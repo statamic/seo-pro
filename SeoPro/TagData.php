@@ -2,6 +2,7 @@
 
 namespace Statamic\Addons\SeoPro;
 
+use Statamic\API\URL;
 use Statamic\API\Data;
 use Statamic\API\Parse;
 
@@ -40,6 +41,7 @@ class TagData
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
             'canonical_url' => $this->model->absoluteUrl(),
+            'home_url' => URL::makeAbsolute('/'),
         ])->all();
     }
 
