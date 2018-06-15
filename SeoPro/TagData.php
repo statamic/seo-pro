@@ -39,6 +39,7 @@ class TagData
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
+            'canonical_url' => $this->model->absoluteUrl(),
         ])->all();
     }
 
