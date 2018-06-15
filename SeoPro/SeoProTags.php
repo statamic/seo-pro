@@ -13,7 +13,7 @@ class SeoProTags extends Tags
         $data = (new TagData)
             ->with($this->getConfig('defaults'))
             ->with(array_get($this->context, 'seo', []))
-            ->with(['page' => array_get($this->context, 'page', [])])
+            ->withCurrent(array_get($this->context, 'page', []))
             ->get();
 
         return $this->render('meta', $data);

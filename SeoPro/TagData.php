@@ -2,9 +2,12 @@
 
 namespace Statamic\Addons\SeoPro;
 
+use Statamic\API\Parse;
+
 class TagData
 {
     protected $data;
+    protected $current;
 
     public function __construct()
     {
@@ -18,11 +21,33 @@ class TagData
         return $this;
     }
 
+    public function withCurrent($array)
+    {
+        $this->current = $array;
+
+        return $this;
+    }
+
     public function get()
     {
+        $this->data = $this->data->map(function ($item) {
+            return $this->parse($item);
+        });
+
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
         ])->all();
+    }
+
+    protected function parse($item)
+    {
+        if (is_array($item)) {
+            return array_map(function ($item) {
+                return $this->parse($item);
+            }, $item);
+        }
+
+        return Parse::template($item, $this->current);
     }
 
     protected function compiledTitle()
