@@ -44,6 +44,7 @@ class TagData
             'canonical_url' => $this->model->absoluteUrl(),
             'home_url' => URL::makeAbsolute('/'),
             'locale' => Config::getFullLocale($this->model->locale()),
+            'alternate_locales' => $this->alternateLocales(),
         ])->all();
     }
 
@@ -73,5 +74,14 @@ class TagData
         }
 
         return $compiled;
+    }
+
+    protected function alternateLocales()
+    {
+        $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
+
+        return array_map(function ($locale) {
+            return Config::getFullLocale($locale);
+        }, $alternates);
     }
 }
