@@ -19,6 +19,3 @@ fields:
   description:
     type: text
     display: Description
-  keywords:
-    type: tags
-    display: Keywords
