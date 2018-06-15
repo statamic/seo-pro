@@ -5,6 +5,7 @@ namespace Statamic\Addons\SeoPro;
 use Statamic\API\URL;
 use Statamic\API\Data;
 use Statamic\API\Parse;
+use Statamic\API\Config;
 
 class TagData
 {
@@ -42,6 +43,7 @@ class TagData
             'compiled_title' => $this->compiledTitle(),
             'canonical_url' => $this->model->absoluteUrl(),
             'home_url' => URL::makeAbsolute('/'),
+            'locale' => Config::getFullLocale($this->model->locale()),
         ])->all();
     }
 
