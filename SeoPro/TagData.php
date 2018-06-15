@@ -2,12 +2,14 @@
 
 namespace Statamic\Addons\SeoPro;
 
+use Statamic\API\Data;
 use Statamic\API\Parse;
 
 class TagData
 {
     protected $data;
     protected $current;
+    protected $model;
 
     public function __construct()
     {
@@ -24,6 +26,7 @@ class TagData
     public function withCurrent($array)
     {
         $this->current = $array;
+        $this->model = Data::find($array['id']);
 
         return $this;
     }
