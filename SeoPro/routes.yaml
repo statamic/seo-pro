@@ -1,0 +1,7 @@
+routes:
+  defaults:
+    uses: DefaultsController@edit
+    as: seopro.defaults.edit
+  post@defaults:
+    uses: DefaultsController@update
+    as: seopro.defaults.update

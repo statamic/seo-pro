@@ -1,0 +1,24 @@
+fields:
+  title:
+    type: text
+    display: Title
+    placeholder: 'derp'
+  site_name:
+    type: text
+    display: Site Name
+    width: 66
+  site_name_position:
+    type: select
+    display: Site Name Position
+    options:
+      before: Before
+      after: After
+      none: None
+    default: before
+    width: 33
+  description:
+    type: text
+    display: Description
+  keywords:
+    type: tags
+    display: Keywords

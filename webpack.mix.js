@@ -6,3 +6,5 @@ require('dotenv').config();
 const statamic = process.env.STATAMIC_PATH;
 
 mix.copyDirectory('SeoPro', `${statamic}/site/addons/SeoPro`);
+
+mix.js('SeoPro/resources/assets/src/js/fieldtype.js', 'SeoPro/resources/assets/js');

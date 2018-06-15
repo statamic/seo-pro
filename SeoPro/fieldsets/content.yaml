@@ -1,0 +1,13 @@
+fields:
+  seo:
+    type: seo_pro
+    fields:
+      title:
+        type: text
+        display: Title
+      description:
+        type: text
+        display: Description
+      keywords:
+        type: tags
+        display: Keywords
