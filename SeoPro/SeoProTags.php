@@ -10,10 +10,11 @@ class SeoProTags extends Tags
 {
     public function meta()
     {
-        $data = array_merge(
-            $this->getConfig('defaults'),
-            array_get($this->context, 'seo', [])
-        );
+        $data = (new TagData)
+            ->with($this->getConfig('defaults'))
+            ->with(array_get($this->context, 'seo', []))
+            ->with(['page' => array_get($this->context, 'page', [])])
+            ->get();
 
         return $this->render('meta', $data);
     }
@@ -24,6 +25,6 @@ class SeoProTags extends Tags
 
         $contents = File::get($path);
 
-        return Parse::template($contents, $data, ['page' => array_get($this->context, 'page')]);
+        return Parse::template($contents, $data);
     }
 }
