@@ -1,4 +1,5 @@
 @extends('layout')
+@section('content-class', 'publishing')
 
 @section('content')
 
