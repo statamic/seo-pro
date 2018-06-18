@@ -7,6 +7,10 @@
         </div>
 
         <div class="flex-1">
+            <div v-if="source === 'inherit'">
+                <p class="form-control-static text-sm">{{ config.placeholder }}</p>
+            </div>
+
             <div v-if="source === 'field'">
                 <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig"></suggest-fieldtype>
             </div>
@@ -16,7 +20,7 @@
                 :is="componentName"
                 :name="name"
                 :data.sync="customText"
-                :config="config.field"
+                :config="fieldConfig"
                 :leave-alert="true">
             </component>
         </div>
@@ -69,6 +73,10 @@ export default {
                 create: true,
             }
         },
+
+        fieldConfig() {
+            return Object.assign(this.config.field, { placeholder: this.config.placeholder });
+        }
 
     },
 

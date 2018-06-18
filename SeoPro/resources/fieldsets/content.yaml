@@ -3,8 +3,12 @@ fields:
     type: seo_pro
     fields:
       title:
-        type: text
         display: Title
+        type: seo_pro.source
+        field:
+          type: text
       description:
-        type: text
+        type: seo_pro.source
         display: Description
+        field:
+          type: text
