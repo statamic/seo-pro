@@ -7,16 +7,16 @@
         </div>
 
         <div class="flex-1">
-            <div v-if="data.source === 'field'">
+            <div v-if="source === 'field'">
                 <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig"></suggest-fieldtype>
             </div>
 
             <component
-                v-if="data.source === 'custom'"
+                v-if="source === 'custom'"
                 :is="componentName"
                 :name="name"
                 :data.sync="customText"
-                :config="config"
+                :config="config.field"
                 :leave-alert="true">
             </component>
         </div>
@@ -41,7 +41,7 @@ export default {
 
     data() {
         return {
-            source: this.data.source,
+            source: null,
             customText: null,
             sourceField: null
         }
@@ -55,8 +55,9 @@ export default {
 
         sourceTypeSelectOptions() {
             return [
+                { text: 'Inherit', value: 'inherit' },
                 { text: 'From Field', value: 'field' },
-                { text: 'Custom Text', value: 'custom' }
+                { text: 'Custom', value: 'custom' }
             ]
         },
 
@@ -99,6 +100,9 @@ export default {
         } else {
             this.customText = this.data.value;
         }
+
+        // Set source after so that the suggest fields don't load before they potentially have data.
+        this.source = this.data.source;
     }
 
 }
