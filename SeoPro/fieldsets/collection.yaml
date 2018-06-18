@@ -1,0 +1,22 @@
+fields:
+  title:
+    type: seo_pro.source
+    display: Title
+    field:
+      type: text
+  site_name_position:
+    type: seo_pro.source
+    display: Site Name Position
+    field:
+      type: select
+      options:
+        before: Before
+        after: After
+        none: None
+      default: before
+  description:
+    type: seo_pro.source
+    display: Description
+    field:
+      type: text
+

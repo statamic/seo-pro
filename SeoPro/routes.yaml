@@ -1,7 +1,21 @@
 routes:
+  /:
+    uses: DashboardController@index
+    as: seopro.dashboard
+
   defaults:
     uses: DefaultsController@edit
     as: seopro.defaults.edit
   post@defaults:
     uses: DefaultsController@update
     as: seopro.defaults.update
+
+  collections:
+    uses: CollectionController@index
+    as: seopro.collections.index
+  collections/{collection}:
+    uses: CollectionController@edit
+    as: seopro.collections.edit
+  post@collections/{collection}:
+    uses: CollectionController@update
+    as: seopro.collections.update

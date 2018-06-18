@@ -6,6 +6,7 @@ use Statamic\API\Str;
 use Statamic\API\Nav;
 use Statamic\API\File;
 use Statamic\API\YAML;
+use Statamic\API\Collection;
 use Statamic\Extend\Listener;
 
 class SeoProListener extends Listener
@@ -17,10 +18,22 @@ class SeoProListener extends Listener
 
     public function addNavItems($nav)
     {
-        $nav->addTo('tools', Nav::item('seo-pro')
+        $seo = Nav::item('seo-pro')
             ->title('SEO Pro')
-            ->route('seopro.defaults.edit')
-            ->icon('magnifying-glass'));
+            ->route('seopro.dashboard')
+            ->icon('magnifying-glass');
+
+        $seo->add(function ($item) {
+            $item->add(Nav::item('seo-pro-defaults')
+                ->title('Defaults')
+                ->route('seopro.defaults.edit'));
+
+            $item->add(Nav::item('seo-pro-collections')
+                ->title('Collections')
+                ->route('seopro.collections.index'));
+        });
+
+        $nav->addTo('tools', $seo);
     }
 
     public function addFieldsetTab($event)
