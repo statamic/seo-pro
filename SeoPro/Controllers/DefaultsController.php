@@ -33,6 +33,7 @@ class DefaultsController extends Controller
             'data' => $data,
             'fieldset' => $fieldset->toPublishArray(),
             'suggestions' => $this->getSuggestions($fieldset),
+            'submitUrl' => route('seopro.defaults.update'),
         ]);
     }
 

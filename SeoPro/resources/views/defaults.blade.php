@@ -13,7 +13,7 @@
 
     <publish
         title="{{ $title }}"
-        submit-url="{{ route('seopro.defaults.update') }}"
+        submit-url="{{ $submitUrl }}"
         :update-title-on-save="false"
         content-type="addon"
         :meta-fields="false"
