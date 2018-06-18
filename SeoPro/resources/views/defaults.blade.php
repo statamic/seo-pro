@@ -14,6 +14,7 @@
         submit-url="{{ route('seopro.defaults.update') }}"
         :update-title-on-save="false"
         content-type="addon"
+        :meta-fields="false"
     ></publish>
 
 @stop
