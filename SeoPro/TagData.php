@@ -6,6 +6,7 @@ use Statamic\API\URL;
 use Statamic\API\Data;
 use Statamic\API\Parse;
 use Statamic\API\Config;
+use Statamic\Contracts\Data\Data as DataContract;
 
 class TagData
 {
@@ -25,10 +26,15 @@ class TagData
         return $this;
     }
 
-    public function withCurrent($array)
+    public function withCurrent($data)
     {
-        $this->current = $array;
-        $this->model = Data::find($array['id']);
+        if ($data instanceof DataContract) {
+            $this->current = $data->toArray();
+            $this->model = $data;
+        } else {
+            $this->current = $data;
+            $this->model = Data::find($data['id']);
+        }
 
         return $this;
     }
