@@ -43,7 +43,7 @@ class DefaultsController extends Controller
     protected function fieldset()
     {
         return Fieldset::create('default',
-            YAML::parse(File::get($this->getDirectory().'/fieldsets/defaults.yaml'))
+            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/defaults.yaml'))
         );
     }
 }

@@ -41,7 +41,7 @@ class SeoProListener extends Listener
         $fieldset = $event->fieldset;
         $sections = $fieldset->sections();
 
-        $fields = YAML::parse(File::get($this->getDirectory().'/fieldsets/content.yaml'))['fields'];
+        $fields = YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content.yaml'))['fields'];
 
         $fields['seo']['fields'] = collect($fields['seo']['fields'])->map(function ($field, $key) use ($event) {
             $field['placeholder'] = $this->getPlaceholder($key, $field, $event->data);
