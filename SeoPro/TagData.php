@@ -2,6 +2,7 @@
 
 namespace Statamic\Addons\SeoPro;
 
+use Statamic\API\Str;
 use Statamic\API\URL;
 use Statamic\API\Data;
 use Statamic\API\Parse;
@@ -41,8 +42,8 @@ class TagData
 
     public function get()
     {
-        $this->data = $this->data->map(function ($item) {
-            return $this->parse($item);
+        $this->data = $this->data->map(function ($item, $key) {
+            return $this->parse($key, $item);
         });
 
         return $this->data->merge([
@@ -54,15 +55,37 @@ class TagData
         ])->all();
     }
 
-    protected function parse($item)
+    protected function parse($key, $item)
     {
         if (is_array($item)) {
-            return array_map(function ($item) {
-                return $this->parse($item);
+            return array_map(function ($item) use ($key) {
+                return $this->parse($key, $item);
             }, $item);
         }
 
-        return Parse::template($item, $this->current);
+        // If they have antlers in the string, they are on their own.
+        if (Str::contains($item, '{{')) {
+            return Parse::template($item, $this->current);
+        }
+
+        // For source-based strings, we should get the value from the source.
+        if (Str::startsWith($item, '@seo:')) {
+            $field = explode('@seo:', $item)[1];
+
+            if (Str::contains($field, '/')) {
+                $field = explode('/', $field)[1];
+            }
+
+            $item = array_get($this->current, $field);
+        }
+
+        // If we have a method here to perform additional parsing, do that now.
+        // eg. Limit a string to n characters.
+        if (method_exists($this, $method = 'parse' . ucfirst($key) . 'Field')) {
+            $item = $this->$method($item);
+        }
+
+        return $item;
     }
 
     protected function compiledTitle()
@@ -89,5 +112,16 @@ class TagData
         return array_map(function ($locale) {
             return Config::getFullLocale($locale);
         }, $alternates);
+    }
+
+    protected function parseDescriptionField($value)
+    {
+        $value = strip_tags($value);
+
+        if (strlen($value) > 320) {
+            $value = substr($value, 0, 320) . '...';
+        }
+
+        return $value;
     }
 }
