@@ -50,7 +50,7 @@ class SeoProListener extends Listener
         $vars = (new TagData)
             ->with($this->getConfig('defaults'))
             ->with($data->get('seo', []))
-            ->withCurrent($data->toArray())
+            ->withCurrent($data)
             ->get();
 
         return array_get($vars, $key);
