@@ -7,8 +7,8 @@
         </div>
 
         <div class="flex-1">
-            <div v-if="source === 'inherit'">
-                <p class="form-control-static text-sm">{{ config.placeholder }}</p>
+            <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
+                {{ config.placeholder }}
             </div>
 
             <div v-if="source === 'field'">
@@ -33,6 +33,10 @@
 
     .source-type-select {
         width: 20rem;
+    }
+
+    .inherit-placeholder {
+        padding-top: 5px;
     }
 
 </style>
