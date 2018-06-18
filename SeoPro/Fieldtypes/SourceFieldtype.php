@@ -14,7 +14,7 @@ class SourceFieldtype extends Fieldtype
         }
 
         if (! $data) {
-            $data = '';
+            return ['source' => 'inherit', 'value' => null];
         }
 
         return ['source' => 'custom', 'value' => $data];
@@ -24,6 +24,10 @@ class SourceFieldtype extends Fieldtype
     {
         if ($data['source'] === 'field') {
             return '@seo:' . $data['value'];
+        }
+
+        if ($data['source'] === 'inherit') {
+            return null;
         }
 
         return $data['value'];
