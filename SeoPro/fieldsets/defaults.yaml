@@ -1,8 +1,9 @@
 fields:
   title:
-    type: text
+    type: seo_pro.source
     display: Title
-    placeholder: 'derp'
+    field:
+      type: text
   site_name:
     type: text
     display: Site Name
@@ -17,5 +18,8 @@ fields:
     default: before
     width: 33
   description:
-    type: text
+    type: seo_pro.source
     display: Description
+    field:
+      type: text
+
