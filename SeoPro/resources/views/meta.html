@@ -14,3 +14,12 @@
 {{ alternate_locales }}
     <meta property="og:locale:alternate" content="{{ value }}" />
 {{ /alternate_locales }}
+
+{{ asset:image }}
+    {{ glide:generate :src="url" preset="seo" absolute="true" }}
+        <meta property="og:image" content="{{ url }}" />
+        <meta property="og:image:width" content="{{ width }}" />
+        <meta property="og:image:height" content="{{ height }}" />
+    {{ /glide:generate }}
+{{ /asset:image }}
+
