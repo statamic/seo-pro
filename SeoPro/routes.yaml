@@ -19,3 +19,10 @@ routes:
   post@collections/{collection}:
     uses: CollectionController@update
     as: seopro.collections.update
+
+  humans:
+    uses: HumansController@edit
+    as: seopro.humans.edit
+  post@humans:
+    uses: HumansController@update
+    as: seopro.humans.update

@@ -22,7 +22,7 @@ class DefaultsController extends Controller
             Settings::load()->get('defaults')
         );
 
-        return $this->view('defaults', [
+        return $this->view('edit', [
             'title' => 'SEO Defaults',
             'data' => $data,
             'fieldset' => $fieldset->toPublishArray(),

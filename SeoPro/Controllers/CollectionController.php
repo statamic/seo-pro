@@ -28,7 +28,7 @@ class CollectionController extends Controller
             $collection->get('seo', [])
         );
 
-        return $this->view('defaults', [
+        return $this->view('edit', [
             'title' => $collection->title() . ' SEO',
             'data' => $data,
             'fieldset' => $fieldset->toPublishArray(),

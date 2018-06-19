@@ -1,0 +1,18 @@
+defaults: []
+humans:
+  enabled: true
+  content: |
+    /* TEAM */
+
+    Creator: {{ site_name }}
+    URL: {{ site_url }}
+    Description: {{ description }}
+
+    /* THANKS */
+
+    Statamic: https://statamic.com
+
+    /* SITE */
+
+    Standards: HTML5, CSS3
+    Components: Statamic 2, Laravel, PHP, JavaScript
