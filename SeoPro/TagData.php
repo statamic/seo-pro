@@ -5,6 +5,7 @@ namespace Statamic\Addons\SeoPro;
 use Statamic\API\Str;
 use Statamic\API\URL;
 use Statamic\API\Data;
+use Statamic\API\Page;
 use Statamic\API\Parse;
 use Statamic\API\Config;
 use Statamic\Contracts\Data\Data as DataContract;
@@ -42,6 +43,10 @@ class TagData
 
     public function get()
     {
+        if (! $this->current) {
+            $this->withCurrent(Page::whereUri('/'));
+        }
+
         $this->data = $this->data->map(function ($item, $key) {
             return $this->parse($key, $item);
         });
