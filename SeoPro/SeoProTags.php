@@ -10,6 +10,11 @@ class SeoProTags extends Tags
 {
     public function meta()
     {
+        if (array_get($this->context, 'response_code', 200) === 404) {
+            // Temporarily do nothing for 404 pages.
+            return;
+        }
+
         $data = (new TagData)
             ->with($this->getConfig('defaults'))
             ->with(array_get($this->context, 'seo', []))
