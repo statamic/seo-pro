@@ -1,7 +1,7 @@
 fields:
   title:
     type: seo_pro.source
-    display: Title
+    display: Meta Title
     field:
       type: text
   site_name_position:
@@ -16,7 +16,6 @@ fields:
       default: before
   description:
     type: seo_pro.source
-    display: Description
+    display: Meta Description
     field:
       type: text
-
