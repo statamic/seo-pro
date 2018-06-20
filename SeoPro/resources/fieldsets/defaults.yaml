@@ -14,7 +14,7 @@ fields:
     options:
       after: After
       before: Before
-      none: None
+      none: Disable
     default: after
     width: 33
   description:

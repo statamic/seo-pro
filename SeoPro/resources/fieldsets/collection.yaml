@@ -1,21 +1,21 @@
 fields:
   title:
     type: seo_pro.source
-    display: Meta Title
+    display: Title
     field:
       type: text
   site_name_position:
-    type: seo_pro.source
+    type: select
     display: Site Name Position
-    field:
-      type: select
-      options:
-        before: Before
-        after: After
-        none: None
-      default: before
+    options:
+      after: After
+      before: Before
+      inherit: Inherit
+      none: Disable
+    default: after
+    width: 25
   description:
     type: seo_pro.source
-    display: Meta Description
+    display: Description
     field:
       type: text
