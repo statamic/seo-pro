@@ -1,4 +1,6 @@
-defaults: []
+defaults:
+  title: '@seo:title'
+  description: '@seo:content'
 humans:
   enabled: true
   content: |
