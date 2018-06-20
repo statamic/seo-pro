@@ -12,10 +12,10 @@ fields:
     type: select
     display: Site Name Position
     options:
-      before: Before
       after: After
+      before: Before
       none: None
-    default: before
+    default: after
     width: 33
   description:
     type: seo_pro.source
