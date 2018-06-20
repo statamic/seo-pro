@@ -10,6 +10,7 @@ class Pulse
     use Extensible;
 
     protected $content;
+    protected $includedFields = ['title', 'description'];
 
     public function summary()
     {
@@ -29,7 +30,7 @@ class Pulse
             foreach ($item as $key => $value) {
                 // These are the fields we're interested in checking for.
                 // The rest are ok to be duplicated.
-                if (! in_array($key, ['title', 'description'])) {
+                if (! in_array($key, $this->includedFields)) {
                     continue;
                 }
 
@@ -39,9 +40,12 @@ class Pulse
         });
 
         $summaries = $data->map(function ($item, $id) use ($values) {
-            $fields = collect($item)->map(function ($value, $key) use ($id, $values) {
+            $fields = collect($item)->filterWithKey(function ($value, $key) {
+                return in_array($key, $this->includedFields);
+            })->map(function ($value, $key) use ($id, $values) {
                 return [
-                    'unique' => $values->has($key) ? !$values[$key]->except($id)->contains($value) : null
+                    'value' => $value,
+                    'unique' => !$values[$key]->except($id)->contains($value)
                 ];
             });
 
