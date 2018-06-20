@@ -37,11 +37,11 @@ class CollectionController extends Controller
         ]);
     }
 
-    public function update(Request $request, $collection)
+    public function update(Request $request, $handle)
     {
         $data = $this->processFields($this->fieldset(), $request->fields);
 
-        $collection = Collection::whereHandle($collection);
+        $collection = Collection::whereHandle($handle);
 
         if (empty($data)) {
             $collection->remove('seo');
@@ -51,7 +51,11 @@ class CollectionController extends Controller
 
         $collection->save();
 
-        return ['success' => true, 'message' => trans('cp.saved_success')];
+        return [
+            'success' => true,
+            'message' => trans('cp.saved_success'),
+            'redirect' => route('seopro.collections.edit', ['collection' => $handle]),
+        ];
     }
 
     protected function fieldset()
