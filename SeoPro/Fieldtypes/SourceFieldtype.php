@@ -9,7 +9,7 @@ class SourceFieldtype extends Fieldtype
 {
     public function preProcess($data)
     {
-        if (Str::startsWith($data, '@seo:')) {
+        if (is_string($data) && Str::startsWith($data, '@seo:')) {
             return ['source' => 'field', 'value' => explode('@seo:', $data)[1]];
         }
 
