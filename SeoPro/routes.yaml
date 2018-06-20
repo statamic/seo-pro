@@ -26,3 +26,10 @@ routes:
   post@humans:
     uses: HumansController@update
     as: seopro.humans.update
+
+  pulse:
+    uses: PulseController@index
+    as: seopro.pulse.index
+  pulse/summary:
+    uses: PulseController@summary
+    as: seopro.pulse.summary

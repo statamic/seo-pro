@@ -35,6 +35,10 @@ class SeoProListener extends Listener
             $item->add(Nav::item('seo-pro-humans')
                 ->title('Humans')
                 ->route('seopro.humans.edit'));
+
+            $item->add(Nav::item('seo-pro-humans')
+                ->title('Pulse')
+                ->route('seopro.pulse.index'));
         });
 
         $nav->addTo('tools', $seo);
