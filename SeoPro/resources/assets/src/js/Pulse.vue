@@ -25,7 +25,7 @@
                         <tbody>
 
                             <tr v-for="item in items">
-                                <td class="cell-title first-cell">{{ item.title }}</td>
+                                <td class="first-cell">{{ item.title }}</td>
                                 <td class="cell-slug">{{ item.url }}</td>
                                 <td class="text-center">
                                     <span class="icon-status status-{{ item.unique ? 'live' : 'hidden' }}"></span>
