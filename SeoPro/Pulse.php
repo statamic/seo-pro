@@ -13,7 +13,12 @@ class Pulse
 
     public function summary()
     {
-        $this->content = Entry::all();
+        $this->content = Entry::all()->flatMap(function ($content) {
+            return collect($content->locales())->mapWithKeys(function ($locale) use ($content) {
+                return [$locale . '::' . $content->id() => $content->in($locale)->get()];
+            });
+        });
+
         $values = collect();
 
         $data = $this->content->map(function ($entry) {
@@ -47,7 +52,7 @@ class Pulse
             return [
                 'id' => $id,
                 'title' => $this->content->get($id)->get('title'),
-                'url' => $this->content->get($id)->uri(),
+                'url' => $this->content->get($id)->url(),
                 'unique' => $unique,
                 'fields' => $fields->all()
             ];
