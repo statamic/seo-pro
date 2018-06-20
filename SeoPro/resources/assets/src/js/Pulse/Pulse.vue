@@ -4,6 +4,9 @@
 
         <div class="flex items-center mb-3">
             <h1 class="flex-1">Pulse</h1>
+            <div class="controls" v-if="!loading">
+                <button @click="load" class="btn btn-primary">{{ translate('cp.refresh') }}</button>
+            </div>
         </div>
 
         <div v-if="loading" class="card loading">
@@ -111,11 +114,20 @@ export default {
     },
 
     ready() {
+        this.load();
+    },
 
-        this.$http.get(cp_url('addons/seo-pro/pulse/summary')).then(response => {
-            this.items = response.data;
-            this.loading = false;
-        });
+    methods: {
+
+        load() {
+            this.loading = true;
+            this.items = null;
+
+            this.$http.get(cp_url('addons/seo-pro/pulse/summary')).then(response => {
+                this.items = response.data;
+                this.loading = false;
+            });
+        }
 
     }
 
