@@ -22,4 +22,10 @@ fields:
     display: Description
     field:
       type: text
-
+  image:
+    type: seo_pro.source
+    display: Image
+    field:
+      type: assets
+      container: '@first_asset_container'
+      max_files: 1
