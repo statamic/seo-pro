@@ -12,6 +12,23 @@
 
         <div v-else>
 
+            <div class="card">
+                <div class="metrics">
+                    <div class="metric simple">
+                        <div class="count">
+                            <small>SEO Pro Grade</small>
+                            <h2>{{ grade }}</h2>
+                        </div>
+                    </div>
+                    <div class="metric simple">
+                        <div class="count">
+                            <small>Complete</small>
+                            <h2>{{ completionPercent }}%</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card flush dossier">
                 <div class="dossier-table-wrapper">
                     <table class="dossier">
@@ -52,6 +69,33 @@ export default {
             loading: true,
             items: null
         }
+    },
+
+    computed: {
+
+        completionPercent() {
+            const total = this.items.length;
+            const unique = this.items.filter(item => item.unique).length;
+            return Math.round(unique / total * 100);
+        },
+
+        grade() {
+            const score = this.completionPercent;
+            if (score >= 97) return 'A+';
+            if (score >= 93) return 'A';
+            if (score >= 90) return 'A-';
+            if (score >= 87) return 'B+';
+            if (score >= 83) return 'B';
+            if (score >= 80) return 'B-';
+            if (score >= 77) return 'C+';
+            if (score >= 73) return 'C';
+            if (score >= 70) return 'C-';
+            if (score >= 67) return 'D+';
+            if (score >= 63) return 'D';
+            if (score >= 60) return 'D-';
+            return 'F';
+        }
+
     },
 
     ready() {
