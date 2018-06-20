@@ -42,7 +42,14 @@
                         <tbody>
 
                             <tr v-for="item in items">
-                                <td class="first-cell">{{ item.title }}</td>
+                                <td class="first-cell">
+                                    <a href="" @click.prevent="selected = item.id">{{ item.title }}</a>
+                                    <pulse-details
+                                        v-if="selected === item.id"
+                                        :item="item"
+                                        @closed="selected = null"
+                                    ></pulse-details>
+                                </td>
                                 <td class="cell-slug">{{ item.url }}</td>
                                 <td class="text-center">
                                     <span class="icon-status status-{{ item.unique ? 'live' : 'hidden' }}"></span>
@@ -64,10 +71,15 @@
 <script>
 export default {
 
+    components: {
+        PulseDetails: require('./Details.vue')
+    },
+
     data() {
         return {
             loading: true,
-            items: null
+            items: null,
+            selected: null
         }
     },
 
