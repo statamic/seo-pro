@@ -1,1 +1,1 @@
-Vue.component('seo-pulse', require('./Pulse/Pulse.vue'));
+Vue.component('seo-report', require('./Report/Report.vue'));

@@ -3,7 +3,7 @@
     <div>
 
         <div class="flex items-center mb-3">
-            <h1 class="flex-1">Pulse</h1>
+            <h1 class="flex-1">SEO Report</h1>
             <div class="controls" v-if="!loading">
                 <button @click="load" class="btn btn-primary">{{ translate('cp.refresh') }}</button>
             </div>
@@ -58,11 +58,11 @@
                                 </div>
                                 <td>
                                     <a href="" @click.prevent="selected = item.id">{{{ item.url }}}</a>
-                                    <pulse-details
+                                    <report-details
                                         v-if="selected === item.id"
                                         :item="item"
                                         @closed="selected = null"
-                                    ></pulse-details>
+                                    ></report-details>
                                 </td>
                             </tr>
                         </tbody>
@@ -81,7 +81,7 @@
 export default {
 
     components: {
-        PulseDetails: require('./Details.vue')
+        ReportDetails: require('./Details.vue')
     },
 
     data() {
@@ -129,7 +129,7 @@ export default {
             this.loading = true;
             this.items = null;
 
-            this.$http.get(cp_url('addons/seo-pro/pulse/summary')).then(response => {
+            this.$http.get(cp_url('addons/seo-pro/report/summary')).then(response => {
                 this.items = response.data;
                 this.loading = false;
             });

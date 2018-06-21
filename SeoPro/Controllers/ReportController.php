@@ -4,12 +4,12 @@ namespace Statamic\Addons\SeoPro\Controllers;
 
 use Statamic\Addons\SeoPro\Reporting\Report;
 
-class PulseController extends Controller
+class ReportController extends Controller
 {
     public function index()
     {
-        return $this->view('pulse', [
-            'title' => 'Pulse'
+        return $this->view('report', [
+            'title' => 'SEO Report'
         ]);
     }
 

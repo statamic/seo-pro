@@ -2,6 +2,6 @@
 
 @section('content')
 
-    <seo-pulse></seo-pulse>
+    <seo-report></seo-report>
 
 @stop

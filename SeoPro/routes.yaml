@@ -27,9 +27,9 @@ routes:
     uses: HumansController@update
     as: seopro.humans.update
 
-  pulse:
-    uses: PulseController@index
-    as: seopro.pulse.index
-  pulse/summary:
-    uses: PulseController@summary
-    as: seopro.pulse.summary
+  report:
+    uses: ReportController@index
+    as: seopro.report.index
+  report/summary:
+    uses: ReportController@summary
+    as: seopro.report.summary
