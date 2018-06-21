@@ -35,30 +35,36 @@
             <div class="card flush dossier">
                 <div class="dossier-table-wrapper">
                     <table class="dossier">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>URL</th>
-                                <th class="text-center">Unique</th>
-                            </tr>
-                        </thead>
                         <tbody>
+                            <tr v-for="item in items.site">
+                                <td class="w-8 text-center">
+                                    <span class="icon-status icon-status-{{ item.valid ? 'live' : 'error' }}"></span>
+                                </div>
+                                <td>{{{ item.description }}}</td>
+                                <td class="text-grey text-right">{{{ item.comment }}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                            <tr v-for="item in items">
-                                <td class="first-cell">
-                                    <a href="" @click.prevent="selected = item.id">{{ item.title }}</a>
+            <div class="card flush dossier">
+                <div class="dossier-table-wrapper">
+                    <table class="dossier">
+                        <tbody>
+                            <tr v-for="item in items.pages">
+                                <td class="w-8 text-center">
+                                    <span class="icon-status icon-status-{{ item.valid ? 'live' : 'error' }}"></span>
+                                </div>
+                                <td>
+                                    <a href="" @click.prevent="selected = item.id">{{{ item.url }}}</a>
                                     <pulse-details
                                         v-if="selected === item.id"
                                         :item="item"
                                         @closed="selected = null"
                                     ></pulse-details>
                                 </td>
-                                <td class="cell-slug">{{ item.url }}</td>
-                                <td class="text-center">
-                                    <span class="icon-status status-{{ item.unique ? 'live' : 'hidden' }}"></span>
-                                </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -89,8 +95,8 @@ export default {
     computed: {
 
         completionPercent() {
-            const total = this.items.length;
-            const unique = this.items.filter(item => item.unique).length;
+            const total = this.items.pages.length;
+            const unique = this.items.pages.filter(page => page.valid).length;
             return Math.round(unique / total * 100);
         },
 

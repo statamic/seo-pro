@@ -7,18 +7,17 @@
 
         <template slot="body">
 
-            <dl>
-                <dt class="mb-1">URL</dt>
-                <dd class="mb-2 font-mono text-xs">{{ item.url }}</dd>
+            <p class="mb-4 font-mono text-grey text-xs">{{ item.url }}</p>
 
-                <template v-for="(key, field) in item.fields">
-                    <dt class="mb-1 font-mono">
-                        <span class="icon-status status-{{ field.unique ? 'live' : 'hidden' }}"></span>
-                        {{ key }}
-                    </dt>
-                    <dd class="mb-2">{{ field.value }}</td>
-                </template>
-            </dl>
+            <div class="mb-3">
+                <div v-for="item in item.results" class="flex mb-1 leading-normal">
+                    <div><span class="icon-status icon-status-{{ item.valid ? 'live' : 'error' }}"></span></div>
+                    <div class="flex-1 pl-2">
+                        <span :class="{ 'font-bold': !item.valid }">{{{ item.description }}}</span>
+                        <div class="text-grey" v-if="item.comment">{{{ item.comment }}}</div>
+                    </div>
+                </div>
+            </div>
 
         </template>
     </modal>

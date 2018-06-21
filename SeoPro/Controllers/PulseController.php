@@ -2,17 +2,10 @@
 
 namespace Statamic\Addons\SeoPro\Controllers;
 
-use Statamic\Addons\SeoPro\Pulse;
+use Statamic\Addons\SeoPro\Reporting\Report;
 
 class PulseController extends Controller
 {
-    protected $pulse;
-
-    public function __construct(Pulse $pulse)
-    {
-        $this->pulse = $pulse;
-    }
-
     public function index()
     {
         return $this->view('pulse', [
@@ -22,6 +15,6 @@ class PulseController extends Controller
 
     public function summary()
     {
-        return $this->pulse->summary();
+        return Report::create()->withPages()->generate();
     }
 }
