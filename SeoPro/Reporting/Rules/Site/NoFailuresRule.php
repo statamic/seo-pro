@@ -27,11 +27,11 @@ abstract class NoFailuresRule extends Rule
 
     public function save()
     {
-        return ['count' => $this->count];
+        return $this->count;
     }
 
     public function load($saved)
     {
-        $this->count = $saved['count'];
+        $this->count = $saved;
     }
 }
