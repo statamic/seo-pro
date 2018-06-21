@@ -13,7 +13,14 @@ class Rule
 
     public function comment()
     {
-        return $this->passes() ? $this->passingComment() : $this->failingComment();
+        switch ($this->status()) {
+            case 'pass':
+                return $this->passingComment();
+            case 'fail':
+                return $this->failingComment();
+            case 'warning':
+                return $this->warningComment();
+        }
     }
 
     protected function passingComment()
@@ -22,6 +29,11 @@ class Rule
     }
 
     protected function failingComment()
+    {
+        return;
+    }
+
+    protected function warningComment()
     {
         return;
     }

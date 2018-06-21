@@ -14,6 +14,7 @@ class Page
         Rules\Page\UniqueTitleTag::class,
         Rules\Page\UniqueMetaDescription::class,
         Rules\Page\NoUnderscoresInUrl::class,
+        Rules\Page\ThreeSegmentUrls::class,
     ];
 
     public function setData($data)
@@ -60,11 +61,21 @@ class Page
         return $this->data->get($key);
     }
 
-    public function isValid()
+    public function status()
     {
-        return null == $this->getRuleResults()->first(function ($key, $result) {
-            return !$result['valid'];
-        });
+        $status = 'pass';
+
+        foreach ($this->getRuleResults() as $result) {
+            if ($result['status'] === 'warning') {
+                $status = 'warning';
+            }
+
+            if ($result['status'] === 'fail') {
+                return 'fail';
+            }
+        }
+
+        return $status;
     }
 
     public function getRuleResults()
@@ -79,7 +90,7 @@ class Page
 
             $results[] = [
                 'description' => $rule->description(),
-                'valid' => $rule->passes(),
+                'status' => $rule->status(),
                 'comment' => $rule->comment(),
             ];
         }

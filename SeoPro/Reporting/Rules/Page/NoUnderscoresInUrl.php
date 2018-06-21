@@ -17,9 +17,9 @@ class NoUnderscoresInUrl extends Rule
         $this->passes = !Str::contains($this->page->url(), '_');
     }
 
-    public function passes()
+    public function status()
     {
-        return $this->passes;
+        return $this->passes ? 'pass' : 'fail';
     }
 
     public function save()

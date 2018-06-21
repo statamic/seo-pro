@@ -23,9 +23,9 @@ class UniqueMetaDescription extends Rule
         })->count();
     }
 
-    public function passes()
+    public function status()
     {
-        return $this->count === 1;
+        return $this->count === 1 ? 'pass' : 'fail';
     }
 
     public function save()

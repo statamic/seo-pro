@@ -38,7 +38,7 @@
                         <tbody>
                             <tr v-for="item in items.site">
                                 <td class="w-8 text-center">
-                                    <span class="icon-status icon-status-{{ item.valid ? 'live' : 'error' }}"></span>
+                                    <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
                                 </div>
                                 <td>{{{ item.description }}}</td>
                                 <td class="text-grey text-right">{{{ item.comment }}}</td>
@@ -54,7 +54,7 @@
                         <tbody>
                             <tr v-for="item in items.pages">
                                 <td class="w-8 text-center">
-                                    <span class="icon-status icon-status-{{ item.valid ? 'live' : 'error' }}"></span>
+                                    <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
                                 </div>
                                 <td>
                                     <a href="" @click.prevent="selected = item.id">{{{ item.url }}}</a>

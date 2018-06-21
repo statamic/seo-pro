@@ -16,4 +16,9 @@ class UniqueTitleTag extends NoFailuresRule
             $this->count
         );
     }
+
+    public function status()
+    {
+        return $this->count === 0 ? 'pass' : 'warning';
+    }
 }

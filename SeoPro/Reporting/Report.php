@@ -19,6 +19,7 @@ class Report implements Arrayable, Jsonable
         Rules\Site\UniqueTitleTag::class,
         Rules\Site\UniqueMetaDescription::class,
         Rules\Site\NoUnderscoresInUrl::class,
+        Rules\Site\ThreeSegmentUrls::class,
     ];
 
     public static function create()
@@ -89,7 +90,7 @@ class Report implements Arrayable, Jsonable
 
             $results[] = [
                 'description' => $rule->description(),
-                'valid' => $rule->passes(),
+                'status' => $rule->status(),
                 'comment' => $rule->comment(),
             ];
         }
@@ -99,7 +100,7 @@ class Report implements Arrayable, Jsonable
                 'site' => $results,
                 'pages' => $this->pages()->map(function ($page) {
                     return [
-                        'valid' => $page->isValid(),
+                        'status' => $page->status(),
                         'url' => $page->url(),
                         'id' => $page->id(),
                         'results' => $page->getRuleResults()

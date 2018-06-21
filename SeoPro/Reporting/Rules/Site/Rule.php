@@ -6,7 +6,7 @@ use Statamic\Addons\SeoPro\Reporting\Page;
 use Statamic\Addons\SeoPro\Reporting\Report;
 use Statamic\Addons\SeoPro\Reporting\Rules\Rule as AbstractRule;
 
-class Rule extends AbstractRule
+abstract class Rule extends AbstractRule
 {
     protected $report;
 
@@ -25,7 +25,7 @@ class Rule extends AbstractRule
 
         $rule->load($page->results()[$id]);
 
-        return $rule->passes();
+        return $rule->status() === 'pass';
     }
 
     protected function failsPageRule(Page $page, $id)

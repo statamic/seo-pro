@@ -20,9 +20,9 @@ abstract class NoFailuresRule extends Rule
         $this->count = $failures->count();
     }
 
-    public function passes()
+    public function status()
     {
-        return $this->count === 0;
+        return $this->count === 0 ? 'pass' : 'fail';
     }
 
     public function save()

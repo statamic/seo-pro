@@ -11,9 +11,11 @@
 
             <div class="mb-3">
                 <div v-for="item in item.results" class="flex mb-1 leading-normal">
-                    <div><span class="icon-status icon-status-{{ item.valid ? 'live' : 'error' }}"></span></div>
+                    <div>
+                        <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
+                    </div>
                     <div class="flex-1 pl-2">
-                        <span :class="{ 'font-bold': !item.valid }">{{{ item.description }}}</span>
+                        <span :class="{ 'font-bold': item.status !== 'pass' }">{{{ item.description }}}</span>
                         <div class="text-grey" v-if="item.comment">{{{ item.comment }}}</div>
                     </div>
                 </div>
