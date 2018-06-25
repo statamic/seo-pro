@@ -2,7 +2,10 @@
 
 namespace Statamic\Addons\SeoPro\Reporting;
 
+use Statamic\API\File;
+use Statamic\API\YAML;
 use Statamic\API\Entry;
+use Statamic\API\Folder;
 use Statamic\Addons\SeoPro\TagData;
 use Statamic\Addons\SeoPro\Settings;
 use Illuminate\Contracts\Support\Jsonable;
@@ -14,6 +17,8 @@ class Report implements Arrayable, Jsonable
     protected $pages;
     protected $results;
     protected $generatePages = false;
+    protected $date;
+    public static $reportsToGenerate = [];
 
     protected $rules = [
         Rules\Site\UniqueTitleTag::class,
@@ -22,9 +27,39 @@ class Report implements Arrayable, Jsonable
         Rules\Site\ThreeSegmentUrls::class,
     ];
 
-    public static function create()
+    public static function create($id = null)
     {
-        return new static;
+        $report = new static;
+
+        $report->setId($id ?: static::nextId());
+
+        return $report;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public static function nextId()
+    {
+        if (! $latest = static::latest()) {
+            return 1;
+        }
+
+        return $latest->id() + 1;
+    }
+
+    public function id()
+    {
+        return $this->id;
+    }
+
+    public function date()
+    {
+        return carbon($this->date);
     }
 
     public function generate()
@@ -33,7 +68,7 @@ class Report implements Arrayable, Jsonable
             $page->validate();
         });
 
-        $this->validateSite();
+        $this->validateSite()->save();
 
         return $this;
     }
@@ -51,6 +86,8 @@ class Report implements Arrayable, Jsonable
         }
 
         $this->results = $results;
+
+        return $this;
     }
 
     public function pages()
@@ -59,19 +96,44 @@ class Report implements Arrayable, Jsonable
             return $this->pages;
         }
 
+        return $this->createPages();
+    }
+
+    protected function createPages()
+    {
         // For now, we're just dealing with entries. Eventually also pages, taxonomy
         // terms, and routes. Anything that can have a corresponding web page.
         $content = Entry::all();
 
         return $this->pages = $content->map(function ($content) {
+            $id = $content->id();
+
             $data = (new TagData)
                 ->with(Settings::load()->get('defaults'))
                 ->with($content->getWithCascade('seo', []))
                 ->withCurrent($content->toArray())
                 ->get();
 
-            return (new Page)->setData($data)->setReport($this);
+            return (new Page)->setId($id)->setData($data)->setReport($this);
         });
+    }
+
+    public function loadPages()
+    {
+        $dir = temp_path(sprintf('/seopro/reports/%s/pages', $this->id));
+        $files = Folder::getFilesRecursively($dir);
+
+        $this->pages = collect($files)->map(function ($file) {
+            $yaml = YAML::parse(File::get($file));
+
+            return (new Page)
+                ->setId($yaml['id'])
+                ->setData($yaml['data'])
+                ->setResults($yaml['results'])
+                ->setReport($this);
+        });
+
+        return $this;
     }
 
     public function results()
@@ -81,35 +143,48 @@ class Report implements Arrayable, Jsonable
 
     public function toArray()
     {
-        $results = [];
+        $array = [
+            'id' => $this->id,
+            'date' => $this->date()->timestamp,
+            'status' => $this->status(),
+            'results' => $this->resultsToArray(),
+        ];
 
-        foreach ($this->results() as $class => $array) {
+        if ($this->generatePages) {
+            $array['pages'] = $this->pages()->map(function ($page) {
+                return [
+                    'status' => $page->status(),
+                    'url' => $page->url(),
+                    'id' => $page->id(),
+                    'results' => $page->getRuleResults()
+                ];
+            });
+        }
+
+        return $array;
+    }
+
+    protected function resultsToArray()
+    {
+        if (! $results = $this->results()) {
+            return [];
+        }
+
+        $array = [];
+
+        foreach ($this->results() as $class => $result) {
             $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\Site\\$class";
             $rule = new $class;
-            $rule->setReport($this)->load($array);
+            $rule->setReport($this)->load($result);
 
-            $results[] = [
+            $array[] = [
                 'description' => $rule->description(),
                 'status' => $rule->status(),
                 'comment' => $rule->comment(),
             ];
         }
 
-        if ($this->generatePages) {
-            $results = [
-                'site' => $results,
-                'pages' => $this->pages()->map(function ($page) {
-                    return [
-                        'status' => $page->status(),
-                        'url' => $page->url(),
-                        'id' => $page->id(),
-                        'results' => $page->getRuleResults()
-                    ];
-                })
-            ];
-        }
-
-        return $results;
+        return $array;
     }
 
     public function toJson($options = 0)
@@ -122,5 +197,102 @@ class Report implements Arrayable, Jsonable
         $this->generatePages = true;
 
         return $this;
+    }
+
+    public static function all()
+    {
+        $files = collect(Folder::disk('storage')->getFiles($dir = 'addons/SeoPro/reports'));
+
+        if ($files->isEmpty()) {
+            return $files;
+        }
+
+        return $files->map(function ($path) {
+            preg_match('/\/(\d+)\.yaml$/', $path, $matches);
+            return (int) $matches[1];
+        })->sort()->reverse()->map(function ($id) {
+            return static::find($id);
+        });
+    }
+
+    public static function latest()
+    {
+        return static::all()->first();
+    }
+
+    public static function find($id)
+    {
+        $instance = static::create($id);
+
+        if (! $instance->exists()) {
+            return;
+        }
+
+        return $instance->load();
+    }
+
+    public function save()
+    {
+        File::disk('storage')->put($this->path(), YAML::dump([
+            'date' => time(),
+            'results' => $this->results
+        ]));
+
+        return $this;
+    }
+
+    public function path()
+    {
+        return 'addons/SeoPro/reports/' . $this->id . '.yaml';
+    }
+
+    public function exists()
+    {
+        return File::disk('storage')->exists($this->path());
+    }
+
+    public function load()
+    {
+        $raw = YAML::parse(File::disk('storage')->get($this->path()));
+
+        $this->date = $raw['date'];
+        $this->results = $raw['results'];
+        $this->loadPages();
+
+        return $this;
+    }
+
+    public static function queue()
+    {
+        $report = static::create()->save();
+
+        $id = $report->id();
+
+        static::$reportsToGenerate[] = $id;
+
+        return $id;
+    }
+
+    public function status()
+    {
+        $results = $this->resultsToArray();
+
+        if (empty($results)) {
+            return 'pending';
+        }
+
+        $status = 'pass';
+
+        foreach ($results as $result) {
+            if ($result['status'] === 'warning') {
+                $status = 'warning';
+            }
+
+            if ($result['status'] === 'fail') {
+                return 'fail';
+            }
+        }
+
+        return $status;
     }
 }

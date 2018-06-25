@@ -61,3 +61,19 @@ You may use Statamic Antlers templating in your strings. When doing this, the ad
 ``` yaml
 description: "{{ content | striptags | truncate:250:... }}"
 ```
+
+## Reports
+
+You may generate an SEO report that checks all the pages of your site against a number of tests. The tests include mandatory items like title tag uniqueness, or suggested items like URLs being no more than 3 segments. Failing a mandatory item will result in a fail where failing a suggested item will result in a warning.
+
+Reports will stick around until deleted, so you are free to compare reports to see how you are progressing.
+
+You may generate a report through the Control Panel, or by running `php please seo:report:generate`.
+
+### Queuing Reports
+
+Depending on the size of your site, generating a report may take a while.
+
+We generate them in the "background" using a middleware. It's possible that this could interfere with other middleware. To prevent this, you can enable queues, and the reports will be truly queued in the background.
+
+The simplest way to do this locally is with Redis. Add `QUEUE_DRIVER=redis` to your `.env` file, then run `php please queue:listen`.

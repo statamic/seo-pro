@@ -2,43 +2,22 @@
 
     <div>
 
-        <div class="flex items-center mb-3">
-            <h1 class="flex-1">SEO Report</h1>
-            <div class="controls" v-if="!loading">
-                <button @click="load" class="btn btn-primary">{{ translate('cp.refresh') }}</button>
-            </div>
-        </div>
-
         <div v-if="loading" class="card loading">
-            <span class="icon icon-circular-graph animation-spin"></span> {{ translate('cp.loading') }}
+            <span class="icon icon-circular-graph animation-spin"></span>
+            Your report is being generated.
         </div>
 
-        <div v-else>
+        <div v-if="!loading">
 
-            <div class="card">
-                <div class="metrics">
-                    <div class="metric simple">
-                        <div class="count">
-                            <small>SEO Pro Grade</small>
-                            <h2>{{ grade }}</h2>
-                        </div>
-                    </div>
-                    <div class="metric simple">
-                        <div class="count">
-                            <small>Complete</small>
-                            <h2>{{ completionPercent }}%</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="card text-sm text-grey">Generated <relative-date :date="report.date"></relative-date></div>
 
             <div class="card flush dossier">
                 <div class="dossier-table-wrapper">
                     <table class="dossier">
                         <tbody>
-                            <tr v-for="item in items.site">
+                            <tr v-for="item in report.results">
                                 <td class="w-8 text-center">
-                                    <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
+                                    <status-icon :status="item.status"></status-icon>
                                 </div>
                                 <td>{{{ item.description }}}</td>
                                 <td class="text-grey text-right">{{{ item.comment }}}</td>
@@ -52,9 +31,9 @@
                 <div class="dossier-table-wrapper">
                     <table class="dossier">
                         <tbody>
-                            <tr v-for="item in items.pages">
+                            <tr v-for="item in report.pages">
                                 <td class="w-8 text-center">
-                                    <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
+                                    <status-icon :status="item.status"></status-icon>
                                 </div>
                                 <td>
                                     <a href="" @click.prevent="selected = item.id">{{{ item.url }}}</a>
@@ -81,42 +60,19 @@
 export default {
 
     components: {
-        ReportDetails: require('./Details.vue')
+        ReportDetails: require('./Details.vue'),
+        RelativeDate: require('./RelativeDate.vue'),
+        StatusIcon: require('./StatusIcon.vue'),
     },
+
+    props: ['id'],
 
     data() {
         return {
-            loading: true,
-            items: null,
+            loading: false,
+            report: null,
             selected: null
         }
-    },
-
-    computed: {
-
-        completionPercent() {
-            const total = this.items.pages.length;
-            const unique = this.items.pages.filter(page => page.valid).length;
-            return Math.round(unique / total * 100);
-        },
-
-        grade() {
-            const score = this.completionPercent;
-            if (score >= 97) return 'A+';
-            if (score >= 93) return 'A';
-            if (score >= 90) return 'A-';
-            if (score >= 87) return 'B+';
-            if (score >= 83) return 'B';
-            if (score >= 80) return 'B-';
-            if (score >= 77) return 'C+';
-            if (score >= 73) return 'C';
-            if (score >= 70) return 'C-';
-            if (score >= 67) return 'D+';
-            if (score >= 63) return 'D';
-            if (score >= 60) return 'D-';
-            return 'F';
-        }
-
     },
 
     ready() {
@@ -127,10 +83,15 @@ export default {
 
         load() {
             this.loading = true;
-            this.items = null;
+            this.report = null;
 
-            this.$http.get(cp_url('addons/seo-pro/report/summary')).then(response => {
-                this.items = response.data;
+            this.$http.get(cp_url(`addons/seo-pro/reports/${this.id}`)).then(response => {
+                if (response.data.status === 'pending') {
+                    setTimeout(() => this.load(), 1000);
+                    return;
+                }
+
+                this.report = response.data;
                 this.loading = false;
             });
         }

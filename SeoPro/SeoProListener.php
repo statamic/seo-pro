@@ -36,9 +36,9 @@ class SeoProListener extends Listener
                 ->title('Humans')
                 ->route('seopro.humans.edit'));
 
-            $item->add(Nav::item('seo-pro-report')
-                ->title('Report')
-                ->route('seopro.report.index'));
+            $item->add(Nav::item('seo-pro-reports')
+                ->title('Reports')
+                ->route('seopro.reports.index'));
         });
 
         $nav->addTo('tools', $seo);

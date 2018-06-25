@@ -2,6 +2,8 @@
 
 namespace Statamic\Addons\SeoPro\Reporting;
 
+use Statamic\API\File;
+use Statamic\API\YAML;
 use Statamic\API\Entry;
 
 class Page
@@ -9,6 +11,7 @@ class Page
     protected $report;
     protected $data;
     protected $results;
+    protected $id;
 
     protected $rules = [
         Rules\Page\UniqueTitleTag::class,
@@ -20,6 +23,13 @@ class Page
     public function setData($data)
     {
         $this->data = collect($data);
+
+        return $this;
+    }
+
+    public function setResults($results)
+    {
+        $this->results = $results;
 
         return $this;
     }
@@ -54,6 +64,10 @@ class Page
         }
 
         $this->results = $results;
+
+        $this->save();
+
+        return $this;
     }
 
     public function get($key)
@@ -105,6 +119,34 @@ class Page
 
     public function id()
     {
-        return md5($this->url());
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function save()
+    {
+        $data = [
+            'id' => $this->id,
+            'data' => $this->data->all(),
+            'results' => $this->results
+        ];
+
+        File::put($this->path(), YAML::dump($data));
+    }
+
+    protected function path()
+    {
+        $key = $this->id;
+        $parts = array_slice(str_split($key, 2), 0, 2);
+
+        return temp_path(vsprintf('/seopro/reports/%s/pages/%s/%s.yaml', [
+            $this->report->id(), implode('/', $parts), $key
+        ]));
     }
 }

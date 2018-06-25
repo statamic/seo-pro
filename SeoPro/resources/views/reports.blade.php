@@ -2,6 +2,6 @@
 
 @section('content')
 
-    <seo-report></seo-report>
+    <seo-reports></seo-reports>
 
 @stop
