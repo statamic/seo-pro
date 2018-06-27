@@ -62,11 +62,16 @@ export default {
         },
 
         sourceTypeSelectOptions() {
-            return [
-                { text: 'Inherit', value: 'inherit' },
+            let options = [
                 { text: 'From Field', value: 'field' },
                 { text: 'Custom', value: 'custom' }
-            ]
+            ];
+
+            if (this.config.inherit !== false) {
+                options.unshift({ text: 'Inherit', value: 'inherit' });
+            }
+
+            return options;
         },
 
         suggestConfig() {

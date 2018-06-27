@@ -2,6 +2,7 @@ fields:
   title:
     type: seo_pro.source
     display: Meta Title
+    inherit: 'yesplease'
     field:
       type: text
   site_name:
@@ -20,11 +21,13 @@ fields:
   description:
     type: seo_pro.source
     display: Meta Description
+    inherit: false
     field:
       type: text
   image:
     type: seo_pro.source
     display: Image
+    inherit: false
     field:
       type: assets
       container: '@first_asset_container'
