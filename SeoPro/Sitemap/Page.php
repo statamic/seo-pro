@@ -35,6 +35,11 @@ class Page
 
     public function priority()
     {
-        return $this->data->get('priority', '0.9');
+        return $this->data->get('priority', $this->isHome() ? '1.0' : '0.9');
+    }
+
+    public function isHome()
+    {
+        return $this->path() === '/';
     }
 }
