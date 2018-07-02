@@ -8,7 +8,6 @@ use Statamic\API\File;
 use Statamic\API\YAML;
 use Statamic\API\Collection;
 use Statamic\Extend\Listener;
-use Statamic\Contracts\Data\Content;
 
 class SeoProListener extends Listener
 {
@@ -88,10 +87,18 @@ class SeoProListener extends Listener
 
     protected function shouldHaveSeoTab($model)
     {
-        return in_array(get_class($model), [
-            Content\Page::class,
-            Content\Entry::class,
-            Content\Term::class
-        ]);
+        $classes = [
+            \Statamic\Contracts\Data\Pages\Page::class,
+            \Statamic\Contracts\Data\Entries\Entry::class,
+            \Statamic\Contracts\Data\Taxonomies\Term::class
+        ];
+
+        foreach ($classes as $class) {
+            if ($model instanceof $class) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
