@@ -32,3 +32,20 @@ fields:
       type: assets
       container: '@first_asset_container'
       max_files: 1
+  priority:
+    type: seo_pro.source
+    inherit: false
+    field:
+      type: text
+  change_frequency:
+    type: seo_pro.source
+    inherit: false
+    field:
+      type: select
+      options:
+        hourly: Hourly
+        daily: Daily
+        weekly: Weekly
+        monthly: Monthly
+        yearly: Yearly
+        never: Never

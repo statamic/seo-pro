@@ -19,3 +19,18 @@ fields:
     display: Meta Description
     field:
       type: text
+  priority:
+    type: seo_pro.source
+    field:
+      type: text
+  change_frequency:
+    type: seo_pro.source
+    field:
+      type: select
+      options:
+        hourly: Hourly
+        daily: Daily
+        weekly: Weekly
+        monthly: Monthly
+        yearly: Yearly
+        never: Never
