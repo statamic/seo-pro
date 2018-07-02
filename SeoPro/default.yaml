@@ -1,5 +1,6 @@
 open_graph_image_width: 1200
 open_graph_image_height: 1200
+sitemap_cache_length: 60
 
 defaults:
   title: '@seo:title'

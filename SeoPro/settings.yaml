@@ -12,3 +12,9 @@ fields:
     type: integer
     display: OG Image Height
     width: 50
+  sitemap:
+    type: section
+  sitemap_cache_length:
+    type: integer
+    display: Cache Length
+    instructions: How long the sitemap should get cached, in minutes.
