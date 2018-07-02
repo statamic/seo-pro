@@ -6,6 +6,9 @@ developer: Statamic
 developer_url: 'https://statamic.com'
 commercial: true
 
+fieldtype_fields:
+  fields:
+    type: seo_pro.fields
 source_fieldtype_fields:
   field:
     type: seo_pro.source_field
