@@ -8,6 +8,7 @@ use Statamic\API\File;
 use Statamic\API\YAML;
 use Statamic\API\Collection;
 use Statamic\Extend\Listener;
+use Statamic\Contracts\Data\Content;
 
 class SeoProListener extends Listener
 {
@@ -50,6 +51,10 @@ class SeoProListener extends Listener
 
     public function addFieldsetTab($event)
     {
+        if (! $this->shouldHaveSeoTab($event->data)) {
+            return;
+        }
+
         $fieldset = $event->fieldset;
         $sections = $fieldset->sections();
 
@@ -79,5 +84,14 @@ class SeoProListener extends Listener
             ->get();
 
         return array_get($vars, $key);
+    }
+
+    protected function shouldHaveSeoTab($model)
+    {
+        return in_array(get_class($model), [
+            Content\Page::class,
+            Content\Entry::class,
+            Content\Term::class
+        ]);
     }
 }
