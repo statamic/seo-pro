@@ -13,6 +13,11 @@ class Page
         return $this;
     }
 
+    public function path()
+    {
+        return parse_url($this->loc())['path'];
+    }
+
     public function loc()
     {
         return $this->data->get('canonical_url');

@@ -18,6 +18,8 @@ class Sitemap
                 ->get();
 
             return (new Page)->with($data);
+        })->sortBy(function ($page) {
+            return substr_count(rtrim($page->path(), '/'), '/');
         });
     }
 }
