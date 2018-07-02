@@ -57,6 +57,7 @@ class TagData
             'home_url' => URL::makeAbsolute('/'),
             'locale' => Config::getFullLocale($this->model->locale()),
             'alternate_locales' => $this->alternateLocales(),
+            'last_modified' => $this->model->lastModified(),
         ])->all();
     }
 

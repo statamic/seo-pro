@@ -14,6 +14,7 @@ class SeoProListener extends Listener
     public $events = [
         'cp.nav.created' => 'addNavItems',
         \Statamic\Events\Data\FindingFieldset::class => 'addFieldsetTab',
+        \Statamic\Events\RoutesMapping::class => 'addRoutes',
     ];
 
     public function addNavItems($nav)
@@ -100,5 +101,10 @@ class SeoProListener extends Listener
         }
 
         return false;
+    }
+
+    public function addRoutes($event)
+    {
+        $event->router->get('sitemap.xml', 'Statamic\Addons\SeoPro\Controllers\SitemapController@show');
     }
 }
