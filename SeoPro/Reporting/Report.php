@@ -201,15 +201,14 @@ class Report implements Arrayable, Jsonable
 
     public static function all()
     {
-        $files = collect(Folder::disk('storage')->getFiles($dir = 'addons/SeoPro/reports'));
+        $folders = collect(Folder::getFolders(temp_path('seopro/reports')));
 
-        if ($files->isEmpty()) {
+        if ($folders->isEmpty()) {
             return $files;
         }
 
-        return $files->map(function ($path) {
-            preg_match('/\/(\d+)\.yaml$/', $path, $matches);
-            return (int) $matches[1];
+        return $folders->map(function ($path) {
+            return (int) pathinfo($path)['filename'];
         })->sort()->reverse()->map(function ($id) {
             return static::find($id);
         });
@@ -233,7 +232,7 @@ class Report implements Arrayable, Jsonable
 
     public function save()
     {
-        File::disk('storage')->put($this->path(), YAML::dump([
+        File::put($this->path(), YAML::dump([
             'date' => time(),
             'results' => $this->results
         ]));
@@ -243,17 +242,17 @@ class Report implements Arrayable, Jsonable
 
     public function path()
     {
-        return 'addons/SeoPro/reports/' . $this->id . '.yaml';
+        return temp_path('seopro/reports/' . $this->id . '/report.yaml');
     }
 
     public function exists()
     {
-        return File::disk('storage')->exists($this->path());
+        return File::exists($this->path());
     }
 
     public function load()
     {
-        $raw = YAML::parse(File::disk('storage')->get($this->path()));
+        $raw = YAML::parse(File::get($this->path()));
 
         $this->date = $raw['date'];
         $this->results = $raw['results'];
