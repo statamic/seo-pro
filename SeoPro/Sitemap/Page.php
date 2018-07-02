@@ -30,16 +30,11 @@ class Page
 
     public function changefreq()
     {
-        return $this->data->get('change_frequency', 'monthly');
+        return $this->data->get('change_frequency');
     }
 
     public function priority()
     {
-        return $this->data->get('priority', $this->isHome() ? '1.0' : '0.5');
-    }
-
-    public function isHome()
-    {
-        return $this->path() === '/';
+        return $this->data->get('priority');
     }
 }
