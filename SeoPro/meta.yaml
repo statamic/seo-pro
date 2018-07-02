@@ -4,6 +4,7 @@ description: Search Engine Optimization tools.
 url: 'https://statamic.com/marketplace/addons/seo-pro'
 developer: Statamic
 developer_url: 'https://statamic.com'
+commercial: true
 
 source_fieldtype_fields:
   field:
