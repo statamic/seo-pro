@@ -1,0 +1,14 @@
+fields:
+  og_image_dimensions:
+    type: section
+    display: OpenGraph Image Dimensions
+    instructions: |
+      According this <a href="https://www.h3xed.com/web-and-internet/how-to-use-og-image-meta-tag-facebook-reddit" target="_blank">this article</a>, the ideal image size for open graph tags to work for Facebook and Reddit is 1200x1200 pixels.
+  open_graph_image_width:
+    type: integer
+    display: OG Image Width
+    width: 50
+  open_graph_image_height:
+    type: integer
+    display: OG Image Height
+    width: 50

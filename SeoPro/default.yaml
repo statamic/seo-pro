@@ -1,3 +1,6 @@
+open_graph_image_width: 1200
+open_graph_image_height: 1200
+
 defaults:
   title: '@seo:title'
   description: '@seo:content'

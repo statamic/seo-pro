@@ -21,7 +21,10 @@ class SeoProServiceProvider extends ServiceProvider
     {
         $server = app(\League\Glide\Server::class);
         $server->setPresets($server->getPresets() + [
-            'seo' => ['w' => 1200, 'h' => 1200, 'crop' => 'fit']
+            'seo' => [
+                'w' => $this->getConfig('open_graph_image_width'),
+                'h' => $this->getConfig('open_graph_image_height')
+            ]
         ]);
     }
 
