@@ -25,6 +25,7 @@ class Report implements Arrayable, Jsonable
         Rules\Site\UniqueMetaDescription::class,
         Rules\Site\NoUnderscoresInUrl::class,
         Rules\Site\ThreeSegmentUrls::class,
+        Rules\Site\SiteName::class,
     ];
 
     public static function create($id = null)
