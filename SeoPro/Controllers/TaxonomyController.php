@@ -7,7 +7,6 @@ use Statamic\API\YAML;
 use Statamic\API\Fieldset;
 use Statamic\API\Taxonomy;
 use Illuminate\Http\Request;
-use Statamic\API\Collection;
 use Statamic\Addons\SeoPro\Settings;
 
 class TaxonomyController extends Controller
