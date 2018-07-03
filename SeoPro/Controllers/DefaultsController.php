@@ -23,7 +23,7 @@ class DefaultsController extends Controller
         );
 
         return $this->view('edit', [
-            'title' => 'SEO Defaults',
+            'title' => 'Site Defaults',
             'data' => $data,
             'fieldset' => $fieldset->toPublishArray(),
             'suggestions' => $this->getSuggestions($fieldset),

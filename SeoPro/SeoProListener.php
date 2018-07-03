@@ -26,15 +26,15 @@ class SeoProListener extends Listener
 
         $seo->add(function ($item) {
             $item->add(Nav::item('seo-pro-defaults')
-                ->title('Defaults')
+                ->title('Site Defaults')
                 ->route('seopro.defaults.edit'));
 
             $item->add(Nav::item('seo-pro-content')
-                ->title('Content')
+                ->title('Content Defaults')
                 ->route('seopro.content.index'));
 
             $item->add(Nav::item('seo-pro-humans')
-                ->title('Humans')
+                ->title('Humans.txt')
                 ->route('seopro.humans.edit'));
 
             $item->add(Nav::item('seo-pro-reports')
