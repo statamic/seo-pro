@@ -204,7 +204,7 @@ class Report implements Arrayable, Jsonable
         $folders = collect(Folder::getFolders(temp_path('seopro/reports')));
 
         if ($folders->isEmpty()) {
-            return $files;
+            return $folders;
         }
 
         return $folders->map(function ($path) {
