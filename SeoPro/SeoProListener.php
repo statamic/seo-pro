@@ -29,9 +29,9 @@ class SeoProListener extends Listener
                 ->title('Defaults')
                 ->route('seopro.defaults.edit'));
 
-            $item->add(Nav::item('seo-pro-collections')
-                ->title('Collections')
-                ->route('seopro.collections.index'));
+            $item->add(Nav::item('seo-pro-content')
+                ->title('Content')
+                ->route('seopro.content.index'));
 
             $item->add(Nav::item('seo-pro-humans')
                 ->title('Humans')

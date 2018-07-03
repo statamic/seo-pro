@@ -10,15 +10,23 @@ routes:
     uses: DefaultsController@update
     as: seopro.defaults.update
 
-  collections:
-    uses: CollectionController@index
-    as: seopro.collections.index
-  collections/{collection}:
+  content:
+    uses: ContentController@index
+    as: seopro.content.index
+
+  content/collections/{collection}:
     uses: CollectionController@edit
     as: seopro.collections.edit
-  post@collections/{collection}:
+  post@content/collections/{collection}:
     uses: CollectionController@update
     as: seopro.collections.update
+
+  content/taxonomies/{collection}:
+    uses: TaxonomyController@edit
+    as: seopro.taxonomies.edit
+  post@content/taxonomies/{collection}:
+    uses: TaxonomyController@update
+    as: seopro.taxonomies.update
 
   humans:
     uses: HumansController@edit

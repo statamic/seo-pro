@@ -5,28 +5,29 @@ namespace Statamic\Addons\SeoPro\Controllers;
 use Statamic\API\File;
 use Statamic\API\YAML;
 use Statamic\API\Fieldset;
+use Statamic\API\Taxonomy;
 use Illuminate\Http\Request;
 use Statamic\API\Collection;
 use Statamic\Addons\SeoPro\Settings;
 
-class CollectionController extends Controller
+class TaxonomyController extends Controller
 {
-    public function edit($collection)
+    public function edit($taxonomy)
     {
         $fieldset = $this->fieldset();
-        $collection = Collection::whereHandle($collection);
+        $taxonomy = Taxonomy::whereHandle($taxonomy);
 
         $data = $this->preProcessWithBlankFields(
             $fieldset,
-            $collection->get('seo', [])
+            $taxonomy->get('seo', [])
         );
 
         return $this->view('edit', [
-            'title' => $collection->title() . ' SEO',
+            'title' => $taxonomy->title() . ' SEO',
             'data' => $data,
             'fieldset' => $fieldset->toPublishArray(),
             'suggestions' => $this->getSuggestions($fieldset),
-            'submitUrl' => route('seopro.collections.update', ['collection' => $collection->path()]),
+            'submitUrl' => route('seopro.taxonomies.update', ['taxonomy' => $taxonomy->path()]),
         ]);
     }
 
@@ -34,20 +35,20 @@ class CollectionController extends Controller
     {
         $data = $this->processFields($this->fieldset(), $request->fields);
 
-        $collection = Collection::whereHandle($handle);
+        $taxonomy = Taxonomy::whereHandle($handle);
 
         if (empty($data)) {
-            $collection->remove('seo');
+            $taxonomy->remove('seo');
         } else {
-            $collection->set('seo', $data);
+            $taxonomy->set('seo', $data);
         }
 
-        $collection->save();
+        $taxonomy->save();
 
         return [
             'success' => true,
             'message' => trans('cp.saved_success'),
-            'redirect' => route('seopro.collections.edit', ['collection' => $handle]),
+            'redirect' => route('seopro.taxonomies.edit', ['taxonomy' => $handle]),
         ];
     }
 
@@ -55,7 +56,7 @@ class CollectionController extends Controller
     {
         return Fieldset::create(
             'default',
-            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/collection.yaml'))
+            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content-defaults.yaml'))
         );
     }
 }
