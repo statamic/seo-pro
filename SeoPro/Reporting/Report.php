@@ -294,4 +294,11 @@ class Report implements Arrayable, Jsonable
 
         return $status;
     }
+
+    public function defaults()
+    {
+        return collect((new TagData)
+            ->with(Settings::load()->get('defaults'))
+            ->get());
+    }
 }
