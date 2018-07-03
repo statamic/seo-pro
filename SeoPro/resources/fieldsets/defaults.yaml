@@ -2,7 +2,6 @@ fields:
   title:
     type: seo_pro.source
     display: Meta Title
-    inherit: 'yesplease'
     field:
       type: text
   site_name:
