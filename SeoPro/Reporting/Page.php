@@ -149,7 +149,7 @@ class Page
 
     protected function path()
     {
-        $key = $this->id;
+        $key = md5($this->id);
         $parts = array_slice(str_split($key, 2), 0, 2);
 
         return temp_path(vsprintf('/seopro/reports/%s/pages/%s/%s.yaml', [

@@ -119,7 +119,7 @@ class Report implements Arrayable, Jsonable
                 ->get();
 
             return (new Page)
-                ->setId(md5($content->id()))
+                ->setId($content->id())
                 ->setData($data)
                 ->setReport($this);
         });
@@ -143,7 +143,7 @@ class Report implements Arrayable, Jsonable
                 ->get();
 
             return (new Page)
-                ->setId(md5('route:'.$route->absoluteUrl()))
+                ->setId('route:'.$route->absoluteUri())
                 ->setData($data)
                 ->setReport($this);
         });
