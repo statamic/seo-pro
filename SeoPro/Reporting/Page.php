@@ -55,11 +55,14 @@ class Page
     {
         $results = [];
 
-        foreach ($this->rules as $class) {
+        foreach (Report::$rules as $class) {
             $rule = new $class;
 
-            $rule->setPage($this)->process();
+            if (! $rule->validatesPages()) {
+                continue;
+            }
 
+            $rule->setReport($this->report())->setPage($this)->process();
             $results[$rule->id()] = $rule->save();
         }
 
@@ -97,10 +100,14 @@ class Page
         $results = collect();
 
         foreach ($this->results as $class => $array) {
-            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\Page\\$class";
+            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
             $rule = new $class;
-            $rule->setPage($this);
-            $rule->load($array);
+
+            if (! $rule->validatesPages()) {
+                continue;
+            }
+
+            $rule->setPage($this)->load($array);
 
             $results[] = [
                 'description' => $rule->description(),

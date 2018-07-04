@@ -20,12 +20,12 @@ class Report implements Arrayable, Jsonable
     protected $date;
     public static $reportsToGenerate = [];
 
-    protected $rules = [
-        Rules\Site\UniqueTitleTag::class,
-        Rules\Site\UniqueMetaDescription::class,
-        Rules\Site\NoUnderscoresInUrl::class,
-        Rules\Site\ThreeSegmentUrls::class,
-        Rules\Site\SiteName::class,
+    public static $rules = [
+        Rules\SiteName::class,
+        Rules\UniqueTitleTag::class,
+        Rules\UniqueMetaDescription::class,
+        Rules\NoUnderscoresInUrl::class,
+        Rules\ThreeSegmentUrls::class,
     ];
 
     public static function create($id = null)
@@ -78,7 +78,7 @@ class Report implements Arrayable, Jsonable
     {
         $results = [];
 
-        foreach ($this->rules as $class) {
+        foreach (static::$rules as $class) {
             $rule = new $class;
 
             $rule->setReport($this)->process();
@@ -174,9 +174,11 @@ class Report implements Arrayable, Jsonable
         $array = [];
 
         foreach ($this->results() as $class => $result) {
-            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\Site\\$class";
-            $rule = new $class;
-            $rule->setReport($this)->load($result);
+            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
+
+            $rule = (new $class)->setReport($this);
+
+            $rule->load($result);
 
             $array[] = [
                 'description' => $rule->description(),
