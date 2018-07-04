@@ -19,7 +19,10 @@ trait FailsWhenPagesDontPass
     {
         $rule = new static;
 
-        $rule->setPage($page)->load($page->results()[$this->id()]);
+        $rule
+            ->setPage($page)
+            ->setReport($this->report)
+            ->load($page->results()[$this->id()]);
 
         return $rule->status() === 'pass';
     }
