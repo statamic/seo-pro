@@ -4,8 +4,10 @@ namespace Statamic\Addons\SeoPro\Reporting;
 
 use Statamic\API\File;
 use Statamic\API\YAML;
+use Statamic\API\Config;
 use Statamic\API\Folder;
 use Statamic\API\Content;
+use Statamic\Routing\Router;
 use Statamic\Addons\SeoPro\TagData;
 use Statamic\Addons\SeoPro\Settings;
 use Illuminate\Contracts\Support\Jsonable;
@@ -102,19 +104,48 @@ class Report implements Arrayable, Jsonable
 
     protected function createPages()
     {
-        // For now, we're just dealing with content. (Pages, entries, terms) Eventually also routes.
-        $content = Content::all();
+        return $this->pages = $this
+            ->pagesFromContent()
+            ->merge($this->pagesFromRoutes());
+    }
 
-        return $this->pages = $content->map(function ($content) {
-            $id = $content->id();
-
+    protected function pagesFromContent()
+    {
+        return Content::all()->map(function ($content) {
             $data = (new TagData)
                 ->with(Settings::load()->get('defaults'))
                 ->with($content->getWithCascade('seo', []))
                 ->withCurrent($content->toArray())
                 ->get();
 
-            return (new Page)->setId($id)->setData($data)->setReport($this);
+            return (new Page)
+                ->setId(md5($content->id()))
+                ->setData($data)
+                ->setReport($this);
+        });
+    }
+
+    protected function pagesFromRoutes()
+    {
+        $router = new Router($routes = Config::get('routes.routes'));
+        $routes = collect($router->standardize($routes));
+
+        return $routes->filterWithKey(function ($data, $route) {
+            return ! str_contains($route, '{');
+        })->filter(function ($data) {
+            return array_get($data, 'content_type', 'html') === 'html';
+        })->map(function ($data, $route) use ($router) {
+            return $router->getExactRoute($route, $route, $data);
+        })->map(function ($route) {
+            $data = (new TagData)
+                ->with(Settings::load()->get('defaults'))
+                ->withCurrent($route)
+                ->get();
+
+            return (new Page)
+                ->setId(md5('route:'.$route->absoluteUrl()))
+                ->setData($data)
+                ->setReport($this);
         });
     }
 

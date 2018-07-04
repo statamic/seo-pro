@@ -8,6 +8,7 @@ use Statamic\API\Data;
 use Statamic\API\Page;
 use Statamic\API\Parse;
 use Statamic\API\Config;
+use Statamic\Routing\Route;
 use Statamic\Contracts\Data\Data as DataContract;
 
 class TagData
@@ -30,7 +31,7 @@ class TagData
 
     public function withCurrent($data)
     {
-        if ($data instanceof DataContract) {
+        if ($data instanceof DataContract || $data instanceof Route) {
             $this->current = $data->toArray();
             $this->model = $data;
         } else {
@@ -55,9 +56,9 @@ class TagData
             'compiled_title' => $this->compiledTitle(),
             'canonical_url' => $this->model->absoluteUrl(),
             'home_url' => URL::makeAbsolute('/'),
-            'locale' => Config::getFullLocale($this->model->locale()),
+            'locale' => $this->locale(),
             'alternate_locales' => $this->alternateLocales(),
-            'last_modified' => $this->model->lastModified(),
+            'last_modified' => $this->lastModified(),
         ])->all();
     }
 
@@ -111,8 +112,28 @@ class TagData
         return $compiled;
     }
 
+    protected function lastModified()
+    {
+        if (method_exists($this->model, 'lastModified')) {
+            return $this->model->lastModified();
+        }
+    }
+
+    protected function locale()
+    {
+        if (! method_exists($this->model, 'locale')) {
+            return site_locale();
+        }
+
+        return Config::getFullLocale($this->model->locale());
+    }
+
     protected function alternateLocales()
     {
+        if (! method_exists($this->model, 'locales')) {
+            return site_locale();
+        }
+
         $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
 
         return array_map(function ($locale) {
