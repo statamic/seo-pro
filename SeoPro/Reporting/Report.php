@@ -4,8 +4,8 @@ namespace Statamic\Addons\SeoPro\Reporting;
 
 use Statamic\API\File;
 use Statamic\API\YAML;
-use Statamic\API\Entry;
 use Statamic\API\Folder;
+use Statamic\API\Content;
 use Statamic\Addons\SeoPro\TagData;
 use Statamic\Addons\SeoPro\Settings;
 use Illuminate\Contracts\Support\Jsonable;
@@ -102,9 +102,8 @@ class Report implements Arrayable, Jsonable
 
     protected function createPages()
     {
-        // For now, we're just dealing with entries. Eventually also pages, taxonomy
-        // terms, and routes. Anything that can have a corresponding web page.
-        $content = Entry::all();
+        // For now, we're just dealing with content. (Pages, entries, terms) Eventually also routes.
+        $content = Content::all();
 
         return $this->pages = $content->map(function ($content) {
             $id = $content->id();
