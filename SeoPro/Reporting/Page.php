@@ -4,7 +4,7 @@ namespace Statamic\Addons\SeoPro\Reporting;
 
 use Statamic\API\File;
 use Statamic\API\YAML;
-use Statamic\API\Entry;
+use Statamic\API\Content;
 
 class Page
 {
@@ -155,5 +155,19 @@ class Page
         return temp_path(vsprintf('/seopro/reports/%s/pages/%s/%s.yaml', [
             $this->report->id(), implode('/', $parts), $key
         ]));
+    }
+
+    public function model()
+    {
+        return Content::find($this->id);
+    }
+
+    public function editUrl()
+    {
+        if (! $model = $this->model()) {
+            return;
+        }
+
+        return $model->editUrl();
     }
 }

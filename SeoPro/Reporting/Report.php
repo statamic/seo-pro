@@ -187,6 +187,7 @@ class Report implements Arrayable, Jsonable
                     'status' => $page->status(),
                     'url' => $page->url(),
                     'id' => $page->id(),
+                    'edit_url' => $page->editUrl(),
                     'results' => $page->getRuleResults()
                 ];
             });

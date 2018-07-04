@@ -47,6 +47,9 @@
                                         @closed="selected = null"
                                     ></report-details>
                                 </td>
+                                <td class="text-right text-xs">
+                                    <a v-if="item.edit_url" :href="item.edit_url" class="text-grey-light hover:text-blue">Edit</a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
