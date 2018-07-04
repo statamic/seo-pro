@@ -30,13 +30,18 @@ class UniqueMetaDescription extends Rule
 
     public function pageFailingComment()
     {
-        return sprintf('%s pages with "%s" as the meta description.', $this->count, $this->page->get('description'));
+        return sprintf('%s pages with "%s" as the meta description.', $this->count, $this->metaDescription());
+    }
+
+    public function pagePassingComment()
+    {
+        return $this->metaDescription();
     }
 
     public function processPage()
     {
         $this->count = $this->page->report()->pages()->filter(function ($page) {
-            return $page->get('description') === $this->page->get('description');
+            return $page->get('description') === $this->metaDescription();
         })->count();
     }
 
@@ -53,5 +58,10 @@ class UniqueMetaDescription extends Rule
     public function pageStatus()
     {
         return $this->count === 1 ? 'pass' : 'fail';
+    }
+
+    protected function metaDescription()
+    {
+        return $this->page->get('description');
     }
 }

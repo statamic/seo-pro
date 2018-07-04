@@ -30,13 +30,18 @@ class UniqueTitleTag extends Rule
 
     public function pageFailingComment()
     {
-        return sprintf('%s pages with "%s" as the title.', $this->failures, $this->page->get('title'));
+        return sprintf('%s pages with "%s" as the title.', $this->failures, $this->title());
+    }
+
+    public function pagePassingComment()
+    {
+        return $this->title();
     }
 
     public function processPage()
     {
         $this->count = $this->page->report()->pages()->filter(function ($page) {
-            return $page->get('title') === $this->page->get('title');
+            return $page->get('title') === $this->title();
         })->count();
     }
 
@@ -53,5 +58,10 @@ class UniqueTitleTag extends Rule
     public function pageStatus()
     {
         return $this->count === 1 ? 'pass' : 'fail';
+    }
+
+    protected function title()
+    {
+        return $this->page->get('title');
     }
 }
