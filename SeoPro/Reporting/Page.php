@@ -164,10 +164,10 @@ class Page
 
     public function editUrl()
     {
-        if (! $model = $this->model()) {
-            return;
+        if (starts_with($this->id, 'route:')) {
+            return route('settings.edit', ['settings' => 'routes']);
         }
 
-        return $model->editUrl();
+        return $this->model()->editUrl();
     }
 }
