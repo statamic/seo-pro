@@ -9,7 +9,11 @@
 
         <div v-if="!loading">
 
-            <div class="card text-sm text-grey">Generated <relative-date :date="report.date"></relative-date></div>
+            <div class="card text-sm text-grey">
+                Generated <relative-date :date="report.date"></relative-date>
+                <span class="mx-1">&bull;</span>
+                {{ report.pages.length }} pages
+            </div>
 
             <div class="card flush dossier">
                 <div class="dossier-table-wrapper">
