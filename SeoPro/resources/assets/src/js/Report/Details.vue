@@ -16,7 +16,7 @@
                     </div>
                     <div class="flex-1 pl-2">
                         <span :class="{ 'font-bold': item.status !== 'pass' }">{{{ item.description }}}</span>
-                        <div class="text-grey" v-if="item.comment">{{{ item.comment }}}</div>
+                        <div class="text-grey text-xs" v-if="item.comment">{{{ item.comment }}}</div>
                     </div>
                 </div>
             </div>
