@@ -55,7 +55,7 @@ class CollectionController extends Controller
     {
         return Fieldset::create(
             'default',
-            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/collection.yaml'))
+            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content-defaults.yaml'))
         );
     }
 }
