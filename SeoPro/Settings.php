@@ -5,6 +5,7 @@ namespace Statamic\Addons\SeoPro;
 use Statamic\API\File;
 use Statamic\API\YAML;
 use Statamic\Extend\Extensible;
+use Statamic\Events\Data\AddonSettingsSaved;
 
 class Settings
 {
@@ -36,7 +37,9 @@ class Settings
 
     public function save()
     {
-        File::put($this->path(), YAML::dump($this->data->all()));
+        File::put($path = $this->path(), YAML::dump($data = $this->data->all()));
+
+        event(new AddonSettingsSaved($path, $data));
     }
 
     protected function path()
