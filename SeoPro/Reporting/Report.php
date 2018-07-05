@@ -143,7 +143,7 @@ class Report implements Arrayable, Jsonable
                 ->get();
 
             return (new Page)
-                ->setId('route:'.$route->absoluteUri())
+                ->setId('route:'.$route->absoluteUrl())
                 ->setData($data)
                 ->setReport($this);
         });
