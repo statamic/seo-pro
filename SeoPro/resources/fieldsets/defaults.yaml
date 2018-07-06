@@ -1,47 +1,77 @@
 fields:
+  meta_section:
+    type: section
+    display: Meta Data
+    instructions: Every URL in your site should have a unique meta title and description.
   title:
     type: seo_pro.source
     display: Meta Title
+    instructions: Pick an existing field to set as your **default** meta title. Each Collection and Taxonomy can also have its own default.
     field:
       type: text
   site_name:
     type: text
     display: Site Name
-    width: 66
+    instructions: It's common practice to include the site's name in meta titles.
+    width: 50
   site_name_position:
     type: select
     display: Site Name Position
+    instructions: Before or after the the meta title is up to you.
     options:
       after: After
       before: Before
       none: Disable
     default: after
-    width: 33
+    width: 50
   description:
     type: seo_pro.source
     display: Meta Description
+    instructions: Pick an existing field to set as your **default** meta description. Each Collection and Taxonomy can also have its own default.
     inherit: false
     field:
       type: text
+  image_section:
+    type: section
+    display: Open Graph
+    instructions: We automatically generate most Open Graph fields from your meta data and site configuration.
   image:
     type: seo_pro.source
     display: Image
     inherit: false
+    instructions: Choose a default image field to represent each URL when shared on social networks.
     field:
       type: assets
       container: '@first_asset_container'
       max_files: 1
+  twitter_section:
+    type: section
+    display: Twitter
+    instructions: We automatically generate most Twitter Card fields from your meta data and site configuration.
+  twitter_site:
+    type: text
+    display: Twitter Handle
+    instructions: _(Optional)_ Set the twitter handle that corresponds to the site.
+    field:
+      type: text
+  sitemap_section:
+    type: section
+    display: Site Map
+    instructions: Choose your default sitemap settings. If you're not sure, leave them blank for the standard default values.
   priority:
     type: seo_pro.source
     inherit: false
+    instructions: The priority of this URL relative to other URLs on your site. Valid values range from `0.0` to `1.0`.
     field:
       type: text
   change_frequency:
     type: seo_pro.source
     inherit: false
+    instructions: A hint to search engines on how frequently the page is likely to change.
     field:
       type: select
       options:
+        always: Always
         hourly: Hourly
         daily: Daily
         weekly: Weekly

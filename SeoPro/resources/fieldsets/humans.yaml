@@ -1,5 +1,8 @@
 fields:
+
   enabled:
     type: toggle
+    instructions: Humans.txt is an initiative for knowing the people behind a website.
   content:
     type: textarea
+    instructions: The following is a generated TXT file that contains information about the different people who have contributed to building the website.
