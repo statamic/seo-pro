@@ -12,6 +12,14 @@ fields:
         display: Meta Description
         field:
           type: text
+      image:
+        type: seo_pro.source
+        display: Social Image
+        inherit: false
+        field:
+          type: assets
+          container: '@first_asset_container'
+          max_files: 1
       priority:
         type: seo_pro.source
         field:
