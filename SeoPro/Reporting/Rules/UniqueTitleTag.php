@@ -25,12 +25,12 @@ class UniqueTitleTag extends Rule
 
     public function siteFailingComment()
     {
-        return sprintf('%s pages with the same title tag.', $this->count);
+        return sprintf('%s pages with duplicate titles.', $this->failures);
     }
 
     public function pageFailingComment()
     {
-        return sprintf('%s pages with "%s" as the title.', $this->failures, $this->title());
+        return sprintf('%s pages with "%s" as the title.', $this->count, $this->title());
     }
 
     public function pagePassingComment()
