@@ -4,6 +4,7 @@ namespace Statamic\Addons\SeoPro\Fieldtypes;
 
 use Statamic\API\Str;
 use Statamic\Extend\Fieldtype;
+use Statamic\CP\FieldtypeFactory;
 
 class SourceFieldtype extends Fieldtype
 {
@@ -17,7 +18,7 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'inherit', 'value' => null];
         }
 
-        return ['source' => 'custom', 'value' => $data];
+        return ['source' => 'custom', 'value' => $this->fieldtype()->preProcess($data)];
     }
 
     public function process($data)
@@ -30,6 +31,13 @@ class SourceFieldtype extends Fieldtype
             return null;
         }
 
-        return $data['value'];
+        return $this->fieldtype()->process($data['value']);
+    }
+
+    protected function fieldtype()
+    {
+        $config = $this->getFieldConfig('field');
+
+        return FieldtypeFactory::create(array_get($config, 'type'), $config);
     }
 }
