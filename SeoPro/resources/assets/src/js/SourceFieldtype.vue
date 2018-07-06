@@ -51,7 +51,9 @@ export default {
         return {
             source: null,
             customText: null,
-            sourceField: null
+            sourceField: null,
+            autoBindChangeWatcher: false,
+            changeWatcherWatchDeep: false
         }
     },
 
@@ -120,6 +122,8 @@ export default {
 
         // Set source after so that the suggest fields don't load before they potentially have data.
         this.source = this.data.source;
+
+        this.bindChangeWatcher();
     }
 
 }
