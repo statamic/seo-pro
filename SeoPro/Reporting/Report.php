@@ -139,6 +139,7 @@ class Report implements Arrayable, Jsonable
         })->map(function ($route) {
             $data = (new TagData)
                 ->with(Settings::load()->get('defaults'))
+                ->with($route->get('seo', []))
                 ->withCurrent($route)
                 ->get();
 
