@@ -17,9 +17,7 @@ fields:
         display: Social Image
         inherit: false
         field:
-          type: assets
-          container: '@first_asset_container'
-          max_files: 1
+          type: seo_pro.asset
       priority:
         type: seo_pro.source
         field:

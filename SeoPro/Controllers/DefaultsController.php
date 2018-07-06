@@ -43,7 +43,6 @@ class DefaultsController extends Controller
     protected function fieldset()
     {
         $contents = File::get($this->getDirectory().'/resources/fieldsets/defaults.yaml');
-        $contents = str_replace('@first_asset_container', \Statamic\API\AssetContainer::all()->first()->handle(), $contents);
         return Fieldset::create('default', YAML::parse($contents));
     }
 }

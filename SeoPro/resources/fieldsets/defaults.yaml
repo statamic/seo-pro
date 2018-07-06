@@ -45,9 +45,7 @@ sections:
         inherit: false
         instructions: Choose a default image field to represent each URL when shared on social networks.
         field:
-          type: assets
-          container: '@first_asset_container'
-          max_files: 1
+          type: seo_pro.asset
   twitter:
     fields:
       twitter_section:

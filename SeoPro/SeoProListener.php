@@ -15,6 +15,7 @@ class SeoProListener extends Listener
         'cp.nav.created' => 'addNavItems',
         \Statamic\Events\Data\FindingFieldset::class => 'addFieldsetTab',
         \Statamic\Events\RoutesMapping::class => 'addRoutes',
+        'cp.add_to_head' => 'addToHead',
     ];
 
     public function addNavItems($nav)
@@ -106,5 +107,12 @@ class SeoProListener extends Listener
     public function addRoutes($event)
     {
         $event->router->get('sitemap.xml', 'Statamic\Addons\SeoPro\Controllers\SitemapController@show');
+    }
+
+    public function addToHead()
+    {
+        $assetContainer = $this->getConfig('asset_container');
+
+        return "<script>var SeoPro = { assetContainer: '{$assetContainer}' };</script>";
     }
 }

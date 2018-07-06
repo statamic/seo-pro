@@ -2,6 +2,9 @@ sections:
 
   images:
     fields:
+      asset_container:
+        type: asset_container
+        instructions: The asset container used for any of SEO Pro's image fields.
       og_image_dimensions:
         type: section
         display: OpenGraph Image Dimensions

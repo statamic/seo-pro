@@ -34,9 +34,7 @@ fields:
     inherit: false
     instructions: Choose a default image field to represent each URL in this section when shared on social networks.
     field:
-      type: assets
-      container: '@first_asset_container'
-      max_files: 1
+      type: seo_pro.asset
   sitemap_section:
     type: section
     display: Site Map
