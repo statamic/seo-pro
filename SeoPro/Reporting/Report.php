@@ -341,27 +341,16 @@ class Report implements Arrayable, Jsonable
     public function score()
     {
         $demerits = 0;
-        $pages = $this->pages->count();
+        $maxPoints = 0;
 
-        $pointMap = collect([
-            'SiteName' => 10,
-            'UniqueTitleTag' => 2,
-            'UniqueMetaDescription' => 1,
-        ]);
+        foreach ($this->results as $class => $result) {
+            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
+            $rule = new $class;
+            $rule->setReport($this)->load($result);
 
-        if ($this->results['SiteName'] === false) {
-            $demerits += 10;
+            $maxPoints += $rule->maxPoints();
+            $demerits += $rule->demerits();
         }
-
-        if ($this->results['UniqueTitleTag'] !== 0) {
-            $demerits += $pointMap->get('UniqueTitleTag') * $pages;
-        }
-
-        if ($this->results['UniqueMetaDescription'] !== 0) {
-            $demerits += $pointMap->get('UniqueMetaDescription') * $pages;
-        }
-
-        $maxPoints = $pages * $pointMap->sum() + 10;
 
         $score = ($maxPoints - $demerits) / $maxPoints * 100;
 

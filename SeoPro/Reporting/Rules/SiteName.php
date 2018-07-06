@@ -43,4 +43,16 @@ class SiteName extends Rule
     {
         return $this->report->defaults()->get('site_name');
     }
+
+    public function maxPoints()
+    {
+        return 10;
+    }
+
+    public function demerits()
+    {
+        if (! $this->passes) {
+            return $this->maxPoints();
+        }
+    }
 }

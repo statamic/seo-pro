@@ -158,4 +158,14 @@ abstract class Rule
     {
         //
     }
+
+    public function maxPoints()
+    {
+        return 0;
+    }
+
+    public function demerits()
+    {
+        return 0;
+    }
 }
