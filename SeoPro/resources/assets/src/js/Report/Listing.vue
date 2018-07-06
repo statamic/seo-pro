@@ -24,6 +24,10 @@
                                 <td class="w-1 text-center">
                                     <status-icon :status="report.status"></status-icon>
                                 </td>
+                                <td class="w-2 text-xs"
+                                    :class="{ 'text-red': report.score < 50, 'text-grey': report.score < 90, 'text-green': report.score >= 90 }">
+                                    {{ report.score }}%
+                                </td>
                                 <td>
                                     <a @click.prevent="$emit('report-selected', report.id)">
                                         <relative-date :date="report.date"></relative-date>
