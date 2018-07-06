@@ -9,10 +9,16 @@
 
         <div v-if="!loading">
 
-            <div class="card text-sm text-grey">
-                Generated <relative-date :date="report.date"></relative-date>
-                <span class="mx-1">&bull;</span>
-                {{ report.pages.length }} pages
+            <div class="card text-sm text-grey flex items-center justify-between">
+                <div>
+                    Generated <relative-date :date="report.date"></relative-date>
+                    <span class="mx-1">&bull;</span>
+                    {{ report.pages.length }} pages
+                </div>
+                <div class="text-xl leading-none"
+                    :class="{ 'text-red': report.score < 50, 'text-blue': report.score < 90, 'text-green': report.score >= 90 }">
+                    {{ report.score }}%
+                </div>
             </div>
 
             <div class="card flush dossier">

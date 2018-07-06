@@ -179,6 +179,7 @@ class Report implements Arrayable, Jsonable
             'id' => $this->id,
             'date' => $this->date()->timestamp,
             'status' => $this->status(),
+            'score' => $this->score(),
             'results' => $this->resultsToArray(),
         ];
 
@@ -335,5 +336,35 @@ class Report implements Arrayable, Jsonable
         return collect((new TagData)
             ->with(Settings::load()->get('defaults'))
             ->get());
+    }
+
+    public function score()
+    {
+        $demerits = 0;
+        $pages = $this->pages->count();
+
+        $pointMap = collect([
+            'SiteName' => 10,
+            'UniqueTitleTag' => 2,
+            'UniqueMetaDescription' => 1,
+        ]);
+
+        if ($this->results['SiteName'] === false) {
+            $demerits += 10;
+        }
+
+        if ($this->results['UniqueTitleTag'] !== 0) {
+            $demerits += $pointMap->get('UniqueTitleTag') * $pages;
+        }
+
+        if ($this->results['UniqueMetaDescription'] !== 0) {
+            $demerits += $pointMap->get('UniqueMetaDescription') * $pages;
+        }
+
+        $maxPoints = $pages * $pointMap->sum() + 10;
+
+        $score = ($maxPoints - $demerits) / $maxPoints * 100;
+
+        return round($score);
     }
 }
