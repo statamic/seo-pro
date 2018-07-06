@@ -115,7 +115,7 @@ class Report implements Arrayable, Jsonable
             $data = (new TagData)
                 ->with(Settings::load()->get('defaults'))
                 ->with($content->getWithCascade('seo', []))
-                ->withCurrent($content->toArray())
+                ->withCurrent($content)
                 ->get();
 
             return (new Page)
