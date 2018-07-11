@@ -10,9 +10,12 @@ use Statamic\Addons\SeoPro\Settings;
 use Statamic\CP\Publish\ProcessesFields;
 use Statamic\CP\Publish\ValidationBuilder;
 use Statamic\CP\Publish\PreloadsSuggestions;
+use Statamic\Addons\SeoPro\TranslatesFieldsets;
 
 class DefaultsController extends Controller
 {
+    use TranslatesFieldsets;
+
     public function edit()
     {
         $fieldset = $this->fieldset();
@@ -43,6 +46,7 @@ class DefaultsController extends Controller
     protected function fieldset()
     {
         $contents = File::get($this->getDirectory().'/resources/fieldsets/defaults.yaml');
-        return Fieldset::create('default', YAML::parse($contents));
+        $fieldset = Fieldset::create('defaults', YAML::parse($contents));
+        return $this->translateFieldset($fieldset);
     }
 }

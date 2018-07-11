@@ -3,18 +3,15 @@ fields:
     type: seo_pro
     fields:
       title:
-        display: Meta Title
         type: seo_pro.source
         field:
           type: text
       description:
         type: seo_pro.source
-        display: Meta Description
         field:
           type: text
       image:
         type: seo_pro.source
-        display: Social Image
         inherit: false
         field:
           type: seo_pro.asset

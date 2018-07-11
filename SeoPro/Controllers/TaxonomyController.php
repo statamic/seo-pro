@@ -8,9 +8,12 @@ use Statamic\API\Fieldset;
 use Statamic\API\Taxonomy;
 use Illuminate\Http\Request;
 use Statamic\Addons\SeoPro\Settings;
+use Statamic\Addons\SeoPro\TranslatesFieldsets;
 
 class TaxonomyController extends Controller
 {
+    use TranslatesFieldsets;
+
     public function edit($taxonomy)
     {
         $fieldset = $this->fieldset();
@@ -53,9 +56,9 @@ class TaxonomyController extends Controller
 
     protected function fieldset()
     {
-        return Fieldset::create(
-            'default',
+        return $this->translateFieldset(Fieldset::create(
+            'content-defaults',
             YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content-defaults.yaml'))
-        );
+        ));
     }
 }

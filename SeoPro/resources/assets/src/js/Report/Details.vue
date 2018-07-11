@@ -2,7 +2,7 @@
 
     <modal :show="true" @closed="$emit('closed')">
         <template slot="header">
-            <h1>Page Details</h1>
+            <h1>{{ translate('addons.SeoPro::messages.page_details') }}</h1>
         </template>
 
         <template slot="body">

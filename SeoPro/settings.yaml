@@ -4,28 +4,18 @@ sections:
     fields:
       asset_container:
         type: asset_container
-        instructions: The asset container used for any of SEO Pro's image fields.
       og_image_dimensions:
         type: section
-        display: OpenGraph Image Dimensions
-        instructions: |
-          According this <a href="https://www.h3xed.com/web-and-internet/how-to-use-og-image-meta-tag-facebook-reddit" target="_blank">this article</a>, the ideal image size for Facebook and Reddit Open Graph tags is 1200x1200 pixels.
       open_graph_image_width:
         type: integer
-        display: OG Image Width
         width: 50
       open_graph_image_height:
         type: integer
-        display: OG Image Height
         width: 50
 
   sitemap:
     fields:
       sitemap_url:
         type: text
-        display: Sitemap URL
-        instructions: The location of the sitemap relative to the root of your default locale's home page.
       sitemap_cache_length:
         type: integer
-        display: Cache Length
-        instructions: How long the sitemap should get cached, in minutes.

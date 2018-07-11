@@ -4,16 +4,18 @@
 
         <div v-if="loading" class="card loading">
             <span class="icon icon-circular-graph animation-spin"></span>
-            Your report is being generated.
+            {{ translate('addons.SeoPro::messages.report_is_being_generated')}}
         </div>
 
         <div v-if="!loading">
 
             <div class="card text-sm text-grey flex items-center justify-between">
                 <div>
-                    Generated <relative-date :date="report.date"></relative-date>
+                    {{ translate('addons.SeoPro::messages.generated') }}:
+                    <relative-date :date="report.date"></relative-date>
                     <span class="mx-1">&bull;</span>
-                    {{ report.pages.length }} pages
+                    {{ translate_choice('cp.pages', 2) }}:
+                    {{ report.pages.length }}
                 </div>
                 <div class="text-xl leading-none"
                     :class="{ 'text-red': report.score < 50, 'text-blue': report.score < 90, 'text-green': report.score >= 90 }">
@@ -54,7 +56,7 @@
                                     ></report-details>
                                 </td>
                                 <td class="text-right text-xs">
-                                    <a v-if="item.edit_url" :href="item.edit_url" class="text-grey-light hover:text-blue">Edit</a>
+                                    <a v-if="item.edit_url" :href="item.edit_url" class="text-grey-light hover:text-blue" v-text="translate('cp.edit')"></a>
                                 </td>
                             </tr>
                         </tbody>

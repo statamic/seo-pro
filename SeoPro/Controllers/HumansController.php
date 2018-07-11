@@ -9,9 +9,12 @@ use Statamic\API\Fieldset;
 use Illuminate\Http\Request;
 use Statamic\Addons\SeoPro\TagData;
 use Statamic\Addons\SeoPro\Settings;
+use Statamic\Addons\SeoPro\TranslatesFieldsets;
 
 class HumansController extends Controller
 {
+    use TranslatesFieldsets;
+
     public function edit()
     {
         $fieldset = $this->fieldset();
@@ -42,10 +45,10 @@ class HumansController extends Controller
 
     protected function fieldset()
     {
-        return Fieldset::create(
-            'default',
+        return $this->translateFieldset(Fieldset::create(
+            'humans',
             YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/humans.yaml'))
-        );
+        ));
     }
 
     protected function write($content)

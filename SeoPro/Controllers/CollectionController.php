@@ -8,9 +8,12 @@ use Statamic\API\Fieldset;
 use Illuminate\Http\Request;
 use Statamic\API\Collection;
 use Statamic\Addons\SeoPro\Settings;
+use Statamic\Addons\SeoPro\TranslatesFieldsets;
 
 class CollectionController extends Controller
 {
+    use TranslatesFieldsets;
+
     public function edit($collection)
     {
         $fieldset = $this->fieldset();
@@ -53,9 +56,9 @@ class CollectionController extends Controller
 
     protected function fieldset()
     {
-        return Fieldset::create(
-            'default',
+        return $this->translateFieldset(Fieldset::create(
+            'content-defaults',
             YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content-defaults.yaml'))
-        );
+        ));
     }
 }

@@ -10,9 +10,9 @@
         <div class="card" v-if="reports.length == 0">
             <div class="no-results">
                 <span class="icon icon-documents"></span>
-                <h2>SEO Reports</h2>
-                <h3>Run a report on your site to see how well it has been configured and learn ways for it to be improved.</h3>
-                <button class="btn btn-default btn-lg" @click.prevent="$parent.generateReport">Generate your first report</button>
+                <h2>{{ translate('addons.SeoPro::messages.seo_reports') }}</h2>
+                <h3>{{ translate('addons.SeoPro::messages.report_no_results_text') }}</h3>
+                <button class="btn btn-default btn-lg" @click.prevent="$parent.generateReport" v-text="translate('addons.SeoPro::messages.generate_your_first_report')"</button>
             </div>
         </div>
 

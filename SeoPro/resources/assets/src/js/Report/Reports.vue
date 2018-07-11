@@ -8,12 +8,12 @@
                 v-if="showingReport"
                 @click.prevent="currentReportId = null"
                 class="btn btn-default mr-2">
-                &larr; Back to reports
+                &larr; {{ translate('addons.SeoPro::messages.back_to_reports') }}
             </a>
             <a href=""
                 @click.prevent="generateReport"
-                class="btn btn-primary">
-                Generate Report
+                class="btn btn-primary"
+                v-text="translate('addons.SeoPro::messages.generate_report')">
             </a>
         </div>
 
