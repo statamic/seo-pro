@@ -343,6 +343,10 @@ class Report implements Arrayable, Jsonable
         $demerits = 0;
         $maxPoints = 0;
 
+        if (! $this->results) {
+            return 0;
+        }
+
         foreach ($this->results as $class => $result) {
             $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
             $rule = new $class;
