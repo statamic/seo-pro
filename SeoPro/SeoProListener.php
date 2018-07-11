@@ -106,7 +106,7 @@ class SeoProListener extends Listener
 
     public function addRoutes($event)
     {
-        $event->router->get('sitemap.xml', 'Statamic\Addons\SeoPro\Controllers\SitemapController@show');
+        $event->router->get($this->getConfig('sitemap_url'), 'Statamic\Addons\SeoPro\Controllers\SitemapController@show');
     }
 
     public function addToHead()

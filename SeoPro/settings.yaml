@@ -21,6 +21,10 @@ sections:
 
   sitemap:
     fields:
+      sitemap_url:
+        type: text
+        display: Sitemap URL
+        instructions: The location of the sitemap relative to the root of your default locale's home page.
       sitemap_cache_length:
         type: integer
         display: Cache Length
