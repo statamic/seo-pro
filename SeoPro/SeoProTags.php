@@ -16,6 +16,10 @@ class SeoProTags extends Tags
             return;
         }
 
+        if (array_get($this->context, 'seo') === false) {
+            return;
+        }
+
         $data = (new TagData)
             ->with(Settings::load()->get('defaults'))
             ->with(array_get($this->context, 'seo', []))

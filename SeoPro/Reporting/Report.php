@@ -112,9 +112,15 @@ class Report implements Arrayable, Jsonable
     protected function pagesFromContent()
     {
         return Content::all()->map(function ($content) {
+            $cascade = $content->getWithCascade('seo');
+
+            if ($cascade === false) {
+                return;
+            }
+
             $data = (new TagData)
                 ->with(Settings::load()->get('defaults'))
-                ->with($content->getWithCascade('seo', []))
+                ->with($cascade ?: [])
                 ->withCurrent($content)
                 ->get();
 
@@ -122,7 +128,7 @@ class Report implements Arrayable, Jsonable
                 ->setId($content->id())
                 ->setData($data)
                 ->setReport($this);
-        });
+        })->filter();
     }
 
     protected function pagesFromRoutes()
