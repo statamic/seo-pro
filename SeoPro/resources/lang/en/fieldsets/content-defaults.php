@@ -7,12 +7,6 @@ return [
     'title' => 'Meta Title',
     'title_instruct' => "Pick an existing field to set as this section's **default** meta title.",
 
-    'site_name_position' => 'Site Name Position',
-    'site_name_position_instruct' => 'Add the Site Name before or after the the meta title in this section.',
-
-    'site_name_separator' => 'Site Name Separator',
-    'site_name_separator_instruct' => 'The character(s) between the title and site name in this section.',
-
     'description' => 'Meta Description',
     'description_instruct' => "Pick an existing field to set as this section's **default** meta description.",
 

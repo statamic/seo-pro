@@ -7,21 +7,6 @@ sections:
         type: seo_pro.source
         field:
           type: text
-      site_name_position:
-        type: seo_pro.source
-        from_field: false
-        field:
-          type: select
-          default: after
-          options:
-            after: After
-            before: Before
-            none: Disable
-      site_name_separator:
-        type: seo_pro.source
-        from_field: false
-        field:
-          type: text
       description:
         type: seo_pro.source
         field:
