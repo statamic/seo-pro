@@ -4,6 +4,7 @@ sitemap_url: sitemap.xml
 sitemap_cache_length: 60
 
 defaults:
+  site_name_separator: '|'
   title: '@seo:title'
   description: '@seo:content'
   priority: 0.5

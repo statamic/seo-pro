@@ -14,6 +14,9 @@ return [
     'site_name_position' => 'Site Name Position',
     'site_name_position_instruct' => 'Before or after the the meta title is up to you.',
 
+    'site_name_separator' => 'Site Name Separator',
+    'site_name_separator_instruct' => 'The character(s) between the title and site name.',
+
     'description' => 'Meta Description',
     'description_instruct' => 'Pick an existing field to set as your **default** meta description. Each Collection and Taxonomy can also have its own default.',
 

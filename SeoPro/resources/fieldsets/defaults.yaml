@@ -9,7 +9,6 @@ sections:
           type: text
       site_name:
         type: text
-        width: 50
       site_name_position:
         type: select
         options:
@@ -17,6 +16,9 @@ sections:
           before: Before
           none: Disable
         default: after
+        width: 50
+      site_name_separator:
+        type: text
         width: 50
       description:
         type: seo_pro.source

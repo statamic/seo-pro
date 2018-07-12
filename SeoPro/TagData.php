@@ -98,15 +98,16 @@ class TagData
     protected function compiledTitle()
     {
         $compiled = '';
+        $separator = $this->data->get('site_name_separator');
 
         if ($this->data->get('site_name_position') === 'before') {
-            $compiled .= $this->data->get('site_name') . ' | ';
+            $compiled .= $this->data->get('site_name') . ' ' . $separator . ' ';
         }
 
         $compiled .= $this->data->get('title');
 
         if ($this->data->get('site_name_position') === 'after') {
-            $compiled .= ' | ' . $this->data->get('site_name');
+            $compiled .= ' ' . $separator . ' ' . $this->data->get('site_name');
         }
 
         return $compiled;
