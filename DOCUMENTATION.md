@@ -16,11 +16,13 @@ Head over to `Tools > SEO Pro > Defaults` and configure your default settings. T
 
 You may choose to pull data from other fields, enter hardcoded strings, or use Antlers templating. See [File Usage](#file-usage) for more details.
 
-### Collections
+### Sections (Collections and Taxonomies)
 
-Each collection may be configured independently. You may opt to inherit values from the defaults and tweak as necessary.
+Each section may be configured independently. You may opt to inherit values from the defaults and tweak as necessary.
 
-> Values configured here will be saved into the `seo` array in the respective collection's respective `folder.yaml`.
+> Values configured here will be saved into the `seo` array in the respective section's `folder.yaml`.
+
+You may disable a section by toggling the "Enabled" field when editing a section, or set `seo: false` in their `folder.yaml`. Disabling a section will prevent it's items from being included in reports, and prevent the template tag from rendering anything.
 
 ### Entries
 
