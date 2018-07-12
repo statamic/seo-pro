@@ -19,10 +19,12 @@ class CollectionController extends Controller
         $fieldset = $this->fieldset();
         $collection = Collection::whereHandle($collection);
 
-        $data = $this->preProcessWithBlankFields(
-            $fieldset,
-            $collection->get('seo', [])
-        );
+        $data = $collection->get('seo');
+        if ($data === false) {
+            $data = ['enabled' => false];
+        }
+
+        $data = $this->preProcessWithBlankFields($fieldset, $data);
 
         return $this->view('edit', [
             'title' => $collection->title() . ' SEO',
@@ -35,11 +37,17 @@ class CollectionController extends Controller
 
     public function update(Request $request, $handle)
     {
-        $data = $this->processFields($this->fieldset(), $request->fields);
+        if ($request->input('fields.enabled') === false) {
+            $data = false;
+        } else {
+            $data = $this->processFields($this->fieldset(), array_except($request->fields, ['enabled']));
+        }
 
         $collection = Collection::whereHandle($handle);
 
-        if (empty($data)) {
+        if ($data === false) {
+            $collection->set('seo', false);
+        } elseif (empty($data)) {
             $collection->remove('seo');
         } else {
             $collection->set('seo', $data);

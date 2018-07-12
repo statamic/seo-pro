@@ -19,10 +19,12 @@ class TaxonomyController extends Controller
         $fieldset = $this->fieldset();
         $taxonomy = Taxonomy::whereHandle($taxonomy);
 
-        $data = $this->preProcessWithBlankFields(
-            $fieldset,
-            $taxonomy->get('seo', [])
-        );
+        $data = $taxonomy->get('seo');
+        if ($data === false) {
+            $data = ['enabled' => false];
+        }
+
+        $data = $this->preProcessWithBlankFields($fieldset, $data);
 
         return $this->view('edit', [
             'title' => $taxonomy->title() . ' SEO',
@@ -35,11 +37,17 @@ class TaxonomyController extends Controller
 
     public function update(Request $request, $handle)
     {
-        $data = $this->processFields($this->fieldset(), $request->fields);
+        if ($request->input('fields.enabled') === false) {
+            $data = false;
+        } else {
+            $data = $this->processFields($this->fieldset(), array_except($request->fields, ['enabled']));
+        }
 
         $taxonomy = Taxonomy::whereHandle($handle);
 
-        if (empty($data)) {
+        if ($data === false) {
+            $taxonomy->set('seo', false);
+        } elseif (empty($data)) {
             $taxonomy->remove('seo');
         } else {
             $taxonomy->set('seo', $data);

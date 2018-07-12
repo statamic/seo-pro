@@ -1,6 +1,9 @@
 sections:
   main:
     fields:
+      enabled:
+        type: toggle
+        default: true
       meta_section:
         type: section
       title:
