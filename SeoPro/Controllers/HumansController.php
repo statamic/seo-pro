@@ -21,7 +21,7 @@ class HumansController extends Controller
 
         return $this->view('edit', [
             'title' => 'Humans.txt',
-            'data' => $this->getConfig('humans'),
+            'data' => Settings::load()->get('humans'),
             'fieldset' => $fieldset->toPublishArray(),
             'suggestions' => [],
             'submitUrl' => route('seopro.humans.update'),
@@ -54,7 +54,7 @@ class HumansController extends Controller
     protected function write($content)
     {
         $data = (new TagData)
-            ->with($this->getConfig('defaults'))
+            ->with(Settings::load()->get('defaults'))
             ->get();
 
         $parsed = Parse::template($content, $data);

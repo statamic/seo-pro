@@ -79,7 +79,7 @@ class SeoProListener extends Listener
     protected function getPlaceholder($key, $field, $data)
     {
         $vars = (new TagData)
-            ->with($this->getConfig('defaults'))
+            ->with(Settings::load()->get('defaults'))
             ->with($data->getWithCascade('seo', []))
             ->withCurrent($data)
             ->get();

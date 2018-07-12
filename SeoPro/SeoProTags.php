@@ -5,6 +5,7 @@ namespace Statamic\Addons\SeoPro;
 use Statamic\API\File;
 use Statamic\API\Parse;
 use Statamic\Extend\Tags;
+use Statamic\Addons\SeoPro\Settings;
 
 class SeoProTags extends Tags
 {
@@ -16,7 +17,7 @@ class SeoProTags extends Tags
         }
 
         $data = (new TagData)
-            ->with($this->getConfig('defaults'))
+            ->with(Settings::load()->get('defaults'))
             ->with(array_get($this->context, 'seo', []))
             ->withCurrent(array_get($this->context, 'page', []))
             ->get();
