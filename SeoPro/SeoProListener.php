@@ -11,6 +11,8 @@ use Statamic\Extend\Listener;
 
 class SeoProListener extends Listener
 {
+    use TranslatesFieldsets;
+
     public $events = [
         'cp.nav.created' => 'addNavItems',
         \Statamic\Events\Data\FindingFieldset::class => 'addFieldsetTab',
@@ -61,10 +63,12 @@ class SeoProListener extends Listener
 
         $fields = YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content.yaml'))['fields'];
 
-        $fields['seo']['fields'] = collect($fields['seo']['fields'])->map(function ($field, $key) use ($event) {
+        $seoFields = collect($fields['seo']['fields'])->map(function ($field, $key) use ($event) {
             $field['placeholder'] = $this->getPlaceholder($key, $field, $event->data);
             return $field;
         })->all();
+
+        $fields['seo']['fields'] = $this->translateFieldsetFields($seoFields, 'content');
 
         $sections['seo'] = [
             'display' => 'SEO',
