@@ -30,7 +30,6 @@ sections:
         type: section
       image:
         type: seo_pro.source
-        inherit: false
         field:
           type: seo_pro.asset
       sitemap_section:

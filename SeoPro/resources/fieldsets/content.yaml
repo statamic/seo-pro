@@ -26,7 +26,6 @@ fields:
           type: text
       image:
         type: seo_pro.source
-        inherit: false
         field:
           type: seo_pro.asset
       priority:
