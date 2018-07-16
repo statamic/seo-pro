@@ -7,19 +7,27 @@ use Statamic\Addons\Suggest\Modes\AbstractMode;
 
 class SeoProSuggestMode extends AbstractMode
 {
+    protected $allowedTypes = [
+        'text',
+        'textarea',
+        'markdown',
+        'redactor',
+    ];
+
     public function suggestions()
     {
         return collect(Fieldset::all())->flatMap(function ($fieldset) {
-            $fieldsetName = $fieldset->name();
-            $fieldsetTitle = $fieldset->title();
+            return collect($fieldset->inlinedFields())->map(function ($config, $name) {
+                $type = array_get($config, 'type', 'text');
 
-            return collect($fieldset->inlinedFields())->map(function ($config, $name) use ($fieldsetName, $fieldsetTitle) {
-                return [
-                    'value' => $fieldsetName . '/' . $name,
-                    'text' => array_get($config, 'display', ucfirst($name)),
-                    'optgroup' => $fieldsetTitle
-                ];
-            })->values()->all();
-        })->all();
+                if (! in_array($type, $this->allowedTypes)) {
+                    return null;
+                }
+
+                return $name;
+            })->filter();
+        })->sort()->map(function ($name) {
+            return ['value' => $name, 'text' => $name];
+        })->values()->all();
     }
 }
