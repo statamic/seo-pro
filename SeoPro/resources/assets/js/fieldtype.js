@@ -599,7 +599,7 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.source-type-select {\n    width: 20rem;\n}\n\n.inherit-placeholder {\n    padding-top: 5px;\n}\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.source-type-select {\n    width: 20rem;\n}\n\n.inherit-placeholder {\n    padding-top: 5px;\n}\n\n.source-field-select .selectize-dropdown,\n.source-field-select .selectize-input span {\n    font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';\n}\n\n", ""]);
 
 // exports
 
@@ -623,7 +623,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //                 {{ config.placeholder }}
 //             </div>
 //
-//             <div v-if="source === 'field'">
+//             <div v-if="source === 'field'" class="source-field-select">
 //                 <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig"></suggest-fieldtype>
 //             </div>
 //
@@ -649,6 +649,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //     .inherit-placeholder {
 //         padding-top: 5px;
+//     }
+//
+//     .source-field-select .selectize-dropdown,
+//     .source-field-select .selectize-input span {
+//         font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
 //     }
 //
 // </style>
@@ -692,7 +697,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 type: 'suggest',
                 mode: 'seo_pro',
                 max_items: 1,
-                create: true
+                create: true,
+                placeholder: translate('addons.SeoPro::messages.source_suggest_placeholder')
             };
         },
         fieldConfig: function fieldConfig() {
@@ -737,7 +743,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* 33 */
 /***/ (function(module, exports) {
 
-module.exports = "\n\n<div class=\"flex\">\n\n    <div class=\"source-type-select pr-2\">\n        <select-fieldtype :data.sync=\"source\" :options=\"sourceTypeSelectOptions\"></select-fieldtype>\n    </div>\n\n    <div class=\"flex-1\">\n        <div v-if=\"source === 'inherit'\" class=\"text-sm text-grey inherit-placeholder\">\n            {{ config.placeholder }}\n        </div>\n\n        <div v-if=\"source === 'field'\">\n            <suggest-fieldtype :data.sync=\"sourceField\" :config=\"suggestConfig\"></suggest-fieldtype>\n        </div>\n\n        <component\n            v-if=\"source === 'custom'\"\n            :is=\"componentName\"\n            :name=\"name\"\n            :data.sync=\"customText\"\n            :config=\"fieldConfig\"\n            :leave-alert=\"true\">\n        </component>\n    </div>\n</div>\n\n";
+module.exports = "\n\n<div class=\"flex\">\n\n    <div class=\"source-type-select pr-2\">\n        <select-fieldtype :data.sync=\"source\" :options=\"sourceTypeSelectOptions\"></select-fieldtype>\n    </div>\n\n    <div class=\"flex-1\">\n        <div v-if=\"source === 'inherit'\" class=\"text-sm text-grey inherit-placeholder\">\n            {{ config.placeholder }}\n        </div>\n\n        <div v-if=\"source === 'field'\" class=\"source-field-select\">\n            <suggest-fieldtype :data.sync=\"sourceField\" :config=\"suggestConfig\"></suggest-fieldtype>\n        </div>\n\n        <component\n            v-if=\"source === 'custom'\"\n            :is=\"componentName\"\n            :name=\"name\"\n            :data.sync=\"customText\"\n            :config=\"fieldConfig\"\n            :leave-alert=\"true\">\n        </component>\n    </div>\n</div>\n\n";
 
 /***/ }),
 /* 34 */
