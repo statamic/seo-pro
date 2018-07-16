@@ -90,6 +90,7 @@ export default {
                 mode: 'seo_pro',
                 max_items: 1,
                 create: true,
+                placeholder: translate('addons.SeoPro::messages.source_suggest_placeholder')
             }
         },
 
