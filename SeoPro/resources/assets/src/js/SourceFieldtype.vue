@@ -11,7 +11,7 @@
                 {{ config.placeholder }}
             </div>
 
-            <div v-if="source === 'field'">
+            <div v-if="source === 'field'" class="source-field-select">
                 <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig"></suggest-fieldtype>
             </div>
 
@@ -37,6 +37,11 @@
 
     .inherit-placeholder {
         padding-top: 5px;
+    }
+
+    .source-field-select .selectize-dropdown,
+    .source-field-select .selectize-input span {
+        font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
     }
 
 </style>
