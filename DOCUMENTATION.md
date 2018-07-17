@@ -6,11 +6,11 @@ Add `{{ seo_pro:meta }}` somewhere between your `<head>` tags.
 
 ## Usage
 
-SEO settings will cascade down from the global defaults, to the collection level, and finally to the entry level.
+SEO settings will cascade down from the global defaults, to the collection level, and finally to the page/entry level.
 
 ### Defaults
 
-Head over to `Tools > SEO Pro > Defaults` and configure your default settings. The defaults will be used if you haven't set anything more specific at the collection or entry level.
+Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. The defaults will be used if you haven't set anything more specific at the collection or entry level.
 
 > Values configured here will be saved into the `defaults` array in `site/settings/seo_pro.yaml`.
 
