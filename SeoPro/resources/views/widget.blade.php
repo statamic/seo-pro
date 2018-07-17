@@ -5,21 +5,19 @@
             {{ translate('addons.SeoPro::messages.reports') }}
         </a>
     </div>
-    <div class="card-body pad-16">
+    <div class="card-body flex flex-col h-full -mt-5 items-center justify-center p-2">
         @if ($report)
 
-            <div class="text-center p-5 ">
-                <p class="text-grey text-sm">
-                    {{ translate('addons.SeoPro::messages.latest_report_score') }}
-                </p>
-                <div class="text-3xl mb-2
+                <div class="text-4xl leading-tight font-light
                     @if ($report->score() < 50) text-red
-                    @elseif ($report->score() < 90) text-blue
+                    @elseif ($report->score() < 90) text-yellow-dark
                     @else text-green @endif
                 ">
                     {{ $report->score() }}%
                 </div>
-            </div>
+                <p class="text-grey text-sm">
+                    {{ translate('addons.SeoPro::messages.latest_report_score') }}
+                </p>
 
         @else
 
