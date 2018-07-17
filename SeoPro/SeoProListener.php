@@ -16,6 +16,7 @@ class SeoProListener extends Listener
     public $events = [
         'cp.nav.created' => 'addNavItems',
         \Statamic\Events\Data\PublishFieldsetFound::class => 'addFieldsetTab',
+        \Statamic\Events\Data\FindingFieldset::class => 'addFieldsetTab',
         \Statamic\Events\RoutesMapping::class => 'addRoutes',
         'cp.add_to_head' => 'addToHead',
     ];
