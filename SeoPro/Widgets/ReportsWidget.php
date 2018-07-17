@@ -5,7 +5,7 @@ namespace Statamic\Addons\SeoPro\Widgets;
 use Statamic\Extend\Widget;
 use Statamic\Addons\SeoPro\Reporting\Report;
 
-class SeoProWidget extends Widget
+class ReportsWidget extends Widget
 {
     public function html()
     {
