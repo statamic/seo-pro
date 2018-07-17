@@ -428,7 +428,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-78ad4b3d/SeoProFieldtype.vue"
+  var id = "_v-a0f15b6e/SeoProFieldtype.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -556,7 +556,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-2d949bdc/SourceFieldtype.vue"
+  var id = "_v-200fb91e/SourceFieldtype.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -774,7 +774,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-02b9c3fb/AssetFieldtype.vue"
+  var id = "_v-0786a922/AssetFieldtype.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {

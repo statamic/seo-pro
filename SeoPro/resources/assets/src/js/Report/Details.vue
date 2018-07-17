@@ -1,16 +1,15 @@
+
 <template>
 
-    <modal :show="true" @closed="$emit('closed')">
+    <modal :show="true" @closed="$emit('closed')" :dismissible="true">
         <template slot="header">
             <h1>{{ translate('addons.SeoPro::messages.page_details') }}</h1>
         </template>
 
         <template slot="body">
 
-            <p class="mb-4 font-mono text-grey text-xs">{{ item.url }}</p>
-
-            <div class="mb-3">
-                <div v-for="item in item.results" class="flex mb-1 leading-normal">
+            <div class="">
+                <div v-for="item in item.results" class="flex mb-2 leading-normal">
                     <div>
                         <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
                     </div>
@@ -22,12 +21,14 @@
             </div>
 
         </template>
+        <template slot="footer"><div class="font-mono text-left text-grey text-xs">{{ item.url }}</div></template>
     </modal>
 
 </template>
 
 
 <script>
+
 export default {
 
     props: ['item']

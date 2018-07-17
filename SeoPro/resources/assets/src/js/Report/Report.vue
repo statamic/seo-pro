@@ -18,7 +18,10 @@
                     {{ report.pages.length }}
                 </div>
                 <div class="text-xl leading-none"
-                    :class="{ 'text-red': report.score < 50, 'text-blue': report.score < 90, 'text-green': report.score >= 90 }">
+                    :class="{
+                        'text-red': report.score < 70,
+                        'text-yellow-dark': report.score < 90,
+                        'text-green': report.score >= 90 }">
                     {{ report.score }}%
                 </div>
             </div>
@@ -56,7 +59,8 @@
                                     ></report-details>
                                 </td>
                                 <td class="text-right text-xs">
-                                    <a v-if="item.edit_url" :href="item.edit_url" class="text-grey-light hover:text-blue" v-text="translate('cp.edit')"></a>
+                                    <a @click.prevent="selected = item.id" class="text-grey-light mr-2 hover:text-grey-dark" v-text="translate('cp.details')"></a>
+                                    <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-2 text-grey-light hover:text-grey-dark" v-text="translate('cp.edit')"></a>
                                 </td>
                             </tr>
                         </tbody>

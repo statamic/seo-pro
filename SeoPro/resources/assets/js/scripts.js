@@ -90,7 +90,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-54b70024/RelativeDate.vue"
+  var id = "_v-72cc20fa/RelativeDate.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -123,7 +123,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-1c9bfd5f/StatusIcon.vue"
+  var id = "_v-0510716b/StatusIcon.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -169,7 +169,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-b6a554ca/Reports.vue"
+  var id = "_v-c39f85e2/Reports.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -291,7 +291,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-2639dc88/Report.vue"
+  var id = "_v-1dc23694/Report.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -325,7 +325,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //                     {{ report.pages.length }}
 //                 </div>
 //                 <div class="text-xl leading-none"
-//                     :class="{ 'text-red': report.score < 50, 'text-blue': report.score < 90, 'text-green': report.score >= 90 }">
+//                     :class="{
+//                         'text-red': report.score < 70,
+//                         'text-yellow-dark': report.score < 90,
+//                         'text-green': report.score >= 90 }">
 //                     {{ report.score }}%
 //                 </div>
 //             </div>
@@ -363,7 +366,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //                                     ></report-details>
 //                                 </td>
 //                                 <td class="text-right text-xs">
-//                                     <a v-if="item.edit_url" :href="item.edit_url" class="text-grey-light hover:text-blue" v-text="translate('cp.edit')"></a>
+//                                     <a @click.prevent="selected = item.id" class="text-grey-light mr-2 hover:text-grey-dark" v-text="translate('cp.details')"></a>
+//                                     <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-2 text-grey-light hover:text-grey-dark" v-text="translate('cp.edit')"></a>
 //                                 </td>
 //                             </tr>
 //                         </tbody>
@@ -450,7 +454,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-392dfc9e/Details.vue"
+  var id = "_v-32b0e412/Details.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -464,19 +468,18 @@ if (false) {(function () {  module.hot.accept()
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
 // <template>
 //
-//     <modal :show="true" @closed="$emit('closed')">
+//     <modal :show="true" @closed="$emit('closed')" :dismissible="true">
 //         <template slot="header">
 //             <h1>{{ translate('addons.SeoPro::messages.page_details') }}</h1>
 //         </template>
 //
 //         <template slot="body">
 //
-//             <p class="mb-4 font-mono text-grey text-xs">{{ item.url }}</p>
-//
-//             <div class="mb-3">
-//                 <div v-for="item in item.results" class="flex mb-1 leading-normal">
+//             <div class="">
+//                 <div v-for="item in item.results" class="flex mb-2 leading-normal">
 //                     <div>
 //                         <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
 //                     </div>
@@ -488,12 +491,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //             </div>
 //
 //         </template>
+//         <template slot="footer"><div class="font-mono text-left text-grey text-xs">{{ item.url }}</div></template>
 //     </modal>
 //
 // </template>
 //
 //
 // <script>
+
 /* harmony default export */ __webpack_exports__["default"] = ({
 
     props: ['item']
@@ -505,7 +510,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* 12 */
 /***/ (function(module, exports) {
 
-module.exports = "\n\n<modal :show=\"true\" @closed=\"$emit('closed')\">\n    <template slot=\"header\">\n        <h1>{{ translate('addons.SeoPro::messages.page_details') }}</h1>\n    </template>\n\n    <template slot=\"body\">\n\n        <p class=\"mb-4 font-mono text-grey text-xs\">{{ item.url }}</p>\n\n        <div class=\"mb-3\">\n            <div v-for=\"item in item.results\" class=\"flex mb-1 leading-normal\">\n                <div>\n                    <span class=\"icon-status\" :class=\"{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}\"></span>\n                </div>\n                <div class=\"flex-1 pl-2\">\n                    <span :class=\"{ 'font-bold': item.status !== 'pass' }\">{{{ item.description }}}</span>\n                    <div class=\"text-grey text-xs\" v-if=\"item.comment\">{{{ item.comment }}}</div>\n                </div>\n            </div>\n        </div>\n\n    </template>\n</modal>\n\n";
+module.exports = "\n\n\n<modal :show=\"true\" @closed=\"$emit('closed')\" :dismissible=\"true\">\n    <template slot=\"header\">\n        <h1>{{ translate('addons.SeoPro::messages.page_details') }}</h1>\n    </template>\n\n    <template slot=\"body\">\n\n        <div class=\"\">\n            <div v-for=\"item in item.results\" class=\"flex mb-2 leading-normal\">\n                <div>\n                    <span class=\"icon-status\" :class=\"{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}\"></span>\n                </div>\n                <div class=\"flex-1 pl-2\">\n                    <span :class=\"{ 'font-bold': item.status !== 'pass' }\">{{{ item.description }}}</span>\n                    <div class=\"text-grey text-xs\" v-if=\"item.comment\">{{{ item.comment }}}</div>\n                </div>\n            </div>\n        </div>\n\n    </template>\n    <template slot=\"footer\"><div class=\"font-mono text-left text-grey text-xs\">{{ item.url }}</div></template>\n</modal>\n\n";
 
 /***/ }),
 /* 13 */
@@ -598,7 +603,7 @@ module.exports = "\n\n<span>\n    <span v-if=\"status === 'pending'\" class=\"ic
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = "\n\n<div>\n\n    <div v-if=\"loading\" class=\"card loading\">\n        <span class=\"icon icon-circular-graph animation-spin\"></span>\n        {{ translate('addons.SeoPro::messages.report_is_being_generated')}}\n    </div>\n\n    <div v-if=\"!loading\">\n\n        <div class=\"card text-sm text-grey flex items-center justify-between\">\n            <div>\n                {{ translate('addons.SeoPro::messages.generated') }}:\n                <relative-date :date=\"report.date\"></relative-date>\n                <span class=\"mx-1\">&bull;</span>\n                {{ translate_choice('cp.pages', 2) }}:\n                {{ report.pages.length }}\n            </div>\n            <div class=\"text-xl leading-none\"\n                :class=\"{ 'text-red': report.score < 50, 'text-blue': report.score < 90, 'text-green': report.score >= 90 }\">\n                {{ report.score }}%\n            </div>\n        </div>\n\n        <div class=\"card flush dossier\">\n            <div class=\"dossier-table-wrapper\">\n                <table class=\"dossier\">\n                    <tbody>\n                        <tr v-for=\"item in report.results\">\n                            <td class=\"w-8 text-center\">\n                                <status-icon :status=\"item.status\"></status-icon>\n                            </div>\n                            <td>{{{ item.description }}}</td>\n                            <td class=\"text-grey text-right\">{{{ item.comment }}}</td>\n                        </tr>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n\n        <div class=\"card flush dossier\">\n            <div class=\"dossier-table-wrapper\">\n                <table class=\"dossier\">\n                    <tbody>\n                        <tr v-for=\"item in report.pages\">\n                            <td class=\"w-8 text-center\">\n                                <status-icon :status=\"item.status\"></status-icon>\n                            </div>\n                            <td>\n                                <a href=\"\" @click.prevent=\"selected = item.id\">{{{ item.url }}}</a>\n                                <report-details\n                                    v-if=\"selected === item.id\"\n                                    :item=\"item\"\n                                    @closed=\"selected = null\"\n                                ></report-details>\n                            </td>\n                            <td class=\"text-right text-xs\">\n                                <a v-if=\"item.edit_url\" :href=\"item.edit_url\" class=\"text-grey-light hover:text-blue\" v-text=\"translate('cp.edit')\"></a>\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n\n    </div>\n\n</div>\n\n";
+module.exports = "\n\n<div>\n\n    <div v-if=\"loading\" class=\"card loading\">\n        <span class=\"icon icon-circular-graph animation-spin\"></span>\n        {{ translate('addons.SeoPro::messages.report_is_being_generated')}}\n    </div>\n\n    <div v-if=\"!loading\">\n\n        <div class=\"card text-sm text-grey flex items-center justify-between\">\n            <div>\n                {{ translate('addons.SeoPro::messages.generated') }}:\n                <relative-date :date=\"report.date\"></relative-date>\n                <span class=\"mx-1\">&bull;</span>\n                {{ translate_choice('cp.pages', 2) }}:\n                {{ report.pages.length }}\n            </div>\n            <div class=\"text-xl leading-none\"\n                :class=\"{\n                    'text-red': report.score < 70,\n                    'text-yellow-dark': report.score < 90,\n                    'text-green': report.score >= 90 }\">\n                {{ report.score }}%\n            </div>\n        </div>\n\n        <div class=\"card flush dossier\">\n            <div class=\"dossier-table-wrapper\">\n                <table class=\"dossier\">\n                    <tbody>\n                        <tr v-for=\"item in report.results\">\n                            <td class=\"w-8 text-center\">\n                                <status-icon :status=\"item.status\"></status-icon>\n                            </div>\n                            <td>{{{ item.description }}}</td>\n                            <td class=\"text-grey text-right\">{{{ item.comment }}}</td>\n                        </tr>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n\n        <div class=\"card flush dossier\">\n            <div class=\"dossier-table-wrapper\">\n                <table class=\"dossier\">\n                    <tbody>\n                        <tr v-for=\"item in report.pages\">\n                            <td class=\"w-8 text-center\">\n                                <status-icon :status=\"item.status\"></status-icon>\n                            </div>\n                            <td>\n                                <a href=\"\" @click.prevent=\"selected = item.id\">{{{ item.url }}}</a>\n                                <report-details\n                                    v-if=\"selected === item.id\"\n                                    :item=\"item\"\n                                    @closed=\"selected = null\"\n                                ></report-details>\n                            </td>\n                            <td class=\"text-right text-xs\">\n                                <a @click.prevent=\"selected = item.id\" class=\"text-grey-light mr-2 hover:text-grey-dark\" v-text=\"translate('cp.details')\"></a>\n                                <a v-if=\"item.edit_url\" target=\"_blank\" :href=\"item.edit_url\" class=\"mr-2 text-grey-light hover:text-grey-dark\" v-text=\"translate('cp.edit')\"></a>\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n\n    </div>\n\n</div>\n\n";
 
 /***/ }),
 /* 18 */
@@ -625,7 +630,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-54a85840/Listing.vue"
+  var id = "_v-61a28958/Listing.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -666,7 +671,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //                                     <status-icon :status="report.status"></status-icon>
 //                                 </td>
 //                                 <td class="w-2 text-xs"
-//                                     :class="{ 'text-red': report.score < 50, 'text-grey': report.score < 90, 'text-green': report.score >= 90 }">
+//                                     :class="{
+//                                         'text-red': report.score < 70,
+//                                         'text-yellow-dark': report.score > 70 && report.score < 90,
+//                                         'text-green': report.score >= 90 }">
 //                                     {{ report.score }}%
 //                                 </td>
 //                                 <td>
@@ -709,13 +717,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }
 });
 // </script>
-//
 
 /***/ }),
 /* 20 */
 /***/ (function(module, exports) {
 
-module.exports = "\n\n<div>\n\n    <div v-if=\"loading\" class=\"card loading\">\n        <span class=\"icon icon-circular-graph animation-spin\"></span>\n        {{ translate('cp.loading') }}\n    </div>\n\n    <div class=\"card\" v-if=\"reports.length == 0\">\n        <div class=\"no-results\">\n            <span class=\"icon icon-documents\"></span>\n            <h2>{{ translate('addons.SeoPro::messages.seo_reports') }}</h2>\n            <h3>{{ translate('addons.SeoPro::messages.report_no_results_text') }}</h3>\n            <button class=\"btn btn-default btn-lg\" @click.prevent=\"$parent.generateReport\" v-text=\"translate('addons.SeoPro::messages.generate_your_first_report')\"</button>\n        </div>\n    </div>\n\n    <div class=\"card flush dossier\">\n        <div class=\"dossier-table-wrapper\">\n            <table class=\"dossier\">\n                <tbody>\n                        <tr v-for=\"report in reports\">\n                            <td class=\"w-1 text-center\">\n                                <status-icon :status=\"report.status\"></status-icon>\n                            </td>\n                            <td class=\"w-2 text-xs\"\n                                :class=\"{ 'text-red': report.score < 50, 'text-grey': report.score < 90, 'text-green': report.score >= 90 }\">\n                                {{ report.score }}%\n                            </td>\n                            <td>\n                                <a @click.prevent=\"$emit('report-selected', report.id)\">\n                                    <relative-date :date=\"report.date\"></relative-date>\n                                </a>\n                            </td>\n                        </tr>\n\n                </tbody>\n            </table>\n        </div>\n    </div>\n\n</div>\n\n";
+module.exports = "\n\n<div>\n\n    <div v-if=\"loading\" class=\"card loading\">\n        <span class=\"icon icon-circular-graph animation-spin\"></span>\n        {{ translate('cp.loading') }}\n    </div>\n\n    <div class=\"card\" v-if=\"reports.length == 0\">\n        <div class=\"no-results\">\n            <span class=\"icon icon-documents\"></span>\n            <h2>{{ translate('addons.SeoPro::messages.seo_reports') }}</h2>\n            <h3>{{ translate('addons.SeoPro::messages.report_no_results_text') }}</h3>\n            <button class=\"btn btn-default btn-lg\" @click.prevent=\"$parent.generateReport\" v-text=\"translate('addons.SeoPro::messages.generate_your_first_report')\"</button>\n        </div>\n    </div>\n\n    <div class=\"card flush dossier\">\n        <div class=\"dossier-table-wrapper\">\n            <table class=\"dossier\">\n                <tbody>\n                        <tr v-for=\"report in reports\">\n                            <td class=\"w-1 text-center\">\n                                <status-icon :status=\"report.status\"></status-icon>\n                            </td>\n                            <td class=\"w-2 text-xs\"\n                                :class=\"{\n                                    'text-red': report.score < 70,\n                                    'text-yellow-dark': report.score > 70 && report.score < 90,\n                                    'text-green': report.score >= 90 }\">\n                                {{ report.score }}%\n                            </td>\n                            <td>\n                                <a @click.prevent=\"$emit('report-selected', report.id)\">\n                                    <relative-date :date=\"report.date\"></relative-date>\n                                </a>\n                            </td>\n                        </tr>\n\n                </tbody>\n            </table>\n        </div>\n    </div>\n\n</div>\n\n";
 
 /***/ }),
 /* 21 */
