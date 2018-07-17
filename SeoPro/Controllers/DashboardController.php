@@ -6,6 +6,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return redirect()->route('seopro.defaults.edit');
+        return redirect()->route('seopro.reports.index');
     }
 }
