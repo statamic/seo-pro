@@ -132,7 +132,7 @@ class TagData
     protected function alternateLocales()
     {
         if (! method_exists($this->model, 'locales')) {
-            return site_locale();
+            return Config::getOtherLocales();
         }
 
         $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
