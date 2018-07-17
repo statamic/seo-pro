@@ -56,6 +56,7 @@ class TagData
             'compiled_title' => $this->compiledTitle(),
             'canonical_url' => $this->model->absoluteUrl(),
             'home_url' => URL::makeAbsolute('/'),
+            'humans_txt' => $this->humans(),
             'locale' => $this->locale(),
             'alternate_locales' => $this->alternateLocales(),
             'last_modified' => $this->lastModified(),
@@ -151,5 +152,14 @@ class TagData
         }
 
         return $value;
+    }
+
+    protected function humans()
+    {
+        $config = Settings::load()->get('humans');
+
+        if (array_get($config, 'enabled')) {
+            return URL::makeAbsolute('humans.txt');
+        }
     }
 }

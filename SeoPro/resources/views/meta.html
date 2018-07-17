@@ -27,3 +27,6 @@
 {{ /asset:image }}
 <link href="{{ home_url }}" rel="home" />
 <link href="{{ canonical_url }}" rel="canonical" />
+{{ if humans_txt }}
+<link type="text/plain" rel="author" href="{{ humans_txt }}" />
+{{ /if }}
