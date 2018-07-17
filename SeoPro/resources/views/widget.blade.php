@@ -9,7 +9,7 @@
         @if ($report)
 
                 <div class="text-4xl leading-tight font-light
-                    @if ($report->score() < 50) text-red
+                    @if ($report->score() < 70) text-red
                     @elseif ($report->score() < 90) text-yellow-dark
                     @else text-green @endif
                 ">
