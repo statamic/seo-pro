@@ -48,6 +48,10 @@ class TagData
             $this->withCurrent(Page::whereUri('/'));
         }
 
+        if (array_get($this->current, 'response_code') === 404) {
+            $this->current['title'] = '404 Page Not Found';
+        }
+
         $this->data = $this->data->map(function ($item, $key) {
             return $this->parse($key, $item);
         });
