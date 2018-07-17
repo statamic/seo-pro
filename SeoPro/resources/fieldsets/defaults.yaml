@@ -5,6 +5,7 @@ sections:
         type: section
       title:
         type: seo_pro.source
+        inherit: false
         field:
           type: text
       site_name:
