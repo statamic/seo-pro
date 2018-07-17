@@ -65,8 +65,8 @@ class TaxonomyController extends Controller
     protected function fieldset()
     {
         return $this->translateFieldset(Fieldset::create(
-            'content-defaults',
-            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/content-defaults.yaml'))
+            'sections',
+            YAML::parse(File::get($this->getDirectory().'/resources/fieldsets/sections.yaml'))
         ));
     }
 }

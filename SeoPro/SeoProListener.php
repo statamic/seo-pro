@@ -29,23 +29,23 @@ class SeoProListener extends Listener
 
         $seo->add(function ($item) {
             $item->add(Nav::item('seo-pro-defaults')
-                ->title('Site Defaults')
+                ->title($this->trans('messages.site_defaults'))
                 ->route('seopro.defaults.edit'));
 
             $item->add(Nav::item('seo-pro-content')
-                ->title('Content Defaults')
-                ->route('seopro.content.index'));
+                ->title($this->trans('messages.section_defaults'))
+                ->route('seopro.sections.index'));
 
             $item->add(Nav::item('seo-pro-humans')
-                ->title('Humans.txt')
+                ->title($this->trans('messages.humans_txt'))
                 ->route('seopro.humans.edit'));
 
             $item->add(Nav::item('seo-pro-reports')
-                ->title('Reports')
+                ->title($this->trans('messages.reports'))
                 ->route('seopro.reports.index'));
 
             $item->add(Nav::item('seo-pro-settings')
-                ->title('Settings')
+                ->title(trans_choice('cp.settings', 2))
                 ->route('addon.settings', ['addon' => 'seo-pro']));
         });
 

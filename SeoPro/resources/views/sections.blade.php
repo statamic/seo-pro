@@ -3,15 +3,15 @@
 @section('content')
 
     <div class="flex items-center mb-3">
-        <h1 class="flex-1">Content Defaults</h1>
+        <h1 class="flex-1">{{ $title }}</h1>
     </div>
 
     <div class="flex items-center mb-1">
-        <h2 class="flex-1">Collections</h2>
+        <h2 class="flex-1">{{ trans_choice('cp.collections', 2) }}</h2>
     </div>
 
     @if ($collections->isEmpty())
-        <p class="card text-xs text-grey">There are no collections</p>
+        <p class="card text-xs text-grey">{{ translate('addons.SeoPro::messages.no_collections') }}</p>
     @else
         <div class="card flush dossier">
             <div class="dossier-table-wrapper">
@@ -34,11 +34,11 @@
     @endif
 
     <div class="flex items-center mb-1">
-        <h2 class="flex-1">Taxonomies</h2>
+        <h2 class="flex-1">{{ trans_choice('cp.taxonomies', 2) }}</h2>
     </div>
 
     @if ($taxonomies->isEmpty())
-        <p class="card text-xs text-grey">There are no taxonomies</p>
+        <p class="card text-xs text-grey">{{ translate('addons.SeoPro::messages.no_taxonomies') }}</p>
     @else
         <div class="card flush dossier">
             <div class="dossier-table-wrapper">
