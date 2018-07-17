@@ -20,6 +20,7 @@ class Report implements Arrayable, Jsonable
     protected $results;
     protected $generatePages = false;
     protected $date;
+    protected $score;
     public static $reportsToGenerate = [];
 
     public static $rules = [
@@ -346,6 +347,10 @@ class Report implements Arrayable, Jsonable
 
     public function score()
     {
+        if ($this->score) {
+            return $this->score;
+        }
+
         $demerits = 0;
         $maxPoints = 0;
 
@@ -364,6 +369,6 @@ class Report implements Arrayable, Jsonable
 
         $score = ($maxPoints - $demerits) / $maxPoints * 100;
 
-        return round($score);
+        return $this->score = round($score);
     }
 }
