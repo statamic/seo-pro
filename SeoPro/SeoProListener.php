@@ -15,7 +15,7 @@ class SeoProListener extends Listener
 
     public $events = [
         'cp.nav.created' => 'addNavItems',
-        \Statamic\Events\Data\FindingFieldset::class => 'addFieldsetTab',
+        \Statamic\Events\PublishFieldsetFound::class => 'addFieldsetTab',
         \Statamic\Events\RoutesMapping::class => 'addRoutes',
         'cp.add_to_head' => 'addToHead',
     ];
@@ -54,7 +54,7 @@ class SeoProListener extends Listener
 
     public function addFieldsetTab($event)
     {
-        if (! $this->shouldHaveSeoTab($event->data)) {
+        if (! in_array($event->type, ['page', 'entry', 'term'])) {
             return;
         }
 
@@ -82,6 +82,10 @@ class SeoProListener extends Listener
 
     protected function getPlaceholder($key, $field, $data)
     {
+        if (! $data) {
+            return;
+        }
+
         $vars = (new TagData)
             ->with(Settings::load()->get('defaults'))
             ->with($data->getWithCascade('seo', []))
@@ -89,23 +93,6 @@ class SeoProListener extends Listener
             ->get();
 
         return array_get($vars, $key);
-    }
-
-    protected function shouldHaveSeoTab($model)
-    {
-        $classes = [
-            \Statamic\Contracts\Data\Pages\Page::class,
-            \Statamic\Contracts\Data\Entries\Entry::class,
-            \Statamic\Contracts\Data\Taxonomies\Term::class
-        ];
-
-        foreach ($classes as $class) {
-            if ($model instanceof $class) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function addRoutes($event)
