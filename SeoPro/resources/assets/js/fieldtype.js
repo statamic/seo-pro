@@ -599,7 +599,7 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.source-type-select {\n    width: 20rem;\n}\n\n.inherit-placeholder {\n    padding-top: 5px;\n}\n\n.source-field-select .selectize-dropdown,\n.source-field-select .selectize-input span {\n    font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';\n}\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.source-type-select {\n    width: 20rem;\n}\n\n.inherit-placeholder {\n    padding-top: 5px;\n}\n\n.source-field-select .selectize-dropdown,\n.source-field-select .selectize-input span {\n    font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';\n    font-size: 12px;\n}\n\n", ""]);
 
 // exports
 
@@ -654,6 +654,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //     .source-field-select .selectize-dropdown,
 //     .source-field-select .selectize-input span {
 //         font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
+//         font-size: 12px;
 //     }
 //
 // </style>

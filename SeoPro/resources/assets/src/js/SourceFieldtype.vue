@@ -42,6 +42,7 @@
     .source-field-select .selectize-dropdown,
     .source-field-select .selectize-input span {
         font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
+        font-size: 12px;
     }
 
 </style>
