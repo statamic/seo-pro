@@ -75,3 +75,13 @@ Depending on the size of your site, generating a report may take a while.
 We generate them in the "background" using a middleware. It's possible that this could interfere with other middleware. To prevent this, you can enable queues, and the reports will be truly queued in the background.
 
 The simplest way to do this locally is with Redis. Add `QUEUE_DRIVER=redis` to your `.env` file, then run `php please queue:listen`.
+
+### Widget
+
+You may add a reports widget to your dashboard to get a quick insight into your site's SEO status. Add the following to `site/settings/cp.yaml` to show the latest report's score:
+
+``` yaml
+widgets:
+  -
+    type: seo_pro.reports
+```
