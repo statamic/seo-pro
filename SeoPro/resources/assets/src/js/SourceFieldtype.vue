@@ -12,7 +12,7 @@
             </div>
 
             <div v-if="source === 'field'" class="source-field-select">
-                <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig"></suggest-fieldtype>
+                <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig" :suggestions-prop="suggestSuggestions"></suggest-fieldtype>
             </div>
 
             <component
@@ -92,6 +92,10 @@ export default {
                 create: true,
                 placeholder: translate('addons.SeoPro::messages.source_suggest_placeholder')
             }
+        },
+
+        suggestSuggestions() {
+            return SeoPro.fieldSuggestions;
         },
 
         fieldConfig() {

@@ -119,6 +119,8 @@ class SeoProListener extends Listener
     {
         $assetContainer = $this->getConfig('asset_container');
 
-        return "<script>var SeoPro = { assetContainer: '{$assetContainer}' };</script>";
+        $suggestions = json_encode((new FieldSuggestions)->suggestions());
+
+        return "<script>var SeoPro = { assetContainer: '{$assetContainer}', fieldSuggestions: {$suggestions} };</script>";
     }
 }

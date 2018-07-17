@@ -3,9 +3,8 @@
 namespace Statamic\Addons\SeoPro;
 
 use Statamic\API\Fieldset;
-use Statamic\Addons\Suggest\Modes\AbstractMode;
 
-class SeoProSuggestMode extends AbstractMode
+class FieldSuggestions
 {
     protected $allowedTypes = [
         'text',
