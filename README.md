@@ -7,4 +7,4 @@ You can use it for free while in development, but requires a license to use on a
 
 ## Documentation
 
-Read the docs on the [Statamic Marketplace](https://statamic.com/markeplace/addons/seo-pro/docs) or contribute to it [here on GitHub](DOCUMENTATION.md).
+Read the docs on the [Statamic Marketplace](https://statamic.com/marketplace/addons/seo-pro/docs) or contribute to it [here on GitHub](DOCUMENTATION.md).
