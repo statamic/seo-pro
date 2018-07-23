@@ -13,6 +13,10 @@ class SeoProServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        if (version_compare(STATAMIC_VERSION, '2.10.0', '<')) {
+            throw new \Exception('SEO Pro requires Statamic 2.10.0');
+        }
+
         $this->addGlidePresets();
         $this->registerMiddleware();
     }
