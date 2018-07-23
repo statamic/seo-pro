@@ -98,7 +98,7 @@ class SeoProListener extends Listener
 
     public function addRoutes($event)
     {
-        if (site_locale() === default_locale()) {
+        if ($this->getConfig('sitemap_enabled') && site_locale() === default_locale()) {
             $event->router->get($this->getConfig('sitemap_url'), 'Statamic\Addons\SeoPro\Controllers\SitemapController@show');
         }
     }

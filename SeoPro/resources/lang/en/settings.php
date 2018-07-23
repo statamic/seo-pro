@@ -13,6 +13,9 @@ return [
     'open_graph_image_height' => 'Height',
     'open_graph_image_height_instruct' => 'In pixels',
 
+    'sitemap_enabled' => 'Enabled',
+    'sitemap_enabled_instruct' => 'If enabled, a sitemap xml file will be viewable at the URL defined below.',
+
     'sitemap_url' => 'Sitemap URL',
     'sitemap_url_instruct' => "The location of the sitemap relative to the root of your default locale's home page.",
 
