@@ -7,6 +7,8 @@ use Statamic\CP\FieldtypeFactory;
 
 class FieldsFieldtype extends Fieldtype
 {
+    public $selectable = false;
+
     public function preProcess($config)
     {
         return collect($config)->map(function ($item) {

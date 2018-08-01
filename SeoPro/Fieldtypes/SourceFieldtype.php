@@ -8,6 +8,8 @@ use Statamic\CP\FieldtypeFactory;
 
 class SourceFieldtype extends Fieldtype
 {
+    public $selectable = false;
+
     public function preProcess($data)
     {
         if (is_string($data) && Str::startsWith($data, '@seo:')) {

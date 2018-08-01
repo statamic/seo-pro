@@ -7,6 +7,8 @@ use Statamic\CP\FieldtypeFactory;
 
 class SeoProFieldtype extends Fieldtype
 {
+    public $selectable = false;
+
     public function preProcess($data)
     {
         return collect($this->getFieldConfig('fields'))->map(function ($item) {
