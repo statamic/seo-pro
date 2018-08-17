@@ -10,7 +10,10 @@ class SitemapController extends Controller
     public function show()
     {
         $content = Cache::remember('sitemap', $this->getConfig('sitemap_cache_length'), function () {
-            return $this->view('sitemap', ['sitemap' => new Sitemap])->render();
+            return $this->view('sitemap', [
+                'xmlHeader' => '<?xml version="1.0" encoding="UTF-8"?>',
+                'sitemap' => new Sitemap,
+            ])->render();
         });
 
         return response($content)->header('Content-Type', 'text/xml');
