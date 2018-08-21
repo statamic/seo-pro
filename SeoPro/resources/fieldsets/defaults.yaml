@@ -33,6 +33,8 @@ sections:
       image:
         type: seo_pro.source
         inherit: false
+        allowed_fieldtypes:
+          - assets
         field:
           type: seo_pro.asset
   twitter:
