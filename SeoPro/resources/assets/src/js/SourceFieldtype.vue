@@ -59,7 +59,8 @@ export default {
             customText: null,
             sourceField: null,
             autoBindChangeWatcher: false,
-            changeWatcherWatchDeep: false
+            changeWatcherWatchDeep: false,
+            allowedFieldtypes: []
         }
     },
 
@@ -96,7 +97,7 @@ export default {
         },
 
         suggestSuggestions() {
-            return SeoPro.fieldSuggestions;
+            return SeoPro.fieldSuggestions.filter(item => this.allowedFieldtypes.includes(item.type));
         },
 
         fieldConfig() {
@@ -128,6 +129,9 @@ export default {
     },
 
     ready() {
+        let types = this.config.allowed_fieldtypes || ['text', 'textarea', 'markdown', 'redactor'];
+        this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
+
         if (this.data.source === 'field') {
             this.sourceField = [this.data.value];
         } else {
