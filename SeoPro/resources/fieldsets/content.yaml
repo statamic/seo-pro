@@ -12,6 +12,8 @@ fields:
           type: text
       image:
         type: seo_pro.source
+        allowed_fieldtypes:
+          - assets
         field:
           type: seo_pro.asset
       priority:
