@@ -1,21 +1,26 @@
 fields:
   seo:
     type: seo_pro
+    localizable: true
     fields:
       enabled:
         type: toggle
         default: true
+        localizable: true
       title:
         type: seo_pro.source
         disableable: true
+        localizable: true
         field:
           type: text
       description:
         type: seo_pro.source
+        localizable: true
         field:
           type: text
       image:
         type: seo_pro.source
+        localizable: true
         allowed_fieldtypes:
           - assets
         field:
@@ -26,10 +31,12 @@ fields:
         field: false
       priority:
         type: seo_pro.source
+        localizable: true
         field:
           type: text
       change_frequency:
         type: seo_pro.source
+        localizable: true
         field:
           type: select
           options:
