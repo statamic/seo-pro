@@ -2,6 +2,9 @@ fields:
   seo:
     type: seo_pro
     fields:
+      enabled:
+        type: toggle
+        default: true
       title:
         type: seo_pro.source
         disableable: true

@@ -22,6 +22,10 @@ class SeoProFieldtype extends Fieldtype
 
     public function process($data)
     {
+        if (! $enabled = array_pull($data, 'enabled')) {
+            return false;
+        }
+
         return collect($data)->map(function ($value, $key) {
             $config = $this->getFieldConfig('fields.'.$key);
             $fieldtype = FieldtypeFactory::create(array_get($config, 'type'), $config);
