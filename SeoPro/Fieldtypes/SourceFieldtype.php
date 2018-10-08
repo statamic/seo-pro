@@ -16,6 +16,10 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'field', 'value' => explode('@seo:', $data)[1]];
         }
 
+        if ($data === false && $this->getFieldConfig('disableable') === true) {
+            return ['source' => 'disable', 'value' => null];
+        }
+
         if (! $data && $this->getFieldConfig('inherit') !== false) {
             return ['source' => 'inherit', 'value' => null];
         }
