@@ -21,6 +21,15 @@ return [
 
     'sitemap_section' => 'Site Map',
 
+    'sitemap' => 'Enabled',
+    'sitemap_instruct' => 'If disabled, items in this section will not appear in the sitemap.',
+
+    'show_future' => 'Show Future Entries',
+    'show_future_instruct' => 'If disabled, entries dated in the future will not appear in the sitemap.',
+
+    'show_past' => 'Show Past Entries',
+    'show_past_instruct' => 'If disabled, entries dated in the past will not appear in the sitemap.',
+
     'priority' => 'Priority',
     'priority_instruct' => 'The priority of these URLs relative to other URLs on your site. Valid values range from `0.0` to `1.0`.',
 

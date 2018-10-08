@@ -24,6 +24,15 @@ sections:
           type: seo_pro.asset
       sitemap_section:
         type: section
+      sitemap:
+        type: toggle
+        default: true
+      show_future:
+        type: toggle
+        default: true
+      show_past:
+        type: toggle
+        default: true
       priority:
         type: seo_pro.source
         field:

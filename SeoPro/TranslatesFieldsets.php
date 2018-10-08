@@ -11,7 +11,7 @@ trait TranslatesFieldsets
         $contents['sections'] = collect($contents['sections'])->map(function ($section) use ($fieldset) {
             $section['fields'] = $this->translateFieldsetFields($section['fields'], $fieldset->name());
             return $section;
-        });
+        })->all();
 
         $fieldset->contents($contents);
 

@@ -20,6 +20,10 @@ fields:
           - assets
         field:
           type: seo_pro.asset
+      sitemap:
+        type: seo_pro.source
+        disableable: true
+        field: false
       priority:
         type: seo_pro.source
         field:

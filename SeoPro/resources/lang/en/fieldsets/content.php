@@ -14,6 +14,9 @@ return [
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
 
+    'sitemap' => 'Sitemap',
+    'sitemap_instruct' => 'If disabled, this item will not appear in the sitemap.',
+
     'priority' => 'Sitemap: Priority',
     'priority_instruct' => 'The priority of this URL relative to other URLs on your site. Valid values range from `0.0` to `1.0`.',
 
