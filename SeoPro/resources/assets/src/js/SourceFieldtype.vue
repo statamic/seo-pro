@@ -71,9 +71,11 @@ export default {
         },
 
         sourceTypeSelectOptions() {
-            let options = [
-                { text: 'Custom', value: 'custom' }
-            ];
+            let options = [];
+
+            if (this.config.field !== false) {
+                options.push({ text: 'Custom', value: 'custom' });
+            }
 
             if (this.config.from_field !== false) {
                 options.unshift({ text: 'From Field', value: 'field' });

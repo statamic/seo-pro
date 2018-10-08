@@ -8,6 +8,6 @@ class SourceFieldFieldtype extends FieldsFieldtype
 
     public function preProcess($config)
     {
-        return $this->preProcessField($config);
+        return $config ? $this->preProcessField($config) : $config;
     }
 }

@@ -682,7 +682,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return this.config.field.type.replace('.', '-') + '-fieldtype';
         },
         sourceTypeSelectOptions: function sourceTypeSelectOptions() {
-            var options = [{ text: 'Custom', value: 'custom' }];
+            var options = [];
+
+            if (this.config.field !== false) {
+                options.push({ text: 'Custom', value: 'custom' });
+            }
 
             if (this.config.from_field !== false) {
                 options.unshift({ text: 'From Field', value: 'field' });
