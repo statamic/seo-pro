@@ -34,7 +34,8 @@ class Sitemap
         return collect_content()
             ->merge(API\Page::all())
             ->merge($this->entries())
-            ->merge($this->terms());
+            ->merge($this->terms())
+            ->removeUnpublished();
     }
 
     protected function entries()
