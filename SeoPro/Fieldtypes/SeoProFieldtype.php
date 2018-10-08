@@ -11,6 +11,10 @@ class SeoProFieldtype extends Fieldtype
 
     public function preProcess($data)
     {
+        if ($data === false) {
+            $data = ['enabled' => false];
+        }
+
         return collect($this->getFieldConfig('fields'))->map(function ($item) {
             return null; // Make sure every field has at least a null value.
         })->merge($data)->map(function ($value, $key) {
