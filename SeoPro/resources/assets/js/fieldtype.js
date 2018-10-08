@@ -428,7 +428,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-a0f15b6e/SeoProFieldtype.vue"
+  var id = "_v-78ad4b3d/SeoProFieldtype.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -556,7 +556,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-200fb91e/SourceFieldtype.vue"
+  var id = "_v-2d949bdc/SourceFieldtype.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -671,7 +671,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             customText: null,
             sourceField: null,
             autoBindChangeWatcher: false,
-            changeWatcherWatchDeep: false
+            changeWatcherWatchDeep: false,
+            allowedFieldtypes: []
         };
     },
 
@@ -691,6 +692,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 options.unshift({ text: 'Inherit', value: 'inherit' });
             }
 
+            if (this.config.disableable) {
+                options.push({ text: 'Disable', value: 'disable' });
+            }
+
             return options;
         },
         suggestConfig: function suggestConfig() {
@@ -703,7 +708,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             };
         },
         suggestSuggestions: function suggestSuggestions() {
-            return SeoPro.fieldSuggestions;
+            var _this = this;
+
+            return SeoPro.fieldSuggestions.filter(function (item) {
+                return _this.allowedFieldtypes.includes(item.type);
+            });
         },
         fieldConfig: function fieldConfig() {
             return Object.assign(this.config.field, { placeholder: this.config.placeholder });
@@ -729,6 +738,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     ready: function ready() {
+        var types = this.config.allowed_fieldtypes || ['text', 'textarea', 'markdown', 'redactor'];
+        this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
+
         if (this.data.source === 'field') {
             this.sourceField = [this.data.value];
         } else {
@@ -775,7 +787,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-0786a922/AssetFieldtype.vue"
+  var id = "_v-02b9c3fb/AssetFieldtype.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {

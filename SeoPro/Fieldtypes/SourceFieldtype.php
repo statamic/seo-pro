@@ -33,6 +33,10 @@ class SourceFieldtype extends Fieldtype
             return null;
         }
 
+        if ($data['source'] === 'disable') {
+            return false;
+        }
+
         return $this->fieldtype()->process($data['value']);
     }
 

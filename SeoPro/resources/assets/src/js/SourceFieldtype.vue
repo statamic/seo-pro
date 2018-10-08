@@ -83,6 +83,10 @@ export default {
                 options.unshift({ text: 'Inherit', value: 'inherit' });
             }
 
+            if (this.config.disableable) {
+                options.push({ text: 'Disable', value: 'disable' });
+            }
+
             return options;
         },
 

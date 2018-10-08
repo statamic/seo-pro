@@ -26,6 +26,9 @@ class SeoProFieldtype extends Fieldtype
             $config = $this->getFieldConfig('fields.'.$key);
             $fieldtype = FieldtypeFactory::create(array_get($config, 'type'), $config);
             return $fieldtype->process($value);
-        })->filter()->all();
+        })->reject(function ($item) {
+            // Remove empty strings, empty arrays, and nulls. Leave literal false values alone.
+            return in_array($item, ['', [], null], true);
+        })->all();
     }
 }

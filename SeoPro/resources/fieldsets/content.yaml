@@ -4,6 +4,7 @@ fields:
     fields:
       title:
         type: seo_pro.source
+        disableable: true
         field:
           type: text
       description:

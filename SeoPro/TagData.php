@@ -102,17 +102,23 @@ class TagData
 
     protected function compiledTitle()
     {
+        $siteName = $this->data->get('site_name');
+
+        if (! $title = $this->data->get('title')) {
+            return $siteName;
+        }
+
         $compiled = '';
         $separator = $this->data->get('site_name_separator');
 
         if ($this->data->get('site_name_position') === 'before') {
-            $compiled .= $this->data->get('site_name') . ' ' . $separator . ' ';
+            $compiled .= $siteName . ' ' . $separator . ' ';
         }
 
-        $compiled .= $this->data->get('title');
+        $compiled .= $title;
 
         if ($this->data->get('site_name_position') === 'after') {
-            $compiled .= ' ' . $separator . ' ' . $this->data->get('site_name');
+            $compiled .= ' ' . $separator . ' ' . $siteName;
         }
 
         return $compiled;
