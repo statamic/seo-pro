@@ -143,14 +143,19 @@ class TagData
     protected function alternateLocales()
     {
         if (! method_exists($this->model, 'locales')) {
-            return Config::getOtherLocales();
+            return collect(Config::getOtherLocales())->map(function ($locale) {
+                return ['locale' => $locale, 'url' => $this->model->absoluteUrl()];
+            });
         }
 
         $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
 
-        return array_map(function ($locale) {
-            return Config::getFullLocale($locale);
-        }, $alternates);
+        return collect($alternates)->map(function ($locale) {
+            return [
+                'locale' => Config::getFullLocale($locale),
+                'url' => $this->model->in($locale)->absoluteUrl(),
+            ];
+        })->all();
     }
 
     protected function parseDescriptionField($value)

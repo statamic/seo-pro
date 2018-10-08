@@ -7,7 +7,7 @@
 <meta property="og:site_name" content="{{ site_name }}" />
 <meta property="og:locale" content="{{ locale }}" />
 {{ alternate_locales }}
-<meta property="og:locale:alternate" content="{{ value }}" />
+<meta property="og:locale:alternate" content="{{ locale }}" />
 {{ /alternate_locales }}
 <meta name="twitter:card" content="summary" />
 {{ if twitter_site }}
@@ -27,6 +27,9 @@
 {{ /asset:image }}
 <link href="{{ home_url }}" rel="home" />
 <link href="{{ canonical_url }}" rel="canonical" />
+{{ alternate_locales }}
+<link rel="alternate" href="{{ url }}" hreflang="{{ locale }}" />
+{{ /alternate_locales }}
 {{ if humans_txt }}
 <link type="text/plain" rel="author" href="{{ humans_txt }}" />
 {{ /if }}
