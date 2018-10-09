@@ -21,6 +21,15 @@ return [
 
     'sitemap_section' => 'Site Map',
 
+    'sitemap' => 'Activer',
+    'sitemap_instruct' => 'Si cette option est désactivée, les éléments de cette section n\'apparaîtront pas dans le sitemap.',
+
+    'show_future' => 'Afficher les entrées futures',
+    'show_future_instruct' => 'Si cette option est désactivée, les entrées datées dans le futur ne figureront pas dans le sitemap.',
+
+    'show_past' => 'Afficher les entrées passées',
+    'show_past_instruct' => 'Si désactivé, les entrées datées dans le passé n\'apparaîtront pas dans le sitemap.',
+
     'priority' => 'Priorité',
     'priority_instruct' => 'La priorité de ces URL par rapport aux autres URL de votre site. Les valeurs valides vont de `0.0` à` 1.0`.',
 
