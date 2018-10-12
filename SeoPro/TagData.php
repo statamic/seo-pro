@@ -145,7 +145,7 @@ class TagData
         if (! method_exists($this->model, 'locales')) {
             return collect(Config::getOtherLocales())->map(function ($locale) {
                 return ['locale' => $locale, 'url' => $this->model->absoluteUrl()];
-            });
+            })->all();
         }
 
         $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
