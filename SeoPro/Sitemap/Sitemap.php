@@ -13,7 +13,7 @@ class Sitemap
         return $this->items()->map(function ($content) {
             $cascade = $content->getWithCascade('seo', []);
 
-            if (array_get($cascade, 'sitemap') === false) {
+            if ($cascade === false || array_get($cascade, 'sitemap') === false) {
                 return;
             }
 
