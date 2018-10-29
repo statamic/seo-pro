@@ -8,6 +8,8 @@ use Statamic\Addons\SeoPro\Settings;
 
 class Sitemap
 {
+    const CACHE_KEY = 'seo-pro.sitemap';
+
     public function pages()
     {
         return $this->items()->map(function ($content) {

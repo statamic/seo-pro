@@ -8,6 +8,8 @@ use Statamic\API\File;
 use Statamic\API\YAML;
 use Statamic\API\Collection;
 use Statamic\Extend\Listener;
+use Illuminate\Support\Facades\Cache;
+use Statamic\Addons\SeoPro\Sitemap\Sitemap;
 
 class SeoProListener extends Listener
 {
@@ -19,6 +21,11 @@ class SeoProListener extends Listener
         \Statamic\Events\Data\FindingFieldset::class => 'addFieldsetTab',
         \Statamic\Events\RoutesMapping::class => 'addRoutes',
         'cp.add_to_head' => 'addToHead',
+        \Statamic\Events\Data\CollectionSaved::class => 'clearSitemapCache',
+        \Statamic\Events\Data\TaxonomySaved::class => 'clearSitemapCache',
+        \Statamic\Events\Data\TermSaved::class => 'clearSitemapCache',
+        \Statamic\Events\Data\EntrySaved::class => 'clearSitemapCache',
+        \Statamic\Events\Data\PageSaved::class => 'clearSitemapCache',
     ];
 
     public function addNavItems($nav)
@@ -110,5 +117,10 @@ class SeoProListener extends Listener
         $suggestions = json_encode((new FieldSuggestions)->suggestions());
 
         return "<script>var SeoPro = { assetContainer: '{$assetContainer}', fieldSuggestions: {$suggestions} };</script>";
+    }
+
+    public function clearSitemapCache()
+    {
+        Cache::forget(Sitemap::CACHE_KEY);
     }
 }
