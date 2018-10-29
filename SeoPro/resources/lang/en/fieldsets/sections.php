@@ -3,7 +3,7 @@
 return [
 
     'enabled' => 'Enabled',
-    'enabled_instruct' => 'Disabling this section will exclude it from reports and prevent anything from being rendered through the template tag.',
+    'enabled_instruct' => 'Disabling this section will exclude it from reports and the sitemap, and prevent anything from being rendered through the template tag.',
 
     'meta_section' => 'Meta Data',
 
