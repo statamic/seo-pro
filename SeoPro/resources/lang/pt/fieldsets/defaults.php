@@ -15,7 +15,7 @@ return [
     'site_name_position_instruct' => 'Cabe a ti escolher antes ou depois meta do título.',
 
     'site_name_separator' => 'Separador de Nome do Site',
-    'site_name_separator_instruct' => 'O(s) caractere(s) entre o título e o nome do site.',
+    'site_name_separator_instruct' => 'O(s) caracter(es) entre o título e o nome do site.',
 
     'description' => 'Meta Descrição',
     'description_instruct' => 'Escolha um campo existente para definir como sua meta descrição **padrão**. Cada coleção e taxonomia também podem ter o seu próprio padrão.',
