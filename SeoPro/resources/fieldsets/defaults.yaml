@@ -67,3 +67,12 @@ sections:
             monthly: Monthly
             yearly: Yearly
             never: Never
+  webmaster_tools:
+    display: Webmaster Tools
+    fields:
+      webmaster_tools_section:
+        type: section
+      bing_verification:
+        type: text
+      google_verification:
+        type: text

@@ -41,4 +41,13 @@ return [
     'change_frequency' => 'Change Frequency',
     'change_frequency_instruct' => 'A hint to search engines on how frequently the page is likely to change.',
 
+    'webmaster_tools_section' => 'Webmaster Tools',
+    'webmaster_tools_section_instruct' => "Verifying your site with popular search engines will help you track how well they're crawling your site.",
+
+    'bing_verification' => 'Bing Verification Code',
+    'bing_verification_instruct' => 'Get your Bing verification code in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
+
+    'google_verification' => 'Google Verification Code',
+    'google_verification_instruct' => 'Get your Google verification code in [Google Search Console](https://search.google.com/search-console).',
+
 ];
