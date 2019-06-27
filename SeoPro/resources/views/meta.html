@@ -1,10 +1,20 @@
+{{ if compiled_title }}
 <title>{{ compiled_title | striptags }}</title>
+{{ /if }}
+{{ if description }}
 <meta name="description" content="{{ description | striptags | entities | trim }}" />
+{{ /if }}
 <meta property="og:type" content="website" />
+{{ if title }}
 <meta property="og:title" content="{{ title | striptags | entities | trim }}" />
+{{ /if }}
+{{ if description }}
 <meta property="og:description" content="{{ description | striptags | entities | trim }}" />
+{{ /if }}
 <meta property="og:url" content="{{ canonical_url }}" />
+{{ if site_name }}
 <meta property="og:site_name" content="{{ site_name | striptags | entities | trim }}" />
+{{ /if }}
 <meta property="og:locale" content="{{ locale }}" />
 {{ alternate_locales }}
 <meta property="og:locale:alternate" content="{{ locale }}" />
@@ -13,8 +23,12 @@
 {{ if twitter_site }}
 <meta name="twitter:site" content="{{ twitter_site ensure_left="@" }}" />
 {{ /if }}
+{{ if title }}
 <meta name="twitter:title" content="{{ title | striptags | entities | trim }}" />
+{{ /if }}
+{{ if description }}
 <meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
+{{ /if }}
 {{ asset:image }}
 {{ glide:generate :src="url" preset="seo" absolute="true" }}
 <meta property="og:image" content="{{ url }}" />
