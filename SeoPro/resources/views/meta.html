@@ -1,10 +1,10 @@
 <title>{{ compiled_title | striptags }}</title>
-<meta name="description" content="{{ description | striptags | entities }}" />
+<meta name="description" content="{{ description | striptags | entities | trim }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="{{ title | striptags | entities }}" />
-<meta property="og:description" content="{{ description | striptags | entities }}" />
+<meta property="og:title" content="{{ title | striptags | entities | trim }}" />
+<meta property="og:description" content="{{ description | striptags | entities | trim }}" />
 <meta property="og:url" content="{{ canonical_url }}" />
-<meta property="og:site_name" content="{{ site_name | striptags | entities }}" />
+<meta property="og:site_name" content="{{ site_name | striptags | entities | trim }}" />
 <meta property="og:locale" content="{{ locale }}" />
 {{ alternate_locales }}
 <meta property="og:locale:alternate" content="{{ locale }}" />
@@ -13,8 +13,8 @@
 {{ if twitter_site }}
 <meta name="twitter:site" content="{{ twitter_site ensure_left="@" }}" />
 {{ /if }}
-<meta name="twitter:title" content="{{ title | striptags | entities }}" />
-<meta name="twitter:description" content="{{ description | striptags | entities }}" />
+<meta name="twitter:title" content="{{ title | striptags | entities | trim }}" />
+<meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
 {{ asset:image }}
 {{ glide:generate :src="url" preset="seo" absolute="true" }}
 <meta property="og:image" content="{{ url }}" />
