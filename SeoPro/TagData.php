@@ -58,13 +58,24 @@ class TagData
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
-            'canonical_url' => $this->model->absoluteUrl(),
+            'canonical_url' => $this->canonicalUrl(),
             'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
             'locale' => $this->locale(),
             'alternate_locales' => $this->alternateLocales(),
             'last_modified' => $this->lastModified(),
         ])->all();
+    }
+
+    public function canonicalUrl() {
+        $url = $this->model->absoluteUrl();
+
+        // Include pagination if present
+        if (app('request')->has('page')) {
+            $url .= '?page=' . app('request')->get('page');
+        }
+
+        return $url;
     }
 
     protected function parse($key, $item)
