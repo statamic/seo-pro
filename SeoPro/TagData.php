@@ -177,7 +177,7 @@ class TagData
             $value = substr($value, 0, 320) . '...';
         }
 
-        return $value;
+        return iconv("UTF-8", "UTF-8//IGNORE", $value);
     }
 
     protected function humans()
