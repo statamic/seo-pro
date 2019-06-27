@@ -8,6 +8,8 @@ Add `{{ seo_pro:meta }}` somewhere between your `<head>` tags.
 
 SEO settings will cascade down from the global defaults, to the collection level, and finally to the page/entry level.
 
+Empty meta tags will not be rendered, which allows you to optionally set your own tags with other means if you so choose.
+
 ### Defaults
 
 Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. The defaults will be used if you haven't set anything more specific at the collection or entry level.
