@@ -137,7 +137,7 @@ class TagData
             return site_locale();
         }
 
-        return Config::getFullLocale($this->model->locale());
+        return Config::getShortLocale($this->model->locale());
     }
 
     protected function alternateLocales()
@@ -152,7 +152,7 @@ class TagData
 
         return collect($alternates)->map(function ($locale) {
             return [
-                'locale' => Config::getFullLocale($locale),
+                'locale' => Config::getShortLocale($locale),
                 'url' => $this->model->in($locale)->absoluteUrl(),
             ];
         })->all();
