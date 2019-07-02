@@ -41,4 +41,13 @@ return [
     'change_frequency' => 'Frequência de Mudança',
     'change_frequency_instruct' => 'Uma dica para os mecanismos de pesquisa sobre a frequência com que se pode alterar uma página.',
 
+    'webmaster_tools_section' => 'Ferramentas do Webmaster',
+    'webmaster_tools_section_instruct' => "A verificação do seu website com os mecanismos de pesquisa populares ajudará a acompanhar o desempenho do rastreamento do mesmo.",
+
+    'bing_verification' => 'Código de Verificação do Bing',
+    'bing_verification_instruct' => 'Obtenha o seu código de verificação do Bing em [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
+
+    'google_verification' => 'Código de Verificação do Google',
+    'google_verification_instruct' => 'Obtenha o seu código de verificação do Google em [Google Search Console](https://search.google.com/search-console).',
+
 ];
