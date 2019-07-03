@@ -3,7 +3,7 @@
 return [
 
     'enabled' => 'Ativado',
-    'enabled_instruct' => 'Desativar este item irá excluí-lo dos relatórios e do sitemap e impedir que qualquer coisa seja renderizada por meio da tag de modelo.',
+    'enabled_instruct' => 'Desativando este item irá excluí-lo dos relatórios e do sitemap e impedir que qualquer coisa seja renderizada por meio da tag de modelo.',
 
     'title' => 'Meta Título',
     'title_instruct' => 'Cada URL em seu site deve ter um Meta Título exclusivo, idealmente com menos de 60 caracteres.',
