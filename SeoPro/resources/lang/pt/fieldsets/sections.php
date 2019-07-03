@@ -3,12 +3,12 @@
 return [
 
     'enabled' => 'Ativado',
-    'enabled_instruct' => 'Disabling this section will exclude it from reports and the sitemap, and prevent anything from being rendered through the template tag.',
+    'enabled_instruct' => 'Desativando esta seção irá excluí-la dos relatórios e do sitemap e impedir que qualquer coisa seja renderizada por meio da tag de modelo.',
 
     'meta_section' => 'Meta Dados',
 
     'title' => 'Meta Título',
-    'title_instruct' => "Pick an existing field to set as this section's **default** meta title.",
+    'title_instruct' => "Escolha um campo existente para definir como meta título **padrão** desta seção.",
 
     'description' => 'Meta Descrição',
     'description_instruct' => "Escolha um campo existente para definir como meta descrição **padrão** da seção.",
