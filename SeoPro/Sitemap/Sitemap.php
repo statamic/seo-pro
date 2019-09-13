@@ -5,6 +5,7 @@ namespace Statamic\Addons\SeoPro\Sitemap;
 use Statamic\API;
 use Statamic\Addons\SeoPro\TagData;
 use Statamic\Addons\SeoPro\Settings;
+use Statamic\API\Config;
 
 class Sitemap
 {
@@ -12,17 +13,19 @@ class Sitemap
 
     public function pages()
     {
-        return $this->items()->map(function ($content) {
+        $defaultSettings = Settings::load()->get('defaults');
+
+        return $this->items()->map(function ($content) use ($defaultSettings) {
             $cascade = $content->getWithCascade('seo', []);
 
             if ($cascade === false || array_get($cascade, 'sitemap') === false) {
-                return;
+                return false;
             }
 
             $data = (new TagData)
-                ->with(Settings::load()->get('defaults'))
+                ->with($defaultSettings)
                 ->with($cascade)
-                ->withCurrent($content->toArray())
+                ->withCurrent($content)
                 ->get();
 
             return (new Page)->with($data);
@@ -33,11 +36,25 @@ class Sitemap
 
     protected function items()
     {
-        return collect_content()
-            ->merge(API\Page::all())
-            ->merge($this->entries())
-            ->merge($this->terms())
-            ->removeUnpublished();
+        $items = collect_content()
+            ->merge(API\Page::all()->values())
+            ->merge($this->entries()->values())
+            ->merge($this->terms()->values())
+            ->removeUnpublished()
+            ->values();
+
+        foreach (Config::getOtherLocales() as $locale) {
+            $localizedItems = collect_content()
+                ->merge(API\Page::all())
+                ->merge($this->entries())
+                ->merge($this->terms())
+                ->localize($locale)
+                ->removeUnpublished()
+                ->values();
+            $items = $items->merge($localizedItems);
+        }
+
+        return $items;
     }
 
     protected function entries()

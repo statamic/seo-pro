@@ -154,6 +154,8 @@ class TagData
         if (method_exists($this->model, 'lastModified')) {
             return $this->model->lastModified();
         }
+
+        return null;
     }
 
     protected function locale()
@@ -176,11 +178,17 @@ class TagData
         $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
 
         return collect($alternates)->map(function ($locale) {
+            $localizedModel = $this->model->in($locale);
+            // Only include content if published in the alternate locale.
+            if (!$localizedModel->published()) {
+                return false;
+            }
+
             return [
                 'locale' => Config::getShortLocale($locale),
-                'url' => $this->model->in($locale)->absoluteUrl(),
+                'url' => $localizedModel->absoluteUrl(),
             ];
-        })->all();
+        })->filter()->all();
     }
 
     protected function parseDescriptionField($value)

@@ -37,4 +37,14 @@ class Page
     {
         return $this->data->get('priority');
     }
+
+    public function locale()
+    {
+        return $this->data->get('locale');
+    }
+
+    public function alternateLocales()
+    {
+        return $this->data->get('alternate_locales');
+    }
 }
