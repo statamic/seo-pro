@@ -2,20 +2,24 @@
 
 namespace Statamic\Addons\SeoPro\Sitemap;
 
+use Statamic\Addons\SeoPro\Events\CollectSitemapPagesEvent;
 use Statamic\API;
 use Statamic\Addons\SeoPro\TagData;
 use Statamic\Addons\SeoPro\Settings;
 use Statamic\API\Config;
+use Statamic\Extend\Extensible;
 
 class Sitemap
 {
+    use Extensible;
+
     const CACHE_KEY = 'seo-pro.sitemap';
 
     public function pages()
     {
         $defaultSettings = Settings::load()->get('defaults');
 
-        return $this->items()->map(function ($content) use ($defaultSettings) {
+        $pages = $this->items()->map(function ($content) use ($defaultSettings) {
             $cascade = $content->getWithCascade('seo', []);
 
             if ($cascade === false || array_get($cascade, 'sitemap') === false) {
@@ -32,6 +36,12 @@ class Sitemap
         })->filter()->sortBy(function ($page) {
             return substr_count(rtrim($page->path(), '/'), '/');
         });
+
+        // Emit an event to customize the collected pages.
+        $collectSitemapPagesEvent = new CollectSitemapPagesEvent($pages);
+        $this->emitEvent('collect_sitemap_pages', $collectSitemapPagesEvent);
+
+        return $collectSitemapPagesEvent->getPages();
     }
 
     protected function items()
