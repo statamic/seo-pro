@@ -17,6 +17,9 @@ return [
     'site_name_position' => 'Site Name Position',
     'site_name_position_instruct' => 'Optionally adjust the position for this page.',
 
+    'robots' => 'Robots',
+    'robots_instruct' => "Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.",
+
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
 

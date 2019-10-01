@@ -26,6 +26,12 @@ sections:
         inherit: false
         field:
           type: text
+      robots:
+        type: suggest
+        create: true
+        options:
+          - noindex
+          - nofollow
   image:
     fields:
       image_section:

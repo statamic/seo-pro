@@ -28,6 +28,16 @@ sections:
             after: After
             before: Before
             none: Disable
+      robots:
+        type: seo_pro.source
+        from_field: false
+        disableable: true
+        field:
+          type: suggest
+          create: true
+          options:
+            - noindex
+            - nofollow
       og_section:
         type: section
       image:
