@@ -58,6 +58,7 @@ class TagData
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
+            'og_title' => $this->ogTitle(),
             'canonical_url' => $this->canonicalUrl(),
             'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
@@ -133,6 +134,15 @@ class TagData
         }
 
         return $compiled;
+    }
+
+    protected function ogTitle()
+    {
+        if ($title = $this->data->get('title')) {
+            return $title;
+        }
+
+        return $this->compiledTitle();
     }
 
     protected function lastModified()

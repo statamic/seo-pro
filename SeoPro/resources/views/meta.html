@@ -5,8 +5,8 @@
 <meta name="description" content="{{ description | striptags | entities | trim }}" />
 {{ /if }}
 <meta property="og:type" content="website" />
-{{ if title }}
-<meta property="og:title" content="{{ title | striptags | entities | trim }}" />
+{{ if og_title }}
+<meta property="og:title" content="{{ og_title | striptags }}" />
 {{ /if }}
 {{ if description }}
 <meta property="og:description" content="{{ description | striptags | entities | trim }}" />
