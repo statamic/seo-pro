@@ -7,6 +7,24 @@
     </div>
 
     <div class="flex items-center mb-1">
+        <h2 class="flex-1">{{ trans_choice('cp.pages', 2) }}</h2>
+    </div>
+
+    <div class="card flush dossier">
+        <div class="dossier-table-wrapper">
+            <table class="dossier">
+                <tbody>
+                    <tr>
+                        <td class="cell-title first-cell">
+                            <a class="" href="{{ route('seopro.pages.edit') }}">{{ trans_choice('cp.pages', 2) }}</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="flex items-center mb-1">
         <h2 class="flex-1">{{ trans_choice('cp.collections', 2) }}</h2>
     </div>
 

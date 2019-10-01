@@ -14,6 +14,13 @@ routes:
     uses: SectionController@index
     as: seopro.sections.index
 
+  sections/pages:
+    uses: PagesController@edit
+    as: seopro.pages.edit
+  post@sections/pages:
+    uses: PagesController@update
+    as: seopro.pages.update
+
   sections/collections/{collection}:
     uses: CollectionController@edit
     as: seopro.collections.edit
