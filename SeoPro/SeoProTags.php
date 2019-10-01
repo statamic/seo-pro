@@ -15,13 +15,21 @@ class SeoProTags extends Tags
             return;
         }
 
-        $data = (new TagData)
+        return $this->render('meta', $this->metaData());
+    }
+
+    public function metaData()
+    {
+        return (new TagData)
             ->with(Settings::load()->get('defaults'))
             ->with(array_get($this->context, 'seo', []))
             ->withCurrent(array_get($this->context, 'page_object'))
             ->get();
+    }
 
-        return $this->render('meta', $data);
+    public function dumpMetaData()
+    {
+        return dd($this->metaData());
     }
 
     protected function render($template, $data = [])
