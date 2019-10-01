@@ -4,6 +4,7 @@ sections:
     fields:
       asset_container:
         type: asset_container
+        allow_blank: true
       og_image_dimensions:
         type: section
       open_graph_image_width:

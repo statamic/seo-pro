@@ -8,6 +8,7 @@ use Statamic\API\File;
 use Statamic\API\YAML;
 use Statamic\API\Collection;
 use Statamic\Extend\Listener;
+use Statamic\API\AssetContainer;
 use Illuminate\Support\Facades\Cache;
 use Statamic\Addons\SeoPro\Sitemap\Sitemap;
 
@@ -112,7 +113,7 @@ class SeoProListener extends Listener
 
     public function addToHead()
     {
-        $assetContainer = $this->getConfig('asset_container');
+        $assetContainer = $this->getConfig('asset_container', AssetContainer::all()->first()->handle());
 
         $suggestions = json_encode((new FieldSuggestions)->suggestions());
 
