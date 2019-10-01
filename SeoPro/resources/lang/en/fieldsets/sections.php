@@ -13,6 +13,12 @@ return [
     'description' => 'Meta Description',
     'description_instruct' => "Pick an existing field to set as this section's **default** meta description.",
 
+    'site_name' => 'Site Name',
+    'site_name_instruct' => 'Optionally disable the site name for this section.',
+
+    'site_name_position' => 'Site Name Position',
+    'site_name_position_instruct' => 'Optionally adjust the position for this section.',
+
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
 
