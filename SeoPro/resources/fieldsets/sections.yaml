@@ -14,6 +14,21 @@ sections:
         type: seo_pro.source
         field:
           type: text
+      site_name:
+        type: seo_pro.source
+        from_field: false
+        disableable: true
+        field:
+          type: text
+      site_name_position:
+        type: seo_pro.source
+        from_field: false
+        field:
+          type: select
+          options:
+            after: After
+            before: Before
+            none: Disable
       og_section:
         type: section
       image:

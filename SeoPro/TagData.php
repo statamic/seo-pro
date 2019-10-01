@@ -120,6 +120,10 @@ class TagData
             return $siteName;
         }
 
+        if (! $siteName) {
+            return $title;
+        }
+
         $compiled = '';
         $separator = $this->data->get('site_name_separator');
 
