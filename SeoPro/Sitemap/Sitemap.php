@@ -39,7 +39,7 @@ class Sitemap
 
         // Emit an event to customize the collected pages.
         $collectSitemapPagesEvent = new CollectSitemapPagesEvent($pages);
-        $this->emitEvent('collect_sitemap_pages', $collectSitemapPagesEvent);
+        $this->emitEvent('collectSitemapPages', $collectSitemapPagesEvent);
 
         return $collectSitemapPagesEvent->getPages();
     }
