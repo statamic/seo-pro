@@ -27,7 +27,8 @@ class SeoProServiceProvider extends ServiceProvider
         $server->setPresets($server->getPresets() + [
             'seo' => [
                 'w' => $this->getConfig('open_graph_image_width'),
-                'h' => $this->getConfig('open_graph_image_height')
+                'h' => $this->getConfig('open_graph_image_height'),
+                'fit' => 'crop',
             ]
         ]);
     }
