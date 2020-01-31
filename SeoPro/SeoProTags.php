@@ -34,6 +34,10 @@ class SeoProTags extends Tags
 
     private function getSectionDefaults($obj)
     {
+        if (! method_exists($obj, 'cascadingData')) {
+            return [];
+        }
+
         // The cascadingData method is exactly what's needed here, but it's
         // protected. Rather than update core and need to require the
         // latest Statamic, just cheat with some reflection.
