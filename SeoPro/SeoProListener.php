@@ -96,12 +96,10 @@ class SeoProListener extends Listener
             return;
         }
 
-        $sectionDefaults = $this->getSectionDefaults($data);
-        $currentValues = $data->get('seo', []);
-
         $vars = (new TagData)
             ->with(Settings::load()->get('defaults'))
-            ->with(array_merge($sectionDefaults, $currentValues))
+            ->with($this->getSectionDefaults($data))
+            ->with($data->get('seo', []))
             ->withCurrent($data)
             ->get();
 

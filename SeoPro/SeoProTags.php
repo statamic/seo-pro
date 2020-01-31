@@ -24,12 +24,11 @@ class SeoProTags extends Tags
     public function metaData()
     {
         $current = array_get($this->context, 'page_object');
-        $sectionDefaults = $this->getSectionDefaults($current);
-        $currentValues = array_get($this->context, 'seo', []);
 
         return (new TagData)
             ->with(Settings::load()->get('defaults'))
-            ->with(array_merge($sectionDefaults, $currentValues))
+            ->with($this->getSectionDefaults($current))
+            ->with(array_get($this->context, 'seo', []))
             ->withCurrent($current)
             ->get();
     }
