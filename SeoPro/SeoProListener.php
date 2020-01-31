@@ -14,6 +14,7 @@ use Statamic\Addons\SeoPro\Sitemap\Sitemap;
 
 class SeoProListener extends Listener
 {
+    use GetsSectionDefaults;
     use TranslatesFieldsets;
 
     public $events = [
@@ -95,9 +96,12 @@ class SeoProListener extends Listener
             return;
         }
 
+        $sectionDefaults = $this->getSectionDefaults($data);
+        $currentValues = $data->get('seo', []);
+
         $vars = (new TagData)
             ->with(Settings::load()->get('defaults'))
-            ->with($data->getWithCascade('seo', []))
+            ->with(array_merge($sectionDefaults, $currentValues))
             ->withCurrent($data)
             ->get();
 

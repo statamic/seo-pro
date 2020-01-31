@@ -10,6 +10,8 @@ use Statamic\Addons\SeoPro\Settings;
 
 class SeoProTags extends Tags
 {
+    use GetsSectionDefaults;
+
     public function meta()
     {
         if (array_get($this->context, 'seo') === false) {
@@ -30,22 +32,6 @@ class SeoProTags extends Tags
             ->with(array_merge($sectionDefaults, $currentValues))
             ->withCurrent($current)
             ->get();
-    }
-
-    private function getSectionDefaults($obj)
-    {
-        if (! method_exists($obj, 'cascadingData')) {
-            return [];
-        }
-
-        // The cascadingData method is exactly what's needed here, but it's
-        // protected. Rather than update core and need to require the
-        // latest Statamic, just cheat with some reflection.
-        $ref = new \ReflectionClass($obj);
-        $met = $ref->getMethod('cascadingData');
-        $met->setAccessible(true);
-        $data = $met->invokeArgs($obj, []);
-        return array_get($data, 'seo', []);
     }
 
     public function dumpMetaData()
