@@ -73,7 +73,7 @@ class TagData
 
         // Include pagination if present
         if (app('request')->has('page')) {
-            $url .= '?page=' . app('request')->get('page');
+            $url .= '?page=' . ((int) app('request')->get('page'));
         }
 
         return $url;
