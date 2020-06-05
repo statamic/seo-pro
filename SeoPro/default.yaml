@@ -29,3 +29,8 @@ humans:
 
     Standards: HTML5, CSS3
     Components: Statamic 2, Laravel, PHP, JavaScript
+robots:
+  enabled: true
+  content: |
+    User-agent: *
+    Disallow: /

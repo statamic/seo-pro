@@ -53,6 +53,9 @@ class SeoProListener extends Listener
             $item->add(Nav::item('seo-pro-humans')
                 ->title($this->trans('messages.humans_txt'))
                 ->route('seopro.humans.edit'));
+            $item->add(Nav::item('seo-pro-robots')
+                ->title($this->trans('messages.robots_txt'))
+                ->route('seopro.robots.edit'));
 
             $item->add(Nav::item('seo-pro-settings')
                 ->title(trans_choice('cp.settings', 2))

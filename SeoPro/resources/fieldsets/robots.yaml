@@ -1,0 +1,7 @@
+sections:
+  main:
+    fields:
+      enabled:
+        type: toggle
+      content:
+        type: textarea

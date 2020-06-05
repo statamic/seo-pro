@@ -5,6 +5,7 @@ return [
     'site_defaults' => 'Site Defaults',
     'section_defaults' => 'Section Defaults',
     'humans_txt' => 'Humans.txt',
+    'robots_txt' => 'Robots.txt',
     'reports' => 'Reports',
     'seo_reports' => 'SEO Reports',
     'generate_report' => 'Generate Report',

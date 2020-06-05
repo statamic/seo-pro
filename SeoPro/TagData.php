@@ -62,6 +62,7 @@ class TagData
             'canonical_url' => $this->canonicalUrl(),
             'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
+            'robots_txt' => $this->robots(),
             'locale' => $this->locale(),
             'alternate_locales' => $this->alternateLocales(),
             'last_modified' => $this->lastModified(),
@@ -200,6 +201,14 @@ class TagData
 
         if (array_get($config, 'enabled')) {
             return URL::makeAbsolute('humans.txt');
+        }
+    }
+    protected function robots()
+    {
+        $config = Settings::load()->get('robots');
+
+        if (array_get($config, 'enabled')) {
+            return URL::makeAbsolute('robots.txt');
         }
     }
 }

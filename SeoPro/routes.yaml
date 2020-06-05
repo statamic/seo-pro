@@ -41,6 +41,12 @@ routes:
   post@humans:
     uses: HumansController@update
     as: seopro.humans.update
+  robots:
+    uses: RobotsController@edit
+    as: seopro.robots.edit
+  post@robots:
+    uses: RobotsController@update
+    as: seopro.robots.update
 
   reports:
     uses: ReportController@index
