@@ -1,0 +1,19 @@
+{
+    "name": "statamic/seo-pro",
+    "autoload": {
+        "psr-4": {
+            "Statamic\\SeoPro\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Seo Pro",
+            "description": "Seo Pro addon"
+        },
+        "laravel": {
+            "providers": [
+                "Statamic\\SeoPro\\ServiceProvider"
+            ]
+        }
+    }
+}
