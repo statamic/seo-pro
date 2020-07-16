@@ -1,17 +1,17 @@
 <?php
 
-namespace Statamic\Addons\SeoPro;
+namespace Statamic\SeoPro;
 
-use Statamic\API\Str;
-use Statamic\API\URL;
-use Statamic\API\Data;
-use Statamic\API\Page;
+use Statamic\Support\Str;
+use Statamic\Facades\URL;
+use Statamic\Facades\Data;
+use Statamic\Facades\Entry;
 use Statamic\API\Parse;
-use Statamic\API\Config;
+use Statamic\Facades\Config;
 use Statamic\Routing\Route;
 use Statamic\Contracts\Data\Data as DataContract;
 
-class TagData
+class Cascade
 {
     protected $data;
     protected $current;
@@ -36,7 +36,12 @@ class TagData
             $this->model = $data;
         } else {
             $this->current = $data;
-            $this->model = Data::find($data['id']);
+            $this->model = Data::find($data->id());
+        }
+
+        // TODO: Why is Data::find() not finding terms?
+        if (is_null($this->model)) {
+            $this->model = \Statamic\Facades\Term::find($data->id());
         }
 
         return $this;
@@ -45,7 +50,7 @@ class TagData
     public function get()
     {
         if (! $this->current) {
-            $this->withCurrent(Page::whereUri('/'));
+            $this->withCurrent(Entry::findByUri('/'));
         }
 
         if (array_get($this->current, 'response_code') === 404) {
@@ -68,7 +73,13 @@ class TagData
         ])->all();
     }
 
-    public function canonicalUrl() {
+    public function value($key)
+    {
+        return $this->get()[$key] ?? null;
+    }
+
+    public function canonicalUrl()
+    {
         $url = $this->model->absoluteUrl();
 
         // Include pagination if present
@@ -196,10 +207,12 @@ class TagData
 
     protected function humans()
     {
-        $config = Settings::load()->get('humans');
+        return 'wip';
 
-        if (array_get($config, 'enabled')) {
-            return URL::makeAbsolute('humans.txt');
-        }
+        // $config = Settings::load()->get('humans');
+
+        // if (array_get($config, 'enabled')) {
+        //     return URL::makeAbsolute('humans.txt');
+        // }
     }
 }
