@@ -1,9 +1,12 @@
 <template>
-
     <div class="flex">
 
         <div class="source-type-select pr-2">
-            <select-fieldtype :data.sync="source" :options="sourceTypeSelectOptions"></select-fieldtype>
+            <v-select
+                :options="sourceTypeSelectOptions"
+                :reduce="option => option.value"
+                v-model="source"
+            />
         </div>
 
         <div class="flex-1">
@@ -11,26 +14,25 @@
                 {{ config.placeholder }}
             </div>
 
-            <div v-if="source === 'field'" class="source-field-select">
-                <suggest-fieldtype :data.sync="sourceField" :config="suggestConfig" :suggestions-prop="suggestSuggestions"></suggest-fieldtype>
+            <div v-else-if="source === 'field'" class="source-field-select">
+                <text-input v-model="sourceField" />
             </div>
 
             <component
-                v-if="source === 'custom'"
+                v-else-if="source === 'custom'"
                 :is="componentName"
                 :name="name"
-                :data.sync="customText"
                 :config="fieldConfig"
-                :leave-alert="true">
+                :value="value.value"
+                :meta="meta"
+                handle="source_value"
+                @input="updateValue">
             </component>
         </div>
     </div>
-
 </template>
 
-
 <style>
-
     .source-type-select {
         width: 20rem;
     }
@@ -44,9 +46,7 @@
         font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
         font-size: 12px;
     }
-
 </style>
-
 
 <script>
 export default {
@@ -74,36 +74,22 @@ export default {
             let options = [];
 
             if (this.config.field !== false) {
-                options.push({ text: 'Custom', value: 'custom' });
+                options.push({ label: 'Custom', value: 'custom' });
             }
 
             if (this.config.from_field !== false) {
-                options.unshift({ text: 'From Field', value: 'field' });
+                options.unshift({ label: 'From Field', value: 'field' });
             }
 
             if (this.config.inherit !== false) {
-                options.unshift({ text: 'Inherit', value: 'inherit' });
+                options.unshift({ label: 'Inherit', value: 'inherit' });
             }
 
             if (this.config.disableable) {
-                options.push({ text: 'Disable', value: 'disable' });
+                options.push({ label: 'Disable', value: 'disable' });
             }
 
             return options;
-        },
-
-        suggestConfig() {
-            return {
-                type: 'suggest',
-                mode: 'seo_pro',
-                max_items: 1,
-                create: true,
-                placeholder: translate('addons.SeoPro::messages.source_suggest_placeholder')
-            }
-        },
-
-        suggestSuggestions() {
-            return SeoPro.fieldSuggestions.filter(item => this.allowedFieldtypes.includes(item.type));
         },
 
         fieldConfig() {
@@ -115,40 +101,52 @@ export default {
     watch: {
 
         source(val) {
-            this.data.source = val;
+            this.value.source = val;
 
             if (val === 'field') {
-                this.data.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
+                this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
             } else {
-                this.data.value = this.customText;
+                this.value.value = this.customText;
             }
         },
 
         sourceField(val) {
-            this.data.value = Array.isArray(val) ? val[0] : val;
+            this.value.value = Array.isArray(val) ? val[0] : val;
         },
 
         customText(val) {
-            this.data.value = val;
+            this.value.value = val;
         }
 
     },
 
-    ready() {
+    mounted() {
         let types = this.config.allowed_fieldtypes || ['text', 'textarea', 'markdown', 'redactor'];
         this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
 
-        if (this.data.source === 'field') {
-            this.sourceField = [this.data.value];
+        if (this.value.source === 'field') {
+            this.sourceField = [this.value.value];
         } else {
-            this.customText = this.data.value;
+            this.customText = this.value.value;
         }
 
         // Set source after so that the suggest fields don't load before they potentially have data.
-        this.source = this.data.source;
+        this.source = this.value.source;
 
-        this.bindChangeWatcher();
-    }
+        // this.bindChangeWatcher();
+    },
+
+    methods: {
+
+        updateValue(value) {
+            let newValue = this.value;
+
+            newValue.value = value;
+
+            this.update(newValue);
+        },
+
+    },
 
 }
 </script>

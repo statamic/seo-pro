@@ -1,13 +1,15 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Fieldtypes;
+namespace Statamic\SeoPro\Fieldtypes;
 
-use Statamic\API\Str;
-use Statamic\Extend\Fieldtype;
-use Statamic\CP\FieldtypeFactory;
+use Statamic\Support\Str;
+use Statamic\Fields\Field;
+use Statamic\Fields\Fieldtype;
 
 class SourceFieldtype extends Fieldtype
 {
+    public static $handle = 'seo_pro_source';
+
     public $selectable = false;
 
     public function preProcess($data)
@@ -16,15 +18,19 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'field', 'value' => explode('@seo:', $data)[1]];
         }
 
-        if ($data === false && $this->getFieldConfig('disableable') === true) {
+        if ($data === false && $this->config('disableable') === true) {
             return ['source' => 'disable', 'value' => null];
         }
 
-        if (! $data && $this->getFieldConfig('inherit') !== false) {
-            return ['source' => 'inherit', 'value' => null];
+        $data = $this->sourceField()
+            ? $this->fieldtype()->preProcess($data)
+            : $data;
+
+        if (! $data && $this->config('inherit') !== false) {
+            return ['source' => 'inherit', 'value' => $data];
         }
 
-        return ['source' => 'custom', 'value' => $this->fieldtype()->preProcess($data)];
+        return ['source' => 'custom', 'value' => $data];
     }
 
     public function process($data)
@@ -44,10 +50,26 @@ class SourceFieldtype extends Fieldtype
         return $this->fieldtype()->process($data['value']);
     }
 
+    public function preload()
+    {
+        if (! $sourceField = $this->sourceField()) {
+            return null;
+        }
+
+        return $sourceField->setValue($this->field->value())->meta();
+    }
+
+    protected function sourceField()
+    {
+        if (! $config = $this->config('field')) {
+            return null;
+        }
+
+        return new Field(null, $config);
+    }
+
     protected function fieldtype()
     {
-        $config = $this->getFieldConfig('field');
-
-        return FieldtypeFactory::create(array_get($config, 'type'), $config);
+        return $this->sourceField()->fieldtype();
     }
 }
