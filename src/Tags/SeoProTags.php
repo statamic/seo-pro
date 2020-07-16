@@ -1,49 +1,53 @@
 <?php
 
-namespace Statamic\Addons\SeoPro;
+namespace Statamic\SeoPro\Tags;
 
-use ReflectionClass;
-use Statamic\API\File;
-use Statamic\API\Parse;
-use Statamic\Extend\Tags;
-use Statamic\Addons\SeoPro\Settings;
+use Statamic\Tags\Tags;
+use Statamic\SeoPro\Cascade;
 
 class SeoProTags extends Tags
 {
-    use GetsSectionDefaults;
+    protected static $handle = 'seo_pro';
 
+    /**
+     * The {{ seo_pro:meta }} tag.
+     *
+     * @return string
+     */
     public function meta()
     {
         if (array_get($this->context, 'seo') === false) {
             return;
         }
 
-        return $this->render('meta', $this->metaData());
+        return view('seo-pro::meta', $this->metaData());
     }
 
+    /**
+     * The {{ seo_pro:meta_data }} tag.
+     *
+     * @return string
+     */
     public function metaData()
     {
-        $current = array_get($this->context, 'page_object');
+        // $current = array_get($this->seo, 'page_object');
+        $current = $this->context['seo']->augmentable();
 
-        return (new TagData)
-            ->with(Settings::load()->get('defaults'))
-            ->with($this->getSectionDefaults($current))
+        return (new Cascade)
+            ->with(config('statamic.seo-pro.defaults'))
+            // ->with($this->getSectionDefaults($current))
             ->with(array_get($this->context, 'seo', []))
             ->withCurrent($current)
             ->get();
     }
 
+    /**
+     * The {{ seo_pro:dump_meta_data }} tag.
+     *
+     * @return string
+     */
     public function dumpMetaData()
     {
         return dd($this->metaData());
-    }
-
-    protected function render($template, $data = [])
-    {
-        $path = "{$this->getDirectory()}/resources/views/{$template}.html";
-
-        $contents = File::get($path);
-
-        return Parse::template($contents, $data);
     }
 }
