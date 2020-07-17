@@ -73,7 +73,12 @@ class ServiceProvider extends AddonServiceProvider
         Nav::extend(function ($nav) {
             $nav->tools('SEO Pro')
                 ->route('seo-pro.reports.index')
-                ->icon('hierarchy-files');
+                ->icon('seo-search-graph')
+                ->children([
+                    'Reports' => cp_route('seo-pro.reports.index'),
+                    'Site Defaults' => cp_route('seo-pro.site-defaults.edit'),
+                    'Section Defaults' => cp_route('seo-pro.section-defaults.index'),
+                ]);
         });
 
         return $this;
