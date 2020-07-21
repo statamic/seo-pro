@@ -2,48 +2,66 @@
 
 namespace Statamic\SeoPro;
 
-use Statamic\Events\BlueprintFound;
-use Statamic\Support\Arr;
+use Statamic\Events;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 use Statamic\Fields\FieldTransformer;
 use Statamic\Statamic;
+use Statamic\Support\Arr;
 
 class Blueprint
 {
+    const DATA_PROPERTY = [
+        Events\EntryBlueprintFound::class => 'entry',
+        Events\TermBlueprintFound::class => 'term',
+    ];
+
     protected $blueprint;
     protected $data;
 
     /**
      * Instantiate blueprint found event handler.
      *
-     * @param BlueprintFound $event
+     * @param mixed $event
      */
-    public function __construct(BlueprintFound $event)
+    public function __construct($event)
     {
         $this->blueprint = $event->blueprint;
-        $this->data = $event->data;
+        $this->data = $this->getEventData($event);
     }
 
     /**
      * Instantiate blueprint found event handler.
      *
-     * @param BlueprintFound $event
+     * @param mixed $event
      * @return static
      */
-    public static function on(BlueprintFound $event)
+    public static function on($event)
     {
         return new static($event);
     }
 
     /**
      * Add SEO section and fields to blueprint.
-     *
-     * @param BlueprintFound $event
      */
     public function addSeoFields()
     {
         $this->blueprint->ensureFieldInSection('seo', $this->seoField(), __('SEO'));
+    }
+
+    /**
+     * Get event data.
+     *
+     * @param mixed $event
+     * @return mixed
+     */
+    protected function getEventData($event)
+    {
+        $eventClass = get_class($event);
+
+        $dataProperty = static::DATA_PROPERTY[$eventClass];
+
+        return $event->{$dataProperty};
     }
 
     /**
