@@ -54,6 +54,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonViews()
     {
+        $this->loadViewsFrom(__DIR__.'/../resources/views/generated', 'seo-pro');
+
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
         ]);
