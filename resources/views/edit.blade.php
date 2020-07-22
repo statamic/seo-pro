@@ -1,22 +1,22 @@
-@extends('layout')
-@section('content-class', 'publishing')
+@extends('statamic::layout')
 
 @section('content')
 
-    <script>
-        Statamic.Publish = {
-            contentData: {!! json_encode($data) !!},
-            fieldset: {!! json_encode($fieldset) !!},
-            suggestions: {!! json_encode($suggestions) !!}
-        };
-    </script>
+    @if (isset($breadcrumbTitle) && isset($breadcrumbUrl))
+        <header>
+            @include('statamic::partials.breadcrumb', [
+                'url' => $breadcrumbUrl,
+                'title' => $breadcrumbTitle
+            ])
+            <h1>@yield('title')</h1>
+        </header>
+    @endif
 
-    <publish
+    <publish-form
         title="{{ $title }}"
-        submit-url="{{ $submitUrl }}"
-        :update-title-on-save="false"
-        content-type="addon"
-        :meta-fields="false"
-    ></publish>
-
+        action="{{ $action }}"
+        :blueprint='@json($blueprint)'
+        :meta='@json($meta)'
+        :values='@json($values)'
+    ></publish-form>
 @stop
