@@ -15,6 +15,7 @@
             </div>
 
             <div v-else-if="source === 'field'" class="source-field-select">
+                <!-- TODO: Implement field suggestions v-select -->
                 <text-input v-model="sourceField" />
             </div>
 

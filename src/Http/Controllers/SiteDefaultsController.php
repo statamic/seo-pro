@@ -150,7 +150,7 @@ class SiteDefaultsController extends CpController
                                 'default' => false,
                                 'disableable' => true,
                                 'allowed_fieldtypes' => [
-                                    'assets', // TODO: 'from field' dropdown should only suggest assets fields
+                                    'assets',
                                 ],
                                 'field' => $this->getAssetFieldConfig(),
                             ],

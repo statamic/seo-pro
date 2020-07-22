@@ -136,7 +136,7 @@ class Fields
                     'placeholder' => $this->getPlaceholder('image'),
                     'type' => 'seo_pro_source',
                     'allowed_fieldtypes' => [
-                        'assets', // ???
+                        'assets',
                     ],
                     'field' => $this->getAssetFieldConfig(),
                 ],
