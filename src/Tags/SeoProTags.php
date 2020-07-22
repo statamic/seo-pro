@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Tags;
 
 use Statamic\Tags\Tags;
 use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\SiteDefaults;
 
 class SeoProTags extends Tags
 {
@@ -30,11 +31,12 @@ class SeoProTags extends Tags
      */
     public function metaData()
     {
+        // TODO: Is `augmentable()` okay to use?
         // $current = array_get($this->seo, 'page_object');
         $current = $this->context['seo']->augmentable();
 
         return (new Cascade)
-            ->with(config('statamic.seo-pro.defaults'))
+            ->with(SiteDefaults::load()->all())
             // ->with($this->getSectionDefaults($current))
             ->with(array_get($this->context, 'seo', []))
             ->withCurrent($current)
