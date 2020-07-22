@@ -29,11 +29,11 @@ return [
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL when shared on social networks.',
 
-    'twitter_section' => 'Twitter',
-    'twitter_section_instruct' => 'We automatically generate most Twitter Card fields from your meta data and site configuration.',
+    'social_section' => 'Twitter',
+    'social_section_instruct' => 'We automatically generate most Twitter Card fields from your meta data and site configuration.',
 
-    'twitter_site' => 'Twitter Handle',
-    'twitter_site_instruct' => '_(Optional)_ Set the twitter handle that corresponds to the site.',
+    'twitter_handle' => 'Twitter Handle',
+    'twitter_handle_instruct' => '_(Optional)_ Set the twitter handle that corresponds to the site.',
 
     'sitemap_section' => 'Site Map',
     'sitemap_section_instruct' => "Choose your default sitemap settings. If you're not sure, leave them blank for the standard default values.",
@@ -44,8 +44,8 @@ return [
     'change_frequency' => 'Change Frequency',
     'change_frequency_instruct' => 'A hint to search engines on how frequently the page is likely to change.',
 
-    'webmaster_tools_section' => 'Webmaster Tools',
-    'webmaster_tools_section_instruct' => "Verifying your site with popular search engines will help you track how well they're crawling your site.",
+    'search_section' => 'Search Engines',
+    'search_section_instruct' => "Verifying your site with popular search engines will help you track how well they're crawling your site.",
 
     'bing_verification' => 'Bing Verification Code',
     'bing_verification_instruct' => 'Get your Bing verification code in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',

@@ -26,11 +26,11 @@ return [
     'image' => 'Image',
     'image_instruct' => 'Choisissez un champ d\'image par défaut pour représenter chaque URL lorsqu\'il est partagé sur les réseaux sociaux.',
 
-    'twitter_section' => 'Twitter',
-    'twitter_section_instruct' => 'Nous générons automatiquement la plupart des champs de la carte Twitter à partir de vos métadonnées et de la configuration de votre site..',
+    'social_section' => 'Twitter',
+    'social_section_instruct' => 'Nous générons automatiquement la plupart des champs de la carte Twitter à partir de vos métadonnées et de la configuration de votre site..',
 
-    'twitter_site' => 'Twitter Handle',
-    'twitter_site_instruct' => '_ (Facultatif) _ Définissez le descripteur Twitter correspondant au site.',
+    'twitter_handle' => 'Twitter Handle',
+    'twitter_handle_instruct' => '_ (Facultatif) _ Définissez le descripteur Twitter correspondant au site.',
 
     'sitemap_section' => 'Site Map',
     'sitemap_section_instruct' => "Choisissez vos paramètres par défaut de sitemap. En cas de doute, laissez ces champs vides pour les valeurs par défaut standard.",

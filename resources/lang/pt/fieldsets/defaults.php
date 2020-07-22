@@ -26,11 +26,11 @@ return [
     'image' => 'Imagem',
     'image_instruct' => 'Escolha um campo de imagem padrão para representar cada URL quando partilhado nas redes sociais.',
 
-    'twitter_section' => 'Twitter',
-    'twitter_section_instruct' => 'Nós geramos automaticamente a maioria dos campos do Twitter Card a partir dos seus metadados e configuração do site.',
+    'social_section' => 'Twitter',
+    'social_section_instruct' => 'Nós geramos automaticamente a maioria dos campos do Twitter Card a partir dos seus metadados e configuração do site.',
 
-    'twitter_site' => 'Identificador Twitter',
-    'twitter_site_instruct' => '_(Opcional)_ Definir o identificador do Twitter que corresponde ao site.',
+    'twitter_handle' => 'Identificador Twitter',
+    'twitter_handle_instruct' => '_(Opcional)_ Definir o identificador do Twitter que corresponde ao site.',
 
     'sitemap_section' => 'Site Map',
     'sitemap_section_instruct' => "Escolha suas configurações padrão de sitemap. Se não tiver a certeza, deixe em branco para os valores padrão.",
@@ -41,8 +41,8 @@ return [
     'change_frequency' => 'Frequência de Mudança',
     'change_frequency_instruct' => 'Uma dica para os mecanismos de pesquisa sobre a frequência com que se pode alterar uma página.',
 
-    'webmaster_tools_section' => 'Ferramentas do Webmaster',
-    'webmaster_tools_section_instruct' => "A verificação do seu website com os mecanismos de pesquisa populares ajudará a acompanhar o desempenho do rastreamento do mesmo.",
+    'search_section' => 'Ferramentas do Webmaster',
+    'search_section_instruct' => "A verificação do seu website com os mecanismos de pesquisa populares ajudará a acompanhar o desempenho do rastreamento do mesmo.",
 
     'bing_verification' => 'Código de Verificação do Bing',
     'bing_verification_instruct' => 'Obtenha o seu código de verificação do Bing em [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',

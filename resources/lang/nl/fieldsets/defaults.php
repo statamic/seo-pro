@@ -26,11 +26,11 @@ return [
     'image' => 'Afbeelding',
     'image_instruct' => 'Kies een standaard afbeeldingenveld die bij het delen van iedere willekeurige URL op sociale netwerken gebruikt kan worden.',
 
-    'twitter_section' => 'Twitter',
-    'twitter_section_instruct' => 'We genereren automatisch de meeste Twitter kaartvelden op basis van uw metadata en siteconfiguratie.',
+    'social_section' => 'Twitter',
+    'social_section_instruct' => 'We genereren automatisch de meeste Twitter kaartvelden op basis van uw metadata en siteconfiguratie.',
 
-    'twitter_site' => 'Gebruikersnaam Twitter',
-    'twitter_site_instruct' => '_(Optioneel)_ Stel de gebruikersnaam van Twitter in die bij uw site hoort..',
+    'twitter_handle' => 'Gebruikersnaam Twitter',
+    'twitter_handle_instruct' => '_(Optioneel)_ Stel de gebruikersnaam van Twitter in die bij uw site hoort..',
 
     'sitemap_section' => 'Sitemap',
     'sitemap_section_instruct' => "Kies uw standaard sitemapinstellingen. Als uw het niet zeker weet, laat deze velden dan leeg en gebruik de standaardinstellingen.",

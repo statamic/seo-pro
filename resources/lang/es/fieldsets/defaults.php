@@ -26,11 +26,11 @@ return [
     'image' => 'Imágen',
     'image_instruct' => 'Selecciona un campo de imágen por defecto que represente cada URL cuando sea compartida en las redes sociales.',
 
-    'twitter_section' => 'Twitter',
-    'twitter_section_instruct' => 'Generamos de forma automatica la mayoría de campos para la tarjeta de Twitter de tus metadatos y confitguración del sitio.',
+    'social_section' => 'Twitter',
+    'social_section_instruct' => 'Generamos de forma automatica la mayoría de campos para la tarjeta de Twitter de tus metadatos y confitguración del sitio.',
 
-    'twitter_site' => 'Usuario de Twitter',
-    'twitter_site_instruct' => '_(Opcional)_ Establece el nombre de usuario de twitter que está asociado a este sitio.',
+    'twitter_handle' => 'Usuario de Twitter',
+    'twitter_handle_instruct' => '_(Opcional)_ Establece el nombre de usuario de twitter que está asociado a este sitio.',
 
     'sitemap_section' => 'Site Map',
     'sitemap_section_instruct' => "Selecciona tu configuración del sitemap por defecto. Si no estás seguro, déjalos en blaco para que se usen los valores por defecto.",
