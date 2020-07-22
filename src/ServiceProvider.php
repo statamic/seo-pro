@@ -76,6 +76,7 @@ class ServiceProvider extends AddonServiceProvider
             $nav->tools('SEO Pro')
                 ->route('seo-pro.reports.index')
                 ->icon('seo-search-graph')
+                ->active('seo-pro')
                 ->children([
                     'Reports' => cp_route('seo-pro.reports.index'),
                     'Site Defaults' => cp_route('seo-pro.site-defaults.edit'),
