@@ -18,13 +18,19 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'field', 'value' => explode('@seo:', $data)[1]];
         }
 
-        if ($data === false && $this->config('disableable') === true) {
-            return ['source' => 'disable', 'value' => null];
+        $originalData = $data;
+
+        if ($data === false) {
+            $data = null;
         }
 
         $data = $this->sourceField()
             ? $this->fieldtype()->preProcess($data)
             : $data;
+
+        if ($originalData === false && $this->config('disableable') === true) {
+            return ['source' => 'disable', 'value' => $data];
+        }
 
         if (! $data && $this->config('inherit') !== false) {
             return ['source' => 'inherit', 'value' => $data];
@@ -56,7 +62,11 @@ class SourceFieldtype extends Fieldtype
             return null;
         }
 
-        return $sourceField->setValue($this->field->value())->meta();
+        $value = is_array($originalValue = $this->field->value())
+            ? $originalValue['value']
+            : $originalValue;
+
+        return $sourceField->setValue($value)->process()->meta();
     }
 
     protected function sourceField()
