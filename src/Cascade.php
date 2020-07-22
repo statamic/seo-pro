@@ -35,7 +35,7 @@ class Cascade
             $this->current = $data->toArray();
             $this->model = $data;
         } else {
-            $this->current = $data;
+            $this->current = $data->data();
             $this->model = Data::find($data->id());
         }
 
@@ -207,12 +207,8 @@ class Cascade
 
     protected function humans()
     {
-        return 'wip';
-
-        // $config = Settings::load()->get('humans');
-
-        // if (array_get($config, 'enabled')) {
-        //     return URL::makeAbsolute('humans.txt');
-        // }
+        if (config('statamic.seo-pro.humans.enabled')) {
+            return URL::makeAbsolute(Str::ensureLeft(config('statamic.seo-pro.humans.url'), '/'));
+        }
     }
 }

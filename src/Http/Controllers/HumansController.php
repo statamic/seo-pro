@@ -4,14 +4,14 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\SiteDefaults;
 
 class HumansController extends Controller
 {
     public function show()
     {
         $cascade = (new Cascade)
-            ->with(config('statamic.seo-pro.defaults'))
-            // ->with($this->getSectionDefaults($this->data))
+            ->with(SiteDefaults::load()->all())
             ->get();
 
         $contents = view('seo-pro::humans', $cascade);
