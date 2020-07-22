@@ -1,81 +1,41 @@
-@extends('layout')
+@extends('statamic::layout')
 
 @section('content')
 
     <div class="flex items-center mb-3">
-        <h1 class="flex-1">{{ $title }}</h1>
+        <h1 class="flex-1">{{ __('seo-pro::messages.section_defaults') }}</h1>
     </div>
 
-    <div class="flex items-center mb-1">
-        <h2 class="flex-1">{{ trans_choice('cp.pages', 2) }}</h2>
-    </div>
-
-    <div class="card flush dossier">
-        <div class="dossier-table-wrapper">
-            <table class="dossier">
-                <tbody>
+    <h3 class="little-heading pl-0 mb-1">{{ __('Collections') }}</h3>
+    <div class="card p-0 mb-2">
+        <table class="data-table">
+            @foreach (Statamic\Facades\Collection::all() as $collection)
                     <tr>
-                        <td class="cell-title first-cell">
-                            <a class="" href="{{ route('seopro.pages.edit') }}">{{ trans_choice('cp.pages', 2) }}</a>
+                        <td>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 mr-2">@svg('content-writing')</div>
+                                <a href="{{ cp_route('seo-pro.section-defaults.collections.edit', $collection) }}">{{ $collection->title() }}</a>
+                            </div>
                         </td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
+            @endforeach
+        </table>
     </div>
 
-    <div class="flex items-center mb-1">
-        <h2 class="flex-1">{{ trans_choice('cp.collections', 2) }}</h2>
+    <h3 class="little-heading pl-0 mb-1">{{ __('Taxonomies') }}</h3>
+    <div class="card p-0 mb-2">
+        <table class="data-table">
+            @foreach (Statamic\Facades\Taxonomy::all() as $taxonomy)
+                <tr>
+                    <td>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 mr-2">@svg('tags')</div>
+                            <a href="{{ cp_route('seo-pro.section-defaults.taxonomies.edit', $taxonomy) }}">{{ $taxonomy->title() }}</a>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        </table>
     </div>
-
-    @if ($collections->isEmpty())
-        <p class="card text-xs text-grey">{{ translate('addons.SeoPro::messages.no_collections') }}</p>
-    @else
-        <div class="card flush dossier">
-            <div class="dossier-table-wrapper">
-                <table class="dossier">
-                    <tbody>
-                        @foreach ($collections as $collection)
-                        <tr>
-                            <td class="cell-title first-cell">
-                                <span class="column-label">Title</span>
-                                <a class="" href="{{ route('seopro.collections.edit', ['collection' => $collection->path()]) }}">
-                                    {{ $collection->title() }}
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endif
-
-    <div class="flex items-center mb-1">
-        <h2 class="flex-1">{{ trans_choice('cp.taxonomies', 2) }}</h2>
-    </div>
-
-    @if ($taxonomies->isEmpty())
-        <p class="card text-xs text-grey">{{ translate('addons.SeoPro::messages.no_taxonomies') }}</p>
-    @else
-        <div class="card flush dossier">
-            <div class="dossier-table-wrapper">
-                <table class="dossier">
-                    <tbody>
-                        @foreach ($taxonomies as $taxonomy)
-                        <tr>
-                            <td class="cell-title first-cell">
-                                <span class="column-label">Taxonomies</span>
-                                <a class="" href="{{ route('seopro.taxonomies.edit', ['taxonomy' => $taxonomy->path()]) }}">
-                                    {{ $taxonomy->title() }}
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endif
 
 @stop
