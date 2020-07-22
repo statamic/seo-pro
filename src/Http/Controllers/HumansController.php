@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Http\Controllers;
 
+use Illuminate\Routing\Controller;
 use Statamic\SeoPro\Cascade;
 
 class HumansController extends Controller
