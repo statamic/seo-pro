@@ -1,8 +1,8 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Reporting\Rules;
+namespace Statamic\SeoPro\Reporting\Rules;
 
-use Statamic\Addons\SeoPro\Reporting\Rule;
+use Statamic\SeoPro\Reporting\Rule;
 
 class UniqueTitleTag extends Rule
 {

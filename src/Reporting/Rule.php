@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Reporting;
+namespace Statamic\SeoPro\Reporting;
 
 abstract class Rule
 {

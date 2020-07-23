@@ -1,9 +1,9 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Reporting\Rules;
+namespace Statamic\SeoPro\Reporting\Rules;
 
-use Statamic\API\Str;
-use Statamic\Addons\SeoPro\Reporting\Rule;
+use Statamic\Support\Str;
+use Statamic\SeoPro\Reporting\Rule;
 
 class NoUnderscoresInUrl extends Rule
 {

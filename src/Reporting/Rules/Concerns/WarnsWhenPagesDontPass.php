@@ -1,8 +1,8 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Reporting\Rules\Concerns;
+namespace Statamic\SeoPro\Reporting\Rules\Concerns;
 
-use Statamic\Addons\SeoPro\Reporting\Page;
+use Statamic\SeoPro\Reporting\Page;
 
 trait WarnsWhenPagesDontPass
 {
