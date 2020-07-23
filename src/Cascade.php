@@ -39,11 +39,6 @@ class Cascade
             $this->model = Data::find($data->id());
         }
 
-        // TODO: Why is Data::find() not finding terms?
-        if (is_null($this->model)) {
-            $this->model = \Statamic\Facades\Term::find($data->id());
-        }
-
         return $this;
     }
 
