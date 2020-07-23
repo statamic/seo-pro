@@ -107,9 +107,7 @@ class Report implements Arrayable, Jsonable
 
     protected function createPages()
     {
-        return $this->pages = $this
-            ->pagesFromContent()
-            ->merge($this->pagesFromRoutes());
+        return $this->pages = $this->pagesFromContent();
     }
 
     protected function pagesFromContent()
@@ -134,34 +132,6 @@ class Report implements Arrayable, Jsonable
                     ->setReport($this);
             })
             ->filter();
-    }
-
-    protected function pagesFromRoutes()
-    {
-        // TODO: Re-implement pages from routes.
-        return collect();
-
-        $router = new Router($routes = Config::get('routes.routes'));
-        $routes = collect($router->standardize($routes));
-
-        return $routes->filterWithKey(function ($data, $route) {
-            return ! str_contains($route, '{');
-        })->filter(function ($data) {
-            return array_get($data, 'content_type', 'html') === 'html';
-        })->map(function ($data, $route) use ($router) {
-            return $router->getExactRoute($route, $route, $data);
-        })->map(function ($route) {
-            $data = (new TagData)
-                ->with(SiteDefaults::load()->all())
-                ->with($route->get('seo', []))
-                ->withCurrent($route)
-                ->get();
-
-            return (new Page)
-                ->setId('route:'.$route->absoluteUrl())
-                ->setData($data)
-                ->setReport($this);
-        });
     }
 
     public function loadPages()
