@@ -1,18 +1,21 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Commands;
+namespace Statamic\SeoPro\Commands;
 
-use Statamic\Extend\Command;
-use Statamic\Addons\SeoPro\Reporting\Report;
+use Illuminate\Console\Command;
+use Statamic\Console\RunsInPlease;
+use Statamic\SeoPro\Reporting\Report;
 
 class GenerateReportCommand extends Command
 {
+    use RunsInPlease;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'seopro:report:generate {--report= : The ID of a report to generate. }';
+    protected $signature = 'statamic:seopro:generate-report {--report= : The ID of a report to generate. }';
 
     /**
      * The console command description.
