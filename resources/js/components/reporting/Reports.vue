@@ -2,23 +2,22 @@
 
     <div>
 
+        <div v-if="currentReportId" @click="currentReportId = null">
+            <breadcrumb title="Reports" />
+        </div>
+
         <div class="flex items-center mb-3">
             <h1 class="flex-1">{{ title }}</h1>
             <a href=""
-                v-if="showingReport"
-                @click.prevent="currentReportId = null"
-                class="btn btn-default mr-2">
-                &larr; {{ translate('addons.SeoPro::messages.back_to_reports') }}
-            </a>
-            <a href=""
                 @click.prevent="generateReport"
                 class="btn btn-primary"
-                v-text="translate('addons.SeoPro::messages.generate_report')">
+                v-text="__('seo-pro::messages.generate_report')">
             </a>
         </div>
 
         <seo-report-listing
             v-if="showingListing"
+            :route="listingRoute"
             @report-selected="selectReport"
         ></seo-report-listing>
 
@@ -31,14 +30,21 @@
 
 </template>
 
-
 <script>
+import SeoReportListing from './Listing';
+import SeoReport from './Report';
+
 export default {
 
     components: {
-        SeoReport: require('./Report.vue'),
-        SeoReportListing: require('./Listing.vue')
+        SeoReportListing,
+        SeoReport,
     },
+
+    props: [
+        'listingRoute',
+        'generateRoute',
+    ],
 
     data() {
         return {
@@ -72,12 +78,10 @@ export default {
             this.loading = true;
             this.currentReportId = null;
 
-            // this.$nextTick(() => {
-                this.$http.post(cp_url('addons/seo-pro/reports')).then(response => {
-                    this.currentReportId = response.data;
-                    this.loading = false;
-                });
-            // });
+            Statamic.$request.post(this.generateRoute).then(response => {
+                this.currentReportId = response.data;
+                this.loading = false;
+            });
         }
 
     }
