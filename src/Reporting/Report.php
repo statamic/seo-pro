@@ -1,15 +1,17 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Reporting;
+namespace Statamic\SeoPro\Reporting;
 
-use Statamic\API\File;
-use Statamic\API\YAML;
-use Statamic\API\Config;
-use Statamic\API\Folder;
-use Statamic\API\Content;
+use Carbon\Carbon;
+use Statamic\Facades\File;
+use Statamic\Facades\YAML;
+use Statamic\Facades\Config;
+use Statamic\Facades\Folder;
+use Statamic\Facades\Entry;
+use Statamic\Facades\Term;
 use Statamic\Routing\Router;
-use Statamic\Addons\SeoPro\TagData;
-use Statamic\Addons\SeoPro\Settings;
+use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\SiteDefaults;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -63,7 +65,7 @@ class Report implements Arrayable, Jsonable
 
     public function date()
     {
-        return carbon($this->date);
+        return Carbon::parse($this->date);
     }
 
     public function generate()
@@ -112,28 +114,33 @@ class Report implements Arrayable, Jsonable
 
     protected function pagesFromContent()
     {
-        return Content::all()->map(function ($content) {
-            $cascade = $content->getWithCascade('seo');
+        return $this->allContent()
+            ->map(function ($content) {
+                $cascade = $content->value('seo');
 
-            if ($cascade === false) {
-                return;
-            }
+                if ($cascade === false) {
+                    return;
+                }
 
-            $data = (new TagData)
-                ->with(Settings::load()->get('defaults'))
-                ->with($cascade ?: [])
-                ->withCurrent($content)
-                ->get();
+                $data = (new Cascade)
+                    ->with(SiteDefaults::load()->all())
+                    ->with($cascade ?: [])
+                    ->withCurrent($content)
+                    ->get();
 
-            return (new Page)
-                ->setId($content->id())
-                ->setData($data)
-                ->setReport($this);
-        })->filter();
+                return (new Page)
+                    ->setId($content->id())
+                    ->setData($data)
+                    ->setReport($this);
+            })
+            ->filter();
     }
 
     protected function pagesFromRoutes()
     {
+        // TODO: Re-implement pages from routes.
+        return collect();
+
         $router = new Router($routes = Config::get('routes.routes'));
         $routes = collect($router->standardize($routes));
 
@@ -145,7 +152,7 @@ class Report implements Arrayable, Jsonable
             return $router->getExactRoute($route, $route, $data);
         })->map(function ($route) {
             $data = (new TagData)
-                ->with(Settings::load()->get('defaults'))
+                ->with(SiteDefaults::load()->all())
                 ->with($route->get('seo', []))
                 ->withCurrent($route)
                 ->get();
@@ -159,7 +166,7 @@ class Report implements Arrayable, Jsonable
 
     public function loadPages()
     {
-        $dir = temp_path(sprintf('/seopro/reports/%s/pages', $this->id));
+        $dir = storage_path(sprintf('statamic/seopro/reports/%s/pages', $this->id));
         $files = Folder::getFilesRecursively($dir);
 
         $this->pages = collect($files)->map(function ($file) {
@@ -214,7 +221,7 @@ class Report implements Arrayable, Jsonable
         $array = [];
 
         foreach ($this->results() as $class => $result) {
-            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
+            $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
 
             $rule = (new $class)->setReport($this);
 
@@ -244,7 +251,7 @@ class Report implements Arrayable, Jsonable
 
     public static function all()
     {
-        $folders = collect(Folder::getFolders(temp_path('seopro/reports')));
+        $folders = collect(Folder::getFolders(static::preparePath()));
 
         if ($folders->isEmpty()) {
             return $folders;
@@ -285,7 +292,7 @@ class Report implements Arrayable, Jsonable
 
     public function path()
     {
-        return temp_path('seopro/reports/' . $this->id . '/report.yaml');
+        return storage_path('statamic/seopro/reports/' . $this->id . '/report.yaml');
     }
 
     public function exists()
@@ -340,8 +347,8 @@ class Report implements Arrayable, Jsonable
 
     public function defaults()
     {
-        return collect((new TagData)
-            ->with(Settings::load()->get('defaults'))
+        return collect((new Cascade)
+            ->with(SiteDefaults::load()->all())
             ->get());
     }
 
@@ -359,7 +366,7 @@ class Report implements Arrayable, Jsonable
         }
 
         foreach ($this->results as $class => $result) {
-            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
+            $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
             $rule = new $class;
             $rule->setReport($this)->load($result);
 
@@ -370,5 +377,24 @@ class Report implements Arrayable, Jsonable
         $score = ($maxPoints - $demerits) / $maxPoints * 100;
 
         return $this->score = round($score);
+    }
+
+    public static function preparePath($path = null)
+    {
+        $path = collect([storage_path('statamic/seopro/reports'), $path])->filter()->implode('/');
+
+        if (! File::exists($path)) {
+            File::makeDirectory($path, 0755, true);
+        }
+
+        return $path;
+    }
+
+    protected function allContent()
+    {
+        $entries = Entry::all()->all();
+        $terms = Term::all()->all();
+
+        return collect(array_merge($entries, $terms));
     }
 }

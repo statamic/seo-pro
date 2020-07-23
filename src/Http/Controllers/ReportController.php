@@ -1,16 +1,17 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Controllers;
+namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Statamic\Addons\SeoPro\Reporting\Report;
+use Statamic\Http\Controllers\CP\CpController;
+use Statamic\SeoPro\Reporting\Report;
 
-class ReportController extends Controller
+class ReportController extends CpController
 {
     public function index(Request $request)
     {
         if (! $request->ajax()) {
-            return $this->view('reports', [
+            return view('seo-pro::reports', [
                 'title' => 'SEO Reports',
             ]);
         }

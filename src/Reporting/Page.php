@@ -1,10 +1,11 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Reporting;
+namespace Statamic\SeoPro\Reporting;
 
-use Statamic\API\File;
-use Statamic\API\YAML;
-use Statamic\API\Content;
+use Statamic\Facades\Data;
+use Statamic\Facades\File;
+use Statamic\Facades\YAML;
+use Statamic\SeoPro\Reporting\Rules;
 
 class Page
 {
@@ -14,10 +15,10 @@ class Page
     protected $id;
 
     protected $rules = [
-        Rules\Page\UniqueTitleTag::class,
-        Rules\Page\UniqueMetaDescription::class,
-        Rules\Page\NoUnderscoresInUrl::class,
-        Rules\Page\ThreeSegmentUrls::class,
+        Rules\UniqueTitleTag::class,
+        Rules\UniqueMetaDescription::class,
+        Rules\NoUnderscoresInUrl::class,
+        Rules\ThreeSegmentUrls::class,
     ];
 
     public function setData($data)
@@ -100,7 +101,7 @@ class Page
         $results = collect();
 
         foreach ($this->results as $class => $array) {
-            $class = "Statamic\\Addons\\SeoPro\\Reporting\\Rules\\$class";
+            $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
             $rule = new $class;
 
             if (! $rule->validatesPages()) {
@@ -152,14 +153,14 @@ class Page
         $key = md5($this->id);
         $parts = array_slice(str_split($key, 2), 0, 2);
 
-        return temp_path(vsprintf('/seopro/reports/%s/pages/%s/%s.yaml', [
+        return storage_path(vsprintf('statamic/seopro/reports/%s/pages/%s/%s.yaml', [
             $this->report->id(), implode('/', $parts), $key
         ]));
     }
 
     public function model()
     {
-        return Content::find($this->id);
+        return Data::find($this->id);
     }
 
     public function editUrl()
