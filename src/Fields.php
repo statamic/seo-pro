@@ -196,7 +196,7 @@ class Fields
     protected function getPlaceholder($handle)
     {
         $cascade = (new Cascade)
-            ->with(config('statamic.seo-pro.defaults'));
+            ->with(SiteDefaults::load()->all());
             // ->with($this->getSectionDefaults($this->data));
 
         if ($this->data) {
