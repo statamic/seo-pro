@@ -41,8 +41,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonTranslations()
             ->bootAddonNav()
             ->bootAddonSubscriber()
-            ->bootAddonGlidePresets()
-            ->bootAddonMiddleware();
+            ->bootAddonGlidePresets();
     }
 
     protected function bootAddonConfig()
@@ -109,13 +108,6 @@ class ServiceProvider extends AddonServiceProvider
                 'fit' => 'crop',
             ]
         ]);
-
-        return $this;
-    }
-
-    protected function bootAddonMiddleware()
-    {
-        // $this->app[Kernel::class]->pushMiddleware(GenerateReport::class);
 
         return $this;
     }
