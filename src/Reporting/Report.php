@@ -3,17 +3,18 @@
 namespace Statamic\SeoPro\Reporting;
 
 use Carbon\Carbon;
-use Statamic\Facades\File;
-use Statamic\Facades\YAML;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Facades\Artisan;
 use Statamic\Facades\Config;
-use Statamic\Facades\Folder;
 use Statamic\Facades\Entry;
+use Statamic\Facades\File;
+use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
+use Statamic\Facades\YAML;
 use Statamic\Routing\Router;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
 
 class Report implements Arrayable, Jsonable
 {
@@ -226,11 +227,15 @@ class Report implements Arrayable, Jsonable
             return $folders;
         }
 
-        return $folders->map(function ($path) {
-            return (int) pathinfo($path)['filename'];
-        })->sort()->reverse()->map(function ($id) {
-            return static::find($id);
-        });
+        return $folders
+            ->map(function ($path) {
+                return (int) pathinfo($path)['filename'];
+            })
+            ->sortDesc()
+            ->map(function ($id) {
+                return static::find($id);
+            })
+            ->values();
     }
 
     public static function latest()
