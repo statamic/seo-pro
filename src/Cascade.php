@@ -8,8 +8,6 @@ use Statamic\Facades\Data;
 use Statamic\Facades\Entry;
 use Statamic\API\Parse;
 use Statamic\Facades\Config;
-use Statamic\Routing\Route;
-use Statamic\Contracts\Data\Data as DataContract;
 
 class Cascade
 {
@@ -31,13 +29,8 @@ class Cascade
 
     public function withCurrent($data)
     {
-        if ($data instanceof DataContract || $data instanceof Route) {
-            $this->current = $data->toArray();
-            $this->model = $data;
-        } else {
-            $this->current = $data->data();
-            $this->model = Data::find($data->id());
-        }
+        $this->current = $data->values();
+        $this->model = $data;
 
         return $this;
     }
