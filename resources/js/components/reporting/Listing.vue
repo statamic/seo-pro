@@ -4,7 +4,7 @@
 
         <div v-if="loading" class="card loading">
             <span class="icon icon-circular-graph animation-spin"></span>
-            {{ __('cp.loading') }}
+            {{ __('Loading') }}
         </div>
 
         <div v-else-if="reports.length == 0" class="card">
@@ -18,7 +18,7 @@
                         <td class="w-1 text-center">
                             <status-icon :status="report.status"></status-icon>
                         </td>
-                        <td class="text-xs"
+                        <td class="text-xs w-16"
                             :class="{
                                 'text-red': report.score < 70,
                                 'text-yellow-dark': report.score > 70 && report.score < 90,

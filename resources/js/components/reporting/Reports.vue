@@ -15,14 +15,19 @@
             </a>
         </div>
 
+        <div v-if="loading" class="card loading">
+            <span class="icon icon-circular-graph animation-spin"></span>
+            {{ __('seo-pro::messages.report_is_being_generated')}}
+        </div>
+
         <seo-report-listing
-            v-if="showingListing"
+            v-if="showingListing && !loading"
             :route="listingRoute"
             @report-selected="selectReport"
         ></seo-report-listing>
 
         <seo-report
-            v-if="showingReport"
+            v-if="showingReport && !loading"
             :id="currentReportId"
         ></seo-report>
 
@@ -49,6 +54,7 @@ export default {
     data() {
         return {
             currentReportId: null,
+            loading: false,
         }
     },
 
