@@ -23,7 +23,6 @@ class Report implements Arrayable, Jsonable
     protected $generatePages = false;
     protected $date;
     protected $score;
-    public static $reportsToGenerate = [];
 
     public static $rules = [
         Rules\SiteName::class,
@@ -287,7 +286,7 @@ class Report implements Arrayable, Jsonable
 
         $id = $report->id();
 
-        static::$reportsToGenerate[] = $id;
+        Artisan::queue('statamic:seopro:generate-report', ['--report' => $id]);
 
         return $id;
     }
