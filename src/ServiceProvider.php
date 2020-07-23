@@ -18,10 +18,6 @@ class ServiceProvider extends AddonServiceProvider
         SeoPro\Fieldtypes\SourceFieldtype::class,
     ];
 
-    protected $commands = [
-        SeoPro\Commands\GenerateReportCommand::class,
-    ];
-
     protected $scripts = [
         __DIR__.'/../resources/dist/js/cp.js',
     ];
@@ -41,7 +37,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonTranslations()
             ->bootAddonNav()
             ->bootAddonSubscriber()
-            ->bootAddonGlidePresets();
+            ->bootAddonGlidePresets()
+            ->bootAddonCommands();
     }
 
     protected function bootAddonConfig()
@@ -110,5 +107,12 @@ class ServiceProvider extends AddonServiceProvider
         ]);
 
         return $this;
+    }
+
+    protected function bootAddonCommands()
+    {
+        $this->commands([
+            SeoPro\Commands\GenerateReportCommand::class,
+        ]);
     }
 }
