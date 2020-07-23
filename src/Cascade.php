@@ -2,12 +2,13 @@
 
 namespace Statamic\SeoPro;
 
-use Statamic\Support\Str;
-use Statamic\Facades\URL;
-use Statamic\Facades\Data;
-use Statamic\Facades\Entry;
 use Statamic\API\Parse;
 use Statamic\Facades\Config;
+use Statamic\Facades\Data;
+use Statamic\Facades\Entry;
+use Statamic\Facades\Site;
+use Statamic\Facades\URL;
+use Statamic\Support\Str;
 
 class Cascade
 {
@@ -158,7 +159,7 @@ class Cascade
     protected function locale()
     {
         if (! method_exists($this->model, 'locale')) {
-            return site_locale();
+            return Site::default()->handle();
         }
 
         return Config::getShortLocale($this->model->locale());
