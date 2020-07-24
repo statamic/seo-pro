@@ -34,7 +34,7 @@ You may choose to pull data from other fields, enter hardcoded strings, or use A
 
 ### Sections (Collections and Taxonomies)
 
-Each section may be configured independently. You may opt to inherit values from the defaults and tweak as necessary.
+Each section may be configured independently at a collection/taxonomy level. Head to `Tools > SEO Pro > Section Defaults` to configure default settings at this level. You may opt to inherit values from the defaults and tweak as necessary.
 
 > Values configured here will be saved into the `seo` array (within `inject`) in the respective section's yaml config.
 
