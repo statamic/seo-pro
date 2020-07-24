@@ -366,9 +366,9 @@ class Report implements Arrayable, Jsonable
 
     protected function allContent()
     {
-        $entries = Entry::all()->all();
-        $terms = Term::all()->all();
-
-        return collect(array_merge($entries, $terms));
+        return collect()
+            ->merge(Entry::all())
+            ->merge(Term::all())
+            ->values();
     }
 }
