@@ -15,5 +15,8 @@
                 "Statamic\\SeoPro\\ServiceProvider"
             ]
         }
+    },
+    "require": {
+        "statamic/cms": "3.0.*@beta"
     }
 }
