@@ -1,4 +1,4 @@
-# SEO Pro ![Statamic](https://img.shields.io/badge/statamic-2.10-blue.svg?style=flat-square)
+# SEO Pro ![Statamic](https://img.shields.io/badge/statamic-3.0-blue.svg?style=flat-square)
 > SEO Pro is an all-in-one site reporting, metadata wrangling, Open Graph managing, Twitter card making, sitemap generating, turnkey addon.
 
 ## SEO Pro is a Commercial Addon.
