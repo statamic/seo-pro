@@ -51,7 +51,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->publishes([
             __DIR__.'/../config/seo-pro.php' => config_path('statamic/seo-pro.php'),
-        ]);
+        ], 'seo-pro-config');
 
         return $this;
     }
@@ -62,7 +62,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
-        ]);
+        ], 'seo-pro-views');
 
         return $this;
     }
