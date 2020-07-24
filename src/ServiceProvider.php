@@ -18,6 +18,10 @@ class ServiceProvider extends AddonServiceProvider
         SeoPro\Fieldtypes\SourceFieldtype::class,
     ];
 
+    protected $widgets = [
+        SeoPro\Widgets\SeoProWidget::class,
+    ];
+
     protected $scripts = [
         __DIR__.'/../resources/dist/js/cp.js',
     ];
