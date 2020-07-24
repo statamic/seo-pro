@@ -1,70 +1,74 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Sitemap;
+namespace Statamic\SeoPro\Sitemap;
 
-use Statamic\API;
-use Statamic\Addons\SeoPro\TagData;
-use Statamic\Addons\SeoPro\Settings;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Taxonomy;
+use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\SiteDefaults;
 
 class Sitemap
 {
     const CACHE_KEY = 'seo-pro.sitemap';
 
-    public function pages()
+    public static function pages()
     {
-        return $this->items()->map(function ($content) {
-            $cascade = $content->getWithCascade('seo', []);
-
-            if ($cascade === false || array_get($cascade, 'sitemap') === false) {
-                return;
-            }
-
-            $data = (new TagData)
-                ->with(Settings::load()->get('defaults'))
-                ->with($cascade)
-                ->withCurrent($content->toArray())
-                ->get();
-
-            return (new Page)->with($data);
-        })->filter()->sortBy(function ($page) {
-            return substr_count(rtrim($page->path(), '/'), '/');
-        });
+        return (new static)->getPages();
     }
 
-    protected function items()
+    public function getPages()
     {
-        return collect_content()
-            ->merge(API\Page::all())
-            ->merge($this->entries())
-            ->merge($this->terms())
-            ->removeUnpublished();
+        return $this->publishedContent()
+            ->map(function ($content) {
+                $cascade = $content->value('seo');
+
+                if ($cascade === false || collect($cascade)->get('sitemap') === false) {
+                    return;
+                }
+
+                $data = (new Cascade)
+                    ->with(SiteDefaults::load()->all())
+                    ->with($cascade ?: [])
+                    ->withCurrent($content)
+                    ->get();
+
+                return (new Page)->with($data);
+            })
+            ->filter()
+            ->sortBy(function ($page) {
+                return substr_count(rtrim($page->path(), '/'), '/');
+            })
+            ->values()
+            ->map
+            ->toArray();
     }
 
-    protected function entries()
+    protected function publishedContent()
     {
-        return API\Collection::all()->flatMap(function ($collection) {
-            if ($collection->get('seo.sitemap') === false) {
-                return collect();
-            }
-
-            $entries = $collection->entries();
-
-            if ($collection->get('seo.show_future') === false) {
-                $entries = $entries->removeFuture();
-            }
-
-            if ($collection->get('seo.show_past') === false) {
-                $entries = $entries->removePast();
-            }
-
-            return $entries;
-        });
+        return collect()
+            ->merge($this->publishedEntries())
+            ->merge($this->publishedTerms())
+            ->values();
     }
 
-    protected function terms()
+    protected function publishedEntries()
     {
-        return API\Taxonomy::all()->flatMap(function ($taxonomy) {
-            return ($taxonomy->get('seo.sitemap') === false) ? collect() : $taxonomy->terms();
-        });
+        return Collection::all()
+            ->flatMap(function ($collection) {
+                return $collection->cascade('seo') !== false ? $collection->queryEntries()->get() : collect();
+            })
+            ->filter(function ($entry) {
+                return $entry->status() === 'published';
+            });
+    }
+
+    protected function publishedTerms()
+    {
+        return Taxonomy::all()
+            ->flatMap(function ($taxonomy) {
+                return $taxonomy->cascade('seo') !== false ? $taxonomy->queryTerms()->get() : collect();
+            })
+            ->filter
+            ->published();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\Addons\SeoPro\Sitemap;
+namespace Statamic\SeoPro\Sitemap;
 
 class Page
 {
@@ -36,5 +36,16 @@ class Page
     public function priority()
     {
         return $this->data->get('priority');
+    }
+
+    public function toArray()
+    {
+        return [
+            'path' => $this->path(),
+            'loc' => $this->loc(),
+            'lastmod' => $this->lastmod(),
+            'changefreq' => $this->changefreq(),
+            'priority' => $this->priority(),
+        ];
     }
 }
