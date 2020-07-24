@@ -15,7 +15,7 @@ class GenerateReportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'statamic:seopro:generate-report {--report= : The ID of a report to generate. }';
+    protected $signature = 'statamic:seo-pro:generate-report {--report= : The ID of a report to generate. }';
 
     /**
      * The console command description.
