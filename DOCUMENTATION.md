@@ -91,3 +91,43 @@ You may add a reports widget to your dashboard to get a quick insight into your 
     ]
 ],
 ```
+
+## Advanced Configuration
+
+### Publishing Config
+
+You can publish SEO Pro's config for modification by running the following:
+
+```
+php artisan vendor:publish --tag="seo-pro-config"
+```
+
+### Publishing Views
+
+You can publish SEO Pro's `sitemap.xml` and `humans.txt` views for modification by running the following:
+
+```
+php artisan vendor:publish --tag="seo-pro-views"
+```
+
+### Assets
+
+If you wish to use assets in your meta, you can [publish the SEO Pro config](#publishing-config) and specify an asset container, as well as the glide preset to be used.
+
+### Sitemap.xml
+
+A `sitemap.xml` route is automatically generated for you.
+
+If you disable SEO on the section or item level, the relevant section/item will automatically be discluded from the sitemap.
+
+If you wish to completely disable the sitemap, change it's URL, or customize it's cache expiry, you can [publish the SEO Pro config](#publishing-config) and modify these settings within `config/statamic/seo-pro.php`.
+
+If you wish to customize the contents of the `sitemap.xml` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
+
+### Humans.txt
+
+A `humans.txt` route is automatically generated for you.
+
+If you wish to completely disable humans.txt or change it's URL, you can [publish the SEO Pro config](#publishing-config) and modify these settings within `config/statamic/seo-pro.php`.
+
+If you wish to customize the contents of the `humans.txt` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
