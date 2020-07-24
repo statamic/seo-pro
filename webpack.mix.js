@@ -1,11 +1,5 @@
-const mix = require('laravel-mix');
-require('dotenv').config();
+let mix = require('laravel-mix');
 
-// In an .env file, define the path to the Statamic site you want this addon to be copied to.
-// eg. STATAMIC_PATH=/users/bob/sites/statamic
-const statamic = process.env.STATAMIC_PATH;
-
-mix.copyDirectory('SeoPro', `${statamic}/site/addons/SeoPro`);
-
-mix.js('SeoPro/resources/assets/src/js/scripts.js', 'SeoPro/resources/assets/js');
-mix.js('SeoPro/resources/assets/src/js/fieldtype.js', 'SeoPro/resources/assets/js');
+mix
+    .js('resources/js/cp.js', 'resources/dist/js')
+    .setPublicPath('resources/dist');

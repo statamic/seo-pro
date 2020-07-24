@@ -1,0 +1,61 @@
+{{ if compiled_title }}
+<title>{{ compiled_title | striptags }}</title>
+{{ /if }}
+{{ if description }}
+<meta name="description" content="{{ description | striptags | entities | trim }}" />
+{{ /if }}
+{{ if robots }}
+<meta name="robots" content="{{ robots | list }}" />
+{{ /if }}
+<meta property="og:type" content="website" />
+{{ if og_title }}
+<meta property="og:title" content="{{ og_title | striptags }}" />
+{{ /if }}
+{{ if description }}
+<meta property="og:description" content="{{ description | striptags | entities | trim }}" />
+{{ /if }}
+<meta property="og:url" content="{{ canonical_url }}" />
+{{ if site_name }}
+<meta property="og:site_name" content="{{ site_name | striptags | entities | trim }}" />
+{{ /if }}
+<meta property="og:locale" content="{{ locale }}" />
+{{ alternate_locales }}
+<meta property="og:locale:alternate" content="{{ locale }}" />
+{{ /alternate_locales }}
+<meta name="twitter:card" content="summary" />
+{{ if twitter_handle }}
+<meta name="twitter:site" content="{{ twitter_handle ensure_left="@" }}" />
+{{ /if }}
+{{ if title }}
+<meta name="twitter:title" content="{{ title | striptags | entities | trim }}" />
+{{ /if }}
+{{ if description }}
+<meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
+{{ /if }}
+{{ asset:image }}
+{{ glide:generate :src="url" preset="seo" absolute="true" }}
+<meta property="og:image" content="{{ url }}" />
+<meta property="og:image:width" content="{{ width }}" />
+<meta property="og:image:height" content="{{ height }}" />
+<meta name="twitter:image" content="{{ url }}" />
+<meta name="twitter:image:alt" content="{{ alt }}" />
+{{ /glide:generate }}
+<meta property="og:image:alt" content="{{ alt }}" />
+{{ /asset:image }}
+<link href="{{ home_url }}" rel="home" />
+<link href="{{ canonical_url }}" rel="canonical" />
+{{ if alternate_locales }}
+<link rel="alternate" href="{{ canonical_url }}" hreflang="{{ locale }}" />
+{{ alternate_locales }}
+<link rel="alternate" href="{{ url }}" hreflang="{{ locale }}" />
+{{ /alternate_locales }}
+{{ /if }}
+{{ if humans_txt }}
+<link type="text/plain" rel="author" href="{{ humans_txt }}" />
+{{ /if }}
+{{ if google_verification }}
+<meta name="google-site-verification" content="{{ google_verification }}" />
+{{ /if }}
+{{ if bing_verification }}
+<meta name="msvalidate.01" content="{{ bing_verification }}" />
+{{ /if }}
