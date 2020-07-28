@@ -23,11 +23,15 @@ abstract class SectionDefaultsController extends CpController
 
         $seo = Arr::get($item->fileData(), 'inject.seo', []);
 
+        if ($seo === false) {
+            $seo = ['enabled' => false];
+        }
+
         $blueprint = $this->blueprint();
 
         $fields = $blueprint
             ->fields()
-            ->addValues($seo ?: ['enabled' => false])
+            ->addValues($seo)
             ->preProcess();
 
         return view('seo-pro::edit', [
