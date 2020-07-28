@@ -2,11 +2,14 @@
 
 return [
 
-    'site_defaults' => 'Site Defaults',
-    'section_defaults' => 'Section Defaults',
     'humans_txt' => 'Humans.txt',
     'reports' => 'Reports',
     'seo_reports' => 'SEO Reports',
+    'seo_reports_description' => 'Run reports for meta data uniqueness, URL length, and other important SEO factors.',
+    'site_defaults' => 'Site Defaults',
+    'site_defaults_description' => 'Set default meta, social, sitemap, and other settings for the entire site.',
+    'section_defaults' => 'Section Defaults',
+    'section_defaults_description' => 'Override default meta, social, sitemap, and other settings for any particular section.',
     'generate_report' => 'Generate Report',
     'back_to_reports' => 'Back to reports',
     'report_is_being_generated' => 'Your report is being generated.',

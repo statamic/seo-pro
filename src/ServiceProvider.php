@@ -78,7 +78,7 @@ class ServiceProvider extends AddonServiceProvider
     {
         Nav::extend(function ($nav) {
             $nav->tools('SEO Pro')
-                ->route('seo-pro.reports.index')
+                ->route('seo-pro.index')
                 ->icon('seo-search-graph')
                 ->active('seo-pro')
                 ->children([

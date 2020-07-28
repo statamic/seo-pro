@@ -23,7 +23,7 @@ class SiteDefaultsController extends CpController
             ->preProcess();
 
         return view('seo-pro::edit', [
-            'title' => 'Site Defaults',
+            'title' => __('Site Defaults'),
             'action' => cp_route('seo-pro.site-defaults.update'),
             'blueprint' => $blueprint->toPublishArray(),
             'meta' => $fields->meta(),
