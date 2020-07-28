@@ -1,10 +1,10 @@
 @extends('statamic::layout')
-@section('title', __('SEO Pro'))
+@section('title', 'SEO Pro')
 
 @section('content')
 
     <header class="mb-3">
-        <h1>{{ __('SEO Pro') }}</h1>
+        <h1>{{ 'SEO Pro' }}</h1>
     </header>
 
     <div class="card p-2 content">
@@ -40,7 +40,7 @@
     </div>
 
     @include('statamic::partials.docs-callout', [
-        'topic' => __('SEO Pro'),
+        'topic' => 'SEO Pro',
         'url' => 'https://statamic.com/addons/statamic/seo-pro'
     ])
 
