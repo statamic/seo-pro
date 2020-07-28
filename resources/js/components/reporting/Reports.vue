@@ -31,7 +31,7 @@
             :id="currentReportId"
         ></seo-report>
 
-        <div class="no-results md:pt-8 max-w-2xl mx-auto" v-if="reports.length === 0">
+        <div class="no-results md:pt-8 max-w-2xl mx-auto" v-if="reports.length === 0 && !loading">
             <div class="flex flex-wrap">
                 <div class="w-full md:w-1/2">
                     <h1 class="mb-4" v-text="__('seo-pro::messages.first_report')" />
