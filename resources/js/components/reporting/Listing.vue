@@ -1,17 +1,7 @@
 <template>
 
     <div>
-
-        <div v-if="loading" class="card loading">
-            <span class="icon icon-circular-graph animation-spin"></span>
-            {{ __('Loading') }}
-        </div>
-
-        <div v-else-if="reports.length == 0" class="card">
-            <p class="p-1 italic text-grey-60">{{ __('seo-pro::messages.report_no_results_text') }}</p>
-        </div>
-
-        <div v-else class="card p-0">
+        <div class="card p-0" v-if="reports">
             <table class="data-table">
                 <tbody>
                     <tr v-for="report in reports">
@@ -52,23 +42,14 @@ export default {
 
     props: [
         'route',
+        'reports'
     ],
 
     data() {
         return {
             loading: true,
-            reports: [],
         }
     },
-
-    mounted() {
-
-        Statamic.$request.get(this.route).then(response => {
-            this.reports = response.data;
-            this.loading = false;
-        });
-
-    }
 
 }
 </script>
