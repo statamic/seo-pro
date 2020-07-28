@@ -291,7 +291,7 @@ class Report implements Arrayable, Jsonable
 
         $id = $report->id();
 
-        Artisan::queue('statamic:seopro:generate-report', ['--report' => $id]);
+        Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $id]);
 
         return $id;
     }
