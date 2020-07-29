@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Statamic\Facades\Blueprint;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Fields;
-use Statamic\SeoPro\SiteDefaults;
 use Statamic\Support\Arr;
 
 abstract class SectionDefaultsController extends CpController

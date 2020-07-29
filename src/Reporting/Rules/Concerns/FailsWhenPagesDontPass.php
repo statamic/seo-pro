@@ -11,7 +11,7 @@ trait FailsWhenPagesDontPass
     public function processSite()
     {
         $this->failures = $this->report->pages()->filter(function ($page) {
-            return !$this->passesPageRule($page);
+            return ! $this->passesPageRule($page);
         })->count();
     }
 

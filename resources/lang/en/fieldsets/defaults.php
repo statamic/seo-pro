@@ -21,7 +21,7 @@ return [
     'description_instruct' => 'Pick an existing field to set as your **default** meta description. Each Collection and Taxonomy can also have its own default.',
 
     'robots' => 'Robots',
-    'robots_instruct' => "Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.",
+    'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
 
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',

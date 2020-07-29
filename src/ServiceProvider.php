@@ -107,7 +107,7 @@ class ServiceProvider extends AddonServiceProvider
                 'w' => config('statamic.seo-pro.assets.open_graph_preset.w'),
                 'h' => config('statamic.seo-pro.assets.open_graph_preset.h'),
                 'fit' => 'crop',
-            ]
+            ],
         ]);
 
         return $this;

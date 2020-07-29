@@ -20,6 +20,6 @@ return [
     'sitemap_url_instruct' => "The location of the sitemap relative to the root of your default locale's home page.",
 
     'sitemap_cache_length' => 'Cache Length',
-    'sitemap_cache_length_instruct' => 'How long the sitemap should get cached, in minutes.'
+    'sitemap_cache_length_instruct' => 'How long the sitemap should get cached, in minutes.',
 
 ];

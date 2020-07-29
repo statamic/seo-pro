@@ -2,13 +2,6 @@
 
 namespace Statamic\SeoPro;
 
-use Statamic\Events;
-use Statamic\Facades\File;
-use Statamic\Facades\YAML;
-use Statamic\Fields\FieldTransformer;
-use Statamic\Statamic;
-use Statamic\Support\Arr;
-
 class Fields
 {
     use HasAssetField;

@@ -2,9 +2,9 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
-use Statamic\Support\Str;
 use Statamic\Fields\Field;
 use Statamic\Fields\Fieldtype;
+use Statamic\Support\Str;
 
 class SourceFieldtype extends Fieldtype
 {
@@ -42,7 +42,7 @@ class SourceFieldtype extends Fieldtype
     public function process($data)
     {
         if ($data['source'] === 'field') {
-            return '@seo:' . $data['value'];
+            return '@seo:'.$data['value'];
         }
 
         if ($data['source'] === 'inherit') {

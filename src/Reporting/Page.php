@@ -5,7 +5,6 @@ namespace Statamic\SeoPro\Reporting;
 use Statamic\Facades\Data;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
-use Statamic\SeoPro\Reporting\Rules;
 
 class Page
 {
@@ -142,7 +141,7 @@ class Page
         $data = [
             'id' => $this->id,
             'data' => $this->data->all(),
-            'results' => $this->results
+            'results' => $this->results,
         ];
 
         File::put($this->path(), YAML::dump($data));
@@ -154,7 +153,7 @@ class Page
         $parts = array_slice(str_split($key, 2), 0, 2);
 
         return storage_path(vsprintf('statamic/seopro/reports/%s/pages/%s/%s.yaml', [
-            $this->report->id(), implode('/', $parts), $key
+            $this->report->id(), implode('/', $parts), $key,
         ]));
     }
 

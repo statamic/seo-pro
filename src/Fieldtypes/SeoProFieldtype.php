@@ -2,8 +2,8 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
-use Statamic\Fields\Fieldtype;
 use Statamic\Fields\Fields;
+use Statamic\Fields\Fieldtype;
 use Statamic\Support\Arr;
 
 class SeoProFieldtype extends Fieldtype

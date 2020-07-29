@@ -2,8 +2,6 @@
 
 namespace Statamic\SeoPro\Reporting\Rules\Concerns;
 
-use Statamic\SeoPro\Reporting\Page;
-
 trait WarnsWhenPagesDontPass
 {
     use FailsWhenPagesDontPass;

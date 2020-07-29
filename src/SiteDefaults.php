@@ -2,9 +2,9 @@
 
 namespace Statamic\SeoPro;
 
+use Illuminate\Support\Collection;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
-use Illuminate\Support\Collection;
 
 class SiteDefaults extends Collection
 {

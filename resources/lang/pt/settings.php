@@ -2,7 +2,7 @@
 
 return [
 
-    'asset_container_instruct' => "Biblioteca de arquivos usada para qualquer um dos campos de imagem do SEO Pro.",
+    'asset_container_instruct' => 'Biblioteca de arquivos usada para qualquer um dos campos de imagem do SEO Pro.',
 
     'og_image_dimensions' => 'Dimensões da imagem OpenGraph',
     'og_image_dimensions_instruct' => 'De acordo com <a href="https://www.h3xed.com/web-and-internet/how-to-use-og-image-meta-tag-facebook-reddit" target="_blank">este artigo</a>, o tamanho de imagem ideal para as etiquetas Facebook e Reddit Open Graph é de 1200x1200 pixels.',
@@ -20,6 +20,6 @@ return [
     'sitemap_url_instruct' => "The location of the sitemap relative to the root of your default locale's home page.",
 
     'sitemap_cache_length' => 'Comprimento do Cache',
-    'sitemap_cache_length_instruct' => 'Quanto tempo o sitemap deve ficar armazenado em cache, em minutos.'
+    'sitemap_cache_length_instruct' => 'Quanto tempo o sitemap deve ficar armazenado em cache, em minutos.',
 
 ];

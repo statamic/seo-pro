@@ -6,13 +6,11 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
-use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
 use Statamic\Facades\YAML;
-use Statamic\Routing\Router;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -174,7 +172,7 @@ class Report implements Arrayable, Jsonable
                     'url' => $page->url(),
                     'id' => $page->id(),
                     'edit_url' => $page->editUrl(),
-                    'results' => $page->getRuleResults()
+                    'results' => $page->getRuleResults(),
                 ];
             });
         }
@@ -258,7 +256,7 @@ class Report implements Arrayable, Jsonable
     {
         File::put($this->path(), YAML::dump([
             'date' => time(),
-            'results' => $this->results
+            'results' => $this->results,
         ]));
 
         return $this;
@@ -266,7 +264,7 @@ class Report implements Arrayable, Jsonable
 
     public function path()
     {
-        return storage_path('statamic/seopro/reports/' . $this->id . '/report.yaml');
+        return storage_path('statamic/seopro/reports/'.$this->id.'/report.yaml');
     }
 
     public function exists()

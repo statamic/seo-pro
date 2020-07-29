@@ -3,7 +3,7 @@
 return [
 
     'enabled' => 'Activer',
-    'enabled_instruct' => "Si vous désactivez cet élément, il sera exclu des rapports et empêchera tout rendu par le biais de la balise de modèle.",
+    'enabled_instruct' => 'Si vous désactivez cet élément, il sera exclu des rapports et empêchera tout rendu par le biais de la balise de modèle.',
 
     'title' => 'Titre Meta',
     'title_instruct' => 'Chaque URL de votre site doit avoir un titre unique, idéalement moins de 60 caractères.',

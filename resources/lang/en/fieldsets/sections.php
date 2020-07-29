@@ -20,7 +20,7 @@ return [
     'site_name_position_instruct' => 'Optionally adjust the position for this section.',
 
     'robots' => 'Robots',
-    'robots_instruct' => "Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.",
+    'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',

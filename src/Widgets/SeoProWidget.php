@@ -2,15 +2,15 @@
 
 namespace Statamic\SeoPro\Widgets;
 
-use Statamic\Widgets\Widget;
 use Statamic\SeoPro\Reporting\Report;
+use Statamic\Widgets\Widget;
 
 class SeoProWidget extends Widget
 {
     public function html()
     {
         return view('seo-pro::widget', [
-            'report' => Report::latest()
+            'report' => Report::latest(),
         ]);
     }
 }

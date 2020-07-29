@@ -20,6 +20,6 @@ return [
     'sitemap_url_instruct' => "L'emplacement du sitemap par rapport à la racine de la page d'accueil de votre environnement local par défaut.",
 
     'sitemap_cache_length' => 'Durée du Cache',
-    'sitemap_cache_length_instruct' => 'Durée du cache de la sitemap, en minutes.'
+    'sitemap_cache_length_instruct' => 'Durée du cache de la sitemap, en minutes.',
 
 ];

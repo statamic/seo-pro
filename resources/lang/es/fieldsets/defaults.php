@@ -9,7 +9,7 @@ return [
     'title_instruct' => 'Seleciona un campo existente para que sea tu meta título **por defecto**. Cada Colección y Taxonomía puede tener su propio campo por defecto.',
 
     'site_name' => 'Nombre del Sitio',
-    'site_name_instruct' => "Es una práctica común incluír el nombre del sitio en los meta títulos.",
+    'site_name_instruct' => 'Es una práctica común incluír el nombre del sitio en los meta títulos.',
 
     'site_name_position' => 'Posición del Nombre del Sitio',
     'site_name_position_instruct' => 'Antes o después del meta título, tu mismo.',
@@ -33,7 +33,7 @@ return [
     'twitter_handle_instruct' => '_(Opcional)_ Establece el nombre de usuario de twitter que está asociado a este sitio.',
 
     'sitemap_section' => 'Site Map',
-    'sitemap_section_instruct' => "Selecciona tu configuración del sitemap por defecto. Si no estás seguro, déjalos en blaco para que se usen los valores por defecto.",
+    'sitemap_section_instruct' => 'Selecciona tu configuración del sitemap por defecto. Si no estás seguro, déjalos en blaco para que se usen los valores por defecto.',
 
     'priority' => 'Prioridad',
     'priority_instruct' => 'La prioridad de esta URL relativa a otras URLs en tu sitio. Los valores válidos están entre `0.0` y `1.0`.',

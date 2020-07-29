@@ -9,7 +9,7 @@ return [
     'title_instruct' => 'Kies een bestaand veld om deze te gebruiken als de **standaard** metatitel. Iedere collectie en taxonomie kan zijn eigen standaardinstelling hebben.',
 
     'site_name' => 'Sitenaam',
-    'site_name_instruct' => "Het is gebruikelijk om uw sitenaam te gebruiken in metatitels.",
+    'site_name_instruct' => 'Het is gebruikelijk om uw sitenaam te gebruiken in metatitels.',
 
     'site_name_position' => 'Sitenaampositie',
     'site_name_position_instruct' => 'Voor of achter de metatitel.',
@@ -33,7 +33,7 @@ return [
     'twitter_handle_instruct' => '_(Optioneel)_ Stel de gebruikersnaam van Twitter in die bij uw site hoort..',
 
     'sitemap_section' => 'Sitemap',
-    'sitemap_section_instruct' => "Kies uw standaard sitemapinstellingen. Als uw het niet zeker weet, laat deze velden dan leeg en gebruik de standaardinstellingen.",
+    'sitemap_section_instruct' => 'Kies uw standaard sitemapinstellingen. Als uw het niet zeker weet, laat deze velden dan leeg en gebruik de standaardinstellingen.',
 
     'priority' => 'Prioriteit',
     'priority_instruct' => "De prioriteit van deze URL ten opzichte van andere URL's op uw site. Geldige waarden zijn of zitten tussen '0.0' tot '1.0'.",

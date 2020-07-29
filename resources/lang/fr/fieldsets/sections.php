@@ -8,10 +8,10 @@ return [
     'meta_section' => 'Meta Data',
 
     'title' => 'Meta Title',
-    'title_instruct' => "Choisissez un champ existant à définir comme ** méta titre ** par défaut de cette section.",
+    'title_instruct' => 'Choisissez un champ existant à définir comme ** méta titre ** par défaut de cette section.',
 
     'description' => 'Meta Description',
-    'description_instruct' => "Choisissez un champ existant à définir en tant que ** défaut ** meta description de cette section.",
+    'description_instruct' => 'Choisissez un champ existant à définir en tant que ** défaut ** meta description de cette section.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'Nous générons automatiquement la plupart des champs Open Graph à partir de vos métadonnées et de la configuration de votre site..',

@@ -33,7 +33,7 @@ return [
     'twitter_handle_instruct' => '_ (Facultatif) _ Définissez le descripteur Twitter correspondant au site.',
 
     'sitemap_section' => 'Site Map',
-    'sitemap_section_instruct' => "Choisissez vos paramètres par défaut de sitemap. En cas de doute, laissez ces champs vides pour les valeurs par défaut standard.",
+    'sitemap_section_instruct' => 'Choisissez vos paramètres par défaut de sitemap. En cas de doute, laissez ces champs vides pour les valeurs par défaut standard.',
 
     'priority' => 'Priorité',
     'priority_instruct' => 'La priorité de cette URL par rapport aux autres URL de votre site. Les valeurs valides vont de `0.0` à` 1.0`.',

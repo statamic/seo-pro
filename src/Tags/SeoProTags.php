@@ -2,9 +2,9 @@
 
 namespace Statamic\SeoPro\Tags;
 
-use Statamic\Tags\Tags;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Tags\Tags;
 
 class SeoProTags extends Tags
 {

@@ -4,7 +4,6 @@ namespace Statamic\SeoPro;
 
 use Statamic\API\Parse;
 use Statamic\Facades\Config;
-use Statamic\Facades\Data;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
@@ -74,7 +73,7 @@ class Cascade
 
         // Include pagination if present
         if (app('request')->has('page')) {
-            $url .= '?page=' . ((int) app('request')->get('page'));
+            $url .= '?page='.((int) app('request')->get('page'));
         }
 
         return $url;
@@ -110,7 +109,7 @@ class Cascade
 
         // If we have a method here to perform additional parsing, do that now.
         // eg. Limit a string to n characters.
-        if (method_exists($this, $method = 'parse' . ucfirst($key) . 'Field')) {
+        if (method_exists($this, $method = 'parse'.ucfirst($key).'Field')) {
             $item = $this->$method($item);
         }
 
@@ -133,13 +132,13 @@ class Cascade
         $separator = $this->data->get('site_name_separator');
 
         if ($this->data->get('site_name_position') === 'before') {
-            $compiled .= $siteName . ' ' . $separator . ' ';
+            $compiled .= $siteName.' '.$separator.' ';
         }
 
         $compiled .= $title;
 
         if ($this->data->get('site_name_position') === 'after') {
-            $compiled .= ' ' . $separator . ' ' . $siteName;
+            $compiled .= ' '.$separator.' '.$siteName;
         }
 
         return $compiled;
@@ -197,10 +196,10 @@ class Cascade
         $value = strip_tags($value);
 
         if (strlen($value) > 320) {
-            $value = substr($value, 0, 320) . '...';
+            $value = substr($value, 0, 320).'...';
         }
 
-        return iconv("UTF-8", "UTF-8//IGNORE", $value);
+        return iconv('UTF-8', 'UTF-8//IGNORE', $value);
     }
 
     protected function humans()

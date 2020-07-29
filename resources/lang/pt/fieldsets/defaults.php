@@ -9,7 +9,7 @@ return [
     'title_instruct' => 'Escolha um campo existente para definir como seu meta título **padrão**. Cada coleção e taxonomia também podem ter o seu próprio padrão.',
 
     'site_name' => 'Nome do Site',
-    'site_name_instruct' => "É uma prática comum incluir o nome do site meta em títulos.",
+    'site_name_instruct' => 'É uma prática comum incluir o nome do site meta em títulos.',
 
     'site_name_position' => 'Posição do Nome do Site',
     'site_name_position_instruct' => 'Cabe a ti escolher antes ou depois meta do título.',
@@ -33,7 +33,7 @@ return [
     'twitter_handle_instruct' => '_(Opcional)_ Definir o identificador do Twitter que corresponde ao site.',
 
     'sitemap_section' => 'Site Map',
-    'sitemap_section_instruct' => "Escolha suas configurações padrão de sitemap. Se não tiver a certeza, deixe em branco para os valores padrão.",
+    'sitemap_section_instruct' => 'Escolha suas configurações padrão de sitemap. Se não tiver a certeza, deixe em branco para os valores padrão.',
 
     'priority' => 'Prioridade',
     'priority_instruct' => 'A prioridade deste URL em relação a outros URLs no seu site. Os valores válidos variam de `0.0` a `1.0`.',
@@ -42,7 +42,7 @@ return [
     'change_frequency_instruct' => 'Uma dica para os mecanismos de pesquisa sobre a frequência com que se pode alterar uma página.',
 
     'search_section' => 'Ferramentas do Webmaster',
-    'search_section_instruct' => "A verificação do seu website com os mecanismos de pesquisa populares ajudará a acompanhar o desempenho do rastreamento do mesmo.",
+    'search_section_instruct' => 'A verificação do seu website com os mecanismos de pesquisa populares ajudará a acompanhar o desempenho do rastreamento do mesmo.',
 
     'bing_verification' => 'Código de Verificação do Bing',
     'bing_verification_instruct' => 'Obtenha o seu código de verificação do Bing em [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',

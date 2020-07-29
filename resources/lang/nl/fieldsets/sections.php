@@ -8,10 +8,10 @@ return [
     'meta_section' => 'Metadata',
 
     'title' => 'Meta-titel',
-    'title_instruct' => "Kies een bestaand veld om deze te gebruiken als de **standaard** metatitel van dit gedeelte.",
+    'title_instruct' => 'Kies een bestaand veld om deze te gebruiken als de **standaard** metatitel van dit gedeelte.',
 
     'description' => 'Meta-omschrijving',
-    'description_instruct' => "Kies een bestaand veld om deze te gebruiken als de **standaard** meta-omschrijving van dit gedeelte.",
+    'description_instruct' => 'Kies een bestaand veld om deze te gebruiken als de **standaard** meta-omschrijving van dit gedeelte.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van uw metadata en siteconfiguratie.',

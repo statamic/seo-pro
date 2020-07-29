@@ -8,10 +8,10 @@ return [
     'meta_section' => 'Metadatos',
 
     'title' => 'Meta Título',
-    'title_instruct' => "Seleciona un campo existente para que ejerza como el meta título **por defecto** de esta sección.",
+    'title_instruct' => 'Seleciona un campo existente para que ejerza como el meta título **por defecto** de esta sección.',
 
     'description' => 'Meta Descripción',
-    'description_instruct' => "Seleciona un campo existente para que ejerza como la meta descripción **por defecto** de esta sección.",
+    'description_instruct' => 'Seleciona un campo existente para que ejerza como la meta descripción **por defecto** de esta sección.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'Generamos de forma automática la mayoría de campos Open Graph a partir de tus metadatos y configuración del sitio.',
