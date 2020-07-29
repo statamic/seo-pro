@@ -185,6 +185,10 @@ class Cascade
 
     protected function parseDescriptionField($value)
     {
+        if (! is_string($value)) {
+            null;
+        }
+
         $value = strip_tags($value);
 
         if (strlen($value) > 320) {
