@@ -19,6 +19,8 @@ class Blueprint
     protected $blueprint;
     protected $data;
 
+    protected static $addingField = false;
+
     /**
      * Instantiate blueprint found event handler.
      *
@@ -46,7 +48,15 @@ class Blueprint
      */
     public function addSeoFields()
     {
+        if (static::$addingField) {
+            return;
+        }
+
+        static::$addingField = true;
+
         $this->blueprint->ensureFieldInSection('seo', $this->seoField(), __('SEO'));
+
+        static::$addingField = false;
     }
 
     /**

@@ -8,6 +8,7 @@ use Statamic\Facades\Data;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
+use Statamic\Fields\Value;
 use Statamic\Support\Str;
 
 class Cascade
@@ -30,7 +31,7 @@ class Cascade
 
     public function withCurrent($data)
     {
-        $this->current = $data->values();
+        $this->current = $data->toAugmentedArray();
         $this->model = $data;
 
         return $this;
@@ -101,6 +102,10 @@ class Cascade
             }
 
             $item = array_get($this->current, $field);
+
+            if ($item instanceof Value) {
+                $item = $item->value();
+            }
         }
 
         // If we have a method here to perform additional parsing, do that now.
