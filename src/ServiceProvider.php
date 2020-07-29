@@ -47,7 +47,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonConfig()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/seo-pro.php', 'seo-pro');
+        $this->mergeConfigFrom(__DIR__.'/../config/seo-pro.php', 'statamic.seo-pro');
 
         $this->publishes([
             __DIR__.'/../config/seo-pro.php' => config_path('statamic/seo-pro.php'),
