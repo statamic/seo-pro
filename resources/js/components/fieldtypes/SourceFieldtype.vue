@@ -5,6 +5,7 @@
             <v-select
                 :options="sourceTypeSelectOptions"
                 :reduce="option => option.value"
+                :disabled="isReadOnly"
                 v-model="source"
             />
         </div>
@@ -16,7 +17,7 @@
 
             <div v-else-if="source === 'field'" class="source-field-select">
                 <!-- TODO: Implement field suggestions v-select -->
-                <text-input v-model="sourceField" />
+                <text-input v-model="sourceField" :disabled="isReadOnly" />
             </div>
 
             <component
@@ -26,6 +27,7 @@
                 :config="fieldConfig"
                 :value="value.value"
                 :meta="meta"
+                :read-only="isReadOnly"
                 handle="source_value"
                 @input="updateValue">
             </component>
