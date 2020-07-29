@@ -129,7 +129,7 @@ $project_path = __DIR__;
 $finder = Finder::create()
     ->in([
         $project_path . '/src',
-        $project_path . '/tests',
+        // $project_path . '/tests',
     ])
     ->exclude('Fixtures')
     ->name('*.php')
