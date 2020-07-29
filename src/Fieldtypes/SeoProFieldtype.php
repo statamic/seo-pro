@@ -22,13 +22,15 @@ class SeoProFieldtype extends Fieldtype
 
     public function process($data)
     {
-        if (! $enabled = Arr::pull($data, 'enabled')) {
+        if (! $enabled = Arr::get($data, 'enabled')) {
             return false;
         }
 
-        return Arr::removeNullValues(
+        $values = Arr::removeNullValues(
             $this->fields()->addValues($data)->process()->values()->all()
         );
+
+        return Arr::except($values, 'enabled');
     }
 
     protected function fields()
