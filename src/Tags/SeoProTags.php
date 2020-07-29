@@ -33,7 +33,7 @@ class SeoProTags extends Tags
     {
         // TODO: Is `augmentable()` okay to use?
         // $current = array_get($this->seo, 'page_object');
-        $current = $this->context['seo']->augmentable();
+        $current = optional($this->context->get('seo'))->augmentable();
 
         return (new Cascade)
             ->with(SiteDefaults::load()->all())

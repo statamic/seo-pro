@@ -30,6 +30,10 @@ class Cascade
 
     public function withCurrent($data)
     {
+        if (is_null($data)) {
+            return $this;
+        }
+
         $this->current = $data->toAugmentedArray();
         $this->model = $data;
 
