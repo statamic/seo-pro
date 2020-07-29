@@ -186,7 +186,7 @@ class Cascade
     protected function parseDescriptionField($value)
     {
         if (! is_string($value)) {
-            null;
+            return null;
         }
 
         $value = strip_tags($value);
