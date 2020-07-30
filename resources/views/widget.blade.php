@@ -1,4 +1,4 @@
-<div class="card p-0 rounded-lg overflow-hidden">
+<div class="card p-0 overflow-hidden">
     <div class="flex justify-between items-center p-2 mb-2">
         <h2>SEO Pro</h2>
         <a href="{{ cp_route('seo-pro.reports.index') }}" class="text-blue hover:text-blue-dark text-sm">
