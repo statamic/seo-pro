@@ -2,8 +2,9 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
-use Statamic\Fields\Fields;
+use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
+use Statamic\SeoPro\Fields as SeoProFields;
 use Statamic\Support\Arr;
 
 class SeoProFieldtype extends Fieldtype
@@ -17,7 +18,10 @@ class SeoProFieldtype extends Fieldtype
 
     public function preload()
     {
-        return $this->fields()->meta();
+        return [
+            'fields' => $this->fieldConfig(),
+            'meta' => $this->fields()->meta(),
+        ];
     }
 
     public function process($data)
@@ -35,6 +39,11 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fields()
     {
-        return new Fields($this->config('fields'));
+        return new BlueprintFields($this->fieldConfig());
+    }
+
+    protected function fieldConfig()
+    {
+        return SeoProFields::new($this->field()->parent())->getConfig();
     }
 }

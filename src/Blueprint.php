@@ -49,7 +49,7 @@ class Blueprint
 
         static::$addingField = true;
 
-        $this->blueprint->ensureFieldInSection('seo', $this->seoField(), __('SEO'));
+        $this->blueprint->ensureFieldInSection('seo', ['type' => 'seo_pro'], __('SEO'));
 
         static::$addingField = false;
     }
@@ -67,18 +67,5 @@ class Blueprint
         $dataProperty = static::DATA_PROPERTY[$eventClass];
 
         return $event->{$dataProperty};
-    }
-
-    /**
-     * SEO field config.
-     *
-     * @return array
-     */
-    protected function seoField()
-    {
-        return [
-            'type' => 'seo_pro',
-            'fields' => Fields::new($this->data)->getConfig(),
-        ];
     }
 }
