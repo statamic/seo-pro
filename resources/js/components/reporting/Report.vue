@@ -55,7 +55,7 @@
                                     @closed="selected = null"
                                 ></report-details>
                             </td>
-                            <td class="text-right text-xs pr-0">
+                            <td class="text-right text-xs pr-0 whitespace-no-wrap">
                                 <a @click.prevent="selected = item.id" class="text-grey-60 mr-2 hover:text-grey-80" v-text="__('Details')"></a>
                                 <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-2 text-grey-60 hover:text-grey-80" v-text="__('Edit')"></a>
                             </td>
