@@ -5,7 +5,7 @@
             :key="field.handle"
             :config="field"
             :value="value[field.handle]"
-            :meta="meta[field.handle]"
+            :meta="meta.meta[field.handle]"
             :read-only="isReadOnly"
             class="form-group"
             @meta-updated="metaUpdated(field.handle, $event)"
@@ -34,7 +34,7 @@ export default {
 
     computed: {
         fields() {
-            return _.chain(this.config.fields)
+            return _.chain(this.meta.fields)
                 .map(field => {
                     return {
                         handle: field.handle,
