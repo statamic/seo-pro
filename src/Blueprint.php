@@ -49,7 +49,7 @@ class Blueprint
 
         static::$addingField = true;
 
-        $this->blueprint->ensureFieldInSection('seo', ['type' => 'seo_pro'], __('SEO'));
+        $this->blueprint->ensureFieldInSection('seo', ['type' => 'seo_pro', 'listable' => false], __('SEO'));
 
         static::$addingField = false;
     }

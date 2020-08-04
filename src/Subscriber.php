@@ -3,10 +3,11 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
 use Statamic\Events;
-use Statamic\Facades\Data;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Sitemap\Sitemap;
+use Statamic\Support\Str;
 
 class Subscriber
 {
@@ -43,7 +44,7 @@ class Subscriber
      */
     public function addSeoFields($event)
     {
-        if ($this->isAllowedPublishForm() && $this->seoIsEnabledForSection($event)) {
+        if ($this->seoIsEnabledForSection($event)) {
             Blueprint::on($event)->addSeoFields();
         }
     }
@@ -57,23 +58,6 @@ class Subscriber
     }
 
     /**
-     * Check if on an allowed published form.
-     *
-     * @return bool
-     */
-    protected function isAllowedPublishForm()
-    {
-        $allowedRoutes = [
-            'statamic.cp.collections.entries.create',
-            'statamic.cp.collections.entries.edit',
-            'statamic.cp.taxonomies.terms.create',
-            'statamic.cp.taxonomies.terms.edit',
-        ];
-
-        return in_array(Request::route()->getName(), $allowedRoutes);
-    }
-
-    /**
      * Check if SEO is enabled for section.
      *
      * @param mixed $event
@@ -81,19 +65,16 @@ class Subscriber
      */
     protected function seoIsEnabledForSection($event)
     {
-        // We can't check `value('seo')` because when creating an entry/term, we don't have an instance yet.
-        $section = $event->blueprint->namespace();
+        $namespace = $event->blueprint->namespace();
 
-        // So we convert the blueprint's namespace to a proper collection/taxonomy id to find the section,
-        $section = str_replace('collections.', 'collection::', $section);
-        $section = str_replace('taxonomies.', 'taxonomy::', $section);
-
-        // Temporary fix for `Data::('collection::handle')` until beta 43,
-        if (\Statamic\Support\Str::startsWith('collection::', $section)) {
-            return \Statamic\Facades\Collection::find(str_replace('collection::', '', $section))->cascade('seo') !== false;
+        if (Str::startsWith($namespace, 'collections.')) {
+            $section = Collection::findByHandle(Str::after($namespace, 'collections.'));
+        } elseif (Str::startsWith($namespace, 'taxonomies.')) {
+            $section = Taxonomy::findByHandle(Str::after($namespace, 'taxonomies.'));
+        } else {
+            throw new \Exception('Unknown section type.');
         }
 
-        // And then grab the setting right off the collection/taxonomy.
-        return Data::find($section)->cascade('seo') !== false;
+        return $section->cascade('seo') !== false;
     }
 }
