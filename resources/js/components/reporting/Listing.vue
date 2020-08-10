@@ -8,7 +8,7 @@
                         <td class="w-1 text-center">
                             <status-icon :status="report.status"></status-icon>
                         </td>
-                        <td class="text-xs w-16"
+                        <td class="text-xs w-16 whitespace-no-wrap"
                             :class="{
                                 'text-red': report.score < 70,
                                 'text-yellow-dark': report.score > 70 && report.score < 90,
