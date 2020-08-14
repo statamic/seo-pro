@@ -29,9 +29,10 @@ trait GetsSectionDefaults
                 'fields' => Fields::new()->getConfig(),
             ])
             ->fields()
-            ->addValues($parent->cascade('seo'))
+            ->addValues($seo = $parent->cascade('seo') ?: [])
             ->augment()
-            ->values();
+            ->values()
+            ->only(array_keys($seo));
     }
 
     protected function getSectionParent($current)
