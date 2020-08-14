@@ -12,10 +12,13 @@ use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
 
 class Report implements Arrayable, Jsonable
 {
+    use GetsSectionDefaults;
+
     protected $id;
     protected $pages;
     protected $results;
@@ -120,6 +123,7 @@ class Report implements Arrayable, Jsonable
 
                 $data = (new Cascade)
                     ->with(SiteDefaults::load()->all())
+                    ->with($this->getAugmentedSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
                     ->get();
