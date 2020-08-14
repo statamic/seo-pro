@@ -30,7 +30,7 @@ class SeoProFieldtype extends Fieldtype
 
     public function process($data)
     {
-        if (! $enabled = Arr::get($data, 'enabled')) {
+        if (! Arr::get($data, 'enabled')) {
             return false;
         }
 
