@@ -75,6 +75,19 @@ class SourceFieldtype extends Fieldtype
         ];
     }
 
+    public function augment($data)
+    {
+        if (Str::startsWith($data, '@seo:')) {
+            return $data;
+        }
+
+        if (! $this->sourceField()) {
+            return $data;
+        }
+
+        return $this->sourceField()->fieldtype()->augment($data);
+    }
+
     protected function sourceField()
     {
         if (! $config = $this->config('field')) {

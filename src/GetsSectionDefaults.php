@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro;
 
 use Statamic\Contracts\Entries\Entry;
+use Statamic\Facades\Blueprint;
 use Statamic\Taxonomies\LocalizedTerm;
 
 trait GetsSectionDefaults
@@ -17,6 +18,13 @@ trait GetsSectionDefaults
             return [];
         }
 
-        return $parent->cascade('seo');
+        return Blueprint::make()
+            ->setContents([
+                'fields' => Fields::new()->getConfig(),
+            ])
+            ->fields()
+            ->addValues($parent->cascade('seo'))
+            ->augment()
+            ->values();
     }
 }
