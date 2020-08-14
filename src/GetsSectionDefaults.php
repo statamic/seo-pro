@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro;
 
 use Statamic\Contracts\Entries\Entry;
+use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blueprint;
 use Statamic\Taxonomies\LocalizedTerm;
 
@@ -37,7 +38,7 @@ trait GetsSectionDefaults
     {
         if ($current instanceof Entry) {
             return $current->collection();
-        } elseif ($current instanceof LocalizedTerm) {
+        } elseif ($current instanceof Term || $current instanceof LocalizedTerm) {
             return $current->taxonomy();
         }
 
