@@ -38,7 +38,7 @@ class SeoProTags extends Tags
 
         return (new Cascade)
             ->with(SiteDefaults::load()->all())
-            ->with($this->getSectionDefaults($current))
+            ->with($this->getAugmentedSectionDefaults($current))
             ->with(array_get($this->context, 'seo', []))
             ->withCurrent($current)
             ->get();

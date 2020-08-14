@@ -10,11 +10,16 @@ trait GetsSectionDefaults
 {
     public function getSectionDefaults($current)
     {
-        if ($current instanceof Entry) {
-            $parent = $current->collection();
-        } elseif ($current instanceof LocalizedTerm) {
-            $parent = $current->taxonomy();
-        } else {
+        if (! $parent = $this->getSectionParent($current)) {
+            return [];
+        }
+
+        return $parent->cascade('seo');
+    }
+
+    public function getAugmentedSectionDefaults($current)
+    {
+        if (! $parent = $this->getSectionParent($current)) {
             return [];
         }
 
@@ -26,5 +31,16 @@ trait GetsSectionDefaults
             ->addValues($parent->cascade('seo'))
             ->augment()
             ->values();
+    }
+
+    protected function getSectionParent($current)
+    {
+        if ($current instanceof Entry) {
+            return $current->collection();
+        } elseif ($current instanceof LocalizedTerm) {
+            return $current->taxonomy();
+        }
+
+        return null;
     }
 }

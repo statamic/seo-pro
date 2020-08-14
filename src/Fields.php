@@ -4,7 +4,7 @@ namespace Statamic\SeoPro;
 
 class Fields
 {
-    use HasAssetField;
+    use HasAssetField, GetsSectionDefaults;
 
     protected $data;
     protected $langFile;
@@ -192,6 +192,7 @@ class Fields
 
         if ($this->data) {
             $cascade = $cascade
+                ->with($this->getSectionDefaults($this->data))
                 ->with($this->data->value('seo', []))
                 ->withCurrent($this->data);
         }
