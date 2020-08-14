@@ -13,6 +13,10 @@ class SeoProFieldtype extends Fieldtype
 
     public function preProcess($data)
     {
+        if ($data === false) {
+            $data = ['enabled' => false];
+        }
+
         return $this->fields()->addValues($data ?? [])->preProcess()->values()->all();
     }
 
