@@ -26,7 +26,7 @@
                 :name="name"
                 :config="fieldConfig"
                 :value="value.value"
-                :meta="meta"
+                :meta="meta.fieldMeta"
                 :read-only="isReadOnly"
                 handle="source_value"
                 @input="updateValue">
@@ -59,7 +59,6 @@ export default {
     data() {
         return {
             source: null,
-            customText: null,
             sourceField: null,
             autoBindChangeWatcher: false,
             changeWatcherWatchDeep: false,
@@ -109,17 +108,13 @@ export default {
             if (val === 'field') {
                 this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
             } else {
-                this.value.value = this.customText;
+                this.value.value = this.meta.defaultValue;
             }
         },
 
         sourceField(val) {
             this.value.value = Array.isArray(val) ? val[0] : val;
         },
-
-        customText(val) {
-            this.value.value = val;
-        }
 
     },
 
@@ -128,12 +123,9 @@ export default {
         this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
 
         if (this.value.source === 'field') {
-            this.sourceField = [this.value.value];
-        } else {
-            this.customText = this.value.value;
+            this.sourceField = this.value.value;
         }
 
-        // Set source after so that the suggest fields don't load before they potentially have data.
         this.source = this.value.source;
 
         // this.bindChangeWatcher();

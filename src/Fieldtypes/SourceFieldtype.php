@@ -59,14 +59,20 @@ class SourceFieldtype extends Fieldtype
     public function preload()
     {
         if (! $sourceField = $this->sourceField()) {
-            return null;
+            return [
+                'fieldMeta' => null,
+                'defaultValue' => null,
+            ];
         }
 
         $value = is_array($originalValue = $this->field->value())
             ? $originalValue['value']
             : $originalValue;
 
-        return $sourceField->setValue($value)->process()->meta();
+        return [
+            'fieldMeta' => $sourceField->setValue($value)->preProcess()->meta(),
+            'defaultValue' => $sourceField->setValue(null)->preProcess()->value(),
+        ];
     }
 
     protected function sourceField()
