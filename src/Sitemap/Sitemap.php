@@ -5,10 +5,13 @@ namespace Statamic\SeoPro\Sitemap;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
 
 class Sitemap
 {
+    use GetsSectionDefaults;
+
     const CACHE_KEY = 'seo-pro.sitemap';
 
     public static function pages()
@@ -28,6 +31,7 @@ class Sitemap
 
                 $data = (new Cascade)
                     ->with(SiteDefaults::load()->all())
+                    ->with($this->getAugmentedSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
                     ->get();
