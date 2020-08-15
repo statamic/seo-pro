@@ -2,8 +2,10 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
+use Statamic\Facades\Blueprint;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
+use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\Fields as SeoProFields;
 use Statamic\Support\Arr;
 
@@ -50,5 +52,21 @@ class SeoProFieldtype extends Fieldtype
     protected function fieldConfig()
     {
         return SeoProFields::new($this->field()->parent())->getConfig();
+    }
+
+    public function augment($data)
+    {
+        if (! is_iterable($data)) {
+            return $data;
+        }
+
+        return Blueprint::make()
+            ->setContents(['fields' => $this->fieldConfig()])
+            ->fields()
+            ->addValues($data)
+            ->augment()
+            ->values()
+            ->only(array_keys($data))
+            ->all();
     }
 }
