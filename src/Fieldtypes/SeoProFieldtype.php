@@ -9,7 +9,8 @@ use Statamic\Support\Arr;
 
 class SeoProFieldtype extends Fieldtype
 {
-    public $selectable = false;
+    protected $selectable = true;
+    protected $icon = 'seo-search-graph';
 
     public function preProcess($data)
     {
