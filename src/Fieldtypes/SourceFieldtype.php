@@ -85,7 +85,13 @@ class SourceFieldtype extends Fieldtype
             return $data;
         }
 
-        return $this->sourceField()->fieldtype()->augment($data);
+        $fieldtype = $this->sourceField()->fieldtype();
+
+        if ($data === false) {
+            $data = $fieldtype->defaultValue();
+        }
+
+        return $fieldtype->augment($data);
     }
 
     protected function sourceField()
