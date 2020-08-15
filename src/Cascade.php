@@ -193,6 +193,10 @@ class Cascade
 
     protected function parseDescriptionField($value)
     {
+        if ($value instanceof Value) {
+            $value = $value->value();
+        }
+
         if (! is_string($value)) {
             return null;
         }
