@@ -37,7 +37,7 @@ class SeoProTags extends Tags
         $current = optional($this->context->get('seo'))->augmentable();
 
         return (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::load()->augmented())
             ->with($this->getAugmentedSectionDefaults($current))
             ->with(array_get($this->context, 'seo', []))
             ->withCurrent($current)

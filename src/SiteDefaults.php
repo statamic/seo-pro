@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
+use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 
@@ -31,6 +32,18 @@ class SiteDefaults extends Collection
     public static function load($items = null)
     {
         return new static($items);
+    }
+
+    public function augmented()
+    {
+        return Blueprint::make()
+            ->setContents(['fields' => Fields::new()->getConfig()])
+            ->fields()
+            ->addValues($this->items)
+            ->augment()
+            ->values()
+            ->only(array_keys($this->items))
+            ->all();
     }
 
     /**
