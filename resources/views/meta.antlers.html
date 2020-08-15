@@ -32,6 +32,7 @@
 {{ if description }}
 <meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
 {{ /if }}
+{{ if image }}
 {{ image }}
 {{ glide:generate :src="url" preset="seo" absolute="true" }}
 <meta property="og:image" content="{{ url }}" />
@@ -42,6 +43,7 @@
 {{ /glide:generate }}
 <meta property="og:image:alt" content="{{ alt }}" />
 {{ /image }}
+{{ /if }}
 <link href="{{ home_url }}" rel="home" />
 <link href="{{ canonical_url }}" rel="canonical" />
 {{ if alternate_locales }}
