@@ -233,11 +233,11 @@ class Report implements Arrayable, Jsonable
             ->map(function ($path) {
                 return (int) pathinfo($path)['filename'];
             })
-            ->sort()
-            ->reverse()
             ->map(function ($id) {
                 return static::find($id);
             })
+            ->sortByDesc
+            ->date()
             ->values();
     }
 
