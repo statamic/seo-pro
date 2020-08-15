@@ -59,8 +59,8 @@ export default {
 
     data() {
         return {
-            source: null,
-            sourceField: null,
+            source: this.value.source,
+            sourceField: this.value.source === 'field' ? this.value.value : null,
             autoBindChangeWatcher: false,
             changeWatcherWatchDeep: false,
             allowedFieldtypes: []
@@ -108,7 +108,7 @@ export default {
 
             if (val === 'field') {
                 this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
-            } else if (this.value.value === null) {
+            } else {
                 this.value.value = this.meta.defaultValue;
             }
         },
@@ -122,13 +122,6 @@ export default {
     mounted() {
         let types = this.config.allowed_fieldtypes || ['text', 'textarea', 'markdown', 'redactor'];
         this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
-
-        if (this.value.source === 'field') {
-            this.sourceField = this.value.value;
-        }
-
-        this.source = this.value.source;
-
         // this.bindChangeWatcher();
     },
 
