@@ -6,6 +6,7 @@
                 :options="sourceTypeSelectOptions"
                 :reduce="option => option.value"
                 :disabled="isReadOnly"
+                :clearable="false"
                 v-model="source"
             />
         </div>
