@@ -31,7 +31,7 @@ class Sitemap
 
                 $data = (new Cascade)
                     ->with(SiteDefaults::load()->all())
-                    ->with($this->getAugmentedSectionDefaults($content))
+                    ->with($this->getSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
                     ->get();
