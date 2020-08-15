@@ -115,16 +115,14 @@ class Report implements Arrayable, Jsonable
     {
         return $this->allContent()
             ->map(function ($content) {
-                $cascade = $content->value('seo');
-
-                if ($cascade === false) {
+                if ($content->value('seo') === false) {
                     return;
                 }
 
                 $data = (new Cascade)
-                    ->with(SiteDefaults::load()->all())
+                    ->with(SiteDefaults::load()->augmented())
                     ->with($this->getAugmentedSectionDefaults($content))
-                    ->with($cascade ?: [])
+                    ->with($content->augmentedValue('seo'))
                     ->withCurrent($content)
                     ->get();
 
