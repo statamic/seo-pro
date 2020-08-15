@@ -108,7 +108,7 @@ export default {
 
             if (val === 'field') {
                 this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
-            } else {
+            } else if (this.value.value === null) {
                 this.value.value = this.meta.defaultValue;
             }
         },
