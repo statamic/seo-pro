@@ -114,6 +114,7 @@ class Fields
                     'field' => [
                         'type' => 'select',
                         'create' => true,
+                        'multiple' => true,
                         'options' => [
                             'noindex',
                             'nofollow',
