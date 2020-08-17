@@ -198,6 +198,12 @@ class Fields
                 ->withCurrent($this->data);
         }
 
-        return $cascade->value($handle);
+        $placeholder = $cascade->value($handle);
+
+        if (is_array($placeholder)) {
+            return collect($placeholder)->implode(', ');
+        }
+
+        return $placeholder;
     }
 }
