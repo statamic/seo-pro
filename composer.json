@@ -17,6 +17,6 @@
         }
     },
     "require": {
-        "statamic/cms": "3.0.*@beta"
+        "statamic/cms": "3.0.*"
     }
 }
