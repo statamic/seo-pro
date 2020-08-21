@@ -2,6 +2,8 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
+use Statamic\Contracts\Entries\Entry;
+use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blueprint;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
@@ -51,7 +53,11 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fieldConfig()
     {
-        return SeoProFields::new($this->field()->parent())->getConfig();
+        if ($this->field()->parent() instanceof Entry || $this->field()->parent() instanceof Term) {
+            $parent = $this->field()->parent();
+        }
+
+        return SeoProFields::new($parent ?? null)->getConfig();
     }
 
     public function augment($data)
