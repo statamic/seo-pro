@@ -15,7 +15,7 @@ class Page
 
     public function path()
     {
-        return parse_url($this->loc())['path'];
+        return parse_url($this->loc())['path'] ?? '/';
     }
 
     public function loc()
