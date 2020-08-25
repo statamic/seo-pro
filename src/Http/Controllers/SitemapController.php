@@ -16,6 +16,7 @@ class SitemapController extends Controller
         $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
             return view('seo-pro::sitemap', [
                 'pages' => Sitemap::pages(),
+                'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
             ])->render();
         });
 
