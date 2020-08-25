@@ -5,7 +5,7 @@
 <meta name="description" content="{{ description | striptags | entities | trim }}" />
 {{ /if }}
 {{ if robots }}
-<meta name="robots" content="{{ robots | list }}" />
+<meta name="robots" content="{{ robots | raw | list }}" />
 {{ /if }}
 <meta property="og:type" content="website" />
 {{ if og_title }}

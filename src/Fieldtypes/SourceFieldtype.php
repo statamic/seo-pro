@@ -77,7 +77,7 @@ class SourceFieldtype extends Fieldtype
 
     public function augment($data)
     {
-        if (Str::startsWith($data, '@seo:')) {
+        if (is_string($data) && Str::startsWith($data, '@seo:')) {
             return $data;
         }
 
