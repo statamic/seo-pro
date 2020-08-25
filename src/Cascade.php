@@ -91,13 +91,18 @@ class Cascade
             }, $item);
         }
 
+        // Get raw value for string checks.
+        $raw = $item instanceof Value
+            ? $item->raw()
+            : $item;
+
         // If they have antlers in the string, they are on their own.
-        if (is_string($item) && Str::contains($item, '{{')) {
+        if (is_string($raw) && Str::contains($item, '{{')) {
             return Parse::template($item, $this->current);
         }
 
         // For source-based strings, we should get the value from the source.
-        if (is_string($item) && Str::startsWith($item, '@seo:')) {
+        if (is_string($raw) && Str::startsWith($item, '@seo:')) {
             $field = explode('@seo:', $item)[1];
 
             if (Str::contains($field, '/')) {
