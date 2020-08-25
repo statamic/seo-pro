@@ -27,7 +27,7 @@ class ThreeSegmentUrls extends Rule
 
     public function processPage()
     {
-        $url = parse_url($this->page->url())['path'];
+        $url = parse_url($this->page->url())['path'] ?? '/';
         $this->slashes = substr_count($url, '/');
     }
 
