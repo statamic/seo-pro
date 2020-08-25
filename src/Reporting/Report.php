@@ -234,6 +234,7 @@ class Report implements Arrayable, Jsonable
             ->map(function ($id) {
                 return static::find($id);
             })
+            ->filter()
             ->sortByDesc
             ->date()
             ->values();
