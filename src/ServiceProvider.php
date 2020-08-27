@@ -31,6 +31,8 @@ class ServiceProvider extends AddonServiceProvider
         'web' => __DIR__.'/../routes/web.php',
     ];
 
+    protected $config = false;
+
     public function boot()
     {
         parent::boot();
