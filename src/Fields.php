@@ -103,6 +103,19 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'site_name_separator',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$this->langFile}.site_name_separator"),
+                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.site_name_separator_instruct"),
+                    'placeholder' => $this->getPlaceholder('site_name_separator'),
+                    'type' => 'seo_pro_source',
+                    'from_field' => false,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
                 'handle' => 'robots',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$this->langFile}.robots"),

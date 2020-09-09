@@ -138,15 +138,15 @@ class Cascade
         }
 
         $compiled = '';
-        $separator = $this->data->get('site_name_separator');
+        $separator = (string) $this->data->get('site_name_separator');
 
-        if ($this->data->get('site_name_position') === 'before') {
+        if ((string) $this->data->get('site_name_position') === 'before') {
             $compiled .= $siteName.' '.$separator.' ';
         }
 
         $compiled .= $title;
 
-        if ($this->data->get('site_name_position') === 'after') {
+        if ((string) $this->data->get('site_name_position') === 'after') {
             $compiled .= ' '.$separator.' '.$siteName;
         }
 

@@ -19,6 +19,9 @@ return [
     'site_name_position' => 'Site Name Position',
     'site_name_position_instruct' => 'Optionally adjust the position for this section.',
 
+    'site_name_separator' => 'Site Name Separator',
+    'site_name_separator_instruct' => 'Optionally adjust the separator for this section.',
+
     'robots' => 'Robots',
     'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
 
