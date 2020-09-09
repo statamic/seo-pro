@@ -40,6 +40,8 @@ It's better to configure your collections and taxonomies to dynamically pull fro
 
 If you wish to use assets in your meta, you can [publish the SEO Pro config](#publishing-config) and specify an asset container, as well as the glide preset to be used.
 
+> You may disable the glide preset altogether by setting `'open_graph_preset' => false,` in your config.
+
 ## File Usage
 
 For advanced devs, you may bypass the CP and configure your SEO settings through files. There are 3 sorts of values you may save.

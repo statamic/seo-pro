@@ -36,12 +36,16 @@ class SeoProTags extends Tags
     {
         $current = optional($this->context->get('seo'))->augmentable();
 
-        return (new Cascade)
+        $metaData = (new Cascade)
             ->with(SiteDefaults::load()->augmented())
             ->with($this->getAugmentedSectionDefaults($current))
             ->with($this->context->get('seo'))
             ->withCurrent($current)
             ->get();
+
+        $metaData['is_glide_enabled'] = (bool) config('statamic.seo-pro.assets.open_graph_preset');
+
+        return $metaData;
     }
 
     /**
