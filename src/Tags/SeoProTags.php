@@ -24,7 +24,7 @@ class SeoProTags extends Tags
             return;
         }
 
-        return view('seo-pro::meta', $this->metaData());
+        return $this->view('seo-pro::meta', $this->metaData());
     }
 
     /**
@@ -52,5 +52,28 @@ class SeoProTags extends Tags
     public function dumpMetaData()
     {
         return dd($this->metaData());
+    }
+
+    /**
+     * Render normalized view partial.
+     *
+     * @param array $args
+     * @return string
+     */
+    protected function view(...$args)
+    {
+        // Render view.
+        $html = view(...$args)->render();
+
+        // Remove new lines.
+        $html = str_replace(["\n", "\r"], '', $html);
+
+        // Remove whitespace between elements.
+        $html = preg_replace('/(>)\s*(<)/', '$1$2', $html);
+
+        // Add cleaner line breaks.
+        $html = preg_replace('/(<[^\/])/', "\n$1", $html);
+
+        return trim($html);
     }
 }
