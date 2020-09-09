@@ -36,6 +36,10 @@ It's better to configure your collections and taxonomies to dynamically pull fro
 
 > Values configured here will be saved into the `seo` array in the item's front-matter.
 
+### Assets
+
+If you wish to use assets in your meta, you can [publish the SEO Pro config](#publishing-config) and specify an asset container, as well as the glide preset to be used.
+
 ## File Usage
 
 For advanced devs, you may bypass the CP and configure your SEO settings through files. There are 3 sorts of values you may save.
@@ -109,10 +113,6 @@ You can publish SEO Pro's `sitemap.xml` and `humans.txt` views for modification 
 ```
 php artisan vendor:publish --tag="seo-pro-views"
 ```
-
-### Assets
-
-If you wish to use assets in your meta, you can [publish the SEO Pro config](#publishing-config) and specify an asset container, as well as the glide preset to be used.
 
 ### Sitemap.xml
 
