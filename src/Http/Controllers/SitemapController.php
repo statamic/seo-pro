@@ -11,6 +11,8 @@ class SitemapController extends Controller
 {
     public function show()
     {
+        abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
+
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
 
         $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {

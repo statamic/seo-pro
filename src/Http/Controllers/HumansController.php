@@ -10,6 +10,8 @@ class HumansController extends Controller
 {
     public function show()
     {
+        abort_unless(config('statamic.seo-pro.humans.enabled'), 404);
+
         $cascade = (new Cascade)
             ->with(SiteDefaults::load()->all())
             ->get();
