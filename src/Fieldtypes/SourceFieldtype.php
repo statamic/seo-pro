@@ -42,7 +42,7 @@ class SourceFieldtype extends Fieldtype
     public function process($data)
     {
         if ($data['source'] === 'field') {
-            return '@seo:'.$data['value'];
+            return $data['value'] ? '@seo:'.$data['value'] : null;
         }
 
         if ($data['source'] === 'inherit') {
