@@ -79,7 +79,7 @@ class SiteDefaultsController extends CpController
                                 'type' => 'seo_pro_source',
                                 'inherit' => false,
                                 'field' => [
-                                    'type' => 'text',
+                                    'type' => 'textarea',
                                 ],
                             ],
                         ],

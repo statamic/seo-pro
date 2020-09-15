@@ -68,7 +68,7 @@ class Fields
                     'placeholder' => $this->getPlaceholder('description'),
                     'type' => 'seo_pro_source',
                     'field' => [
-                        'type' => 'text',
+                        'type' => 'textarea',
                     ],
                 ],
             ],
