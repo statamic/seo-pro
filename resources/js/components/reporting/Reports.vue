@@ -11,6 +11,7 @@
             <button
                 @click="generateReport"
                 class="btn-primary"
+                :disabled="loading"
                 v-text="__('seo-pro::messages.generate_report')">
             </button>
         </div>
