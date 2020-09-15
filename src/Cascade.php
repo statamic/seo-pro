@@ -3,13 +3,14 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
-use Statamic\API\Parse;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Parse;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Value;
 use Statamic\Support\Str;
+use Statamic\View\Cascade as ViewCascade;
 
 class Cascade
 {
@@ -99,7 +100,7 @@ class Cascade
 
         // If they have antlers in the string, they are on their own.
         if (is_string($raw) && Str::contains($item, '{{')) {
-            return Parse::template($item, $this->current);
+            return $this->parseAntlers($item);
         }
 
         // For source-based strings, we should get the value from the source.
@@ -221,6 +222,13 @@ class Cascade
         return $value instanceof Collection
             ? $value->first()
             : $value;
+    }
+
+    protected function parseAntlers($item)
+    {
+        $viewCascade = app(ViewCascade::class)->toArray();
+
+        return (string) Parse::template($item, array_merge($viewCascade, $this->current));
     }
 
     protected function humans()
