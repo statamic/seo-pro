@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro;
 
+use Illuminate\Support\Collection;
 use Statamic\API\Parse;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
@@ -213,6 +214,13 @@ class Cascade
         }
 
         return iconv('UTF-8', 'UTF-8//IGNORE', $value);
+    }
+
+    protected function parseImageField($value)
+    {
+        return $value instanceof Collection
+            ? $value->first()
+            : $value;
     }
 
     protected function humans()
