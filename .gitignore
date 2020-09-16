@@ -2,3 +2,6 @@
 node_modules
 .env
 mix-manifest.json
+/composer.json
+/composer.lock
+/vendor
