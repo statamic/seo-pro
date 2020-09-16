@@ -5,6 +5,7 @@ namespace Statamic\Addons\SeoPro;
 use Statamic\API\Str;
 use Statamic\API\Nav;
 use Statamic\API\File;
+use Statamic\API\User;
 use Statamic\API\YAML;
 use Statamic\API\Collection;
 use Statamic\Extend\Listener;
@@ -41,7 +42,7 @@ class SeoProListener extends Listener
             $item->add(Nav::item('seo-pro-reports')
                 ->title($this->trans('messages.reports'))
                 ->route('seopro.reports.index'));
-                
+
             $item->add(Nav::item('seo-pro-defaults')
                 ->title($this->trans('messages.site_defaults'))
                 ->route('seopro.defaults.edit'));
@@ -54,9 +55,11 @@ class SeoProListener extends Listener
                 ->title($this->trans('messages.humans_txt'))
                 ->route('seopro.humans.edit'));
 
-            $item->add(Nav::item('seo-pro-settings')
-                ->title(trans_choice('cp.settings', 2))
-                ->route('addon.settings', ['addon' => 'seo-pro']));
+            if (User::getCurrent()->isSuper()) {
+                $item->add(Nav::item('seo-pro-settings')
+                    ->title(trans_choice('cp.settings', 2))
+                    ->route('addon.settings', ['addon' => 'seo-pro']));
+            }
         });
 
         $nav->addTo('tools', $seo);
