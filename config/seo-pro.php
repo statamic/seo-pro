@@ -7,7 +7,6 @@ return [
         'open_graph_preset' => [
             'w' => 1200,
             'h' => 1200,
-            'fit' => 'crop',
         ],
     ],
 
