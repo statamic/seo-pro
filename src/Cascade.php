@@ -45,9 +45,7 @@ class Cascade
     public function get()
     {
         if (! $this->current) {
-            throw_unless($home = Entry::findByUri('/'), new \Exception('SEO Pro requires a home page at [/]'));
-
-            $this->withCurrent($home);
+            $this->withCurrent(Entry::findByUri('/'));
         }
 
         if (array_get($this->current, 'response_code') === 404) {
@@ -77,7 +75,9 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = $this->model->absoluteUrl();
+        $url = method_exists($this->model, 'absoluteUrl')
+            ? $this->model->absoluteUrl()
+            : config('app.url');
 
         // Include pagination if present
         if (app('request')->has('page')) {
@@ -168,22 +168,24 @@ class Cascade
 
     protected function lastModified()
     {
-        if (method_exists($this->model, 'lastModified')) {
-            return $this->model->lastModified();
-        }
+        return method_exists($this->model, 'lastModified')
+            ? $this->model->lastModified()
+            : null;
     }
 
     protected function locale()
     {
-        if (! method_exists($this->model, 'locale')) {
-            return Site::default()->handle();
-        }
-
-        return Config::getShortLocale($this->model->locale());
+        return method_exists($this->model, 'locale')
+            ? Config::getShortLocale($this->model->locale())
+            : Site::default()->handle();
     }
 
     protected function alternateLocales()
     {
+        if (! $this->model) {
+            return [];
+        }
+
         if (! method_exists($this->model, 'locales')) {
             return collect(Config::getOtherLocales())->map(function ($locale) {
                 return ['locale' => $locale, 'url' => $this->model->absoluteUrl()];
