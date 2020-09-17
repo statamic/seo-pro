@@ -49,7 +49,7 @@
 {{ if image }}
     {{ image }}
         {{ if is_glide_enabled }}
-            {{ glide:generate :src="url" preset="seo" absolute="true" }}
+            {{ glide:generate :src="image" preset="seo" absolute="true" }}
                 <meta property="og:image" content="{{ url }}" />
                 <meta property="og:image:width" content="{{ width }}" />
                 <meta property="og:image:height" content="{{ height }}" />
