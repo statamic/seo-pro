@@ -45,7 +45,9 @@ class Cascade
     public function get()
     {
         if (! $this->current) {
-            $this->withCurrent(Entry::findByUri('/'));
+            throw_unless($home = Entry::findByUri('/'), new \Exception('SEO Pro requires a home page at [/]'));
+
+            $this->withCurrent($home);
         }
 
         if (array_get($this->current, 'response_code') === 404) {
