@@ -105,11 +105,7 @@ class ServiceProvider extends AddonServiceProvider
         $server = app(\League\Glide\Server::class);
 
         $server->setPresets($server->getPresets() + [
-            'seo' => [
-                'w' => config('statamic.seo-pro.assets.open_graph_preset.w'),
-                'h' => config('statamic.seo-pro.assets.open_graph_preset.h'),
-                'fit' => 'crop',
-            ],
+            'seo' => config('statamic.seo-pro.assets.open_graph_preset'),
         ]);
 
         return $this;
