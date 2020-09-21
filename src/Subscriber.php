@@ -17,8 +17,8 @@ class Subscriber
      * @var array
      */
     protected $events = [
-        Events\EntryBlueprintFound::class => 'addSeoFields',
-        Events\TermBlueprintFound::class => 'addSeoFields',
+        Events\EntryBlueprintFound::class => 'ensureSeoFields',
+        Events\TermBlueprintFound::class => 'ensureSeoFields',
         Events\CollectionSaved::class => 'clearSitemapCache',
         Events\EntrySaved::class => 'clearSitemapCache',
         Events\TaxonomySaved::class => 'clearSitemapCache',
@@ -38,15 +38,15 @@ class Subscriber
     }
 
     /**
-     * Add SEO section and fields to entry blueprint.
+     * Ensure section blueprint has (or doesn't have) SEO fields.
      *
      * @param mixed $event
      */
-    public function addSeoFields($event)
+    public function ensureSeoFields($event)
     {
-        if ($this->seoIsEnabledForSection($event)) {
-            Blueprint::on($event)->addSeoFields();
-        }
+        Blueprint::on($event)->ensureSeoFields(
+            $this->seoIsEnabledForSection($event)
+        );
     }
 
     /**

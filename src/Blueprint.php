@@ -39,6 +39,18 @@ class Blueprint
     }
 
     /**
+     * Ensure SEO section and fields are added to (or removed from) blueprint.
+     *
+     * @param bool $isEnabled
+     */
+    public function ensureSeoFields($isEnabled = true)
+    {
+        $isEnabled
+            ? $this->addSeoFields()
+            : $this->removeSeoFields();
+    }
+
+    /**
      * Add SEO section and fields to blueprint.
      */
     public function addSeoFields()
@@ -52,6 +64,14 @@ class Blueprint
         $this->blueprint->ensureFieldInSection('seo', ['type' => 'seo_pro', 'listable' => false, 'display' => 'SEO'], 'SEO');
 
         static::$addingField = false;
+    }
+
+    /**
+     * Remove SEO section and fields from blueprint.
+     */
+    public function removeSeoFields()
+    {
+        $this->blueprint->removeSection('SEO');
     }
 
     /**
