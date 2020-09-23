@@ -52,6 +52,7 @@ class Sitemap
         return collect()
             ->merge($this->publishedEntries())
             ->merge($this->publishedTerms())
+            ->merge($this->publishedCollectionTerms())
             ->values();
     }
 
@@ -59,7 +60,9 @@ class Sitemap
     {
         return Collection::all()
             ->flatMap(function ($collection) {
-                return $collection->cascade('seo') !== false ? $collection->queryEntries()->get() : collect();
+                return $collection->cascade('seo') !== false
+                    ? $collection->queryEntries()->get()
+                    : collect();
             })
             ->filter(function ($entry) {
                 return $entry->status() === 'published';
@@ -70,9 +73,34 @@ class Sitemap
     {
         return Taxonomy::all()
             ->flatMap(function ($taxonomy) {
-                return $taxonomy->cascade('seo') !== false ? $taxonomy->queryTerms()->get() : collect();
+                return $taxonomy->cascade('seo') !== false
+                    ? $taxonomy->queryTerms()->get()
+                    : collect();
             })
             ->filter
-            ->published();
+            ->published()
+            ->filter(function ($term) {
+                return view()->exists($term->template());
+            });
+    }
+
+    protected function publishedCollectionTerms()
+    {
+        return Collection::all()
+            ->flatMap(function ($collection) {
+                return $collection->cascade('seo') !== false
+                    ? $collection->taxonomies()->map->collection($collection)
+                    : collect();
+            })
+            ->flatMap(function ($taxonomy) {
+                return $taxonomy->cascade('seo') !== false
+                    ? $taxonomy->queryTerms()->get()->map->collection($taxonomy->collection())
+                    : collect();
+            })
+            ->filter
+            ->published()
+            ->filter(function ($term) {
+                return view()->exists($term->template());
+            });
     }
 }
