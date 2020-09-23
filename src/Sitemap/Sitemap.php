@@ -16,12 +16,23 @@ class Sitemap
 
     public static function pages()
     {
-        return (new static)->getPages();
+        $sitemap = new static;
+
+        return collect()
+            ->merge($sitemap->getPages($sitemap->publishedEntries()))
+            ->merge($sitemap->getPages($sitemap->publishedTerms()))
+            ->merge($sitemap->getPages($sitemap->publishedCollectionTerms()))
+            ->sortBy(function ($page) {
+                return substr_count(rtrim($page->path(), '/'), '/');
+            })
+            ->values()
+            ->map
+            ->toArray();
     }
 
-    public function getPages()
+    protected function getPages($items)
     {
-        return $this->publishedContent()
+        return $items
             ->map(function ($content) {
                 $cascade = $content->value('seo');
 
@@ -38,22 +49,7 @@ class Sitemap
 
                 return (new Page)->with($data);
             })
-            ->filter()
-            ->sortBy(function ($page) {
-                return substr_count(rtrim($page->path(), '/'), '/');
-            })
-            ->values()
-            ->map
-            ->toArray();
-    }
-
-    protected function publishedContent()
-    {
-        return collect()
-            ->merge($this->publishedEntries())
-            ->merge($this->publishedTerms())
-            ->merge($this->publishedCollectionTerms())
-            ->values();
+            ->filter();
     }
 
     protected function publishedEntries()
