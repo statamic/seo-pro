@@ -5,6 +5,11 @@
             "Statamic\\SeoPro\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
     "extra": {
         "statamic": {
             "name": "Seo Pro",
@@ -18,5 +23,8 @@
     },
     "require": {
         "statamic/cms": "~3.0.12"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.4"
     }
 }
