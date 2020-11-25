@@ -168,6 +168,7 @@ class Fields
                     'type' => 'seo_pro_source',
                     'disableable' => true,
                     'field' => false,
+                    'from_field' => false,
                 ],
             ],
             [

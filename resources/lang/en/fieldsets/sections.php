@@ -36,7 +36,7 @@ return [
 
     'sitemap_section' => 'Site Map',
 
-    'sitemap' => 'Enabled',
+    'sitemap' => 'Sitemap',
     'sitemap_instruct' => 'If disabled, items in this section will not appear in the sitemap.',
 
     'show_future' => 'Show Future Entries',
