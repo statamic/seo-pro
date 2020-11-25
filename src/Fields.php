@@ -145,7 +145,7 @@ class Fields
                     'allowed_fieldtypes' => [
                         'assets',
                     ],
-                    'field' => $this->getAssetFieldConfig(),
+                    'field' => static::getAssetFieldConfig(),
                 ],
             ],
             [
