@@ -28,6 +28,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->files = app(Filesystem::class);
 
         $this->files->copyDirectory(__DIR__.'/Fixtures/content', base_path('content'));
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
         $this->restoreStatamicConfigs();
         $this->restoreSiteDefaults();
