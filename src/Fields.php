@@ -149,6 +149,17 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'twitter_handle',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$this->langFile}.twitter_handle"),
+                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.twitter_handle_instruct"),
+                    'type' => 'seo_pro_source',
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
                 'handle' => 'sitemap',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$this->langFile}.sitemap"),

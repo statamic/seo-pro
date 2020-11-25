@@ -31,6 +31,9 @@ return [
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL in this section when shared on social networks.',
 
+    'twitter_handle' => 'Twitter Handle',
+    'twitter_handle_instruct' => 'Choose a default twitter handle that corresponds to this section.',
+
     'sitemap_section' => 'Site Map',
 
     'sitemap' => 'Enabled',

@@ -26,6 +26,9 @@ return [
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
 
+    'twitter_handle' => 'Twitter Handle',
+    'twitter_handle_instruct' => 'Optionally override the twitter handle for this page.',
+
     'sitemap' => 'Sitemap',
     'sitemap_instruct' => 'If disabled, this item will not appear in the sitemap.',
 
