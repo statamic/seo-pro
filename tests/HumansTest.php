@@ -75,6 +75,29 @@ EOT;
         $this->assertStringContainsString('Description: Bob sled team!', $content);
     }
 
+    /**
+     * @test
+     * @environment-setup setCustomHumansTxtUrl
+     */
+    public function it_outputs_humans_txt_with_custom_url()
+    {
+        $this->setSeoInSiteDefaults([
+            'site_name' => 'Cool Runnings',
+        ]);
+
+        $this
+            ->get('/humans.txt')
+            ->assertStatus(404);
+
+        $content = $this
+            ->get('/aliens.md')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->getContent();
+
+        $this->assertStringContainsString('Creator: Cool Runnings', $content);
+    }
+
     /** @test */
     public function it_outputs_humans_txt_with_custom_view()
     {
@@ -91,5 +114,13 @@ EOT;
             ->getContent();
 
         $this->assertEquals('Nice view, Cool Runnings!', $content);
+    }
+
+    protected function setCustomHumansTxtUrl($app)
+    {
+        $app->config->set('statamic.seo-pro.humans', [
+            'enabled' => true,
+            'url' => 'aliens.md',
+        ]);
     }
 }
