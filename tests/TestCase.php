@@ -4,6 +4,7 @@ namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Extend\Manifest;
+use Statamic\SeoPro\SiteDefaults;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -29,11 +30,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->files->copyDirectory(__DIR__.'/Fixtures/content', base_path('content'));
 
         $this->restoreStatamicConfigs();
+        $this->restoreSiteDefaults();
     }
 
     protected function tearDown(): void
     {
         $this->restoreStatamicConfigs();
+        $this->restoreSiteDefaults();
 
         parent::tearDown();
     }
@@ -51,6 +54,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         foreach ($configs as $config) {
             $this->files->delete(config_path("{$config}.php"));
             $this->files->copy(__DIR__."/Fixtures/config/{$config}.php", config_path("{$config}.php"));
+        }
+    }
+
+    protected function restoreSiteDefaults()
+    {
+        if ($this->files->exists($path = base_path('content/seo.yaml'))) {
+            $this->files->delete($path);
         }
     }
 
@@ -78,6 +88,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
                 'namespace' => 'Statamic\\SeoPro\\',
             ],
         ];
+    }
+
+    protected function setSeoInSiteDefaults($seo)
+    {
+        SiteDefaults::load($seo)->save();
+
+        return $this;
     }
 
     protected function setSeoOnCollection($collection, $seo)
