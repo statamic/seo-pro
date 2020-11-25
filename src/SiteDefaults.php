@@ -34,6 +34,11 @@ class SiteDefaults extends Collection
         return new static($items);
     }
 
+    /**
+     * Get augmented.
+     *
+     * @return array
+     */
     public function augmented()
     {
         return Blueprint::make()
