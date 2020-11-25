@@ -3,8 +3,9 @@
 namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Extend\Manifest;
 
-class TestCase extends \Orchestra\Testbench\TestCase
+abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected function getPackageProviders($app)
     {
@@ -25,6 +26,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->files = app(Filesystem::class);
 
+        $this->files->copyDirectory(__DIR__.'/Fixtures/content', base_path('content'));
+
         $this->restoreStatamicConfigs();
     }
 
@@ -38,6 +41,62 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function restoreStatamicConfigs()
     {
         $this->files->copyDirectory(__DIR__.'/../vendor/statamic/cms/config', config_path('statamic'));
+
+        $configs = [
+            'filesystems',
+            'statamic/users',
+            'statamic/stache',
+        ];
+
+        foreach ($configs as $config) {
+            $this->files->delete(config_path("{$config}.php"));
+            $this->files->copy(__DIR__."/Fixtures/config/{$config}.php", config_path("{$config}.php"));
+        }
+    }
+
+    protected function resolveApplicationConfiguration($app)
+    {
+        parent::resolveApplicationConfiguration($app);
+
+        $configs = [
+            'assets', 'cp', 'forms', 'routes', 'static_caching',
+            'sites', 'stache', 'system', 'users',
+        ];
+
+        foreach ($configs as $config) {
+            $app['config']->set("statamic.$config", require(config_path("statamic/{$config}.php")));
+        }
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app->make(Manifest::class)->manifest = [
+            'statamic/seo-pro' => [
+                'id' => 'statamic/seo-pro',
+                'namespace' => 'Statamic\\SeoPro\\',
+            ],
+        ];
+    }
+
+    protected function setSeoOnCollection($collection, $seo)
+    {
+        $collection->cascade(['seo' => $seo])->save();
+
+        return $this;
+    }
+
+    protected function setSeoOnEntry($entry, $seo)
+    {
+        $entry->data(['seo' => $seo])->save();
+
+        return $this;
+    }
+
+    protected static function normalizeMultilineString($string)
+    {
+        return str_replace("\r\n", "\n", $string);
     }
 
     /**
