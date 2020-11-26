@@ -145,7 +145,18 @@ class Fields
                     'allowed_fieldtypes' => [
                         'assets',
                     ],
-                    'field' => $this->getAssetFieldConfig(),
+                    'field' => static::getAssetFieldConfig(),
+                ],
+            ],
+            [
+                'handle' => 'twitter_handle',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$this->langFile}.twitter_handle"),
+                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.twitter_handle_instruct"),
+                    'type' => 'seo_pro_source',
+                    'field' => [
+                        'type' => 'text',
+                    ],
                 ],
             ],
             [
@@ -157,6 +168,7 @@ class Fields
                     'type' => 'seo_pro_source',
                     'disableable' => true,
                     'field' => false,
+                    'from_field' => false,
                 ],
             ],
             [

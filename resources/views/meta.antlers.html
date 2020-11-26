@@ -1,5 +1,5 @@
 {{ if compiled_title }}
-    <title>{{ compiled_title | striptags }}</title>
+    <title>{{ compiled_title | striptags | entities | trim }}</title>
 {{ /if }}
 
 {{ if description }}
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 
 {{ if og_title }}
-    <meta property="og:title" content="{{ og_title | striptags }}" />
+    <meta property="og:title" content="{{ og_title | striptags | entities | trim }}" />
 {{ /if }}
 
 {{ if description }}
@@ -35,7 +35,7 @@
 <meta name="twitter:card" content="summary" />
 
 {{ if twitter_handle }}
-    <meta name="twitter:site" content="{{ twitter_handle ensure_left="@" }}" />
+    <meta name="twitter:site" content="{{ twitter_handle | trim | ensure_left:@ }}" />
 {{ /if }}
 
 {{ if title }}

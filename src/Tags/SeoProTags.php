@@ -20,7 +20,7 @@ class SeoProTags extends Tags
      */
     public function meta()
     {
-        if (array_get($this->context, 'seo') === false) {
+        if ($this->context->value('seo') === false) {
             return;
         }
 
@@ -39,7 +39,7 @@ class SeoProTags extends Tags
         $metaData = (new Cascade)
             ->with(SiteDefaults::load()->augmented())
             ->with($this->getAugmentedSectionDefaults($current))
-            ->with($this->context->get('seo'))
+            ->with($this->context->value('seo'))
             ->withCurrent($current)
             ->get();
 

@@ -18,13 +18,16 @@ return [
     'site_name_position_instruct' => 'Optionally adjust the position for this page.',
 
     'site_name_separator' => 'Site Name Separator',
-    'site_name_separator_instruct' => 'Optionally adjust the separator for this section.',
+    'site_name_separator_instruct' => 'Optionally adjust the separator for this page.',
 
     'robots' => 'Robots',
     'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
 
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
+
+    'twitter_handle' => 'Twitter Handle',
+    'twitter_handle_instruct' => 'Optionally override the twitter handle for this page.',
 
     'sitemap' => 'Sitemap',
     'sitemap_instruct' => 'If disabled, this item will not appear in the sitemap.',

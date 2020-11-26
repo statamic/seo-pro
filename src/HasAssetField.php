@@ -9,7 +9,7 @@ trait HasAssetField
      *
      * @return array
      */
-    protected function getAssetFieldConfig()
+    protected static function getAssetFieldConfig()
     {
         if (! $container = config('statamic.seo-pro.assets.container')) {
             return false;
