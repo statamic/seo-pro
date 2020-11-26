@@ -2,7 +2,9 @@
 
 namespace Tests;
 
+use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
+use Statamic\Facades\Entry;
 
 class SitemapTest extends TestCase
 {
@@ -120,6 +122,114 @@ EOT;
             ->getContent();
 
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?> test', $content);
+    }
+
+    /** @test */
+    public function it_uses_cascade_to_generate_priorities()
+    {
+        $this
+            ->setSeoInSiteDefaults([
+                'priority' => 0.1,
+            ])
+            ->setSeoOnCollection(Collection::find('pages'), [
+                'priority' => 0.2,
+            ])
+            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+                'priority' => 0.3,
+            ]);
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertStringContainsString(<<<'EOT'
+    <url>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-11-26</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+EOT,
+            $content
+        );
+
+        $this->assertStringContainsString(<<<'EOT'
+    <url>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+EOT,
+            $content
+        );
+
+        $this->assertStringContainsString(<<<'EOT'
+    <url>
+        <loc>http://cool-runnings.com/dance</loc>
+        <lastmod>2020-11-26</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.1</priority>
+    </url>
+EOT,
+            $content
+        );
+    }
+
+    /** @test */
+    public function it_uses_cascade_to_generate_frequencies()
+    {
+        $this
+            ->setSeoInSiteDefaults([
+                'change_frequency' => 'weekly',
+            ])
+            ->setSeoOnCollection(Collection::find('pages'), [
+                'change_frequency' => 'daily',
+            ])
+            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+                'change_frequency' => 'hourly',
+            ]);
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertStringContainsString(<<<'EOT'
+    <url>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-11-26</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.5</priority>
+    </url>
+EOT,
+            $content
+        );
+
+        $this->assertStringContainsString(<<<'EOT'
+    <url>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+EOT,
+            $content
+        );
+
+        $this->assertStringContainsString(<<<'EOT'
+    <url>
+        <loc>http://cool-runnings.com/dance</loc>
+        <lastmod>2020-11-26</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+EOT,
+            $content
+        );
     }
 
     protected function setCustomSitemapXmlUrl($app)
