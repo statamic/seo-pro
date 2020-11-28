@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -87,5 +88,23 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('Cool Writings >>> Jamaica', $data['compiled_title']);
+    }
+
+    /** @test */
+    public function it_parses_field_references()
+    {
+        $entry = Entry::findBySlug('about', 'pages');
+
+        $entry->data(['favourite_colour' => 'Red'])->save();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => '@seo:favourite_colour',
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('Red', $data['description']);
     }
 }
