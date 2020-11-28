@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use Statamic\Facades\Entry;
-use Statamic\Facades\Term;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -89,51 +87,5 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('Cool Writings >>> Jamaica', $data['compiled_title']);
-    }
-
-    /** @test */
-    public function it_generates_home_url_on_sub_page()
-    {
-        $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->withCurrent(Entry::findBySlug('about', 'pages'))
-            ->get();
-
-        $this->assertEquals('http://cool-runnings.com/', $data['home_url']);
-    }
-
-    /** @test */
-    public function it_generates_canonical_url_for_entry()
-    {
-        $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->withCurrent(Entry::findBySlug('about', 'pages'))
-            ->get();
-
-        $this->assertEquals('http://cool-runnings.com/about', $data['canonical_url']);
-    }
-
-    /** @test */
-    public function it_generates_canonical_url_for_term()
-    {
-        $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->withCurrent(Term::findBySlug('sneakers', 'topics'))
-            ->get();
-
-        $this->assertEquals('http://cool-runnings.com/topics/sneakers', $data['canonical_url']);
-    }
-
-    /** @test */
-    public function it_generates_canonical_url_with_pagination()
-    {
-        $this->call('GET', '/', ['page' => 2]);
-
-        $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->withCurrent(Entry::findBySlug('about', 'pages'))
-            ->get();
-
-        $this->assertEquals('http://cool-runnings.com/about?page=2', $data['canonical_url']);
     }
 }
