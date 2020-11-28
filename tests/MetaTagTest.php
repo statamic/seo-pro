@@ -239,16 +239,57 @@ EOT;
     }
 
     /** @test */
-    public function it_generates_custom_canonical_url()
+    public function it_generates_canonical_url_meta_with_disabled_pagination()
+    {
+        Config::set('statamic.seo-pro.pagination.enabled_in_canonical_url', false);
+
+        $this->call('GET', '/about', ['page' => 2]);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/about" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_generates_canonical_url_meta_with_custom_url()
     {
         $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'canonical_url' => 'https://hot-walkings.com/pages/aboot',
         ]);
 
+        $this->assertStringContainsString(
+            '<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_applies_pagination_to_custom_canonical_url_on_same_domain()
+    {
         $this->call('GET', '/about', ['page' => 2]);
 
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'http://cool-runnings.com/pages/aboot',
+        ]);
+
         $this->assertStringContainsString(
-            '<link href="https://hot-walkings.com/pages/aboot?page=2" rel="canonical" />',
+            '<link href="http://cool-runnings.com/pages/aboot?page=2" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_doesnt_apply_pagination_to_external_custom_canonical_url()
+    {
+        $this->call('GET', '/about', ['page' => 2]);
+
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'https://hot-walkings.com/pages/aboot',
+        ]);
+
+        $this->assertStringContainsString(
+            '<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />',
             $this->meta('/about')
         );
     }

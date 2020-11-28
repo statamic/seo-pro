@@ -75,9 +75,13 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = $this->data->get('canonical_url');
+        $url = Str::trim($this->data->get('canonical_url'));
 
-        if (config('statamic.seo-pro.pagination.enabled_in_canonical_url') && app('request')->has('page')) {
+        if (config('statamic.seo-pro.pagination.enabled_in_canonical_url') === false) {
+            return $url;
+        }
+
+        if (Str::startsWith($url, config('app.url')) && app('request')->has('page')) {
             $url .= '?page='.((int) app('request')->get('page'));
         }
 
