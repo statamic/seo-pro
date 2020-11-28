@@ -21,4 +21,8 @@ return [
         'url' => 'humans.txt',
     ],
 
+    'pagination' => [
+        'enabled_in_canonical_url' => true,
+    ],
+
 ];

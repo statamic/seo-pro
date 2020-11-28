@@ -77,8 +77,7 @@ class Cascade
     {
         $url = $this->data->get('canonical_url');
 
-        // Include pagination if present
-        if (app('request')->has('page')) {
+        if (config('statamic.seo-pro.pagination.enabled_in_canonical_url') && app('request')->has('page')) {
             $url .= '?page='.((int) app('request')->get('page'));
         }
 
