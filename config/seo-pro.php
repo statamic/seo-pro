@@ -23,6 +23,7 @@ return [
 
     'pagination' => [
         'enabled_in_canonical_url' => true,
+        'enabled_on_first_page' => false,
     ],
 
 ];

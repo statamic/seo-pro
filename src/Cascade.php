@@ -77,12 +77,22 @@ class Cascade
     {
         $url = Str::trim($this->data->get('canonical_url'));
 
+        if (! app('request')->has('page')) {
+            return $url;
+        }
+
+        $page = (int) app('request')->get('page');
+
         if (config('statamic.seo-pro.pagination.enabled_in_canonical_url') === false) {
             return $url;
         }
 
-        if (Str::startsWith($url, config('app.url')) && app('request')->has('page')) {
-            $url .= '?page='.((int) app('request')->get('page'));
+        if (config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $page === 1) {
+            return $url;
+        }
+
+        if (Str::startsWith($url, config('app.url'))) {
+            $url .= '?page='.$page;
         }
 
         return $url;

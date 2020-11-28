@@ -295,6 +295,38 @@ EOT;
     }
 
     /** @test */
+    public function it_doesnt_apply_pagination_to_first_page()
+    {
+        $this->call('GET', '/about', ['page' => 1]);
+
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'http://cool-runnings.com/aboot',
+        ]);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/aboot" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page()
+    {
+        Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
+
+        $this->call('GET', '/about', ['page' => 1]);
+
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'http://cool-runnings.com/aboot',
+        ]);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/aboot?page=1" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
     public function it_generates_alternate_locales_meta()
     {
         // TODO
