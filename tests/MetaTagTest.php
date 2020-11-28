@@ -143,7 +143,7 @@ EOT;
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
 
-        $this->setSeoOnEntry($test = Entry::findBySlug('about', 'pages'), [
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
 
@@ -164,7 +164,7 @@ EOT;
      */
     public function it_generates_social_image_with_custom_glide_preset()
     {
-        $this->setSeoOnEntry($test = Entry::findBySlug('about', 'pages'), [
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
 
@@ -185,7 +185,7 @@ EOT;
         Config::set('statamic.seo-pro.assets.container', 'assets');
         Config::set('statamic.seo-pro.assets.open_graph_preset', false);
 
-        $this->setSeoOnEntry($test = Entry::findBySlug('about', 'pages'), [
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
 
@@ -299,12 +299,8 @@ EOT;
     {
         $this->call('GET', '/about', ['page' => 1]);
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'canonical_url' => 'http://cool-runnings.com/aboot',
-        ]);
-
         $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/aboot" rel="canonical" />',
+            '<link href="http://cool-runnings.com/about" rel="canonical" />',
             $this->meta('/about')
         );
     }
@@ -316,12 +312,8 @@ EOT;
 
         $this->call('GET', '/about', ['page' => 1]);
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'canonical_url' => 'http://cool-runnings.com/aboot',
-        ]);
-
         $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/aboot?page=1" rel="canonical" />',
+            '<link href="http://cool-runnings.com/about?page=1" rel="canonical" />',
             $this->meta('/about')
         );
     }

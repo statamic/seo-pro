@@ -33,7 +33,7 @@ class SitemapTest extends TestCase
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>http://cool-runnings.com</loc>
-        <lastmod></lastmod>
+        <lastmod>2020-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
