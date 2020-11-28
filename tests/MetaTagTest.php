@@ -239,6 +239,21 @@ EOT;
     }
 
     /** @test */
+    public function it_generates_custom_canonical_url()
+    {
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'https://hot-walkings.com/pages/aboot',
+        ]);
+
+        $this->call('GET', '/about', ['page' => 2]);
+
+        $this->assertStringContainsString(
+            '<link href="https://hot-walkings.com/pages/aboot?page=2" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
     public function it_generates_alternate_locales_meta()
     {
         // TODO

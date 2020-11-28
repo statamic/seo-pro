@@ -168,6 +168,16 @@ class SiteDefaults extends Collection
                             ],
                         ],
                         [
+                            'handle' => 'canonical_url',
+                            'field' => [
+                                'display' => __('seo-pro::fieldsets/defaults.canonical_url'),
+                                'instructions' => __('seo-pro::fieldsets/defaults.canonical_url_instruct'),
+                                'type' => 'seo_pro_source',
+                                'inherit' => false,
+                                'field' => false,
+                            ],
+                        ],
+                        [
                             'handle' => 'robots',
                             'field' => [
                                 'display' => __('seo-pro::fieldsets/defaults.robots'),

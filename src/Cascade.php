@@ -75,9 +75,7 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = method_exists($this->model, 'absoluteUrl')
-            ? $this->model->absoluteUrl()
-            : config('app.url');
+        $url = $this->data->get('canonical_url');
 
         // Include pagination if present
         if (app('request')->has('page')) {
