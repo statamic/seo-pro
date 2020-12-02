@@ -30,7 +30,7 @@ class SitemapTest extends TestCase
 
         $today = now()->format('Y-m-d');
 
-        $expected = <<<EOT
+        $expected = <<<"EOT"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
@@ -148,38 +148,36 @@ EOT;
 
         $today = now()->format('Y-m-d');
 
-        $this->assertStringContainsString(<<<EOT
+        $expectedAbout = <<<"EOT"
     <url>
         <loc>http://cool-runnings.com/about</loc>
         <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>
-EOT,
-            $content
-        );
+EOT;
 
-        $this->assertStringContainsString(<<<'EOT'
+        $expectedArticles = <<<'EOT'
     <url>
         <loc>http://cool-runnings.com/articles</loc>
         <lastmod>2020-01-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.2</priority>
     </url>
-EOT,
-            $content
-        );
+EOT;
 
-        $this->assertStringContainsString(<<<EOT
+        $expectedDance = <<<"EOT"
     <url>
         <loc>http://cool-runnings.com/dance</loc>
         <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.1</priority>
     </url>
-EOT,
-            $content
-        );
+EOT;
+
+        $this->assertStringContainsString($expectedAbout, $content);
+        $this->assertStringContainsString($expectedArticles, $content);
+        $this->assertStringContainsString($expectedDance, $content);
     }
 
     /** @test */
@@ -204,38 +202,36 @@ EOT,
 
         $today = now()->format('Y-m-d');
 
-        $this->assertStringContainsString(<<<EOT
+        $expectedAbout = <<<"EOT"
     <url>
         <loc>http://cool-runnings.com/about</loc>
         <lastmod>$today</lastmod>
         <changefreq>hourly</changefreq>
         <priority>0.5</priority>
     </url>
-EOT,
-            $content
-        );
+EOT;
 
-        $this->assertStringContainsString(<<<'EOT'
+        $expectedArticles = <<<'EOT'
     <url>
         <loc>http://cool-runnings.com/articles</loc>
         <lastmod>2020-01-17</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
-EOT,
-            $content
-        );
+EOT;
 
-        $this->assertStringContainsString(<<<EOT
+        $expectedDance = <<<"EOT"
     <url>
         <loc>http://cool-runnings.com/dance</loc>
         <lastmod>$today</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
-EOT,
-            $content
-        );
+EOT;
+
+        $this->assertStringContainsString($expectedAbout, $content);
+        $this->assertStringContainsString($expectedArticles, $content);
+        $this->assertStringContainsString($expectedDance, $content);
     }
 
     protected function setCustomSitemapXmlUrl($app)
