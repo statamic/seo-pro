@@ -28,30 +28,32 @@ class SitemapTest extends TestCase
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $expected = <<<'EOT'
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<"EOT"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>http://cool-runnings.com</loc>
-        <lastmod></lastmod>
+        <lastmod>2020-11-24</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>2020-11-25</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>2020-11-25</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>2020-11-25</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
@@ -144,10 +146,12 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $this->assertStringContainsString(<<<'EOT'
+        $today = now()->format('Y-m-d');
+
+        $this->assertStringContainsString(<<<"EOT"
     <url>
         <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-11-26</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>
@@ -166,10 +170,10 @@ EOT,
             $content
         );
 
-        $this->assertStringContainsString(<<<'EOT'
+        $this->assertStringContainsString(<<<"EOT"
     <url>
         <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>2020-11-26</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.1</priority>
     </url>
@@ -198,10 +202,12 @@ EOT,
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $this->assertStringContainsString(<<<'EOT'
+        $today = now()->format('Y-m-d');
+
+        $this->assertStringContainsString(<<<"EOT"
     <url>
         <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-11-26</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>hourly</changefreq>
         <priority>0.5</priority>
     </url>
@@ -220,10 +226,10 @@ EOT,
             $content
         );
 
-        $this->assertStringContainsString(<<<'EOT'
+        $this->assertStringContainsString(<<<"EOT"
     <url>
         <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>2020-11-26</lastmod>
+        <lastmod>$today</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
