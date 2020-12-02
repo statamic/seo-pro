@@ -30,7 +30,7 @@ class SitemapTest extends TestCase
 
         $today = now()->format('Y-m-d');
 
-        $expected = <<<"EOT"
+        $expected = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
@@ -148,7 +148,7 @@ EOT;
 
         $today = now()->format('Y-m-d');
 
-        $this->assertStringContainsString(<<<"EOT"
+        $this->assertStringContainsString(<<<EOT
     <url>
         <loc>http://cool-runnings.com/about</loc>
         <lastmod>$today</lastmod>
@@ -170,7 +170,7 @@ EOT,
             $content
         );
 
-        $this->assertStringContainsString(<<<"EOT"
+        $this->assertStringContainsString(<<<EOT
     <url>
         <loc>http://cool-runnings.com/dance</loc>
         <lastmod>$today</lastmod>
@@ -204,7 +204,7 @@ EOT,
 
         $today = now()->format('Y-m-d');
 
-        $this->assertStringContainsString(<<<"EOT"
+        $this->assertStringContainsString(<<<EOT
     <url>
         <loc>http://cool-runnings.com/about</loc>
         <lastmod>$today</lastmod>
@@ -226,7 +226,7 @@ EOT,
             $content
         );
 
-        $this->assertStringContainsString(<<<"EOT"
+        $this->assertStringContainsString(<<<EOT
     <url>
         <loc>http://cool-runnings.com/dance</loc>
         <lastmod>$today</lastmod>
