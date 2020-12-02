@@ -30,32 +30,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->files->copyDirectory(__DIR__.'/Fixtures/content', base_path('content'));
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
-        $this->restoreStatamicConfigs();
         $this->restoreSiteDefaults();
-    }
-
-    protected function tearDown(): void
-    {
-        $this->restoreStatamicConfigs();
-        $this->restoreSiteDefaults();
-
-        parent::tearDown();
-    }
-
-    protected function restoreStatamicConfigs()
-    {
-        $this->files->copyDirectory(__DIR__.'/../vendor/statamic/cms/config', config_path('statamic'));
-
-        $configs = [
-            'filesystems',
-            'statamic/users',
-            'statamic/stache',
-        ];
-
-        foreach ($configs as $config) {
-            $this->files->delete(config_path("{$config}.php"));
-            $this->files->copy(__DIR__."/Fixtures/config/{$config}.php", config_path("{$config}.php"));
-        }
     }
 
     protected function restoreSiteDefaults()
@@ -75,7 +50,23 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         ];
 
         foreach ($configs as $config) {
-            $app['config']->set("statamic.$config", require(config_path("statamic/{$config}.php")));
+            $app['config']->set("statamic.$config", require(__DIR__."/../vendor/statamic/cms/config/{$config}.php"));
+        }
+
+        $files = new Filesystem;
+
+        $files->copyDirectory(__DIR__.'/../vendor/statamic/cms/config', config_path('statamic'));
+
+        $configs = [
+            'filesystems',
+            'statamic/users',
+            'statamic/stache',
+        ];
+
+        foreach ($configs as $config) {
+            $files->delete(config_path("{$config}.php"));
+            $files->copy(__DIR__."/Fixtures/config/{$config}.php", config_path("{$config}.php"));
+            $app['config']->set(str_replace('/', '.', $config), require(__DIR__."/Fixtures/config/{$config}.php"));
         }
     }
 
