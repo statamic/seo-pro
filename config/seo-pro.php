@@ -21,4 +21,8 @@ return [
         'url' => 'humans.txt',
     ],
 
+    'twitter' => [
+        'card' => 'summary_large_image',
+    ],
+
 ];

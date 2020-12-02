@@ -32,7 +32,7 @@
     <meta property="og:locale:alternate" content="{{ locale }}" />
 {{ /alternate_locales }}
 
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="{{ twitter_card }}" />
 
 {{ if twitter_handle }}
     <meta name="twitter:site" content="{{ twitter_handle | trim | ensure_left:@ }}" />

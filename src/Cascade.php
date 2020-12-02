@@ -65,6 +65,7 @@ class Cascade
             'locale' => $this->locale(),
             'alternate_locales' => $this->alternateLocales(),
             'last_modified' => $this->lastModified(),
+            'twitter_card' => config('statamic.seo-pro.twitter.card'),
         ])->all();
     }
 
