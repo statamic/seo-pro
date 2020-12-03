@@ -26,4 +26,8 @@ return [
         'enabled_on_first_page' => false,
     ],
 
+    'twitter' => [
+        'card' => 'summary_large_image',
+    ],
+
 ];

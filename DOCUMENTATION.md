@@ -116,6 +116,10 @@ You can publish SEO Pro's `sitemap.xml` and `humans.txt` views for modification 
 php artisan vendor:publish --tag="seo-pro-views"
 ```
 
+These views will be published into your `resources/views/vendor/seo-pro` directory for modification.
+
+You may also override the default `meta.antlers.html` view, though it is not published by default. _**Important Note:** Overriding this view will require you to be mindful of updates as it will not be automatically maintained for you._
+
 ### Sitemap.xml
 
 A `sitemap.xml` route is automatically generated for you.

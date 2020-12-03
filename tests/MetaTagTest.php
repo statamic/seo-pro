@@ -34,7 +34,7 @@ class MetaTagTest extends TestCase
 <meta property="og:url" content="http://cool-runnings.com" />
 <meta property="og:site_name" content="Site Name" />
 <meta property="og:locale" content="default" />
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
 <link href="http://cool-runnings.com/" rel="home" />
@@ -121,6 +121,14 @@ EOT;
 
         $this->assertStringContainsString('<meta name="description" content="It&#039;s a me, Mario!" />', $meta);
         $this->assertStringContainsString('<meta property="og:description" content="It&#039;s a me, Mario!" />', $meta);
+    }
+
+    /** @test */
+    public function it_generates_custom_twitter_card_with_short_summary()
+    {
+        Config::set('statamic.seo-pro.twitter.card', 'summary');
+
+        $this->assertStringContainsString('<meta name="twitter:card" content="summary" />', $this->meta('/'));
     }
 
     /** @test */

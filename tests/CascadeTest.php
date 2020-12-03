@@ -31,6 +31,7 @@ class CascadeTest extends TestCase
             'locale' => 'default',
             'alternate_locales' => [],
             'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
         ];
 
         $this->assertEquals($expected, $data);
@@ -66,6 +67,7 @@ class CascadeTest extends TestCase
             'locale' => 'default',
             'alternate_locales' => [],
             'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
         ];
 
         $this->assertEquals($expected, $data);
