@@ -137,3 +137,15 @@ A `humans.txt` route is automatically generated for you.
 If you wish to completely disable humans.txt or change it's URL, you can [publish the SEO Pro config](#publishing-config) and modify these settings within `config/statamic/seo-pro.php`.
 
 If you wish to customize the contents of the `humans.txt` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
+
+### Pagination Meta
+
+By default, `canonical` URL meta will show pagination on `?page=2` and higher, with `rel="prev"` / `rel="next"` links when appropriate.
+
+If you wish to customize or disable pagination, you can [publish the SEO Pro config](#publishing-config) and modify these settings within `config/statamic/seo-pro.php`.
+
+### Twitter Card Meta
+
+By default, `twitter:card` meta will be rendered using `summary_large_image`.
+
+If you wish to change this to `summary`, you can [publish the SEO Pro config](#publishing-config) and modify your twitter card within `config/statamic/seo-pro.php`.
