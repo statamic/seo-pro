@@ -87,12 +87,11 @@ class Cascade
 
         $page = (int) app('request')->get('page');
 
-        if (config('statamic.seo-pro.pagination.enabled_in_canonical_url') === false) {
-            return $url;
-        }
-
-        if (config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $page === 1) {
-            return $url;
+        switch (true) {
+            case config('statamic.seo-pro.pagination') === false:
+            case config('statamic.seo-pro.pagination.enabled_in_canonical_url') === false:
+            case config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $page === 1:
+                return $url;
         }
 
         if (Str::startsWith($url, config('app.url'))) {
@@ -104,6 +103,10 @@ class Cascade
 
     protected function prevUrl()
     {
+        if (config('statamic.seo-pro.pagination') === false) {
+            return null;
+        }
+
         if (! $paginator = Blink::get('tag-paginator')) {
             return null;
         }
@@ -123,6 +126,10 @@ class Cascade
 
     protected function nextUrl()
     {
+        if (config('statamic.seo-pro.pagination') === false) {
+            return null;
+        }
+
         if (! $paginator = Blink::get('tag-paginator')) {
             return null;
         }

@@ -249,7 +249,7 @@ EOT;
     }
 
     /** @test */
-    public function it_generates_canonical_url_meta_with_disabled_pagination()
+    public function it_generates_canonical_url_meta_without_pagination()
     {
         Config::set('statamic.seo-pro.pagination.enabled_in_canonical_url', false);
 
@@ -307,6 +307,20 @@ EOT;
     {
         $meta = $this->meta('/about');
 
+        $this->assertStringNotContainsString('rel="next"', $meta);
+        $this->assertStringNotContainsString('rel="prev"', $meta);
+    }
+
+    /** @test */
+    public function it_doesnt_generate_any_pagination_when_completely_disabled()
+    {
+        Config::set('statamic.seo-pro.pagination', false);
+
+        $this->simulatePageOutOfFive(2);
+
+        $meta = $this->meta('/about');
+
+        $this->assertStringNotContainsString('page=2', $meta);
         $this->assertStringNotContainsString('rel="next"', $meta);
         $this->assertStringNotContainsString('rel="prev"', $meta);
     }
