@@ -33,7 +33,7 @@
 <meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
 {{ /if }}
 {{ asset:image }}
-{{ glide:generate :src="url" preset="seo" absolute="true" }}
+{{ glide:generate :src="url" preset="seo" absolute="true" fit='crop_focal' }}
 <meta property="og:image" content="{{ url }}" />
 <meta property="og:image:width" content="{{ width }}" />
 <meta property="og:image:height" content="{{ height }}" />
