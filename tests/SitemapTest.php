@@ -28,6 +28,8 @@ class SitemapTest extends TestCase
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
+        $this->assertCount(7, $this->getPagesFromSitemapXml($content));
+
         $today = now()->format('Y-m-d');
 
         $expected = <<<"EOT"
@@ -146,38 +148,11 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $today = now()->format('Y-m-d');
+        $priorities = $this->getPagesFromSitemapXml($content)->pluck('priority', 'loc');
 
-        $expectedAbout = <<<"EOT"
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
-EOT;
-
-        $expectedArticles = <<<'EOT'
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.2</priority>
-    </url>
-EOT;
-
-        $expectedDance = <<<"EOT"
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.1</priority>
-    </url>
-EOT;
-
-        $this->assertStringContainsString($expectedAbout, $content);
-        $this->assertStringContainsString($expectedArticles, $content);
-        $this->assertStringContainsString($expectedDance, $content);
+        $this->assertEquals('0.3', $priorities->get('http://cool-runnings.com/about'));
+        $this->assertEquals('0.2', $priorities->get('http://cool-runnings.com/articles'));
+        $this->assertEquals('0.1', $priorities->get('http://cool-runnings.com/dance'));
     }
 
     /** @test */
@@ -200,38 +175,11 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $today = now()->format('Y-m-d');
+        $frequencies = $this->getPagesFromSitemapXml($content)->pluck('changefreq', 'loc');
 
-        $expectedAbout = <<<"EOT"
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>hourly</changefreq>
-        <priority>0.5</priority>
-    </url>
-EOT;
-
-        $expectedArticles = <<<'EOT'
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-EOT;
-
-        $expectedDance = <<<"EOT"
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.5</priority>
-    </url>
-EOT;
-
-        $this->assertStringContainsString($expectedAbout, $content);
-        $this->assertStringContainsString($expectedArticles, $content);
-        $this->assertStringContainsString($expectedDance, $content);
+        $this->assertEquals('hourly', $frequencies->get('http://cool-runnings.com/about'));
+        $this->assertEquals('daily', $frequencies->get('http://cool-runnings.com/articles'));
+        $this->assertEquals('weekly', $frequencies->get('http://cool-runnings.com/dance'));
     }
 
     protected function setCustomSitemapXmlUrl($app)
@@ -241,5 +189,12 @@ EOT;
             'url' => 'gps.xml',
             'expire' => 60,
         ]);
+    }
+
+    protected function getPagesFromSitemapXml($content)
+    {
+        $data = json_decode(json_encode(simplexml_load_string($content)), true);
+
+        return collect($data['url']);
     }
 }
