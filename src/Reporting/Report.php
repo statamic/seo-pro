@@ -115,7 +115,7 @@ class Report implements Arrayable, Jsonable
     {
         return $this->allContent()
             ->map(function ($content) {
-                if ($content->value('seo') === false) {
+                if ($content->value('seo') === false || is_null($content->uri())) {
                     return;
                 }
 
