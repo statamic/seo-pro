@@ -182,6 +182,20 @@ EOT;
         $this->assertEquals('weekly', $frequencies->get('http://cool-runnings.com/dance'));
     }
 
+    /** @test */
+    public function it_doesnt_generate_pages_for_content_without_uris()
+    {
+        $this->files->put(base_path('content/collections/articles.yaml'), 'route: null');
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertCount(4, $this->getPagesFromSitemapXml($content));
+    }
+
     protected function setCustomSitemapXmlUrl($app)
     {
         $app->config->set('statamic.seo-pro.sitemap', [
