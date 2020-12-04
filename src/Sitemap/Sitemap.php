@@ -62,6 +62,9 @@ class Sitemap
             })
             ->filter(function ($entry) {
                 return $entry->status() === 'published';
+            })
+            ->reject(function ($entry) {
+                return is_null($entry->uri());
             });
     }
 
