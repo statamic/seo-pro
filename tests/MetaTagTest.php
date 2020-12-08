@@ -2,7 +2,9 @@
 
 namespace Tests;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Statamic\Facades\Antlers;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Data;
@@ -151,7 +153,7 @@ EOT;
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
 
-        $this->setSeoOnEntry($test = Entry::findBySlug('about', 'pages'), [
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
 
@@ -172,7 +174,7 @@ EOT;
      */
     public function it_generates_social_image_with_custom_glide_preset()
     {
-        $this->setSeoOnEntry($test = Entry::findBySlug('about', 'pages'), [
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
 
@@ -193,7 +195,7 @@ EOT;
         Config::set('statamic.seo-pro.assets.container', 'assets');
         Config::set('statamic.seo-pro.assets.open_graph_preset', false);
 
-        $this->setSeoOnEntry($test = Entry::findBySlug('about', 'pages'), [
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
 
@@ -238,10 +240,154 @@ EOT;
     /** @test */
     public function it_generates_canonical_url_meta_with_pagination()
     {
-        $this->call('GET', '/about', ['page' => 2]);
+        $this->simulatePageOutOfFive(2);
 
         $this->assertStringContainsString(
             '<link href="http://cool-runnings.com/about?page=2" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_generates_canonical_url_meta_without_pagination()
+    {
+        Config::set('statamic.seo-pro.pagination.enabled_in_canonical_url', false);
+
+        $this->simulatePageOutOfFive(2);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/about" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_generates_rel_next_prev_url_meta()
+    {
+        $this->simulatePageOutOfFive(1);
+
+        $meta = $this->meta('/about');
+        $this->assertStringNotContainsString('rel="prev"', $meta);
+        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=2" rel="next" />', $meta);
+
+        $this->simulatePageOutOfFive(2);
+
+        $meta = $this->meta('/about');
+        $this->assertStringContainsString('<link href="http://cool-runnings.com/about" rel="prev" />', $meta);
+        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=3" rel="next" />', $meta);
+
+        $this->simulatePageOutOfFive(3);
+
+        $meta = $this->meta('/about');
+        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=2" rel="prev" />', $meta);
+        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=4" rel="next" />', $meta);
+
+        $this->simulatePageOutOfFive(5);
+
+        $meta = $this->meta('/about');
+        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=4" rel="prev" />', $meta);
+        $this->assertStringNotContainsString('rel="next"', $meta);
+    }
+
+    /** @test */
+    public function it_generates_rel_next_prev_url_meta_with_first_page_enabled()
+    {
+        Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
+
+        $this->simulatePageOutOfFive(2);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/about?page=1" rel="prev" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_doesnt_generate_rel_next_prev_url_meta_without_paginator()
+    {
+        $meta = $this->meta('/about');
+
+        $this->assertStringNotContainsString('rel="next"', $meta);
+        $this->assertStringNotContainsString('rel="prev"', $meta);
+    }
+
+    /** @test */
+    public function it_doesnt_generate_any_pagination_when_completely_disabled()
+    {
+        Config::set('statamic.seo-pro.pagination', false);
+
+        $this->simulatePageOutOfFive(2);
+
+        $meta = $this->meta('/about');
+
+        $this->assertStringNotContainsString('page=2', $meta);
+        $this->assertStringNotContainsString('rel="next"', $meta);
+        $this->assertStringNotContainsString('rel="prev"', $meta);
+    }
+
+    /** @test */
+    public function it_generates_canonical_url_meta_with_custom_url()
+    {
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'https://hot-walkings.com/pages/aboot',
+        ]);
+
+        $this->assertStringContainsString(
+            '<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_applies_pagination_to_custom_canonical_url_on_same_domain()
+    {
+        $this->simulatePageOutOfFive(2);
+
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'http://cool-runnings.com/pages/aboot',
+        ]);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/pages/aboot?page=2" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_doesnt_apply_pagination_to_external_custom_canonical_url()
+    {
+        $this->simulatePageOutOfFive(2);
+
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'canonical_url' => 'https://hot-walkings.com/pages/aboot',
+        ]);
+
+        $this->assertStringContainsString(
+            '<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_doesnt_apply_pagination_to_first_page()
+    {
+        $this->simulatePageOutOfFive(1);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/about" rel="canonical" />',
+            $this->meta('/about')
+        );
+    }
+
+    /** @test */
+    public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page()
+    {
+        Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
+
+        $this->simulatePageOutOfFive(1);
+
+        $this->assertStringContainsString(
+            '<link href="http://cool-runnings.com/about?page=1" rel="canonical" />',
             $this->meta('/about')
         );
     }
@@ -321,5 +467,12 @@ EOT;
                 'h' => 600,
             ],
         ]);
+    }
+
+    protected function simulatePageOutOfFive($currentPage)
+    {
+        Blink::put('tag-paginator', new LengthAwarePaginator([], 15, 3, $currentPage));
+
+        $this->call('GET', '/about', ['page' => $currentPage]);
     }
 }

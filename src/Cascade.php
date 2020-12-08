@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Parse;
@@ -60,6 +61,8 @@ class Cascade
             'compiled_title' => $this->compiledTitle(),
             'og_title' => $this->ogTitle(),
             'canonical_url' => $this->canonicalUrl(),
+            'prev_url' => $this->prevUrl(),
+            'next_url' => $this->nextUrl(),
             'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
             'locale' => $this->locale(),
@@ -76,16 +79,68 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = method_exists($this->model, 'absoluteUrl')
-            ? $this->model->absoluteUrl()
-            : config('app.url');
+        $url = Str::trim($this->data->get('canonical_url'));
 
-        // Include pagination if present
-        if (app('request')->has('page')) {
-            $url .= '?page='.((int) app('request')->get('page'));
+        if (! app('request')->has('page')) {
+            return $url;
+        }
+
+        $page = (int) app('request')->get('page');
+
+        switch (true) {
+            case config('statamic.seo-pro.pagination') === false:
+            case config('statamic.seo-pro.pagination.enabled_in_canonical_url') === false:
+            case config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $page === 1:
+                return $url;
+        }
+
+        if (Str::startsWith($url, config('app.url'))) {
+            $url .= '?page='.$page;
         }
 
         return $url;
+    }
+
+    protected function prevUrl()
+    {
+        if (config('statamic.seo-pro.pagination') === false) {
+            return null;
+        }
+
+        if (! $paginator = Blink::get('tag-paginator')) {
+            return null;
+        }
+
+        $url = Str::trim($this->data->get('canonical_url'));
+
+        $page = $paginator->currentPage();
+
+        if (config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $page === 2) {
+            return $url;
+        }
+
+        return $page > 1 && $page <= $paginator->lastPage()
+            ? $url.'?page='.($page - 1)
+            : null;
+    }
+
+    protected function nextUrl()
+    {
+        if (config('statamic.seo-pro.pagination') === false) {
+            return null;
+        }
+
+        if (! $paginator = Blink::get('tag-paginator')) {
+            return null;
+        }
+
+        $url = Str::trim($this->data->get('canonical_url'));
+
+        $page = $paginator->currentPage();
+
+        return $page < $paginator->lastPage()
+            ? $url.'?page='.($page + 1)
+            : null;
     }
 
     protected function parse($key, $item)

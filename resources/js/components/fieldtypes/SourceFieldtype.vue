@@ -13,7 +13,9 @@
 
         <div class="flex-1">
             <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
-                {{ config.placeholder }}
+                <template v-if="placeholder !== false">
+                    {{ placeholder }}
+                </template>
             </div>
 
             <div v-else-if="source === 'field'" class="source-field-select">
@@ -97,7 +99,11 @@ export default {
 
         fieldConfig() {
             return Object.assign(this.config.field, { placeholder: this.config.placeholder });
-        }
+        },
+
+        placeholder() {
+            return this.config.placeholder;
+        },
 
     },
 

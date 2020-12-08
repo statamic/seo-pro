@@ -8,6 +8,9 @@ return [
     'title' => 'Meta Title',
     'title_instruct' => 'Pick an existing field to set as your **default** meta title. Each Collection and Taxonomy can also have its own default.',
 
+    'description' => 'Meta Description',
+    'description_instruct' => 'Pick an existing field to set as your **default** meta description. Each Collection and Taxonomy can also have its own default.',
+
     'site_name' => 'Site Name',
     'site_name_instruct' => "It's common practice to include the site's name in meta titles.",
 
@@ -17,8 +20,8 @@ return [
     'site_name_separator' => 'Site Name Separator',
     'site_name_separator_instruct' => 'The character(s) between the title and site name.',
 
-    'description' => 'Meta Description',
-    'description_instruct' => 'Pick an existing field to set as your **default** meta description. Each Collection and Taxonomy can also have its own default.',
+    'canonical_url' => 'Canonical URL',
+    'canonical_url_instruct' => 'Pick an existing field to set as your **default** canonical URL. Each Collection and Taxonomy can also have its own default.',
 
     'robots' => 'Robots',
     'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',

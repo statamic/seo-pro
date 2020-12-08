@@ -7,7 +7,7 @@ class Fields
     use HasAssetField, GetsSectionDefaults;
 
     protected $data;
-    protected $langFile;
+    protected $isContent;
 
     /**
      * Instantiate SEO fields config.
@@ -17,7 +17,7 @@ class Fields
     public function __construct($data = null)
     {
         $this->data = $data;
-        $this->langFile = is_null($data) ? 'sections' : 'content';
+        $this->isContent = ! is_null($data);
     }
 
     /**
@@ -37,12 +37,14 @@ class Fields
      */
     public function getConfig()
     {
+        $langFile = $this->isContent ? 'content' : 'sections';
+
         return [
             [
                 'handle' => 'enabled',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.enabled"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.enabled_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.enabled"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.enabled_instruct"),
                     'type' => 'toggle',
                     'default' => true,
                 ],
@@ -50,8 +52,8 @@ class Fields
             [
                 'handle' => 'title',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.title"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.title_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.title"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.title_instruct"),
                     'placeholder' => $this->getPlaceholder('title'),
                     'type' => 'seo_pro_source',
                     'disableable' => true,
@@ -63,8 +65,8 @@ class Fields
             [
                 'handle' => 'description',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.description"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.description_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.description"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.description_instruct"),
                     'placeholder' => $this->getPlaceholder('description'),
                     'type' => 'seo_pro_source',
                     'field' => [
@@ -75,8 +77,8 @@ class Fields
             [
                 'handle' => 'site_name',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.site_name"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.site_name_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.site_name"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.site_name_instruct"),
                     'placeholder' => $this->getPlaceholder('site_name'),
                     'type' => 'seo_pro_source',
                     'from_field' => false,
@@ -87,8 +89,8 @@ class Fields
             [
                 'handle' => 'site_name_position',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.site_name_position"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.site_name_position_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.site_name_position"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.site_name_position_instruct"),
                     'placeholder' => $this->getPlaceholder('site_name_position'),
                     'type' => 'seo_pro_source',
                     'from_field' => false,
@@ -105,8 +107,8 @@ class Fields
             [
                 'handle' => 'site_name_separator',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.site_name_separator"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.site_name_separator_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.site_name_separator"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.site_name_separator_instruct"),
                     'placeholder' => $this->getPlaceholder('site_name_separator'),
                     'type' => 'seo_pro_source',
                     'from_field' => false,
@@ -116,10 +118,20 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'canonical_url',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.canonical_url"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.canonical_url_instruct"),
+                    'placeholder' => $this->isContent ? $this->getPlaceholder('canonical_url') : false,
+                    'type' => 'seo_pro_source',
+                    'field' => $this->isContent ? ['type' => 'text'] : false,
+                ],
+            ],
+            [
                 'handle' => 'robots',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.robots"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.robots_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.robots"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_instruct"),
                     'placeholder' => $this->getPlaceholder('robots'),
                     'type' => 'seo_pro_source',
                     'from_field' => false,
@@ -138,8 +150,8 @@ class Fields
             [
                 'handle' => 'image',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.image"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.image_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.image"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.image_instruct"),
                     'placeholder' => $this->getPlaceholder('image'),
                     'type' => 'seo_pro_source',
                     'allowed_fieldtypes' => [
@@ -151,8 +163,8 @@ class Fields
             [
                 'handle' => 'twitter_handle',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.twitter_handle"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.twitter_handle_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.twitter_handle"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.twitter_handle_instruct"),
                     'type' => 'seo_pro_source',
                     'field' => [
                         'type' => 'text',
@@ -162,8 +174,8 @@ class Fields
             [
                 'handle' => 'sitemap',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.sitemap"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.sitemap_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.sitemap"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.sitemap_instruct"),
                     'placeholder' => $this->getPlaceholder('sitemap'),
                     'type' => 'seo_pro_source',
                     'disableable' => true,
@@ -174,8 +186,8 @@ class Fields
             [
                 'handle' => 'priority',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.priority"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.priority_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.priority"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.priority_instruct"),
                     'placeholder' => $this->getPlaceholder('priority'),
                     'type' => 'seo_pro_source',
                     'field' => [
@@ -186,8 +198,8 @@ class Fields
             [
                 'handle' => 'change_frequency',
                 'field' => [
-                    'display' => __("seo-pro::fieldsets/{$this->langFile}.change_frequency"),
-                    'instructions' => __("seo-pro::fieldsets/{$this->langFile}.change_frequency_instruct"),
+                    'display' => __("seo-pro::fieldsets/{$langFile}.change_frequency"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.change_frequency_instruct"),
                     'placeholder' => $this->getPlaceholder('change_frequency'),
                     'type' => 'seo_pro_source',
                     'field' => [
