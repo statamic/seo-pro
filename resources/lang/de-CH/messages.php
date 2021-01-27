@@ -16,7 +16,7 @@ return [
     'report_is_being_generated' => 'Dein Bericht wird gerade erstellt.',
     'generated' => 'Erstellt',
     'page_details' => 'Seitendetails',
-    'report_no_results_text' => 'Erstelle Berichte, um nach Verbesserungsmöglichkeiten bei der Suchmaschinenoptimierung für deine Webseite zu suchen.',
+    'report_no_results_text' => 'Erstelle Berichte, um bei deiner Webseite nach Verbesserungsmöglichkeiten bei der Suchmaschinenoptimierung zu suchen.',
     'generate_your_first_report' => 'Erstelle deinen ersten Bericht',
     'latest_report_score' => 'Punktestand des letzten Berichts',
     'source_suggest_placeholder' => 'Wähle oder gib einen Feldnamen ein, der den Wert enthält.',
