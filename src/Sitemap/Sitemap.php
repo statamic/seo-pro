@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Sitemap;
 
+use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
@@ -41,7 +42,8 @@ class Sitemap
                 }
 
                 $data = (new Cascade)
-                    ->with(SiteDefaults::load()->all())
+                    ->forSitemap()
+                    ->with($this->getSiteDefaults())
                     ->with($this->getSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
@@ -101,5 +103,12 @@ class Sitemap
             ->filter(function ($term) {
                 return view()->exists($term->template());
             });
+    }
+
+    protected function getSiteDefaults()
+    {
+        return Blink::once('seo-pro.site-defaults', function () {
+            return SiteDefaults::load()->all();
+        });
     }
 }

@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Taxonomies\LocalizedTerm;
 
@@ -15,7 +16,9 @@ trait GetsSectionDefaults
             return [];
         }
 
-        return $parent->cascade('seo');
+        return Blink::once($this->getCacheKey($parent), function () use ($parent) {
+            return $parent->cascade('seo');
+        });
     }
 
     public function getAugmentedSectionDefaults($current)
@@ -33,6 +36,11 @@ trait GetsSectionDefaults
             ->augment()
             ->values()
             ->only(array_keys($seo));
+    }
+
+    protected function getCacheKey($parent)
+    {
+        return 'seo-pro.section-defaults.'.get_class($parent).'::'.$parent->handle();
     }
 
     protected function getSectionParent($current)

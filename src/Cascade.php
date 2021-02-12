@@ -18,10 +18,18 @@ class Cascade
     protected $data;
     protected $current;
     protected $model;
+    protected $forSitemap = false;
 
     public function __construct()
     {
         $this->data = collect();
+    }
+
+    public function forSitemap()
+    {
+        $this->forSitemap = true;
+
+        return $this;
     }
 
     public function with($array)
@@ -37,7 +45,7 @@ class Cascade
             return $this;
         }
 
-        $this->current = $data->toAugmentedArray();
+        $this->current = $this->augmentData($data);
         $this->model = $data;
 
         return $this;
@@ -47,6 +55,10 @@ class Cascade
     {
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
+        }
+
+        if ($this->forSitemap) {
+            return $this->getForSitemap();
         }
 
         if (array_get($this->current, 'response_code') === 404) {
@@ -69,6 +81,25 @@ class Cascade
             'alternate_locales' => $this->alternateLocales(),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
+        ])->all();
+    }
+
+    public function getForSitemap()
+    {
+        $this->data = $this->data
+            ->filter(function ($value, $key) {
+                return in_array($key, [
+                    'canonical_url',
+                    'priority',
+                    'change_frequency',
+                ]);
+            })
+            ->map(function ($item, $key) {
+                return $this->parse($key, $item);
+            });
+
+        return $this->data->merge([
+            'last_modified' => $this->lastModified(),
         ])->all();
     }
 
@@ -292,5 +323,19 @@ class Cascade
         if (config('statamic.seo-pro.humans.enabled')) {
             return URL::makeAbsolute(Str::ensureLeft(config('statamic.seo-pro.humans.url'), '/'));
         }
+    }
+
+    protected function augmentData($data)
+    {
+        // It's a big performance hit to augment entries & terms for a sitemap,
+        // when we only need the augmented `permalink`; So here we bypass the
+        // augmentation and just augment what's actually used by the sitemap.
+        if ($this->forSitemap) {
+            return [
+                'permalink' => $data->absoluteUrl(),
+            ];
+        }
+
+        return $data->toAugmentedArray();
     }
 }
