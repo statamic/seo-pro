@@ -4,9 +4,13 @@ return [
 
     'assets' => [
         'container' => null,
-        'open_graph_preset' => [
+        'twitter_preset' => [
             'w' => 1200,
-            'h' => 1200,
+            'h' => 600,
+        ],
+        'open_graph_preset' => [
+            'w' => 1146,
+            'h' => 600,
         ],
     ],
 

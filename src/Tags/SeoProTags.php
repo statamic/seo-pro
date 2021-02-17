@@ -43,7 +43,8 @@ class SeoProTags extends Tags
             ->withCurrent($current)
             ->get();
 
-        $metaData['is_glide_enabled'] = (bool) config('statamic.seo-pro.assets.open_graph_preset');
+        $metaData['is_twitter_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_twitter');
+        $metaData['is_og_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_og');
 
         return $metaData;
     }
@@ -79,5 +80,18 @@ class SeoProTags extends Tags
         $html = preg_replace('/(<[^\/])/', "\n$1", $html);
 
         return trim($html);
+    }
+
+    /**
+     * Check if glide preset is enabled.
+     *
+     * @param string $preset
+     * @return bool
+     */
+    protected function isGlidePresetEnabled($preset)
+    {
+        $server = app(\League\Glide\Server::class);
+
+        return collect($server->getPresets())->has($preset);
     }
 }

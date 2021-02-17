@@ -104,9 +104,18 @@ class ServiceProvider extends AddonServiceProvider
     {
         $server = app(\League\Glide\Server::class);
 
-        $server->setPresets($server->getPresets() + [
-            'seo' => config('statamic.seo-pro.assets.open_graph_preset'),
+        $presets = collect([
+            'seo_pro_twitter' => config('statamic.seo-pro.assets.twitter_preset'),
+            'seo_pro_og' => config('statamic.seo-pro.assets.open_graph_preset'),
         ]);
+
+        // The `twitter_graph_preset` was added later. If it's not set, gracefully
+        // fall back so that existing sites generate off the original config.
+        if (is_null($presets['seo_pro_twitter'])) {
+            $presets['seo_pro_twitter'] = $presets['seo_pro_og'];
+        }
+
+        $server->setPresets($server->getPresets() + $presets->filter()->all());
 
         return $this;
     }
