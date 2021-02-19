@@ -29,6 +29,18 @@ return [
     'source_suggest_placeholder' => 'Select or type a field name containing the value.',
     'no_collections' => 'There are no collections.',
     'no_taxonomies' => 'There are no taxonomies.',
+    'custom' => 'Custom',
+    'from_field' => 'From Field',
+    'inherit' => 'Inherit',
+    'disable' => 'Disable',
+    'after' => 'After',
+    'before' => 'Before',
+    'hourly' => 'Hourly',
+    'daily' => 'Daily',
+    'weekly' => 'Weekly',
+    'monthly' => 'Monthly',
+    'yearly' => 'Yearly',
+    'never' => 'Never',
 
     'rules' => [
         'site_name' => 'A site name must be defined.',
