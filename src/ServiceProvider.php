@@ -84,9 +84,9 @@ class ServiceProvider extends AddonServiceProvider
                 ->icon('seo-search-graph')
                 ->active('seo-pro')
                 ->children([
-                    'Reports' => cp_route('seo-pro.reports.index'),
-                    'Site Defaults' => cp_route('seo-pro.site-defaults.edit'),
-                    'Section Defaults' => cp_route('seo-pro.section-defaults.index'),
+                    __('seo-pro::messages.reports') => cp_route('seo-pro.reports.index'),
+                    __('seo-pro::messages.site_defaults') => cp_route('seo-pro.site-defaults.edit'),
+                    __('seo-pro::messages.section_defaults') => cp_route('seo-pro.section-defaults.index'),
                 ]);
         });
 

@@ -14,7 +14,7 @@
                     @svg('charts')
                 </div>
                 <div class="text-blue flex-1 mb-2 md:mb-0 md:mr-3">
-                    <h3>{{ __('Reports') }}</h3>
+                    <h3>{{ __('seo-pro::messages.reports') }}</h3>
                     <p class="text-xs">{{ __('seo-pro::messages.seo_reports_description') }}</p>
                 </div>
             </a>

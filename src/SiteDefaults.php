@@ -102,7 +102,7 @@ class SiteDefaults extends Collection
         return Blueprint::make()->setContents([
             'sections' => [
                 'meta' => [
-                    'display' => __('Meta'),
+                    'display' => __('seo-pro::messages.meta'),
                     'fields' => [
                         [
                             'handle' => 'meta_section',
@@ -193,7 +193,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'image' => [
-                    'display' => __('Image'),
+                    'display' => __('seo-pro::messages.image'),
                     'fields' => [
                         [
                             'handle' => 'image_section',
@@ -221,7 +221,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'social' => [
-                    'display' => __('Social'),
+                    'display' => __('seo-pro::messages.social'),
                     'fields' => [
                         [
                             'handle' => 'social_section',
@@ -242,7 +242,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'sitemap' => [
-                    'display' => __('Sitemap'),
+                    'display' => __('seo-pro::messages.sitemap'),
                     'fields' => [
                         [
                             'handle' => 'sitemap_section',
@@ -287,7 +287,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'search' => [
-                    'display' => __('Search Engines'),
+                    'display' => __('seo-pro::messages.search_engines'),
                     'fields' => [
                         [
                             'handle' => 'search_section',

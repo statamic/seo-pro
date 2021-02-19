@@ -11,9 +11,7 @@ class ReportController extends CpController
     public function index(Request $request)
     {
         if (! $request->ajax()) {
-            return view('seo-pro::reports', [
-                'title' => 'SEO Reports',
-            ]);
+            return view('seo-pro::reports');
         }
 
         return Report::all();

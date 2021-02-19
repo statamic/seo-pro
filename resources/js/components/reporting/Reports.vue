@@ -3,7 +3,7 @@
     <div>
 
         <div v-if="currentReportId" @click="currentReportId = null">
-            <breadcrumb title="Reports" />
+            <breadcrumb :title="__('seo-pro::messages.reports')" />
         </div>
 
         <div class="flex items-center mb-3" v-if="reports.length > 0">
@@ -84,7 +84,9 @@ export default {
         },
 
         title() {
-            return this.showingListing ? 'SEO Reports' : 'SEO Report';
+            return this.showingListing
+                ? __('seo-pro::messages.seo_reports')
+                : __('seo-pro::messages.seo_report');
         }
 
     },
