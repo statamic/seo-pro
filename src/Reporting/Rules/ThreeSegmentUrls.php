@@ -12,17 +12,17 @@ class ThreeSegmentUrls extends Rule
 
     public function siteDescription()
     {
-        return 'Page URLs should be a maximum of 3 segments.';
+        return __('seo-pro::messages.rules.three_segment_urls_site');
     }
 
     public function pageDescription()
     {
-        return 'The URL should be a maximum of 3 segments.';
+        return __('seo-pro::messages.rules.three_segment_urls_page');
     }
 
     public function siteWarningComment()
     {
-        return sprintf('%s pages with more than 3 segments in their URLs.', $this->failures);
+        return __('seo-pro::messages.rules.three_segment_urls_site_warning', ['count' => $this->failures]);
     }
 
     public function processPage()

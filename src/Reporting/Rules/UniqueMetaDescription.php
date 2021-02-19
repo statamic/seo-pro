@@ -15,22 +15,25 @@ class UniqueMetaDescription extends Rule
 
     public function siteDescription()
     {
-        return 'Each page should have a unique meta description.';
+        return __('seo-pro::messages.rules.unique_description_site');
     }
 
     public function pageDescription()
     {
-        return 'The meta description should be unique.';
+        return __('seo-pro::messages.rules.unique_description_page');
     }
 
     public function siteFailingComment()
     {
-        return sprintf('%s pages with duplicate meta descriptions.', $this->failures);
+        return __('seo-pro::messages.rules.unique_description_site_failing', ['count' => $this->failures]);
     }
 
     public function pageFailingComment()
     {
-        return sprintf('%s pages with "%s" as the meta description.', $this->count, $this->metaDescription());
+        return __('seo-pro::messages.rules.unique_description_page_failing', [
+            'count' => $this->count,
+            'description' => $this->metaDescription(),
+        ]);
     }
 
     public function pagePassingComment()

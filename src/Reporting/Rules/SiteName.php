@@ -11,7 +11,7 @@ class SiteName extends Rule
 
     public function description()
     {
-        return 'A site name must be defined.';
+        return __('seo-pro::messages.rules.site_name');
     }
 
     public function process()

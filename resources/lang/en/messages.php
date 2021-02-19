@@ -23,4 +23,22 @@ return [
     'no_collections' => 'There are no collections.',
     'no_taxonomies' => 'There are no taxonomies.',
 
+    'rules' => [
+        'site_name' => 'A site name must be defined.',
+        'unique_title_site' => 'Each page should have a unique title tag.',
+        'unique_title_page' => 'The title tag should be unique.',
+        'unique_title_site_failing' => ':count pages with duplicate titles.',
+        'unique_title_page_failing' => ':count pages with ":title" as the title.',
+        'unique_description_site' => 'Each page should have a unique meta description.',
+        'unique_description_page' => 'The meta description should be unique.',
+        'unique_description_site_failing' => ':count pages with duplicate meta descriptions.',
+        'unique_description_page_failing' => ':count pages with ":description" as the meta description.',
+        'no_underscores_in_url_site' => 'Page URLs should not contain underscores.',
+        'no_underscores_in_url_page' => 'The URL should not contain underscores.',
+        'no_underscores_in_url_site_failing' => ':count pages with underscores in their URLs.',
+        'three_segment_urls_site' => 'Page URLs should be a maximum of 3 segments.',
+        'three_segment_urls_page' => 'The URL should be a maximum of 3 segments.',
+        'three_segment_urls_site_warning' => ':count pages with more than 3 segments in their URLs.',
+    ],
+
 ];
