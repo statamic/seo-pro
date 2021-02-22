@@ -4,6 +4,7 @@ Route::view('seo-pro', 'seo-pro::index')->name('seo-pro.index');
 Route::get('seo-pro/reports', 'ReportController@index')->name('seo-pro.reports.index');
 Route::post('seo-pro/reports', 'ReportController@store')->name('seo-pro.reports.store');
 Route::get('seo-pro/reports/{seo_pro_report}', 'ReportController@show')->name('seo-pro.reports.show');
+Route::delete('seo-pro/reports/{seo_pro_report}', 'ReportController@destroy')->name('seo-pro.reports.destroy');
 
 Route::get('seo-pro/site-defaults/edit', 'SiteDefaultsController@edit')->name('seo-pro.site-defaults.edit');
 Route::post('seo-pro/site-defaults', 'SiteDefaultsController@update')->name('seo-pro.site-defaults.update');

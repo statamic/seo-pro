@@ -97,9 +97,9 @@ class Fields
                     'field' => [
                         'type' => 'select',
                         'options' => [
-                            'after' => 'After',
-                            'before' => 'Before',
-                            'none' => 'Disable',
+                            'after' => __('seo-pro::messages.after'),
+                            'before' => __('seo-pro::messages.before'),
+                            'none' => __('seo-pro::messages.disable'),
                         ],
                     ],
                 ],
@@ -205,12 +205,12 @@ class Fields
                     'field' => [
                         'type' => 'select',
                         'options' => [
-                            'hourly' => 'Hourly',
-                            'daily' => 'Daily',
-                            'weekly' => 'Weekly',
-                            'monthly' => 'Monthly',
-                            'yearly' => 'Yearly',
-                            'never' => 'Never',
+                            'hourly' => __('seo-pro::messages.hourly'),
+                            'daily' => __('seo-pro::messages.daily'),
+                            'weekly' => __('seo-pro::messages.weekly'),
+                            'monthly' => __('seo-pro::messages.monthly'),
+                            'yearly' => __('seo-pro::messages.yearly'),
+                            'never' => __('seo-pro::messages.never'),
                         ],
                     ],
                 ],

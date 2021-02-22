@@ -266,6 +266,18 @@ class Report implements Arrayable, Jsonable
         return $this;
     }
 
+    public function delete()
+    {
+        File::delete($this->parentFolder());
+
+        return $this;
+    }
+
+    private function parentFolder()
+    {
+        return storage_path('statamic/seopro/reports/'.$this->id);
+    }
+
     public function path()
     {
         return storage_path('statamic/seopro/reports/'.$this->id.'/report.yaml');

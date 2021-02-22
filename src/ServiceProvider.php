@@ -4,6 +4,8 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
+use Statamic\Facades\Permission;
+use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro;
 
@@ -41,6 +43,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonConfig()
             ->bootAddonViews()
             ->bootAddonTranslations()
+            ->bootAddonPermissions()
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
@@ -76,18 +79,37 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
+    protected function bootAddonPermissions()
+    {
+        $this->app->booted(function () {
+            Permission::group('seo_pro', 'SEO Pro', function () {
+                Permission::register('view seo reports', function ($permission) {
+                    $permission->children([
+                        Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
+                    ]);
+                })->label(__('seo-pro::messages.view_reports'));
+                Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
+                Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
+            });
+        });
+
+        return $this;
+    }
+
     protected function bootAddonNav()
     {
         Nav::extend(function ($nav) {
-            $nav->tools('SEO Pro')
-                ->route('seo-pro.index')
-                ->icon('seo-search-graph')
-                ->active('seo-pro')
-                ->children([
-                    'Reports' => cp_route('seo-pro.reports.index'),
-                    'Site Defaults' => cp_route('seo-pro.site-defaults.edit'),
-                    'Section Defaults' => cp_route('seo-pro.section-defaults.index'),
-                ]);
+            if ($this->userHasSeoPermissions()) {
+                $nav->tools('SEO Pro')
+                    ->route('seo-pro.index')
+                    ->icon('seo-search-graph')
+                    ->active('seo-pro')
+                    ->children([
+                        $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
+                        $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
+                        $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
+                    ]);
+            }
         });
 
         return $this;
@@ -104,9 +126,18 @@ class ServiceProvider extends AddonServiceProvider
     {
         $server = app(\League\Glide\Server::class);
 
-        $server->setPresets($server->getPresets() + [
-            'seo' => config('statamic.seo-pro.assets.open_graph_preset'),
+        $presets = collect([
+            'seo_pro_twitter' => config('statamic.seo-pro.assets.twitter_preset'),
+            'seo_pro_og' => config('statamic.seo-pro.assets.open_graph_preset'),
         ]);
+
+        // The `twitter_graph_preset` was added later. If it's not set, gracefully
+        // fall back so that existing sites generate off the original config.
+        if (is_null($presets['seo_pro_twitter'])) {
+            $presets['seo_pro_twitter'] = $presets['seo_pro_og'];
+        }
+
+        $server->setPresets($server->getPresets() + $presets->filter()->all());
 
         return $this;
     }
@@ -115,6 +146,15 @@ class ServiceProvider extends AddonServiceProvider
     {
         $this->commands([
             SeoPro\Commands\GenerateReportCommand::class,
+        ]);
+    }
+
+    private function userHasSeoPermissions()
+    {
+        return User::current()->canAny([
+            'view seo reports',
+            'edit seo site defaults',
+            'edit seo section defaults',
         ]);
     }
 }

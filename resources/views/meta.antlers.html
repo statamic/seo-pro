@@ -48,22 +48,29 @@
 
 {{ if image }}
     {{ image }}
-        {{ if is_glide_enabled }}
-            {{ glide:generate :src="image" preset="seo" absolute="true" }}
+
+        {{ if is_og_glide_enabled }}
+            {{ glide:generate :src="image" preset="seo_pro_og" absolute="true" }}
                 <meta property="og:image" content="{{ url }}" />
                 <meta property="og:image:width" content="{{ width }}" />
                 <meta property="og:image:height" content="{{ height }}" />
-                <meta name="twitter:image" content="{{ url }}" />
-                <meta name="twitter:image:alt" content="{{ alt }}" />
             {{ /glide:generate }}
         {{ else }}
             <meta property="og:image" content="{{ permalink }}" />
             <meta property="og:image:width" content="{{ width }}" />
             <meta property="og:image:height" content="{{ height }}" />
-            <meta name="twitter:image" content="{{ permalink }}" />
-            <meta name="twitter:image:alt" content="{{ alt }}" />
         {{ /if }}
         <meta property="og:image:alt" content="{{ alt }}" />
+
+        {{ if is_twitter_glide_enabled }}
+            {{ glide:generate :src="image" preset="seo_pro_twitter" absolute="true" }}
+                <meta name="twitter:image" content="{{ url }}" />
+            {{ /glide:generate }}
+        {{ else }}
+            <meta name="twitter:image" content="{{ permalink }}" />
+        {{ /if }}
+        <meta name="twitter:image:alt" content="{{ alt }}" />
+
     {{ /image }}
 {{ /if }}
 

@@ -79,19 +79,19 @@ export default {
             let options = [];
 
             if (this.config.field !== false) {
-                options.push({ label: 'Custom', value: 'custom' });
+                options.push({ label: __('seo-pro::messages.custom'), value: 'custom' });
             }
 
             if (this.config.from_field !== false) {
-                options.unshift({ label: 'From Field', value: 'field' });
+                options.unshift({ label: __('seo-pro::messages.from_field'), value: 'field' });
             }
 
             if (this.config.inherit !== false) {
-                options.unshift({ label: 'Inherit', value: 'inherit' });
+                options.unshift({ label: __('seo-pro::messages.inherit'), value: 'inherit' });
             }
 
             if (this.config.disableable) {
-                options.push({ label: 'Disable', value: 'disable' });
+                options.push({ label: __('seo-pro::messages.disable'), value: 'disable' });
             }
 
             return options;

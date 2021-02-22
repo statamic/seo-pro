@@ -102,7 +102,7 @@ class SiteDefaults extends Collection
         return Blueprint::make()->setContents([
             'sections' => [
                 'meta' => [
-                    'display' => __('Meta'),
+                    'display' => __('seo-pro::messages.meta'),
                     'fields' => [
                         [
                             'handle' => 'meta_section',
@@ -151,9 +151,9 @@ class SiteDefaults extends Collection
                                 'instructions' => __('seo-pro::fieldsets/defaults.site_name_position_instruct'),
                                 'type' => 'select',
                                 'options' => [
-                                    'after' => 'After',
-                                    'before' => 'Before',
-                                    'none' => 'Disable',
+                                    'after' => __('seo-pro::messages.after'),
+                                    'before' => __('seo-pro::messages.before'),
+                                    'none' => __('seo-pro::messages.disable'),
                                 ],
                                 'width' => 50,
                             ],
@@ -193,7 +193,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'image' => [
-                    'display' => __('Image'),
+                    'display' => __('seo-pro::messages.image'),
                     'fields' => [
                         [
                             'handle' => 'image_section',
@@ -221,7 +221,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'social' => [
-                    'display' => __('Social'),
+                    'display' => __('seo-pro::messages.social'),
                     'fields' => [
                         [
                             'handle' => 'social_section',
@@ -242,7 +242,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'sitemap' => [
-                    'display' => __('Sitemap'),
+                    'display' => __('seo-pro::messages.sitemap'),
                     'fields' => [
                         [
                             'handle' => 'sitemap_section',
@@ -274,12 +274,12 @@ class SiteDefaults extends Collection
                                 'field' => [
                                     'type' => 'select',
                                     'options' => [
-                                        'hourly' => 'Hourly',
-                                        'daily' => 'Daily',
-                                        'weekly' => 'Weekly',
-                                        'monthly' => 'Monthly',
-                                        'yearly' => 'Yearly',
-                                        'never' => 'Never',
+                                        'hourly' => __('seo-pro::messages.hourly'),
+                                        'daily' => __('seo-pro::messages.daily'),
+                                        'weekly' => __('seo-pro::messages.weekly'),
+                                        'monthly' => __('seo-pro::messages.monthly'),
+                                        'yearly' => __('seo-pro::messages.yearly'),
+                                        'never' => __('seo-pro::messages.never'),
                                     ],
                                 ],
                             ],
@@ -287,7 +287,7 @@ class SiteDefaults extends Collection
                     ],
                 ],
                 'search' => [
-                    'display' => __('Search Engines'),
+                    'display' => __('seo-pro::messages.search_engines'),
                     'fields' => [
                         [
                             'handle' => 'search_section',

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Statamic\Contracts\Entries\Collection;
 use Statamic\Contracts\Taxonomies\Taxonomy;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Fields;
 use Statamic\Support\Arr;
@@ -18,6 +19,8 @@ abstract class SectionDefaultsController extends CpController
 
     public function edit($handle)
     {
+        abort_unless(User::current()->can('edit seo section defaults'), 403);
+
         $sectionType = static::$sectionType;
 
         $item = $this->getSectionItem($handle);
@@ -48,6 +51,8 @@ abstract class SectionDefaultsController extends CpController
 
     public function update($handle, Request $request)
     {
+        abort_unless(User::current()->can('edit seo section defaults'), 403);
+
         $blueprint = $this->blueprint();
 
         $fields = $blueprint->fields()->addValues($request->all());

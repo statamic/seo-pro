@@ -160,19 +160,24 @@ EOT;
         $meta = $this->meta('/about');
 
         $this->assertStringContainsString(
-            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo&s=32e4e5b80785827c55bb5af5240e6638" />',
+            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />',
             $meta
         );
 
-        $this->assertStringContainsString('<meta property="og:image:width" content="1200" />', $meta);
-        $this->assertStringContainsString('<meta property="og:image:height" content="1200" />', $meta);
+        $this->assertStringContainsString('<meta property="og:image:width" content="1146" />', $meta);
+        $this->assertStringContainsString('<meta property="og:image:height" content="600" />', $meta);
+
+        $this->assertStringContainsString(
+            '<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />',
+            $meta
+        );
     }
 
     /**
      * @test
      * @environment-setup setCustomGlidePresetDimensions
      */
-    public function it_generates_social_image_with_custom_glide_preset()
+    public function it_generates_social_image_with_custom_glide_presets()
     {
         $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
@@ -181,7 +186,7 @@ EOT;
         $meta = $this->meta('/about');
 
         $this->assertStringContainsString(
-            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo&s=32e4e5b80785827c55bb5af5240e6638" />',
+            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />',
             $meta
         );
 
@@ -189,12 +194,38 @@ EOT;
         $this->assertStringContainsString('<meta property="og:image:height" content="600" />', $meta);
     }
 
-    /** @test */
-    public function it_generates_social_image_with_glide_preset_disabled()
+    /**
+     * @test
+     * @environment-setup setCustomOgGlidePresetOnly
+     */
+    public function it_generates_social_image_with_og_glide_preset_only()
     {
-        Config::set('statamic.seo-pro.assets.container', 'assets');
-        Config::set('statamic.seo-pro.assets.open_graph_preset', false);
+        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            'image' => 'img/stetson.jpg',
+        ]);
 
+        $meta = $this->meta('/about');
+
+        $this->assertStringContainsString(
+            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />',
+            $meta
+        );
+
+        $this->assertStringContainsString(
+            '<meta name="twitter:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />',
+            $meta
+        );
+
+        $this->assertStringContainsString('<meta property="og:image:width" content="800" />', $meta);
+        $this->assertStringContainsString('<meta property="og:image:height" content="600" />', $meta);
+    }
+
+    /**
+     * @test
+     * @environment-setup setCustomTwitterGlidePresetOnly
+     */
+    public function it_generates_social_image_with_twitter_glide_preset_only()
+    {
         $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
@@ -206,8 +237,10 @@ EOT;
             $meta
         );
 
-        $this->assertStringContainsString('<meta property="og:image:width" content="900" />', $meta);
-        $this->assertStringContainsString('<meta property="og:image:height" content="587" />', $meta);
+        $this->assertStringContainsString(
+            '<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />',
+            $meta
+        );
     }
 
     /** @test */
@@ -462,10 +495,38 @@ EOT;
     {
         $app->config->set('statamic.seo-pro.assets', [
             'container' => 'assets',
+            'twitter_preset' => [
+                'w' => 1024,
+                'h' => 768,
+            ],
             'open_graph_preset' => [
                 'w' => 800,
                 'h' => 600,
             ],
+        ]);
+    }
+
+    protected function setCustomOgGlidePresetOnly($app)
+    {
+        $app->config->set('statamic.seo-pro.assets', [
+            'container' => 'assets',
+            'twitter_preset' => false,
+            'open_graph_preset' => [
+                'w' => 800,
+                'h' => 600,
+            ],
+        ]);
+    }
+
+    protected function setCustomTwitterGlidePresetOnly($app)
+    {
+        $app->config->set('statamic.seo-pro.assets', [
+            'container' => 'assets',
+            'twitter_preset' => [
+                'w' => 800,
+                'h' => 600,
+            ],
+            'open_graph_preset' => false,
         ]);
     }
 

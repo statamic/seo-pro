@@ -15,22 +15,25 @@ class UniqueTitleTag extends Rule
 
     public function siteDescription()
     {
-        return 'Each page should have a unique title tag.';
+        return __('seo-pro::messages.rules.unique_title_site');
     }
 
     public function pageDescription()
     {
-        return 'The title tag should be unique.';
+        return __('seo-pro::messages.rules.unique_title_page');
     }
 
     public function siteFailingComment()
     {
-        return sprintf('%s pages with duplicate titles.', $this->failures);
+        return __('seo-pro::messages.rules.unique_title_site_failing', ['count' => $this->failures]);
     }
 
     public function pageFailingComment()
     {
-        return sprintf('%s pages with "%s" as the title.', $this->count, $this->title());
+        return __('seo-pro::messages.rules.unique_title_page_failing', [
+            'count' => $this->count,
+            'title' => $this->title(),
+        ]);
     }
 
     public function pagePassingComment()

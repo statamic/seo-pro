@@ -13,17 +13,17 @@ class NoUnderscoresInUrl extends Rule
 
     public function siteDescription()
     {
-        return 'Page URLs should not contain underscores.';
+        return __('seo-pro::messages.rules.no_underscores_in_url_site');
     }
 
     public function pageDescription()
     {
-        return 'The URL should not contain underscores.';
+        return __('seo-pro::messages.rules.no_underscores_in_url_page');
     }
 
     public function siteFailingComment()
     {
-        return sprintf('%s pages with underscores in their URLs', $this->failures);
+        return __('seo-pro::messages.rules.no_underscores_in_url_site_failing', ['count' => $this->failures]);
     }
 
     public function processPage()
