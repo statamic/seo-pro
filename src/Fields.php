@@ -2,6 +2,8 @@
 
 namespace Statamic\SeoPro;
 
+use Statamic\Assets\Asset;
+
 class Fields
 {
     use HasAssetField, GetsSectionDefaults;
@@ -239,6 +241,8 @@ class Fields
 
         if (is_array($placeholder)) {
             return collect($placeholder)->implode(', ');
+        } elseif ($placeholder instanceof Asset) {
+            return $placeholder->path();
         }
 
         return $placeholder;
