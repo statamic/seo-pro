@@ -26,4 +26,9 @@ class ReportController extends CpController
     {
         return Report::find($id)->withPages();
     }
+
+    public function destroy($id)
+    {
+        return Report::find($id)->delete();
+    }
 }

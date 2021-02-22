@@ -20,6 +20,11 @@
                                 <relative-date :date="report.date"></relative-date>
                             </a>
                         </td>
+                        <td class="float-right">
+                            <dropdown-list>
+                                <dropdown-item :text="__('seo-pro::messages.delete_report')" @click="$emit('report-deleted', report.id)" />
+                            </dropdown-list>
+                        </td>
                     </tr>
                 </tbody>
             </table>

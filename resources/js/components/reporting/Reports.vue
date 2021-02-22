@@ -25,6 +25,7 @@
             v-if="reports.length > 0 && showingListing && !loading"
             :reports="reports"
             @report-selected="selectReport"
+            @report-deleted="deleteReport"
         ></seo-report-listing>
 
         <seo-report
@@ -113,7 +114,18 @@ export default {
                 this.reports = response.data;
                 this.loading = false;
             });
-        }
+        },
+
+        deleteReport(id) {
+            const rowId = _.findIndex(this.reports, {id});
+            const deleteRoute = cp_url(`seo-pro/reports/${id}`);
+
+            Statamic.$request.delete(deleteRoute).then(response => {
+                Vue.delete(this.reports, rowId);
+
+                this.$toast.success(__('seo-pro::messages.report_deleted'));
+            });
+        },
 
     },
 

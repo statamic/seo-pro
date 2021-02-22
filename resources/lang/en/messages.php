@@ -18,6 +18,8 @@ return [
     'sitemap' => 'Sitemap',
     'search_engines' => 'Search Engines',
     'generate_report' => 'Generate Report',
+    'delete_report' => 'Delete Report',
+    'report_deleted' => 'Report deleted',
     'back_to_reports' => 'Back to reports',
     'first_report' => 'Run your first report',
     'report_is_being_generated' => 'Your report is being generated.',
