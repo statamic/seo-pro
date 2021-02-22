@@ -24,6 +24,7 @@
         <seo-report-listing
             v-if="reports.length > 0 && showingListing && !loading"
             :reports="reports"
+            :can-delete-reports="canDeleteReports"
             @report-selected="selectReport"
             @report-deleted="deleteReport"
         ></seo-report-listing>
@@ -64,6 +65,7 @@ export default {
     props: [
         'listingRoute',
         'generateRoute',
+        'canDeleteReports',
     ],
 
     data() {

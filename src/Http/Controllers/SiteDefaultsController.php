@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\SiteDefaults;
 use Statamic\Support\Arr;
@@ -11,6 +12,8 @@ class SiteDefaultsController extends CpController
 {
     public function edit()
     {
+        abort_unless(User::current()->can('edit seo site defaults'), 403);
+
         $blueprint = SiteDefaults::blueprint();
 
         $fields = $blueprint
@@ -29,6 +32,8 @@ class SiteDefaultsController extends CpController
 
     public function update(Request $request)
     {
+        abort_unless(User::current()->can('edit seo site defaults'), 403);
+
         $blueprint = SiteDefaults::blueprint();
 
         $fields = $blueprint->fields()->addValues($request->all());

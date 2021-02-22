@@ -5,6 +5,7 @@
     <seo-reports
         listing-route="{{ cp_route('seo-pro.reports.index') }}"
         generate-route="{{ cp_route('seo-pro.reports.store') }}"
+        :can-delete-reports="{{ json_encode(auth()->user()->can('delete seo reports')) }}"
     ></seo-reports>
 
     @include('statamic::partials.docs-callout', [

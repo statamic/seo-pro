@@ -20,7 +20,7 @@
                                 <relative-date :date="report.date"></relative-date>
                             </a>
                         </td>
-                        <td class="float-right">
+                        <td class="float-right" v-if="canDeleteReports">
                             <dropdown-list>
                                 <dropdown-item :text="__('seo-pro::messages.delete_report')" @click="$emit('report-deleted', report.id)" />
                             </dropdown-list>
@@ -47,7 +47,8 @@ export default {
 
     props: [
         'route',
-        'reports'
+        'reports',
+        'canDeleteReports',
     ],
 
     data() {
