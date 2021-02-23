@@ -21,7 +21,7 @@ return [
     'delete_report' => 'Bericht löschen',
     'report_deleted' => 'Bericht gelöscht',
     'back_to_reports' => 'Zurück zu Berichte',
-    'first_report' => 'Starte deinen ersten Bericht',
+    'first_report' => 'Erstelle deinen ersten Bericht',
     'report_is_being_generated' => 'Dein Bericht wird gerade erstellt.',
     'generated' => 'Erstellt',
     'page_details' => 'Seitendetails',
@@ -49,7 +49,7 @@ return [
     'never' => 'Nie',
 
     'rules' => [
-        'site_name' => 'Der Name der Website muss definiert werden.',
+        'site_name' => 'Der Name der Website muss definiert sein.',
         'unique_title_site' => 'Jede Seite sollte einen eindeutigen Titel-Tag haben.',
         'unique_title_page' => 'Der Titel-Tag sollte eindeutig sein.',
         'unique_title_site_failing' => ':count Seiten mit doppeltem Titel.',

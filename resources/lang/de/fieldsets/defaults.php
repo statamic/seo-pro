@@ -15,10 +15,10 @@ return [
     'site_name_instruct' => "Es ist üblich, den Namen der Website in die Seitentitel einzufügen.",
 
     'site_name_position' => 'Name der Website: Position',
-    'site_name_position_instruct' => 'Ob vor oder nach dem Titel, bleibt dir überlassen.',
+    'site_name_position_instruct' => 'Ob vor oder nach dem Titel bleibt dir überlassen.',
 
     'site_name_separator' => 'Name der Website: Trennzeichen',
-    'site_name_separator_instruct' => 'Das (oder die) Zeichen zwischen Titel und dem Namen der Website.',
+    'site_name_separator_instruct' => 'Das (oder die) Zeichen zwischen Titel und Name der Website.',
 
     'canonical_url' => 'Kanonische URL',
     'canonical_url_instruct' => 'Wähle für die kanonische URL ein vorhandenes Feld als Standard. Jede Sammlung und Taxonomie kann auch ihre eigene Einstellung haben.',
