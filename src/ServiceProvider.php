@@ -151,10 +151,10 @@ class ServiceProvider extends AddonServiceProvider
 
     private function userHasSeoPermissions()
     {
-        return User::current()->canAny([
-            'view seo reports',
-            'edit seo site defaults',
-            'edit seo section defaults',
-        ]);
+        $user = User::current();
+
+        return $user->can('view seo reports')
+            || $user->can('edit seo site defaults')
+            || $user->can('edit seo section defaults');
     }
 }
