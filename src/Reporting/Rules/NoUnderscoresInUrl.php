@@ -23,7 +23,11 @@ class NoUnderscoresInUrl extends Rule
 
     public function siteFailingComment()
     {
-        return __('seo-pro::messages.rules.no_underscores_in_url_site_failing', ['count' => $this->failures]);
+        return trans_choice(
+            'seo-pro::messages.rules.no_underscores_in_url_site_failing',
+            $this->failures,
+            ['count' => $this->failures]
+        );
     }
 
     public function processPage()

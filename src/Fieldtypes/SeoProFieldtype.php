@@ -29,7 +29,7 @@ class SeoProFieldtype extends Fieldtype
     {
         return [
             'fields' => $this->fieldConfig(),
-            'meta' => $this->fields()->meta(),
+            'meta' => $this->fields()->addValues($this->field->value())->meta(),
         ];
     }
 

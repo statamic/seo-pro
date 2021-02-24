@@ -22,7 +22,11 @@ class ThreeSegmentUrls extends Rule
 
     public function siteWarningComment()
     {
-        return __('seo-pro::messages.rules.three_segment_urls_site_warning', ['count' => $this->failures]);
+        return trans_choice(
+            'seo-pro::messages.rules.three_segment_urls_site_warning',
+            $this->failures,
+            ['count' => $this->failures]
+        );
     }
 
     public function processPage()
