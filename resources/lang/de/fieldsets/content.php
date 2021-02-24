@@ -26,7 +26,7 @@ return [
     'robots' => 'Robots',
     'robots_instruct' => 'Wähle Optionen für das Robots Meta-Tag. `noindex` verhindert, dass die Seite von Suchmaschinen indiziert wird. `nofollow` verhindert, dass Suchmaschinen Links crawlen.',
 
-    'image' => 'Social Bild',
+    'image' => 'Social Media Bild',
     'image_instruct' => 'Dieses Bild wird als Vorschaubild für soziale Netzwerke verwendet.',
 
     'twitter_handle' => 'Twitter-Handle',
