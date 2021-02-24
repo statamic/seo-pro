@@ -60,10 +60,10 @@ return [
         'unique_description_page_failing' => ':count Seiten mit „:description“ als Meta-Beschreibung.',
         'no_underscores_in_url_site' => 'Seiten-URLs sollten keine Underscores enthalten.',
         'no_underscores_in_url_page' => 'Die URL sollte keine Underscores enthalten.',
-        'no_underscores_in_url_site_failing' => ':count Seiten mit Underscores in ihren URLs.',
+        'no_underscores_in_url_site_failing' => ':count Seite mit Underscores in ihrer URL.|:count Seiten mit Underscores in ihren URLs.',
         'three_segment_urls_site' => 'Seiten-URLs sollten aus maximal 3 Segmenten bestehen.',
         'three_segment_urls_page' => 'Die URL sollte aus maximal 3 Segmenten bestehen.',
-        'three_segment_urls_site_warning' => ':count Seiten mit mehr als 3 Segmenten in ihren URLs.',
+        'three_segment_urls_site_warning' => ':count Seite mit mehr als 3 Segmenten in ihrer URL.|:count Seiten mit mehr als 3 Segmenten in ihren URLs.',
     ],
 
 ];
