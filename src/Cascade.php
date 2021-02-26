@@ -221,19 +221,19 @@ class Cascade
         $title = Str::trim($this->data->get('title'));
         $siteName = Str::trim($this->data->get('site_name'));
         $siteNameSeparator = Str::trim($this->data->get('site_name_separator'));
-        $siteNameBefore = (string) $this->data->get('site_name_position') === 'before';
+        $siteNamePosition = (string) $this->data->get('site_name_position');
 
         if (! $title) {
             return $siteName;
         }
 
-        if (! $siteName) {
+        if (! $siteName || $siteNamePosition === 'none') {
             return $title;
         }
 
         $compiled = collect([$title, $siteNameSeparator, $siteName]);
 
-        if ($siteNameBefore) {
+        if ($siteNamePosition === 'before') {
             $compiled = $compiled->reverse();
         }
 
