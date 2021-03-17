@@ -6,7 +6,7 @@
             :config="field"
             :value="value[field.handle]"
             :meta="meta.meta[field.handle]"
-            :read-only="isReadOnly"
+            :read-only="! field.localizable"
             class="form-group"
             @meta-updated="metaUpdated(field.handle, $event)"
             @focus="$emit('focus')"
