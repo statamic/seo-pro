@@ -119,6 +119,7 @@ class SiteDefaults extends Collection
                                 'instructions' => __('seo-pro::fieldsets/defaults.title_instruct'),
                                 'type' => 'seo_pro_source',
                                 'inherit' => false,
+                                'localizable' => true,
                                 'field' => [
                                     'type' => 'text',
                                 ],
@@ -131,6 +132,7 @@ class SiteDefaults extends Collection
                                 'instructions' => __('seo-pro::fieldsets/defaults.description_instruct'),
                                 'type' => 'seo_pro_source',
                                 'inherit' => false,
+                                'localizable' => true,
                                 'field' => [
                                     'type' => 'textarea',
                                 ],
@@ -142,6 +144,7 @@ class SiteDefaults extends Collection
                                 'display' => __('seo-pro::fieldsets/defaults.site_name'),
                                 'instructions' => __('seo-pro::fieldsets/defaults.site_name_instruct'),
                                 'type' => 'text',
+                                'localizable' => true,
                             ],
                         ],
                         [
@@ -156,6 +159,7 @@ class SiteDefaults extends Collection
                                     'none' => __('seo-pro::messages.disable'),
                                 ],
                                 'width' => 50,
+                                'localizable' => true,
                             ],
                         ],
                         [
@@ -165,6 +169,7 @@ class SiteDefaults extends Collection
                                 'instructions' => __('seo-pro::fieldsets/defaults.site_name_separator_instruct'),
                                 'type' => 'text',
                                 'width' => 50,
+                                'localizable' => true,
                             ],
                         ],
                         [
@@ -175,6 +180,7 @@ class SiteDefaults extends Collection
                                 'type' => 'seo_pro_source',
                                 'inherit' => false,
                                 'field' => false,
+                                'localizable' => true,
                             ],
                         ],
                         [
@@ -188,6 +194,7 @@ class SiteDefaults extends Collection
                                     'noindex',
                                     'nofollow',
                                 ],
+                                'localizable' => true,
                             ],
                         ],
                     ],
@@ -215,6 +222,7 @@ class SiteDefaults extends Collection
                                 'allowed_fieldtypes' => [
                                     'assets',
                                 ],
+                                'localizable' => true,
                                 'field' => static::getAssetFieldConfig(),
                             ],
                         ],
@@ -237,6 +245,7 @@ class SiteDefaults extends Collection
                                 'display' => __('seo-pro::fieldsets/defaults.twitter_handle'),
                                 'instructions' => __('seo-pro::fieldsets/defaults.twitter_handle_instruct'),
                                 'type' => 'text',
+                                'localizable' => true,
                             ],
                         ],
                     ],
@@ -259,6 +268,7 @@ class SiteDefaults extends Collection
                                 'instructions' => __('seo-pro::fieldsets/defaults.priority_instruct'),
                                 'type' => 'seo_pro_source',
                                 'inherit' => false,
+                                'localizable' => true,
                                 'field' => [
                                     'type' => 'text',
                                 ],
@@ -271,6 +281,7 @@ class SiteDefaults extends Collection
                                 'instructions' => __('seo-pro::fieldsets/defaults.change_frequency_instruct'),
                                 'type' => 'seo_pro_source',
                                 'inherit' => false,
+                                'localizable' => true,
                                 'field' => [
                                     'type' => 'select',
                                     'options' => [
@@ -303,6 +314,7 @@ class SiteDefaults extends Collection
                                 'display' => __('seo-pro::fieldsets/defaults.bing_verification'),
                                 'instructions' => __('seo-pro::fieldsets/defaults.bing_verification_instruct'),
                                 'type' => 'text',
+                                'localizable' => true,
                             ],
                         ],
                         [
@@ -311,6 +323,7 @@ class SiteDefaults extends Collection
                                 'display' => __('seo-pro::fieldsets/defaults.google_verification'),
                                 'instructions' => __('seo-pro::fieldsets/defaults.google_verification_instruct'),
                                 'type' => 'text',
+                                'localizable' => true,
                             ],
                         ],
                     ],
