@@ -28,9 +28,11 @@
 
 <meta property="og:locale" content="{{ locale }}" />
 
-{{ alternate_locales }}
-    <meta property="og:locale:alternate" content="{{ locale }}" />
-{{ /alternate_locales }}
+{{ if alternate_locales }}
+    {{ alternate_locales }}
+        <meta property="og:locale:alternate" content="{{ locale }}" />
+    {{ /alternate_locales }}
+{{ /if }}
 
 <meta name="twitter:card" content="{{ twitter_card }}" />
 
