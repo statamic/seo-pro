@@ -1,4 +1,5 @@
 @extends('statamic::layout')
+@section('title', __('seo-pro::messages.section_defaults'))
 
 @section('content')
 
