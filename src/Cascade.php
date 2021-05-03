@@ -265,7 +265,7 @@ class Cascade
 
     protected function alternateLocales()
     {
-        if (! config('statamic.seo-pro.alternate_locales.enabled_in_meta')) {
+        if (! config('statamic.seo-pro.alternate_locales')) {
             return [];
         }
 

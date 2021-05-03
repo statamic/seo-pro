@@ -34,7 +34,6 @@ return [
         'card' => 'summary_large_image',
     ],
 
-    'alternate_locales' => [
-        'enabled_in_meta' => true,
-    ],
+    'alternate_locales' => true,
+
 ];
