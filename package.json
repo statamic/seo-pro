@@ -12,7 +12,7 @@
     "dependencies": {
         "cross-env": "^7.0.2",
         "laravel-mix": "^5.0.4",
-        "underscore": "~1.9.2",
+        "underscore": "~1.12.1",
         "vue": "^2.6.11"
     },
     "devDependencies": {
