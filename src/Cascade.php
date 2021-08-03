@@ -48,7 +48,8 @@ class Cascade
         }
 
         $this->current = $this->augmentData($data);
-        $this->model = $data;
+
+        $this->model = $data ?? new NullModel;
 
         return $this;
     }
