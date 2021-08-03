@@ -113,4 +113,37 @@ class CascadeTest extends TestCase
 
         $this->assertEquals('Red', $data['description']);
     }
+
+    /** @test */
+    public function it_generates_seo_cascade_without_exception_when_no_home_entry_exists()
+    {
+        Entry::findByUri('/')->delete();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->get();
+
+        $expected = [
+            'site_name' => 'Site Name',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => null,
+            'description' => null,
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+            'compiled_title' => 'Site Name',
+            'og_title' => 'Site Name',
+            'canonical_url' => '',
+            'prev_url' => null,
+            'next_url' => null,
+            'home_url' => 'http://cool-runnings.com/',
+            'humans_txt' => 'http://cool-runnings.com/humans.txt',
+            'locale' => 'default',
+            'alternate_locales' => [],
+            'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
+        ];
+
+        $this->assertEquals($expected, $data);
+    }
 }
