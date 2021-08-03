@@ -23,6 +23,8 @@ class Cascade
     public function __construct()
     {
         $this->data = collect();
+
+        $this->model = new NullModel;
     }
 
     public function forSitemap()
