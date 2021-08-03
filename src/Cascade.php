@@ -23,6 +23,8 @@ class Cascade
     public function __construct()
     {
         $this->data = collect();
+
+        $this->model = new NullModel;
     }
 
     public function forSitemap()
@@ -46,7 +48,8 @@ class Cascade
         }
 
         $this->current = $this->augmentData($data);
-        $this->model = $data;
+
+        $this->model = $data ?? new NullModel;
 
         return $this;
     }
