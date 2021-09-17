@@ -77,7 +77,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $app->make(Manifest::class)->manifest = [
             'statamic/seo-pro' => [
                 'id' => 'statamic/seo-pro',
-                'namespace' => 'Statamic\\SeoPro\\',
+                'namespace' => 'Statamic\\SeoPro',
             ],
         ];
     }

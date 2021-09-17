@@ -302,7 +302,7 @@ class Cascade
             return null;
         }
 
-        $value = strip_tags($value);
+        $value = trim(strip_tags($value));
 
         if (strlen($value) > 320) {
             $value = substr($value, 0, 320).'...';

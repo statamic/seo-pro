@@ -35,7 +35,7 @@ class MetaTagTest extends TestCase
 <meta property="og:description" content="I see a bad-ass mother." />
 <meta property="og:url" content="http://cool-runnings.com" />
 <meta property="og:site_name" content="Site Name" />
-<meta property="og:locale" content="default" />
+<meta property="og:locale" content="en" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
