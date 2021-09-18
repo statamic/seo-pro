@@ -278,20 +278,20 @@ class Cascade
             return [];
         }
 
-        if (! method_exists($this->model, 'locales')) {
-            return collect(Config::getOtherLocales())->map(function ($locale) {
-                return ['locale' => $locale, 'url' => $this->model->absoluteUrl()];
-            })->all();
-        }
-
-        $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
-
-        return collect($alternates)->map(function ($locale) {
-            return [
-                'locale' => Config::getShortLocale($locale),
-                'url' => $this->model->in($locale)->absoluteUrl(),
-            ];
-        })->all();
+        return collect(Config::getOtherLocales())
+            ->filter(function ($locale) {
+                return $this->model->in($locale);
+            })
+            ->reject(function ($locale) {
+                return collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale);
+            })
+            ->map(function ($locale) {
+                return [
+                    'site' => Config::getSite($locale)->toAugmentedArray(),
+                    'url' => $this->model->in($locale)->absoluteUrl(),
+                ];
+            })
+            ->all();
     }
 
     protected function parseDescriptionField($value)
