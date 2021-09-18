@@ -270,11 +270,11 @@ class Cascade
 
     protected function alternateLocales()
     {
-        if (! config('statamic.seo-pro.alternate_locales')) {
+        if (config('statamic.seo-pro.alternate_locales') === false) {
             return [];
-        }
-
-        if (! $this->model) {
+        } elseif (config('statamic.seo-pro.alternate_locales.enabled') === false) {
+            return [];
+        } elseif (! $this->model) {
             return [];
         }
 

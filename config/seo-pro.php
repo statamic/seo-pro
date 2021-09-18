@@ -34,6 +34,9 @@ return [
         'card' => 'summary_large_image',
     ],
 
-    'alternate_locales' => true,
+    'alternate_locales' => [
+        'enabled' => true,
+        'excluded_sites' => [],
+    ],
 
 ];
