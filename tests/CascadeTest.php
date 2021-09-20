@@ -36,15 +36,13 @@ class CascadeTest extends TestCase
                 'locale' => 'en_US',
                 'short_locale' => 'en',
                 'url' => '/',
-                'direction' => 'ltr',
-                'attributes' => [],
             ],
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
         ];
 
-        $this->assertEquals($expected, $data);
+        $this->assertArraySubset($expected, $data);
     }
 
     /** @test */
@@ -82,15 +80,13 @@ class CascadeTest extends TestCase
                 'locale' => 'en_US',
                 'short_locale' => 'en',
                 'url' => '/',
-                'direction' => 'ltr',
-                'attributes' => [],
             ],
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
         ];
 
-        $this->assertEquals($expected, $data);
+        $this->assertArraySubset($expected, $data);
     }
 
     /** @test */
@@ -160,14 +156,12 @@ class CascadeTest extends TestCase
                 'locale' => 'en_US',
                 'short_locale' => 'en',
                 'url' => '/',
-                'direction' => 'ltr',
-                'attributes' => [],
             ],
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
         ];
 
-        $this->assertEquals($expected, $data);
+        $this->assertArraySubset($expected, $data);
     }
 }
