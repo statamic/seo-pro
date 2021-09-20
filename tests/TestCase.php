@@ -108,6 +108,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         return str_replace("\r\n", "\n", $string);
     }
 
+    public static function assertArraySubset($subset, $array, bool $checkForObjectIdentity = false, string $message = ''): void
+    {
+        $class = version_compare(app()->version(), 7, '>=') ? \Illuminate\Testing\Assert::class : \Illuminate\Foundation\Testing\Assert::class;
+        $class::assertArraySubset($subset, $array, $checkForObjectIdentity, $message);
+    }
+
     /**
      * Normalize line endings before performing assertion in windows.
      */
