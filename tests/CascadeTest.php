@@ -32,7 +32,7 @@ class CascadeTest extends TestCase
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
             'site' => [
                 'handle' => 'default',
-                'name' => 'Laravel',
+                'name' => 'English',
                 'locale' => 'en_US',
                 'short_locale' => 'en',
                 'url' => '/',
@@ -76,7 +76,7 @@ class CascadeTest extends TestCase
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
             'site' => [
                 'handle' => 'default',
-                'name' => 'Laravel',
+                'name' => 'English',
                 'locale' => 'en_US',
                 'short_locale' => 'en',
                 'url' => '/',
@@ -152,7 +152,7 @@ class CascadeTest extends TestCase
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
             'site' => [
                 'handle' => 'default',
-                'name' => 'Laravel',
+                'name' => 'English',
                 'locale' => 'en_US',
                 'short_locale' => 'en',
                 'url' => '/',
