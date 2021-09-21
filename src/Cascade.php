@@ -80,7 +80,7 @@ class Cascade
             'next_url' => $this->nextUrl(),
             'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
-            'locale' => $this->locale(),
+            'site' => $this->site(),
             'alternate_locales' => $this->alternateLocales(),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
@@ -259,37 +259,39 @@ class Cascade
             : null;
     }
 
-    protected function locale()
+    protected function site()
     {
-        return method_exists($this->model, 'locale')
-            ? Config::getShortLocale($this->model->locale())
-            : Site::default()->handle();
+        $site = method_exists($this->model, 'site')
+            ? $this->model->site()
+            : Site::default();
+
+        return $site->toAugmentedArray();
     }
 
     protected function alternateLocales()
     {
-        if (! config('statamic.seo-pro.alternate_locales')) {
+        if (config('statamic.seo-pro.alternate_locales') === false) {
+            return [];
+        } elseif (config('statamic.seo-pro.alternate_locales.enabled') === false) {
+            return [];
+        } elseif (! $this->model) {
             return [];
         }
 
-        if (! $this->model) {
-            return [];
-        }
-
-        if (! method_exists($this->model, 'locales')) {
-            return collect(Config::getOtherLocales())->map(function ($locale) {
-                return ['locale' => $locale, 'url' => $this->model->absoluteUrl()];
-            })->all();
-        }
-
-        $alternates = array_values(array_diff($this->model->locales(), [$this->model->locale()]));
-
-        return collect($alternates)->map(function ($locale) {
-            return [
-                'locale' => Config::getShortLocale($locale),
-                'url' => $this->model->in($locale)->absoluteUrl(),
-            ];
-        })->all();
+        return collect(Config::getOtherLocales())
+            ->filter(function ($locale) {
+                return $this->model->in($locale);
+            })
+            ->reject(function ($locale) {
+                return collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale);
+            })
+            ->map(function ($locale) {
+                return [
+                    'site' => Config::getSite($locale)->toAugmentedArray(),
+                    'url' => $this->model->in($locale)->absoluteUrl(),
+                ];
+            })
+            ->all();
     }
 
     protected function parseDescriptionField($value)

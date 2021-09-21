@@ -8,6 +8,8 @@ use Statamic\SeoPro\SiteDefaults;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
+    protected $siteFixturePath = __DIR__.'/Fixtures/site';
+
     protected function getPackageProviders($app)
     {
         return [
@@ -27,10 +29,19 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->files = app(Filesystem::class);
 
-        $this->files->copyDirectory(__DIR__.'/Fixtures/content', base_path('content'));
-        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+        $this->copyDirectoryFromFixture('content');
+        $this->copyDirectoryFromFixture('assets');
 
         $this->restoreSiteDefaults();
+    }
+
+    protected function copyDirectoryFromFixture($directory)
+    {
+        if (base_path($directory)) {
+            $this->files->deleteDirectory(base_path($directory));
+        }
+
+        $this->files->copyDirectory("{$this->siteFixturePath}/{$directory}", base_path($directory));
     }
 
     protected function restoreSiteDefaults()
@@ -61,12 +72,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'filesystems',
             'statamic/users',
             'statamic/stache',
+            'statamic/sites',
         ];
 
         foreach ($configs as $config) {
             $files->delete(config_path("{$config}.php"));
-            $files->copy(__DIR__."/Fixtures/config/{$config}.php", config_path("{$config}.php"));
-            $app['config']->set(str_replace('/', '.', $config), require(__DIR__."/Fixtures/config/{$config}.php"));
+            $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
+            $app['config']->set(str_replace('/', '.', $config), require("{$this->siteFixturePath}/config/{$config}.php"));
         }
     }
 
@@ -108,12 +120,30 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         return str_replace("\r\n", "\n", $string);
     }
 
+    public static function assertArraySubset($subset, $array, bool $checkForObjectIdentity = false, string $message = ''): void
+    {
+        $class = version_compare(app()->version(), 7, '>=') ? \Illuminate\Testing\Assert::class : \Illuminate\Foundation\Testing\Assert::class;
+        $class::assertArraySubset($subset, $array, $checkForObjectIdentity, $message);
+    }
+
     /**
      * Normalize line endings before performing assertion in windows.
      */
     public static function assertStringContainsString($needle, $haystack, $message = '') : void
     {
         parent::assertStringContainsString(
+            static::normalizeMultilineString($needle),
+            static::normalizeMultilineString($haystack),
+            $message
+        );
+    }
+
+    /**
+     * Normalize line endings before performing assertion in windows.
+     */
+    public static function assertStringNotContainsString($needle, $haystack, $message = '') : void
+    {
+        parent::assertStringNotContainsString(
             static::normalizeMultilineString($needle),
             static::normalizeMultilineString($haystack),
             $message

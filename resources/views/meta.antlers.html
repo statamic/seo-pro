@@ -26,11 +26,11 @@
     <meta property="og:site_name" content="{{ site_name | striptags | entities | trim }}" />
 {{ /if }}
 
-<meta property="og:locale" content="{{ locale }}" />
+<meta property="og:locale" content="{{ site:locale }}" />
 
 {{ if alternate_locales }}
     {{ alternate_locales }}
-        <meta property="og:locale:alternate" content="{{ locale }}" />
+        <meta property="og:locale:alternate" content="{{ site:locale }}" />
     {{ /alternate_locales }}
 {{ /if }}
 
@@ -88,9 +88,9 @@
 {{ /if }}
 
 {{ if alternate_locales }}
-    <link rel="alternate" href="{{ canonical_url }}" hreflang="{{ locale }}" />
+    <link rel="alternate" href="{{ canonical_url }}" hreflang="{{ site:short_locale }}" />
     {{ alternate_locales }}
-        <link rel="alternate" href="{{ url }}" hreflang="{{ locale }}" />
+        <link rel="alternate" href="{{ url }}" hreflang="{{ site:short_locale }}" />
     {{ /alternate_locales }}
 {{ /if }}
 
