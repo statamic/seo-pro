@@ -426,13 +426,6 @@ EOT;
     }
 
     /** @test */
-    public function it_generates_alternate_locales_meta()
-    {
-        // TODO
-        $this->markTestSkipped();
-    }
-
-    /** @test */
     public function it_generates_robots_meta()
     {
         $this->setSeoInSiteDefaults([
