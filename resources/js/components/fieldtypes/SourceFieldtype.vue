@@ -130,6 +130,7 @@ export default {
 
             if (value !== 'field') {
                 this.value.value = this.meta.defaultValue;
+                this.meta.fieldMeta = this.meta.defaultFieldMeta;
             }
         },
 
