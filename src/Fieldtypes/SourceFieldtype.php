@@ -71,6 +71,7 @@ class SourceFieldtype extends Fieldtype
 
         return [
             'fieldMeta' => $sourceField->setValue($value)->preProcess()->meta(),
+            'defaultFieldMeta' => $sourceField->setValue(null)->preProcess()->meta(),
             'defaultValue' => $sourceField->setValue(null)->preProcess()->value(),
         ];
     }
