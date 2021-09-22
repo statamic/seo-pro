@@ -63,7 +63,6 @@ export default {
 
     data() {
         return {
-            sourceField: this.value.source === 'field' ? this.value.value : null,
             autoBindChangeWatcher: false,
             changeWatcherWatchDeep: false,
             allowedFieldtypes: []
@@ -74,6 +73,12 @@ export default {
 
         source() {
             return this.value.source;
+        },
+
+        sourceField() {
+            return this.value.source === 'field'
+                ? this.value.value
+                : null;
         },
 
         componentName() {
@@ -112,16 +117,6 @@ export default {
 
     },
 
-    watch: {
-
-        value(val) {
-            this.sourceField = val.source === 'field'
-                ? val.value
-                : null;
-        },
-
-    },
-
     mounted() {
         let types = this.config.allowed_fieldtypes || ['text', 'textarea', 'markdown', 'redactor'];
         this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
@@ -133,16 +128,13 @@ export default {
         sourceDropdownChanged(value) {
             this.value.source = value;
 
-            if (value === 'field') {
-                this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
-            } else {
+            if (value !== 'field') {
                 this.value.value = this.meta.defaultValue;
             }
         },
 
         sourceFieldChanged(field) {
             this.value.value = field;
-            this.sourceField = field;
         },
 
         customValueChanged(value) {
