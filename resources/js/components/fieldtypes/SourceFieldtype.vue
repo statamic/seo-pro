@@ -1,4 +1,5 @@
 <template>
+
     <div class="flex">
 
         <div class="source-type-select pr-2">
@@ -7,7 +8,8 @@
                 :reduce="option => option.value"
                 :disabled="! config.localizable"
                 :clearable="false"
-                v-model="source"
+                :value="source"
+                @input="sourceDropdownChanged"
             />
         </div>
 
@@ -20,7 +22,7 @@
 
             <div v-else-if="source === 'field'" class="source-field-select">
                 <!-- TODO: Implement field suggestions v-select -->
-                <text-input v-model="sourceField" :disabled="! config.localizable" />
+                <text-input :value="sourceField" @input="sourceFieldChanged" :disabled="! config.localizable" />
             </div>
 
             <component
@@ -32,7 +34,7 @@
                 :meta="meta.fieldMeta"
                 :read-only="! config.localizable"
                 handle="source_value"
-                @input="updateValue">
+                @input="customValueChanged">
             </component>
         </div>
     </div>
@@ -61,7 +63,6 @@ export default {
 
     data() {
         return {
-            source: this.value.source,
             sourceField: this.value.source === 'field' ? this.value.value : null,
             autoBindChangeWatcher: false,
             changeWatcherWatchDeep: false,
@@ -70,6 +71,10 @@ export default {
     },
 
     computed: {
+
+        source() {
+            return this.value.source;
+        },
 
         componentName() {
             return this.config.field.type.replace('.', '-') + '-fieldtype';
@@ -109,18 +114,10 @@ export default {
 
     watch: {
 
-        source(val) {
-            this.value.source = val;
-
-            if (val === 'field') {
-                this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
-            } else {
-                this.value.value = this.meta.defaultValue;
-            }
-        },
-
-        sourceField(val) {
-            this.value.value = Array.isArray(val) ? val[0] : val;
+        value(val) {
+            this.sourceField = val.source === 'field'
+                ? val.value
+                : null;
         },
 
     },
@@ -133,7 +130,22 @@ export default {
 
     methods: {
 
-        updateValue(value) {
+        sourceDropdownChanged(value) {
+            this.value.source = value;
+
+            if (value === 'field') {
+                this.value.value = Array.isArray(this.sourceField) ? this.sourceField[0] : this.sourceField;
+            } else {
+                this.value.value = this.meta.defaultValue;
+            }
+        },
+
+        sourceFieldChanged(field) {
+            this.value.value = field;
+            this.sourceField = field;
+        },
+
+        customValueChanged(value) {
             let newValue = this.value;
 
             newValue.value = value;
