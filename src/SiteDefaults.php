@@ -68,9 +68,9 @@ class SiteDefaults extends Collection
      */
     public function save()
     {
-        SeoProSiteDefaultsSaved::dispatch($this);
-
         File::put($this->path(), YAML::dump($this->items));
+
+        SeoProSiteDefaultsSaved::dispatch($this);
     }
 
     /**
