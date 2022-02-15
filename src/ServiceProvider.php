@@ -42,7 +42,6 @@ class ServiceProvider extends AddonServiceProvider
         $this
             ->bootAddonConfig()
             ->bootAddonViews()
-            ->bootAddonTranslations()
             ->bootAddonPermissions()
             ->bootAddonNav()
             ->bootAddonSubscriber()
@@ -68,13 +67,6 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
         ], 'seo-pro-views');
-
-        return $this;
-    }
-
-    protected function bootAddonTranslations()
-    {
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'seo-pro');
 
         return $this;
     }
