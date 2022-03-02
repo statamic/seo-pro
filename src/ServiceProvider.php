@@ -28,12 +28,12 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $scripts = [
-        __DIR__ . '/../resources/dist/js/cp.js',
+        __DIR__.'/../resources/dist/js/cp.js',
     ];
 
     protected $routes = [
-        'cp' => __DIR__ . '/../routes/cp.php',
-        'web' => __DIR__ . '/../routes/web.php',
+        'cp' => __DIR__.'/../routes/cp.php',
+        'web' => __DIR__.'/../routes/web.php',
     ];
 
     protected $config = false;
@@ -55,10 +55,10 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonConfig()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/seo-pro.php', 'statamic.seo-pro');
+        $this->mergeConfigFrom(__DIR__.'/../config/seo-pro.php', 'statamic.seo-pro');
 
         $this->publishes([
-            __DIR__ . '/../config/seo-pro.php' => config_path('statamic/seo-pro.php'),
+            __DIR__.'/../config/seo-pro.php' => config_path('statamic/seo-pro.php'),
         ], 'seo-pro-config');
 
         return $this;
@@ -66,10 +66,10 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonViews()
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/generated', 'seo-pro');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/generated', 'seo-pro');
 
         $this->publishes([
-            __DIR__ . '/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
+            __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
         ], 'seo-pro-views');
 
         return $this;
