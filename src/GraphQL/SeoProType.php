@@ -79,12 +79,6 @@ class SeoProType extends Type
                     return $value['image']->value();
                 }
             ],
-            'is_twitter_glide_enabled' => [
-                'type' => GraphQL::boolean()
-            ],
-            'is_og_glide_enabled' => [
-                'type' => GraphQL::boolean()
-            ],
         ];
     }
 }
