@@ -5,10 +5,11 @@ namespace Statamic\SeoPro\Fieldtypes;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
-use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\Fields as SeoProFields;
+use Statamic\SeoPro\Fields;
 use Statamic\Support\Arr;
 
 class SeoProFieldtype extends Fieldtype
@@ -74,5 +75,11 @@ class SeoProFieldtype extends Fieldtype
             ->values()
             ->only(array_keys($data))
             ->all();
+    }
+
+
+    public function toGqlType()
+    {
+        return GraphQL::type("SeoPro");
     }
 }

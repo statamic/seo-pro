@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
+use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
@@ -11,6 +12,8 @@ use Statamic\SeoPro;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    use GetsSectionDefaults;
+
     protected $tags = [
         SeoPro\Tags\SeoProTags::class,
     ];
@@ -47,7 +50,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
-            ->bootAddonCommands();
+            ->bootAddonCommands()
+            ->bootGraphQL();
     }
 
     protected function bootAddonConfig()
@@ -147,6 +151,33 @@ class ServiceProvider extends AddonServiceProvider
         $this->commands([
             SeoPro\Commands\GenerateReportCommand::class,
         ]);
+    }
+    
+    protected function bootGraphQL()
+    {
+        $this->app->booted(function () {
+            $this->app->bind("SeoPro", function () {
+                return new \Statamic\SeoPro\GraphQL\SeoProType();
+            });
+
+            GraphQL::addType("SeoPro");
+
+            GraphQL::addField('EntryInterface', 'seo', function () {
+                return [
+                    'type' => GraphQL::type('SeoPro'),
+                    'resolve' => function ($entry, $args) {
+                        return (new Cascade())
+                            ->with(SiteDefaults::load()->augmented())
+                            ->with($this->getAugmentedSectionDefaults($entry))
+                            ->with($entry->augmentedValue('seo'))
+                            ->withCurrent($entry)
+                            ->get();
+                    }
+                ];
+            });
+        });
+
+        return $this;
     }
 
     private function userHasSeoPermissions()
