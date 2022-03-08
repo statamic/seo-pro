@@ -20,8 +20,11 @@ jobs:
         include:
           - laravel: 9.*
             testbench: 7.*
+            testbench-constraint: ^7.0
           - laravel: 8.*
             testbench: 6.*
+            laravel-constraint: ^8.18.1
+            testbench-constraint: ^6.22.0
           - laravel: 7.*
             testbench: 5.*
           - php: 7.4
@@ -49,7 +52,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" ${{ matrix.additional-deps }} --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel-constraint || matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench-constraint || matrix.testbench }}" ${{ matrix.additional-deps }} --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
