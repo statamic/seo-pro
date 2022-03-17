@@ -41,24 +41,15 @@ class ServiceProvider extends AddonServiceProvider
         parent::boot();
 
         $this
-            ->bootAddonBladeDirective()
             ->bootAddonConfig()
             ->bootAddonViews()
+            ->bootAddonBladeDirective()
             ->bootAddonTranslations()
             ->bootAddonPermissions()
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands();
-    }
-
-    protected function bootAddonBladeDirective()
-    {
-        Blade::directive('seo_pro', function ($tag) {
-            return '<?php echo \Facades\Statamic\SeoPro\Directives\SeoProDirective::handle(' . $tag . ', get_defined_vars()) ?>';
-        });
-
-        return $this;
     }
 
     protected function bootAddonConfig()
@@ -79,6 +70,15 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
         ], 'seo-pro-views');
+
+        return $this;
+    }
+
+    protected function bootAddonBladeDirective()
+    {
+        Blade::directive('seo_pro', function ($tag) {
+            return '<?php echo \Facades\Statamic\SeoPro\Directives\SeoProDirective::handle('.$tag.', $__data) ?>';
+        });
 
         return $this;
     }
