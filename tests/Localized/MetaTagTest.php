@@ -2,30 +2,18 @@
 
 namespace Tests\Localized;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Statamic\Facades\Antlers;
-use Statamic\Facades\Blink;
-use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
-use Statamic\Facades\Data;
-use Statamic\Facades\Entry;
-use Statamic\Facades\Site;
-use Statamic\Support\Str;
-use Statamic\View\Cascade;
+use Tests\MetaProviders;
 
 class MetaTagTest extends TestCase
 {
-    private function meta($uri = null)
-    {
-        $site = Site::current();
-        $data = Data::findByUri(Str::ensureLeft($uri, '/'), $site->handle());
-        $context = (new Cascade(request(), $site))->withContent($data)->hydrate()->toArray();
+    use MetaProviders;
 
-        return (string) Antlers::parse('{{ seo_pro:meta }}', $context);
-    }
-
-    /** @test */
-    public function it_generates_multisite_meta()
+    /**
+     * @test
+     * @dataProvider metaProvider
+     */
+    public function it_generates_multisite_meta($metaProvider)
     {
         $expectedOgLocaleMeta = <<<'EOT'
 <meta property="og:locale" content="en_US" />
@@ -39,14 +27,17 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 EOT;
 
-        $meta = $this->meta();
+        $meta = $this->{$metaProvider}();
 
         $this->assertStringContainsString($expectedOgLocaleMeta, $meta);
         $this->assertStringContainsString($expectedAlternateHreflangMeta, $meta);
     }
 
-    /** @test */
-    public function it_generates_multisite_meta_for_non_home_page_route()
+    /**
+     * @test
+     * @dataProvider metaProvider
+     */
+    public function it_generates_multisite_meta_for_non_home_page_route($metaProvider)
     {
         $expectedOgLocaleMeta = <<<'EOT'
 <meta property="og:locale" content="en_US" />
@@ -60,36 +51,45 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
-        $meta = $this->meta('about');
+        $meta = $this->{$metaProvider}('about');
 
         $this->assertStringContainsString($expectedOgLocaleMeta, $meta);
         $this->assertStringContainsString($expectedAlternateHreflangMeta, $meta);
     }
 
-    /** @test */
-    public function it_doesnt_generate_multisite_meta_when_it_doesnt_exist_for_page()
+    /**
+     * @test
+     * @dataProvider metaProvider
+     */
+    public function it_doesnt_generate_multisite_meta_when_it_doesnt_exist_for_page($metaProvider)
     {
-        $meta = $this->meta('articles');
+        $meta = $this->{$metaProvider}('articles');
 
         $this->assertStringContainsString('og:locale', $meta);
         $this->assertStringNotContainsString('og:locale:alternate', $meta);
         $this->assertStringNotContainsString('hreflang', $meta);
     }
 
-    /** @test */
-    public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled()
+    /**
+     * @test
+     * @dataProvider metaProvider
+     */
+    public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled($metaProvider)
     {
         Config::set('statamic.seo-pro.alternate_locales', false);
 
-        $meta = $this->meta();
+        $meta = $this->{$metaProvider}();
 
         $this->assertStringContainsString('og:locale', $meta);
         $this->assertStringNotContainsString('og:locale:alternate', $meta);
         $this->assertStringNotContainsString('hreflang', $meta);
     }
 
-    /** @test */
-    public function it_doesnt_generate_multisite_meta_for_excluded_sites()
+    /**
+     * @test
+     * @dataProvider metaProvider
+     */
+    public function it_doesnt_generate_multisite_meta_for_excluded_sites($metaProvider)
     {
         Config::set('statamic.seo-pro.alternate_locales.excluded_sites', ['french']);
 
@@ -103,7 +103,7 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 EOT;
 
-        $meta = $this->meta();
+        $meta = $this->{$metaProvider}();
 
         $this->assertStringContainsString($expectedOgLocaleMeta, $meta);
         $this->assertStringContainsString($expectedAlternateHreflangMeta, $meta);
