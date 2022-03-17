@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
+use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
 
 class SiteDefaults extends Collection
 {
@@ -68,6 +69,8 @@ class SiteDefaults extends Collection
     public function save()
     {
         File::put($this->path(), YAML::dump($this->items));
+
+        SeoProSiteDefaultsSaved::dispatch($this);
     }
 
     /**

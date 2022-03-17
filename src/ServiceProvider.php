@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\Permission;
@@ -43,8 +42,6 @@ class ServiceProvider extends AddonServiceProvider
         $this
             ->bootAddonConfig()
             ->bootAddonViews()
-            ->bootAddonBladeDirective()
-            ->bootAddonTranslations()
             ->bootAddonPermissions()
             ->bootAddonNav()
             ->bootAddonSubscriber()
@@ -70,22 +67,6 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
         ], 'seo-pro-views');
-
-        return $this;
-    }
-
-    protected function bootAddonBladeDirective()
-    {
-        Blade::directive('seo_pro', function ($tag) {
-            return '<?php echo \Facades\Statamic\SeoPro\Directives\SeoProDirective::handle('.$tag.', $__data) ?>';
-        });
-
-        return $this;
-    }
-
-    protected function bootAddonTranslations()
-    {
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'seo-pro');
 
         return $this;
     }
