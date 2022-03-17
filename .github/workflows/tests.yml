@@ -23,7 +23,7 @@ jobs:
             testbench-constraint: ^7.0
           - laravel: 8.*
             testbench: 6.*
-            laravel-constraint: ^8.80.0
+            laravel-constraint: ^8.79.0
             testbench-constraint: ^6.22.0
           - laravel: 7.*
             testbench: 5.*
