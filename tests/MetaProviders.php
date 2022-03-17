@@ -34,10 +34,6 @@ trait MetaProviders
         $data = Data::findByUri(Str::ensureLeft($uri, '/'), $site->handle());
         $context = (new Cascade(request(), $site))->withContent($data)->hydrate()->toArray();
 
-        ob_start() and extract($context, EXTR_SKIP);
-
-        eval('?>' . Blade::compileString('@seo_pro(\'meta\')'));
-
-        return (string) ob_get_clean();
+        return (string) Blade::render("@seo_pro('meta')", $context);
     }
 }
