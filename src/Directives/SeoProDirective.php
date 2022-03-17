@@ -2,18 +2,12 @@
 
 namespace Statamic\SeoPro\Directives;
 
-use Statamic\Tags\Context;
-use Statamic\SeoPro\GetsOutputHTML;
+use Statamic\SeoPro\Tags\SeoProTags;
 
-class SeoProDirective
+class SeoProDirective extends SeoProTags
 {
-    use GetsOutputHTML;
-
-    protected $context;
-
-    public function handle($tag, $context)
+    public function renderTag($tag, $context)
     {
-        $this->context = new Context($context);
-        return $this->$tag();
+        return $this->setContext($context)->$tag();
     }
 }
