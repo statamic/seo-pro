@@ -2,52 +2,15 @@
 
 namespace Tests\Localized;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Blade;
-use Statamic\Facades\Antlers;
-use Statamic\Facades\Blink;
-use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
-use Statamic\Facades\Data;
-use Statamic\Facades\Entry;
-use Statamic\Facades\Site;
-use Statamic\Support\Str;
-use Statamic\View\Cascade;
+use Tests\MetaProviders;
 
 class MetaTagTest extends TestCase
 {
-    function metaProvider()
-    {
-        return [
-            ['antlersMeta'],
-            ['bladeMeta'],
-        ];
-    }
+    use MetaProviders;
 
-    private function antlersMeta($uri = null)
-    {
-        $site = Site::current();
-        $data = Data::findByUri(Str::ensureLeft($uri, '/'), $site->handle());
-        $context = (new Cascade(request(), $site))->withContent($data)->hydrate()->toArray();
-
-        return (string) Antlers::parse('{{ seo_pro:meta }}', $context);
-    }
-
-    private function bladeMeta($uri = null)
-    {
-        $site = Site::current();
-        $data = Data::findByUri(Str::ensureLeft($uri, '/'), $site->handle());
-        $context = (new Cascade(request(), $site))->withContent($data)->hydrate()->toArray();
-
-        ob_start() and extract($context, EXTR_SKIP);
-
-        eval('?>' . Blade::compileString('@seo_pro(\'meta\')'));
-
-        return (string) ob_get_clean();
-    }
-
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_multisite_meta($metaProvider)
@@ -70,8 +33,8 @@ EOT;
         $this->assertStringContainsString($expectedAlternateHreflangMeta, $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_multisite_meta_for_non_home_page_route($metaProvider)
@@ -94,8 +57,8 @@ EOT;
         $this->assertStringContainsString($expectedAlternateHreflangMeta, $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_multisite_meta_when_it_doesnt_exist_for_page($metaProvider)
@@ -107,8 +70,8 @@ EOT;
         $this->assertStringNotContainsString('hreflang', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled($metaProvider)
@@ -122,8 +85,8 @@ EOT;
         $this->assertStringNotContainsString('hreflang', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_multisite_meta_for_excluded_sites($metaProvider)

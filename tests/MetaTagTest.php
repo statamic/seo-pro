@@ -3,51 +3,17 @@
 namespace Tests;
 
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Blade;
-use Statamic\Facades\Antlers;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
-use Statamic\Facades\Data;
 use Statamic\Facades\Entry;
-use Statamic\Facades\Site;
-use Statamic\Support\Str;
-use Statamic\View\Cascade;
 
 class MetaTagTest extends TestCase
 {
-    function metaProvider()
-    {
-        return [
-            ['antlersMeta'],
-            ['bladeMeta'],
-        ];
-    }
+    use MetaProviders;
 
-    public function antlersMeta($uri = null)
-    {
-        $site = Site::current();
-        $data = Data::findByUri(Str::ensureLeft($uri, '/'), $site->handle());
-        $context = (new Cascade(request(), $site))->withContent($data)->hydrate()->toArray();
-
-        return (string) Antlers::parse('{{ seo_pro:meta }}', $context);
-    }
-
-    public function bladeMeta($uri = null)
-    {
-        $site = Site::current();
-        $data = Data::findByUri(Str::ensureLeft($uri, '/'), $site->handle());
-        $context = (new Cascade(request(), $site))->withContent($data)->hydrate()->toArray();
-
-        ob_start() and extract($context, EXTR_SKIP);
-
-        eval('?>' . Blade::compileString('@seo_pro(\'meta\')'));
-
-        return (string) ob_get_clean();
-    }
-
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_normalized_meta($metaProvider)
@@ -72,8 +38,8 @@ EOT;
         $this->assertEquals($expected, $this->{$metaProvider}());
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_collection($metaProvider)
@@ -83,8 +49,8 @@ EOT;
         $this->assertEmpty($this->{$metaProvider}('about'));
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_entry($metaProvider)
@@ -94,8 +60,8 @@ EOT;
         $this->assertEmpty($this->{$metaProvider}('about'));
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_compiled_title_meta($metaProvider)
@@ -111,8 +77,8 @@ EOT;
         $this->assertStringContainsString('<title>Site Name &gt;&gt;&gt; Aboot</title>', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_uses_cascade_to_generate_meta($metaProvider)
@@ -133,8 +99,8 @@ EOT;
         $this->assertStringContainsString('<title>Cool Runnings -- Aboot</title>', $this->{$metaProvider}('/about'));
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_sanitized_title($metaProvider)
@@ -152,8 +118,8 @@ EOT;
         $this->assertStringContainsString('<meta property="og:title" content="It&#039;s a me, Mario!" />', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_sanitized_description($metaProvider)
@@ -168,8 +134,8 @@ EOT;
         $this->assertStringContainsString('<meta property="og:description" content="It&#039;s a me, Mario!" />', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_custom_twitter_card_with_short_summary($metaProvider)
@@ -179,8 +145,8 @@ EOT;
         $this->assertStringContainsString('<meta name="twitter:card" content="summary" />', $this->{$metaProvider}('/'));
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_twitter_handle_meta($metaProvider)
@@ -197,8 +163,8 @@ EOT;
         $this->assertStringContainsString('<meta name="twitter:site" content="@itsluigi85" />', $this->{$metaProvider}('/about'));
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_social_image($metaProvider)
@@ -298,8 +264,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_home_url_for_entry_meta($metaProvider)
@@ -310,8 +276,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_canonical_url_for_entry_meta($metaProvider)
@@ -322,8 +288,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_canonical_url_for_term_meta($metaProvider)
@@ -334,8 +300,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_canonical_url_meta_with_pagination($metaProvider)
@@ -348,8 +314,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_canonical_url_meta_without_pagination($metaProvider)
@@ -364,8 +330,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_rel_next_prev_url_meta($metaProvider)
@@ -395,8 +361,8 @@ EOT;
         $this->assertStringNotContainsString('rel="next"', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_rel_next_prev_url_meta_with_first_page_enabled($metaProvider)
@@ -411,8 +377,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_rel_next_prev_url_meta_without_paginator($metaProvider)
@@ -423,8 +389,8 @@ EOT;
         $this->assertStringNotContainsString('rel="prev"', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_generate_any_pagination_when_completely_disabled($metaProvider)
@@ -440,8 +406,8 @@ EOT;
         $this->assertStringNotContainsString('rel="prev"', $meta);
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_canonical_url_meta_with_custom_url($metaProvider)
@@ -456,8 +422,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_applies_pagination_to_custom_canonical_url_on_same_domain($metaProvider)
@@ -474,8 +440,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_apply_pagination_to_external_custom_canonical_url($metaProvider)
@@ -492,8 +458,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_doesnt_apply_pagination_to_first_page($metaProvider)
@@ -506,8 +472,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page($metaProvider)
@@ -522,8 +488,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_robots_meta($metaProvider)
@@ -552,8 +518,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_custom_humans_url($metaProvider)
@@ -566,8 +532,8 @@ EOT;
         );
     }
 
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider metaProvider
      */
     public function it_generates_search_engine_verification_codes($metaProvider)
