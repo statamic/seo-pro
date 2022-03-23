@@ -35,7 +35,7 @@ class MetaTagTest extends TestCase
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
-        $this->assertEquals($expected, $this->{$metaProvider}());
+        $this->assertEquals($this->normalizeMultilineString($expected), $this->{$metaProvider}());
     }
 
     /**
