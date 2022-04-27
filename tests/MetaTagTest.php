@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Artisan;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
@@ -198,6 +199,8 @@ EOT;
      */
     public function it_generates_social_image_with_custom_glide_presets($metaProvider)
     {
+        Artisan::call('statamic:glide:clear');
+
         $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
@@ -220,6 +223,8 @@ EOT;
      */
     public function it_generates_social_image_with_og_glide_preset_only($metaProvider)
     {
+        Artisan::call('statamic:glide:clear');
+
         $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
@@ -247,6 +252,8 @@ EOT;
      */
     public function it_generates_social_image_with_twitter_glide_preset_only($metaProvider)
     {
+        Artisan::call('statamic:glide:clear');
+
         $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
             'image' => 'img/stetson.jpg',
         ]);
