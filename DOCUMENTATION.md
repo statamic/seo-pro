@@ -6,7 +6,9 @@
     composer require statamic/seo-pro
     ```
 
-2. Add `{{ seo_pro:meta }}` somewhere between your `<head>` tags.
+2. Add the Antlers tag or Blade directive somewhere between your `<head>` tags.
+    - Antlers: `{{ seo_pro:meta }}`
+    - Blade: `@seo_pro('meta')`
 
 ## Usage
 
