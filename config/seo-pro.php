@@ -39,4 +39,5 @@ return [
         'excluded_sites' => [],
     ],
 
+    'site_defaults_path' => base_path('content/seo.yaml'),
 ];

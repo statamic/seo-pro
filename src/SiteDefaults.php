@@ -92,7 +92,7 @@ class SiteDefaults extends Collection
      */
     protected function path()
     {
-        return base_path('content/seo.yaml');
+        return config('statamic.seo-pro.site_defaults_path');
     }
 
     /**
