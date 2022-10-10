@@ -18,9 +18,6 @@ jobs:
         stability: [prefer-lowest, prefer-stable]
         os: [ubuntu-latest]
         include:
-          - laravel: 7.*
-          - laravel: 8.*
-          - laravel: 9.*
           - os: windows-latest
             php: 7.4
             laravel: 8.*
