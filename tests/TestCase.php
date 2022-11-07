@@ -110,7 +110,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function setSeoOnEntry($entry, $seo)
     {
-        $entry->data(['seo' => $seo])->save();
+        $entry->set('seo', $seo)->save();
 
         return $this;
     }
@@ -129,7 +129,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringContainsString($needle, $haystack, $message = '') : void
+    public static function assertStringContainsString($needle, $haystack, $message = ''): void
     {
         parent::assertStringContainsString(
             static::normalizeMultilineString($needle),
@@ -141,7 +141,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringNotContainsString($needle, $haystack, $message = '') : void
+    public static function assertStringNotContainsString($needle, $haystack, $message = ''): void
     {
         parent::assertStringNotContainsString(
             static::normalizeMultilineString($needle),
@@ -153,7 +153,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * @deprecated
      */
-    public static function assertFileNotExists(string $filename, string $message = '') : void
+    public static function assertFileNotExists(string $filename, string $message = ''): void
     {
         method_exists(static::class, 'assertFileDoesNotExist')
             ? static::assertFileDoesNotExist($filename, $message)
