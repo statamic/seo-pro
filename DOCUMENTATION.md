@@ -151,3 +151,14 @@ If you wish to customize or disable pagination, you can [publish the SEO Pro con
 By default, `twitter:card` meta will be rendered using `summary_large_image`.
 
 If you wish to change this to `summary`, you can [publish the SEO Pro config](#publishing-config) and modify your twitter card within `config/statamic/seo-pro.php`.
+
+
+## Uninstalling
+
+To uninstall, run:
+
+```
+composer remove statamic/seo-pro
+```
+
+If you've saved any blueprints while SEO Pro was installed, an `seo` field will have been added to them. You will need to manually remove the `seo` field from the corresponding blueprints.
