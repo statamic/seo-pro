@@ -36,6 +36,13 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'inherit', 'value' => $data];
         }
 
+        // Handle issue with legacy `sitemap: true` section default.
+        // This shouldn't ever be explicitly set `true` in Statamic v3,
+        // but it may be migrated as `true` when coming from Statamic v2.
+        if ($this->field->handle() === 'sitemap' && $originalData === true) {
+            return ['source' => 'inherit', 'value' => null];
+        }
+
         return ['source' => 'custom', 'value' => $data];
     }
 
