@@ -122,7 +122,7 @@ class Report implements Arrayable, Jsonable
                 $data = (new Cascade)
                     ->with(SiteDefaults::load()->augmented())
                     ->with($this->getAugmentedSectionDefaults($content))
-                    ->with($content->augmentedValue('seo'))
+                    ->with($content->augmentedValue('seo')->value())
                     ->withCurrent($content)
                     ->get();
 
