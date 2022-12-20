@@ -280,7 +280,8 @@ class Cascade
 
         return collect(Config::getOtherLocales())
             ->filter(function ($locale) {
-                return $this->model->in($locale);
+                $localized = $this->model->in($locale);
+                return $localized && $localized->published;
             })
             ->reject(function ($locale) {
                 return collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale);
