@@ -98,7 +98,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_collection($viewType)
@@ -116,7 +115,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_entry($viewType)
@@ -134,7 +132,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_compiled_title_meta($viewType)
@@ -154,7 +151,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_uses_cascade_to_generate_meta($viewType)
@@ -180,7 +176,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_sanitized_title($viewType)
@@ -202,7 +197,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_sanitized_description($viewType)
@@ -221,7 +215,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_custom_twitter_card_with_short_summary($viewType)
@@ -237,7 +230,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_twitter_handle_meta($viewType)
@@ -262,7 +254,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_social_image($viewType)
@@ -285,9 +276,7 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
-     *
      * @environment-setup setCustomGlidePresetDimensions
      */
     public function it_generates_social_image_with_custom_glide_presets($viewType)
@@ -309,9 +298,7 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
-     *
      * @environment-setup setCustomOgGlidePresetOnly
      */
     public function it_generates_social_image_with_og_glide_preset_only($viewType)
@@ -334,9 +321,7 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
-     *
      * @environment-setup setCustomTwitterGlidePresetOnly
      */
     public function it_generates_social_image_with_twitter_glide_preset_only($viewType)
@@ -357,7 +342,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_home_url_for_entry_meta($viewType)
@@ -371,7 +355,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_canonical_url_for_entry_meta($viewType)
@@ -385,7 +368,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_canonical_url_for_term_meta($viewType)
@@ -399,7 +381,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_canonical_url_meta_with_pagination($viewType)
@@ -413,7 +394,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_canonical_url_meta_without_pagination($viewType)
@@ -429,7 +409,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_rel_next_prev_url_meta($viewType)
@@ -456,7 +435,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_rel_next_prev_url_meta_with_first_page_enabled($viewType)
@@ -472,7 +450,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_rel_next_prev_url_meta_without_paginator($viewType)
@@ -487,7 +464,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_any_pagination_when_completely_disabled($viewType)
@@ -505,7 +481,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_canonical_url_meta_with_custom_url($viewType)
@@ -523,7 +498,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_applies_pagination_to_custom_canonical_url_on_same_domain($viewType)
@@ -541,7 +515,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_apply_pagination_to_external_custom_canonical_url($viewType)
@@ -559,7 +532,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_apply_pagination_to_first_page($viewType)
@@ -573,7 +545,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page($viewType)
@@ -589,7 +560,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_robots_meta($viewType)
@@ -620,7 +590,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_custom_humans_url($viewType)
@@ -636,7 +605,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_search_engine_verification_codes($viewType)
