@@ -59,6 +59,38 @@ EOT;
 
     /**
      * @test
+     */
+    public function it_generates_normalized_meta_on_plain_view()
+    {
+        $this->prepareViews('antlers');
+
+        $expected = <<<'EOT'
+<title>The View | Site Name</title>
+<meta name="description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="The View" />
+<meta property="og:description" content="" />
+<meta property="og:url" content="http://cool-runnings.com/the-view" />
+<meta property="og:site_name" content="Site Name" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The View" />
+<meta name="twitter:description" content="" />
+<link href="http://cool-runnings.com/the-view" rel="home" />
+<link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
+EOT;
+
+        $response = $this->get('/the-view');
+
+        dd($response);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee($this->normalizeMultilineString($expected), false);
+    }
+
+    /**
+     * @test
+     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_collection($viewType)
