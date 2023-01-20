@@ -11,6 +11,8 @@ class SeoProDirective extends SeoProTags
     {
         if ($this->isMissingContext($context)) {
             $context = $this->getContextFromCascade();
+            // ray($context, $this->getContextFromCascade());
+            // $context = array_merge($context, $this->getContextFromCascade());
         }
 
         return $this->setContext($context)->$tag();
