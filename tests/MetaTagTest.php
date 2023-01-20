@@ -38,7 +38,6 @@ class MetaTagTest extends TestCase
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_normalized_meta($viewType)
@@ -69,10 +68,11 @@ EOT;
 
     /**
      * @test
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_view_data()
+    public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_view_data($viewType)
     {
-        $this->prepareViews('antlers');
+        $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
 <title>The View | Site Name</title>
@@ -92,7 +92,7 @@ EOT;
 EOT;
 
         $response = $this->get('/the-view');
-        $response->assertSee('<h1>antlers</h1>', false);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
         $response->assertSee($this->normalizeMultilineString($expected), false);
     }
 
