@@ -40,7 +40,7 @@ class SeoProTags extends Tags
             ->with(SiteDefaults::load()->augmented())
             ->with($this->getAugmentedSectionDefaults($current))
             ->with($this->context->value('seo'))
-            ->with($current ? [] : $this->context->all())
+            ->with($current ? [] : $this->context->except('template_content'))
             ->withCurrent($current)
             ->get();
 
