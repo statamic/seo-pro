@@ -3,6 +3,7 @@
 namespace Tests\Localized;
 
 use Statamic\Facades\Config;
+use Statamic\Facades\Entry;
 use Tests\TestCase;
 use Tests\ViewScenarios;
 
@@ -137,5 +138,32 @@ EOT;
         $response->assertSee($this->normalizeMultilineString($expectedAlternateHreflangMeta), false);
         $response->assertDontSee('content="fr_FR"', false);
         $response->assertDontSee('hreflang="fr"', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_doesnt_generates_multisite_meta_for_unpublished_content($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        Entry::find('62136fa2-9e5c-4c38-a894-a2753f02f5ff')->in('french')->unpublish()->save();
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="it_IT" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
+EOT;
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee($this->normalizeMultilineString($expectedOgLocaleMeta), false);
+        $response->assertSee($this->normalizeMultilineString($expectedAlternateHreflangMeta), false);
     }
 }
