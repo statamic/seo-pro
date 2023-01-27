@@ -62,7 +62,7 @@ class SeoProTags extends Tags
     /**
      * Render normalized view partial.
      *
-     * @param array $args
+     * @param  array  $args
      * @return string
      */
     protected function view(...$args)
@@ -85,7 +85,7 @@ class SeoProTags extends Tags
     /**
      * Check if glide preset is enabled.
      *
-     * @param string $preset
+     * @param  string  $preset
      * @return bool
      */
     protected function isGlidePresetEnabled($preset)

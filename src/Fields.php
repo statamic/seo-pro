@@ -14,7 +14,7 @@ class Fields
     /**
      * Instantiate SEO fields config.
      *
-     * @param mixed $data
+     * @param  mixed  $data
      */
     public function __construct($data = null)
     {
@@ -236,7 +236,7 @@ class Fields
     /**
      * Get inherited value from SEO cascade for use as placeholder.
      *
-     * @param string $handle
+     * @param  string  $handle
      * @return mixed
      */
     protected function getPlaceholder($handle)
