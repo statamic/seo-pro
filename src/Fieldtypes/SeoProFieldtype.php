@@ -7,7 +7,6 @@ use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blueprint;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
-use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\Fields as SeoProFields;
 use Statamic\Support\Arr;
 

@@ -19,7 +19,7 @@ class Blueprint
     /**
      * Instantiate blueprint found event handler.
      *
-     * @param mixed $event
+     * @param  mixed  $event
      */
     public function __construct($event)
     {
@@ -30,7 +30,7 @@ class Blueprint
     /**
      * Instantiate blueprint found event handler.
      *
-     * @param mixed $event
+     * @param  mixed  $event
      * @return static
      */
     public static function on($event)
@@ -41,7 +41,7 @@ class Blueprint
     /**
      * Ensure SEO section and fields are added to (or removed from) blueprint.
      *
-     * @param bool $isEnabled
+     * @param  bool  $isEnabled
      */
     public function ensureSeoFields($isEnabled = true)
     {
@@ -77,7 +77,7 @@ class Blueprint
     /**
      * Get event data.
      *
-     * @param mixed $event
+     * @param  mixed  $event
      * @return mixed
      */
     protected function getEventData($event)

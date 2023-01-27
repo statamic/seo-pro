@@ -8,10 +8,10 @@ return [
     'meta_section' => 'Metadaten',
 
     'title' => 'Meta-Titel',
-    'title_instruct' => "Wähle für die Meta-Titel in diesem Bereich ein vorhandenes Feld als Standard.",
+    'title_instruct' => 'Wähle für die Meta-Titel in diesem Bereich ein vorhandenes Feld als Standard.',
 
     'description' => 'Meta-Beschreibung',
-    'description_instruct' => "Wähle für die Meta-Beschreibungen in diesem Bereich ein vorhandenes Feld als Standard.",
+    'description_instruct' => 'Wähle für die Meta-Beschreibungen in diesem Bereich ein vorhandenes Feld als Standard.',
 
     'site_name' => 'Name der Website',
     'site_name_instruct' => 'Optional den Namen der Website in diesem Bereich deaktivieren.',
@@ -23,7 +23,7 @@ return [
     'site_name_separator_instruct' => 'Optional das Trennzeichen zwischen Meta-Titel und dem Namen der Website in diesem Bereich anpassen.',
 
     'canonical_url' => 'Kanonische URL',
-    'canonical_url_instruct' => "Wähle für die kanonischen URLs in diesem Bereich ein vorhandenes Feld als Standard.",
+    'canonical_url_instruct' => 'Wähle für die kanonischen URLs in diesem Bereich ein vorhandenes Feld als Standard.',
 
     'robots' => 'Robots',
     'robots_instruct' => 'Wähle Optionen für das Robots Meta-Tag. `noindex` verhindert, dass die Seite von Suchmaschinen indexiert wird. `nofollow` verhindert, dass Suchmaschinen Links crawlen.',
