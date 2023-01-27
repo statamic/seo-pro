@@ -80,6 +80,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
             $app['config']->set(str_replace('/', '.', $config), require("{$this->siteFixturePath}/config/{$config}.php"));
         }
+
+        $app['config']->set('statamic.antlers.version', 'runtime'); // For < Statamic 3.4
     }
 
     protected function getEnvironmentSetUp($app)
