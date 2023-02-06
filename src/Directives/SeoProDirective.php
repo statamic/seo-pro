@@ -10,7 +10,10 @@ class SeoProDirective extends SeoProTags
     public function renderTag($tag, $context)
     {
         if ($this->isMissingContext($context)) {
-            $context = $this->getContextFromCascade();
+            $context = array_merge(
+                $this->getContextFromCurrentRouteData(),
+                $this->getContextFromCascade()
+            );
         }
 
         return $this->setContext($context)->$tag();
@@ -24,5 +27,10 @@ class SeoProDirective extends SeoProTags
     protected function getContextFromCascade()
     {
         return Cascade::instance()->toArray();
+    }
+
+    protected function getContextFromCurrentRouteData()
+    {
+        return app('router')->current()->parameter('data') ?? [];
     }
 }
