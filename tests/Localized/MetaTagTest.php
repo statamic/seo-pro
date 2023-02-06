@@ -163,9 +163,10 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
-        $response = $this->get('/about');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee($this->normalizeMultilineString($expectedOgLocaleMeta), false);
-        $response->assertSee($this->normalizeMultilineString($expectedAlternateHreflangMeta), false);
+        $content = $this->get('/about')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
     }
 }
