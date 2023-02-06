@@ -291,8 +291,8 @@ class Cascade
             ->filter(function ($locale) {
                 return $this->model->in($locale);
             })
-            ->reject(function ($locale) {
-                return ! $this->model->in($locale)->published();
+            ->filter(function ($locale) {
+                return $this->model->in($locale)->status() === 'published';
             })
             ->reject(function ($locale) {
                 return collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale);
