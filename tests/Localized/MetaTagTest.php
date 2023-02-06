@@ -3,6 +3,7 @@
 namespace Tests\Localized;
 
 use Statamic\Facades\Config;
+use Statamic\Facades\Entry;
 use Tests\TestCase;
 use Tests\ViewScenarios;
 
@@ -140,5 +141,98 @@ EOT;
         $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
         $this->assertStringNotContainsString('content="fr_FR"', $content);
         $this->assertStringNotContainsString('hreflang="fr"', $content);
+    }
+
+    /**
+     * @test
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_doesnt_generate_multisite_meta_for_unpublished_content($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        Entry::find('62136fa2-9e5c-4c38-a894-a2753f02f5ff')->in('french')->unpublish()->save();
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="it_IT" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
+EOT;
+
+        $content = $this->get('/about')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @test
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_doesnt_generate_multisite_meta_for_scheduled_content($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $entry = Entry::find('62136fa2-9e5c-4c38-a894-a2753f02f5ff');
+
+        $collection = $entry->collection()->dated(true)->futureDateBehavior('private')->save();
+
+        $entry->in('default')->date(now()->subDays(5))->save();
+        $entry->in('french')->date(now()->addDays(3))->save(); // This entry is scheduled, should not show
+        $entry->in('italian')->date(now()->subDays(5))->save();
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="it_IT" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
+EOT;
+
+        $content = $this->get('/about')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @test
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_doesnt_generate_multisite_meta_for_expired_content($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $entry = Entry::find('62136fa2-9e5c-4c38-a894-a2753f02f5ff');
+
+        $collection = $entry->collection()->dated(true)->pastDateBehavior('private')->save();
+
+        $entry->in('default')->date(now()->addDays(5))->save();
+        $entry->in('french')->date(now()->subDays(3))->save(); // This entry is expired, should not show
+        $entry->in('italian')->date(now()->addDays(5))->save();
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="it_IT" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
+EOT;
+
+        $content = $this->get('/about')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
     }
 }
