@@ -17,6 +17,7 @@ class Cascade
 {
     protected $data;
     protected $current;
+    protected $explicitUrl;
     protected $model;
     protected $forSitemap = false;
 
@@ -54,10 +55,18 @@ class Cascade
         return $this;
     }
 
+    public function withExplicitUrl($url)
+    {
+        $this->explicitUrl = $url;
+
+        return $this;
+    }
+
     public function get()
     {
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
+            $this->withExplicitUrl(request()->url());
         }
 
         if ($this->forSitemap) {
@@ -113,7 +122,7 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = Str::trim($this->data->get('canonical_url'));
+        $url = Str::trim($this->explicitUrl ?? $this->data->get('canonical_url'));
 
         if (! app('request')->has('page')) {
             return $url;
