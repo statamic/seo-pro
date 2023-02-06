@@ -30,7 +30,6 @@ class MetaTagTest extends TestCase
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_multisite_meta($viewType)
@@ -58,7 +57,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_generates_multisite_meta_for_non_home_page_route($viewType)
@@ -86,7 +84,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_multisite_meta_when_it_doesnt_exist_for_page($viewType)
@@ -102,7 +99,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled($viewType)
@@ -120,7 +116,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generate_multisite_meta_for_excluded_sites($viewType)
@@ -150,7 +145,6 @@ EOT;
 
     /**
      * @test
-     *
      * @dataProvider viewScenarioProvider
      */
     public function it_doesnt_generates_multisite_meta_for_unpublished_content($viewType)
