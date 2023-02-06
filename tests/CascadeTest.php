@@ -145,7 +145,7 @@ class CascadeTest extends TestCase
             'change_frequency' => 'monthly',
             'compiled_title' => 'Site Name',
             'og_title' => 'Site Name',
-            'canonical_url' => '',
+            'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
             'next_url' => null,
             'home_url' => 'http://cool-runnings.com/',

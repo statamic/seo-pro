@@ -44,6 +44,19 @@ If you wish to use assets in your meta, you can [publish the SEO Pro config](#pu
 
 > You may disable the glide preset altogether by setting `'open_graph_preset' => false,` in your config.
 
+### Custom Statamic Routes
+
+In the case that you're loading a custom [Statamic Route](https://statamic.dev/routing#statamic-routes), you can pass SEO meta directly into the route data param. This allows you to define custom meta on a route-by-route basis in situations without a proper collection entry.
+
+```php
+Route::statamic('search', 'search/index', [
+    'title' => 'Search',
+    'description' => 'Comprehensive Site Search.',
+    // ...
+]);
+```
+
+
 ## File Usage
 
 For advanced devs, you may bypass the CP and configure your SEO settings through files. There are 3 sorts of values you may save.

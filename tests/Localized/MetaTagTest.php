@@ -49,10 +49,11 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 EOT;
 
-        $response = $this->get('/');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee($this->normalizeMultilineString($expectedOgLocaleMeta), false);
-        $response->assertSee($this->normalizeMultilineString($expectedAlternateHreflangMeta), false);
+        $content = $this->get('/')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -76,10 +77,11 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
-        $response = $this->get('/about');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee($this->normalizeMultilineString($expectedOgLocaleMeta), false);
-        $response->assertSee($this->normalizeMultilineString($expectedAlternateHreflangMeta), false);
+        $content = $this->get('/about')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -137,12 +139,13 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 EOT;
 
-        $response = $this->get('/');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee($this->normalizeMultilineString($expectedOgLocaleMeta), false);
-        $response->assertSee($this->normalizeMultilineString($expectedAlternateHreflangMeta), false);
-        $response->assertDontSee('content="fr_FR"', false);
-        $response->assertDontSee('hreflang="fr"', false);
+        $content = $this->get('/')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringNotContainsString('content="fr_FR"', $content);
+        $this->assertStringNotContainsString('hreflang="fr"', $content);
     }
 
     /**
