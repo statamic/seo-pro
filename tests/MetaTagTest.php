@@ -61,9 +61,10 @@ class MetaTagTest extends TestCase
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
-        $response = $this->get('/');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee($this->normalizeMultilineString($expected), false);
+        $content = $this->get('/')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
     }
 
     /**
