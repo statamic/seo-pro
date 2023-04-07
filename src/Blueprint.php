@@ -76,7 +76,12 @@ class Blueprint
      */
     public function removeSeoFields()
     {
-        $this->blueprint->removeSection('SEO');
+        // While we still support Statamic v3...
+        $removeTabMethod = method_exists($this->blueprint, 'removeSection')
+            ? 'removeSection'
+            : 'removeTab';
+
+        $this->blueprint->$removeTabMethod('SEO');
     }
 
     /**
