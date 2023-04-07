@@ -61,7 +61,12 @@ class Blueprint
 
         static::$addingField = true;
 
-        $this->blueprint->ensureFieldInSection('seo', ['type' => 'seo_pro', 'listable' => false, 'display' => 'SEO'], 'SEO');
+        // While we still support Statamic v3...
+        $ensureFieldMethod = method_exists($this->blueprint, 'ensureFieldInSection')
+            ? 'ensureFieldInSection'
+            : 'ensureFieldInTab';
+
+        $this->blueprint->$ensureFieldMethod('seo', ['type' => 'seo_pro', 'listable' => false, 'display' => 'SEO'], 'SEO');
 
         static::$addingField = false;
     }
