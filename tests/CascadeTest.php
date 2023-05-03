@@ -111,7 +111,7 @@ class CascadeTest extends TestCase
     /** @test */
     public function it_parses_field_references()
     {
-        $entry = Entry::findBySlug('about', 'pages');
+        $entry = Entry::findByUri('/about')->entry();
 
         $entry->data(['favourite_colour' => 'Red'])->save();
 

@@ -122,7 +122,7 @@ EOT;
     {
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), false);
+            ->setSeoOnEntry(Entry::findByUri('/about'), false);
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
@@ -165,7 +165,7 @@ EOT;
                 'title' => 'Aboot',
                 'site_name_separator' => '>',
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'site_name_position' => 'before',
                 'site_name_separator' => '--',
             ]);
@@ -183,7 +183,7 @@ EOT;
     {
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'title' => "  It's a me, <b>Mario</b>!  ",
                 'site_name' => '  Cool "Runnings"  ',
                 'site_name_position' => 'before',
@@ -204,7 +204,7 @@ EOT;
     {
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'description' => "  It's a me, <b>Mario</b>!  ",
             ]);
 
@@ -240,7 +240,7 @@ EOT;
             ->setSeoInSiteDefaults([
                 'twitter_handle' => '  itsmario85  ',
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'twitter_handle' => '@itsluigi85',
             ]);
 
@@ -263,7 +263,7 @@ EOT;
 
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'image' => 'img/stetson.jpg',
             ]);
 
@@ -286,7 +286,7 @@ EOT;
 
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'image' => 'img/stetson.jpg',
             ]);
 
@@ -308,7 +308,7 @@ EOT;
 
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'image' => 'img/stetson.jpg',
             ]);
 
@@ -331,7 +331,7 @@ EOT;
 
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'image' => 'img/stetson.jpg',
             ]);
 
@@ -488,7 +488,7 @@ EOT;
     {
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'canonical_url' => 'https://hot-walkings.com/pages/aboot',
             ]);
 
@@ -505,7 +505,7 @@ EOT;
     {
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'canonical_url' => 'http://cool-runnings.com/pages/aboot',
             ]);
 
@@ -522,7 +522,7 @@ EOT;
     {
         $this
             ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'canonical_url' => 'https://hot-walkings.com/pages/aboot',
             ]);
 

@@ -145,7 +145,7 @@ EOT;
             ->setSeoOnCollection(Collection::find('pages'), [
                 'priority' => 0.2,
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about')->entry(), [
                 'priority' => 0.3,
             ]);
 
@@ -172,7 +172,7 @@ EOT;
             ->setSeoOnCollection(Collection::find('pages'), [
                 'change_frequency' => 'daily',
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about')->entry(), [
                 'change_frequency' => 'hourly',
             ]);
 
