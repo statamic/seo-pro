@@ -4,7 +4,7 @@ namespace Tests;
 
 trait ViewScenarios
 {
-    public function viewScenarioProvider()
+    public static function viewScenarioProvider()
     {
         return [
             ['antlers'],
