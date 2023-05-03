@@ -61,12 +61,7 @@ class Blueprint
 
         static::$addingField = true;
 
-        // While we still support Statamic v3...
-        $ensureFieldMethod = method_exists($this->blueprint, 'ensureFieldInSection')
-            ? 'ensureFieldInSection'
-            : 'ensureFieldInTab';
-
-        $this->blueprint->$ensureFieldMethod('seo', ['type' => 'seo_pro', 'listable' => false, 'display' => 'SEO'], 'SEO');
+        $this->blueprint->ensureFieldInTab('seo', ['type' => 'seo_pro', 'listable' => false, 'display' => 'SEO'], 'SEO');
 
         static::$addingField = false;
     }
@@ -76,12 +71,7 @@ class Blueprint
      */
     public function removeSeoFields()
     {
-        // While we still support Statamic v3...
-        $removeTabMethod = method_exists($this->blueprint, 'removeSection')
-            ? 'removeSection'
-            : 'removeTab';
-
-        $this->blueprint->$removeTabMethod('SEO');
+        $this->blueprint->removeTab('SEO');
     }
 
     /**
