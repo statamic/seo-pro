@@ -71,9 +71,9 @@
 </template>
 
 <script>
-import ReportDetails from './Details';
-import RelativeDate from './RelativeDate';
-import StatusIcon from './StatusIcon';
+import ReportDetails from './Details.vue';
+import RelativeDate from './RelativeDate.vue';
+import StatusIcon from './StatusIcon.vue';
 
 export default {
 

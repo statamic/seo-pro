@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import SeoReportListing from './Listing';
-import SeoReport from './Report';
+import SeoReportListing from './Listing.vue';
+import SeoReport from './Report.vue';
 
 export default {
 
