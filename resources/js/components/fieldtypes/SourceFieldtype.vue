@@ -2,7 +2,7 @@
 
     <div class="flex">
 
-        <div class="source-type-select pr-2">
+        <div class="source-type-select pr-4">
             <v-select
                 :options="sourceTypeSelectOptions"
                 :reduce="option => option.value"

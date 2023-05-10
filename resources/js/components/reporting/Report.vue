@@ -9,11 +9,11 @@
 
         <div v-else-if="!loading && report">
 
-            <div class="card mb-2 text-sm text-grey flex items-center justify-between">
+            <div class="card mb-4 text-sm text-grey flex items-center justify-between">
                 <div>
                     {{ __('seo-pro::messages.generated') }}:
                     <relative-date :date="report.date"></relative-date>
-                    <span class="mx-1">&bull;</span>
+                    <span class="mx-2">&bull;</span>
                     {{ __('Pages') }}:
                     {{ report.pages.length }}
                 </div>
@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <div class="card p-0 mb-2">
+            <div class="card p-0 mb-4">
                 <table class="data-table">
                     <tbody>
                         <tr v-for="item in report.results">
@@ -56,8 +56,8 @@
                                 ></report-details>
                             </td>
                             <td class="text-right text-xs pr-0 whitespace-no-wrap">
-                                <a @click.prevent="selected = item.id" class="text-grey-60 mr-2 hover:text-grey-80" v-text="__('Details')"></a>
-                                <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-2 text-grey-60 hover:text-grey-80" v-text="__('Edit')"></a>
+                                <a @click.prevent="selected = item.id" class="text-grey-60 mr-4 hover:text-grey-80" v-text="__('Details')"></a>
+                                <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-4 text-grey-60 hover:text-grey-80" v-text="__('Edit')"></a>
                             </td>
                         </tr>
                     </tbody>
