@@ -14,7 +14,7 @@
                     <tr>
                         <td>
                             <div class="flex items-center">
-                                <div class="w-4 h-4 mr-4">@cp_svg('content-writing')</div>
+                                <div class="w-4 h-4 mr-4">@cp_svg('icons/light/content-writing')</div>
                                 <a href="{{ cp_route('seo-pro.section-defaults.collections.edit', $collection) }}">{{ $collection->title() }}</a>
                             </div>
                         </td>
@@ -30,7 +30,7 @@
                 <tr>
                     <td>
                         <div class="flex items-center">
-                            <div class="w-4 h-4 mr-4">@cp_svg('tags')</div>
+                            <div class="w-4 h-4 mr-4">@cp_svg('icons/light/tags')</div>
                             <a href="{{ cp_route('seo-pro.section-defaults.taxonomies.edit', $taxonomy) }}">{{ $taxonomy->title() }}</a>
                         </div>
                     </td>
