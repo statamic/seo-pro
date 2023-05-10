@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import StatusIcon from './StatusIcon';
-import RelativeDate from './RelativeDate';
+import StatusIcon from './StatusIcon.vue';
+import RelativeDate from './RelativeDate.vue';
 
 export default {
 
