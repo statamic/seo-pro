@@ -7,25 +7,23 @@
         :click-to-close="true"
     >
         <div class="p-0">
-            <h1 class="p-6 bg-grey-20 border-b">
+            <h1 class="p-4 bg-gray-200 border-b text-lg">
                 {{ __('seo-pro::messages.page_details') }}
             </h1>
 
-            <div class="p-6 -mb-4">
-            <div v-for="item in item.results" class="flex mb-4 leading-normal">
-                <div>
-                    <span class="icon-status" :class="{'icon-status-live': item.status === 'pass', 'icon-status-error': item.status === 'fail', 'icon-status-warning': item.status === 'warning'}"></span>
+            <div class="modal-body">
+                <div v-for="item in item.results" class="flex px-4 leading-normal pb-2" :class="{ 'bg-red-100': item.status !== 'pass' }">
+                    <status-icon :status="item.status" class="mr-3 mt-2" />
+                    <div class="flex-1 mt-2 prose text-gray-700">
+                        <div class="text-gray-900" v-html="item.description"></div>
+                        <div class="text-xs" :class="{ 'text-red-800': item.status !== 'pass' }" v-if="item.comment" v-html="item.comment"></div>
+                    </div>
                 </div>
-                <div class="flex-1 pl-4">
-                    <span :class="{ 'font-bold': item.status !== 'pass' }" v-html="item.description"></span>
-                    <div class="text-grey text-xs" v-if="item.comment" v-html="item.comment"></div>
-                </div>
-            </div>
             </div>
 
-            <div class="p-4 pl-6 bg-grey-20 border-t text-left font-mono text-grey-60 text-xs">
+            <footer class="px-5 py-3 bg-gray-200 rounded-b-lg border-t flex items-center font-mono text-xs">
                 {{ item.url }}
-            </div>
+            </footer>
         </div>
     </modal>
 
@@ -33,9 +31,13 @@
 
 
 <script>
+import StatusIcon from './StatusIcon.vue';
+
 export default {
+    props: ['item'],
 
-    props: ['item']
-
+    components: {
+        StatusIcon
+    }
 }
 </script>
