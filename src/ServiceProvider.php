@@ -25,8 +25,10 @@ class ServiceProvider extends AddonServiceProvider
         SeoPro\Widgets\SeoProWidget::class,
     ];
 
-    protected $scripts = [
-        __DIR__.'/../resources/dist/js/cp.js',
+    protected $vite = [
+        'input' => ['resources/js/cp.js'],
+        'publicDirectory' => 'resources/dist',
+        'hotFile' => __DIR__.'/../resources/dist/hot',
     ];
 
     protected $routes = [
