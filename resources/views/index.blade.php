@@ -3,40 +3,40 @@
 
 @section('content')
 
-    <header class="mb-3">
+    <header class="mb-6">
         <h1>{{ 'SEO Pro' }}</h1>
     </header>
 
-    <div class="card p-2 content">
+    <div class="card p-4 content">
         <div class="flex flex-wrap">
             @can('view seo reports')
-                <a href="{{ cp_route('seo-pro.reports.index') }}" class="w-full lg:w-1/2 p-2 md:flex items-start hover:bg-grey-20 rounded-md group">
-                    <div class="h-8 w-8 mr-2 text-grey-80">
-                        @cp_svg('charts')
+                <a href="{{ cp_route('seo-pro.reports.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
+                    <div class="h-8 w-8 mr-4 text-gray-800">
+                        @cp_svg('icons/light/charts')
                     </div>
-                    <div class="text-blue flex-1 mb-2 md:mb-0 md:mr-3">
+                    <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
                         <h3>{{ __('seo-pro::messages.reports') }}</h3>
                         <p class="text-xs">{{ __('seo-pro::messages.seo_reports_description') }}</p>
                     </div>
                 </a>
             @endcan
             @can('edit seo site defaults')
-                <a href="{{ cp_route('seo-pro.site-defaults.edit') }}" class="w-full lg:w-1/2 p-2 md:flex items-start hover:bg-grey-20 rounded-md group">
-                    <div class="h-8 w-8 mr-2 text-grey-80">
-                        @cp_svg('hammer-wrench')
+                <a href="{{ cp_route('seo-pro.site-defaults.edit') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
+                    <div class="h-8 w-8 mr-4 text-gray-800">
+                        @cp_svg('icons/light/hammer-wrench')
                     </div>
-                    <div class="text-blue flex-1 mb-2 md:mb-0 md:mr-3">
+                    <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
                         <h3>{{ __('seo-pro::messages.site_defaults') }}</h3>
                         <p class="text-xs">{{ __('seo-pro::messages.site_defaults_description') }}</p>
                     </div>
                 </a>
             @endcan
             @can('edit seo section defaults')
-                <a href="{{ cp_route('seo-pro.section-defaults.index') }}" class="w-full lg:w-1/2 p-2 md:flex items-start hover:bg-grey-20 rounded-md group">
-                    <div class="h-8 w-8 mr-2 text-grey-80">
-                        @cp_svg('hammer-wrench')
+                <a href="{{ cp_route('seo-pro.section-defaults.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
+                    <div class="h-8 w-8 mr-4 text-gray-800">
+                        @cp_svg('icons/light/hammer-wrench')
                     </div>
-                    <div class="text-blue flex-1 mb-2 md:mb-0 md:mr-3">
+                    <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
                         <h3>{{ __('seo-pro::messages.section_defaults') }}</h3>
                         <p class="text-xs">{{ __('seo-pro::messages.section_defaults_description') }}</p>
                     </div>
