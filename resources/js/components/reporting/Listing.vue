@@ -1,19 +1,15 @@
 <template>
 
     <div>
-        <div class="card p-0" v-if="reports">
+        <div class="card p-0 overflow-hidden" v-if="reports">
             <table class="data-table">
                 <tbody>
                     <tr v-for="report in reports">
-                        <td class="w-1 text-center">
-                            <status-icon :status="report.status"></status-icon>
-                        </td>
-                        <td class="text-xs w-16 whitespace-no-wrap"
-                            :class="{
-                                'text-red': report.score < 70,
-                                'text-yellow-dark': report.score > 70 && report.score < 90,
-                                'text-green': report.score >= 90 }">
-                            {{ report.score }}%
+                        <td class="text-xs whitespace-no-wrap">
+                            <div class="flex items-center">
+                                <status-icon :status="report.status" class="mr-3" />
+                                {{ report.score }}%
+                            </div>
                         </td>
                         <td>
                             <a @click.prevent="$emit('report-selected', report.id)">
@@ -35,8 +31,8 @@
 </template>
 
 <script>
-import StatusIcon from './StatusIcon';
-import RelativeDate from './RelativeDate';
+import StatusIcon from './StatusIcon.vue';
+import RelativeDate from './RelativeDate.vue';
 
 export default {
 

@@ -1,17 +1,17 @@
 <template>
 
-    <span>
+    <div>
         <span v-if="status === 'pending'" class="icon icon-circular-graph animation-spin"></span>
 
         <span
             v-else
-            class="icon-status"
+            class="little-dot"
             :class="{
-                'icon-status-live': status === 'pass',
-                'icon-status-error': status === 'fail',
-                'icon-status-warning': status === 'warning'
+                'bg-green-600': status === 'pass',
+                'bg-red-500': status === 'fail',
+                'bg-yellow-dark': status === 'warning'
             }"></span>
-    </span>
+    </div>
 
 </template>
 

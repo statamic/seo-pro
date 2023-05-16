@@ -8,25 +8,33 @@
         </div>
 
         <div v-else-if="!loading && report">
-
-            <div class="card mb-2 text-sm text-grey flex items-center justify-between">
-                <div>
-                    {{ __('seo-pro::messages.generated') }}:
-                    <relative-date :date="report.date"></relative-date>
-                    <span class="mx-1">&bull;</span>
-                    {{ __('Pages') }}:
-                    {{ report.pages.length }}
+            <div class="flex flex-wrap -mx-4">
+                <div class="w-1/3 px-4">
+                    <div class="card py-2">
+                        <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.generated') }}</h2>
+                        <div class="text-lg"><relative-date :date="report.date"></relative-date></div>
+                    </div>
                 </div>
-                <div class="text-xl leading-none"
-                    :class="{
-                        'text-red': report.score < 70,
-                        'text-yellow-dark': report.score < 90,
-                        'text-green': report.score >= 90 }">
-                    {{ report.score }}%
+                <div class="w-1/3 px-4">
+                    <div class="card py-2">
+                        <h2 class="text-sm text-gray-700">{{ __('Pages Crawled') }}</h2>
+                        <div class="text-lg">{{ report.pages.length }}</div>
+                    </div>
+                </div>
+                <div class="w-1/3 px-4">
+                    <div class="card py-2">
+                        <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
+                        <div class="text-lg flex items-center">
+                            <div class="bg-gray-200 h-3 w-full rounded flex mr-2 ">
+                                <div class="h-3 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-yellow-dark': report.score < 90, 'bg-green-500': report.score >= 90 }" />
+                            </div>
+                            <span>{{ report.score }}%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card p-0 mb-2">
+            <div class="card p-0 mt-6">
                 <table class="data-table">
                     <tbody>
                         <tr v-for="item in report.results">
@@ -40,7 +48,7 @@
                 </table>
             </div>
 
-            <div class="card p-0">
+            <div class="card p-0 mt-6">
                 <table class="data-table">
                     <tbody>
                         <tr v-for="item in report.pages">
@@ -56,8 +64,8 @@
                                 ></report-details>
                             </td>
                             <td class="text-right text-xs pr-0 whitespace-no-wrap">
-                                <a @click.prevent="selected = item.id" class="text-grey-60 mr-2 hover:text-grey-80" v-text="__('Details')"></a>
-                                <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-2 text-grey-60 hover:text-grey-80" v-text="__('Edit')"></a>
+                                <a @click.prevent="selected = item.id" class="text-gray-700 mr-4 hover:text-grey-80" v-text="__('Details')"></a>
+                                <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-4 text-gray-700 hover:text-gray-800" v-text="__('Edit')"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -71,9 +79,9 @@
 </template>
 
 <script>
-import ReportDetails from './Details';
-import RelativeDate from './RelativeDate';
-import StatusIcon from './StatusIcon';
+import ReportDetails from './Details.vue';
+import RelativeDate from './RelativeDate.vue';
+import StatusIcon from './StatusIcon.vue';
 
 export default {
 
