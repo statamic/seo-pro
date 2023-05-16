@@ -104,6 +104,7 @@ EOT;
 
     /**
      * @test
+     *
      * @environment-setup setCustomSitemapXmlUrl
      */
     public function it_outputs_sitemap_xml_with_custom_url()
