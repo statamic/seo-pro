@@ -73,7 +73,7 @@ class Cascade
             return $this->getForSitemap();
         }
 
-        if (array_get($this->current, 'response_code') === 404) {
+        if (array_get($this->data, 'response_code') === 404) {
             $this->current['title'] = '404 Page Not Found';
         }
 

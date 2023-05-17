@@ -164,4 +164,18 @@ class CascadeTest extends TestCase
 
         $this->assertArraySubset($expected, $data);
     }
+
+    /** @test */
+    public function it_generates_404_title_with_404_in_response_code_in_context()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'response_code' => 404,
+            ])
+            ->get();
+
+        $this->assertEquals('404 Page Not Found', $data['title']);
+        $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
+    }
 }
