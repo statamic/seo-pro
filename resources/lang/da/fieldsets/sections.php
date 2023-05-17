@@ -8,10 +8,10 @@ return [
     'meta_section' => 'Meta Data',
 
     'title' => 'Meta Titel',
-    'title_instruct' => "Vælg et eksisterende felt som denne sektions **standard** meta titel.",
+    'title_instruct' => 'Vælg et eksisterende felt som denne sektions **standard** meta titel.',
 
     'description' => 'Meta Beskrivelse',
-    'description_instruct' => "Vælg et eksisterende felt som denne sektions **standard** meta beskrivelse.",
+    'description_instruct' => 'Vælg et eksisterende felt som denne sektions **standard** meta beskrivelse.',
 
     'site_name' => 'Webstedsnavn',
     'site_name_instruct' => 'Deaktiver eventuelt webstedsnavnet for denne sektion.',
@@ -23,7 +23,7 @@ return [
     'site_name_separator_instruct' => 'Justér eventuelt separationskarakteren for webstedsnavnet i denne sektion.',
 
     'canonical_url' => 'Canonical URL',
-    'canonical_url_instruct' => "Vælg et eksisterende felt som denne sektions **standard** canonical URL.",
+    'canonical_url_instruct' => 'Vælg et eksisterende felt som denne sektions **standard** canonical URL.',
 
     'robots' => 'Robots',
     'robots_instruct' => 'Vælg indstillinger for robots meta-tagget. noindex forhindrer, at siden indekseres af søgemaskiner. nofollow forhindrer, at søgemaskinerne crawler links.',
