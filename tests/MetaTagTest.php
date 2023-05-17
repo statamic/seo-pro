@@ -657,6 +657,25 @@ EOT;
         $response->assertSee('<meta name="msvalidate.01" content="bing123" />', false);
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_proper_404_page_title($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $expected = <<<'EOT'
+<title>404 Page Not Found | Site Name</title>
+EOT;
+
+        $content = $this->get('/non-existent-page')->content();
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString('<h2>404!</h2>', $content);
+        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+    }
+
     protected function setCustomGlidePresetDimensions($app)
     {
         $app->config->set('statamic.seo-pro.assets', [
