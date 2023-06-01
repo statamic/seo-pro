@@ -35,42 +35,49 @@ class SitemapTest extends TestCase
         $expected = <<<"EOT"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
     <url>
         <loc>http://cool-runnings.com</loc>
         <lastmod>2020-11-24</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+
     <url>
         <loc>http://cool-runnings.com/magic</loc>
         <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+
     <url>
         <loc>http://cool-runnings.com/nectar</loc>
         <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+
     <url>
         <loc>http://cool-runnings.com/dance</loc>
         <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+
     <url>
         <loc>http://cool-runnings.com/about</loc>
         <lastmod>2020-01-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+
     <url>
         <loc>http://cool-runnings.com/articles</loc>
         <lastmod>2020-01-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+
     <url>
         <loc>http://cool-runnings.com/topics</loc>
         <lastmod>2020-01-20</lastmod>
@@ -97,6 +104,7 @@ EOT;
 
     /**
      * @test
+     *
      * @environment-setup setCustomSitemapXmlUrl
      */
     public function it_outputs_sitemap_xml_with_custom_url()
@@ -138,7 +146,7 @@ EOT;
             ->setSeoOnCollection(Collection::find('pages'), [
                 'priority' => 0.2,
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about')->entry(), [
                 'priority' => 0.3,
             ]);
 
@@ -165,7 +173,7 @@ EOT;
             ->setSeoOnCollection(Collection::find('pages'), [
                 'change_frequency' => 'daily',
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about')->entry(), [
                 'change_frequency' => 'hourly',
             ]);
 

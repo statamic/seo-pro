@@ -77,6 +77,7 @@ EOT;
 
     /**
      * @test
+     *
      * @environment-setup setCustomHumansTxtUrl
      */
     public function it_outputs_humans_txt_with_custom_url()

@@ -2,7 +2,7 @@
 
     <div class="flex">
 
-        <div class="source-type-select pr-2">
+        <div class="source-type-select pr-4">
             <v-select
                 :options="sourceTypeSelectOptions"
                 :reduce="option => option.value"
@@ -14,7 +14,7 @@
         </div>
 
         <div class="flex-1">
-            <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
+            <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder mt-1">
                 <template v-if="placeholder !== false">
                     {{ placeholder }}
                 </template>

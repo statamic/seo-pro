@@ -111,7 +111,7 @@ class CascadeTest extends TestCase
     /** @test */
     public function it_parses_field_references()
     {
-        $entry = Entry::findBySlug('about', 'pages');
+        $entry = Entry::findByUri('/about')->entry();
 
         $entry->data(['favourite_colour' => 'Red'])->save();
 
@@ -145,7 +145,7 @@ class CascadeTest extends TestCase
             'change_frequency' => 'monthly',
             'compiled_title' => 'Site Name',
             'og_title' => 'Site Name',
-            'canonical_url' => '',
+            'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
             'next_url' => null,
             'home_url' => 'http://cool-runnings.com/',
@@ -163,5 +163,19 @@ class CascadeTest extends TestCase
         ];
 
         $this->assertArraySubset($expected, $data);
+    }
+
+    /** @test */
+    public function it_generates_404_title_with_404_in_response_code_in_context()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'response_code' => 404,
+            ])
+            ->get();
+
+        $this->assertEquals('404 Page Not Found', $data['title']);
+        $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
     }
 }

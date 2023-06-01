@@ -80,6 +80,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
             $app['config']->set(str_replace('/', '.', $config), require("{$this->siteFixturePath}/config/{$config}.php"));
         }
+
+        $app['config']->set('statamic.antlers.version', 'runtime'); // For < Statamic 3.4
     }
 
     protected function getEnvironmentSetUp($app)
@@ -110,7 +112,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function setSeoOnEntry($entry, $seo)
     {
-        $entry->data(['seo' => $seo])->save();
+        $entry->set('seo', $seo)->save();
 
         return $this;
     }
@@ -129,7 +131,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringContainsString($needle, $haystack, $message = '') : void
+    public static function assertStringContainsString($needle, $haystack, $message = ''): void
     {
         parent::assertStringContainsString(
             static::normalizeMultilineString($needle),
@@ -141,7 +143,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringNotContainsString($needle, $haystack, $message = '') : void
+    public static function assertStringNotContainsString($needle, $haystack, $message = ''): void
     {
         parent::assertStringNotContainsString(
             static::normalizeMultilineString($needle),
@@ -153,7 +155,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * @deprecated
      */
-    public static function assertFileNotExists(string $filename, string $message = '') : void
+    public static function assertFileNotExists(string $filename, string $message = ''): void
     {
         method_exists(static::class, 'assertFileDoesNotExist')
             ? static::assertFileDoesNotExist($filename, $message)

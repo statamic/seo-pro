@@ -17,6 +17,7 @@ class Cascade
 {
     protected $data;
     protected $current;
+    protected $explicitUrl;
     protected $model;
     protected $forSitemap = false;
 
@@ -54,17 +55,25 @@ class Cascade
         return $this;
     }
 
+    public function withExplicitUrl($url)
+    {
+        $this->explicitUrl = $url;
+
+        return $this;
+    }
+
     public function get()
     {
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
+            $this->withExplicitUrl(request()->url());
         }
 
         if ($this->forSitemap) {
             return $this->getForSitemap();
         }
 
-        if (array_get($this->current, 'response_code') === 404) {
+        if (array_get($this->data, 'response_code') === 404) {
             $this->current['title'] = '404 Page Not Found';
         }
 
@@ -113,7 +122,7 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = Str::trim($this->data->get('canonical_url'));
+        $url = Str::trim($this->explicitUrl ?? $this->data->get('canonical_url'));
 
         if (! app('request')->has('page')) {
             return $url;
@@ -281,6 +290,9 @@ class Cascade
         return collect(Config::getOtherLocales())
             ->filter(function ($locale) {
                 return $this->model->in($locale);
+            })
+            ->filter(function ($locale) {
+                return $this->model->in($locale)->status() === 'published';
             })
             ->reject(function ($locale) {
                 return collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale);

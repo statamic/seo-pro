@@ -4,21 +4,47 @@ namespace Tests;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Statamic;
 
 class MetaTagTest extends TestCase
 {
-    use MetaProviders;
+    use ViewScenarios;
+
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('view.paths', [$this->viewsPath()]);
+
+        Statamic::booted(function () {
+            Route::statamic('the-view', 'page', [
+                'title' => 'The View',
+                'description' => 'A wonderful view!',
+            ]);
+        });
+    }
+
+    public function tearDown(): void
+    {
+        $this->cleanUpViews();
+
+        parent::tearDown();
+    }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_normalized_meta($metaProvider)
+    public function it_generates_normalized_meta($viewType)
     {
+        $this->prepareViews($viewType);
+
         $expected = <<<'EOT'
 <title>Home | Site Name</title>
 <meta name="description" content="I see a bad-ass mother." />
@@ -36,55 +62,108 @@ class MetaTagTest extends TestCase
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
-        $this->assertEquals($this->normalizeMultilineString($expected), $this->{$metaProvider}());
+        $content = $this->get('/')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_doesnt_generate_meta_when_seo_is_disabled_on_collection($metaProvider)
+    public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_view_data($viewType)
     {
-        $this->setSeoOnCollection(Collection::find('pages'), false);
+        $this->prepareViews($viewType);
 
-        $this->assertEmpty($this->{$metaProvider}('about'));
+        $expected = <<<'EOT'
+<title>The View | Site Name</title>
+<meta name="description" content="A wonderful view!" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="The View" />
+<meta property="og:description" content="A wonderful view!" />
+<meta property="og:url" content="http://cool-runnings.com/the-view" />
+<meta property="og:site_name" content="Site Name" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The View" />
+<meta name="twitter:description" content="A wonderful view!" />
+<link href="http://cool-runnings.com/" rel="home" />
+<link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
+EOT;
+
+        $content = $this->get('/the-view')->content();
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_doesnt_generate_meta_when_seo_is_disabled_on_entry($metaProvider)
-    {
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), false);
-
-        $this->assertEmpty($this->{$metaProvider}('about'));
-    }
-
-    /**
-     * @test
-     * @dataProvider metaProvider
-     */
-    public function it_generates_compiled_title_meta($metaProvider)
-    {
-        $this->setSeoOnCollection(Collection::find('pages'), [
-            'title' => 'Aboot',
-            'site_name_position' => 'before',
-            'site_name_separator' => '>>>',
-        ]);
-
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString('<title>Site Name &gt;&gt;&gt; Aboot</title>', $meta);
-    }
-
-    /**
-     * @test
-     * @dataProvider metaProvider
-     */
-    public function it_uses_cascade_to_generate_meta($metaProvider)
+    public function it_doesnt_generate_meta_when_seo_is_disabled_on_collection($viewType)
     {
         $this
+            ->prepareViews($viewType)
+            ->setSeoOnCollection(Collection::find('pages'), false);
+
+        $response = $this->get('/');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertDontSee('<title', false);
+        $response->assertDontSee('<meta', false);
+        $response->assertDontSee('<link', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_doesnt_generate_meta_when_seo_is_disabled_on_entry($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), false);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertDontSee('<title', false);
+        $response->assertDontSee('<meta', false);
+        $response->assertDontSee('<link', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_compiled_title_meta($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnCollection(Collection::find('pages'), [
+                'title' => 'Aboot',
+                'site_name_position' => 'before',
+                'site_name_separator' => '>>>',
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<title>Site Name &gt;&gt;&gt; Aboot</title>', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_uses_cascade_to_generate_meta($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
             ->setSeoInSiteDefaults([
                 'site_name' => 'Cool Runnings',
             ])
@@ -92,425 +171,443 @@ EOT;
                 'title' => 'Aboot',
                 'site_name_separator' => '>',
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'site_name_position' => 'before',
                 'site_name_separator' => '--',
             ]);
 
-        $this->assertStringContainsString('<title>Cool Runnings -- Aboot</title>', $this->{$metaProvider}('/about'));
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<title>Cool Runnings -- Aboot</title>', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_sanitized_title($metaProvider)
-    {
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'title' => "  It's a me, <b>Mario</b>!  ",
-            'site_name' => '  Cool "Runnings"  ',
-            'site_name_position' => 'before',
-            'site_name_separator' => '  >>>  ',
-        ]);
-
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString('<title>Cool &quot;Runnings&quot; &gt;&gt;&gt; It&#039;s a me, Mario!</title>', $meta);
-        $this->assertStringContainsString('<meta property="og:title" content="It&#039;s a me, Mario!" />', $meta);
-    }
-
-    /**
-     * @test
-     * @dataProvider metaProvider
-     */
-    public function it_generates_sanitized_description($metaProvider)
-    {
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'description' => "  It's a me, <b>Mario</b>!  ",
-        ]);
-
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString('<meta name="description" content="It&#039;s a me, Mario!" />', $meta);
-        $this->assertStringContainsString('<meta property="og:description" content="It&#039;s a me, Mario!" />', $meta);
-    }
-
-    /**
-     * @test
-     * @dataProvider metaProvider
-     */
-    public function it_generates_custom_twitter_card_with_short_summary($metaProvider)
-    {
-        Config::set('statamic.seo-pro.twitter.card', 'summary');
-
-        $this->assertStringContainsString('<meta name="twitter:card" content="summary" />', $this->{$metaProvider}('/'));
-    }
-
-    /**
-     * @test
-     * @dataProvider metaProvider
-     */
-    public function it_generates_twitter_handle_meta($metaProvider)
+    public function it_generates_sanitized_title($viewType)
     {
         $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'title' => "  It's a me, <b>Mario</b>!  ",
+                'site_name' => '  Cool "Runnings"  ',
+                'site_name_position' => 'before',
+                'site_name_separator' => '  >>>  ',
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<title>Cool &quot;Runnings&quot; &gt;&gt;&gt; It&#039;s a me, Mario!</title>', false);
+        $response->assertSee('<meta property="og:title" content="It&#039;s a me, Mario!" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_sanitized_description($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'description' => "  It's a me, <b>Mario</b>!  ",
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="description" content="It&#039;s a me, Mario!" />', false);
+        $response->assertSee('<meta property="og:description" content="It&#039;s a me, Mario!" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_custom_twitter_card_with_short_summary($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        Config::set('statamic.seo-pro.twitter.card', 'summary');
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="twitter:card" content="summary" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_twitter_handle_meta($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
             ->setSeoInSiteDefaults([
                 'twitter_handle' => '  itsmario85  ',
             ])
-            ->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
                 'twitter_handle' => '@itsluigi85',
             ]);
 
-        $this->assertStringContainsString('<meta name="twitter:site" content="@itsmario85" />', $this->{$metaProvider}('/'));
-        $this->assertStringContainsString('<meta name="twitter:site" content="@itsluigi85" />', $this->{$metaProvider}('/about'));
+        $response = $this->get('/');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="twitter:site" content="@itsmario85" />', false);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="twitter:site" content="@itsluigi85" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_social_image($metaProvider)
+    public function it_generates_social_image($viewType)
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'image' => 'img/stetson.jpg',
-        ]);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'image' => 'img/stetson.jpg',
+            ]);
 
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString(
-            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />',
-            $meta
-        );
-
-        $this->assertStringContainsString('<meta property="og:image:width" content="1146" />', $meta);
-        $this->assertStringContainsString('<meta property="og:image:height" content="600" />', $meta);
-
-        $this->assertStringContainsString(
-            '<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />',
-            $meta
-        );
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />', false);
+        $response->assertSee('<meta property="og:image:width" content="1146" />', false);
+        $response->assertSee('<meta property="og:image:height" content="600" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
+     *
      * @environment-setup setCustomGlidePresetDimensions
      */
-    public function it_generates_social_image_with_custom_glide_presets($metaProvider)
+    public function it_generates_social_image_with_custom_glide_presets($viewType)
     {
         Artisan::call('statamic:glide:clear');
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'image' => 'img/stetson.jpg',
-        ]);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'image' => 'img/stetson.jpg',
+            ]);
 
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString(
-            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />',
-            $meta
-        );
-
-        $this->assertStringContainsString('<meta property="og:image:width" content="800" />', $meta);
-        $this->assertStringContainsString('<meta property="og:image:height" content="600" />', $meta);
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />', false);
+        $response->assertSee('<meta property="og:image:width" content="800" />', false);
+        $response->assertSee('<meta property="og:image:height" content="600" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
+     *
      * @environment-setup setCustomOgGlidePresetOnly
      */
-    public function it_generates_social_image_with_og_glide_preset_only($metaProvider)
+    public function it_generates_social_image_with_og_glide_preset_only($viewType)
     {
         Artisan::call('statamic:glide:clear');
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'image' => 'img/stetson.jpg',
-        ]);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'image' => 'img/stetson.jpg',
+            ]);
 
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString(
-            '<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />',
-            $meta
-        );
-
-        $this->assertStringContainsString(
-            '<meta name="twitter:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />',
-            $meta
-        );
-
-        $this->assertStringContainsString('<meta property="og:image:width" content="800" />', $meta);
-        $this->assertStringContainsString('<meta property="og:image:height" content="600" />', $meta);
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />', false);
+        $response->assertSee('<meta property="og:image:width" content="800" />', false);
+        $response->assertSee('<meta property="og:image:height" content="600" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
+     *
      * @environment-setup setCustomTwitterGlidePresetOnly
      */
-    public function it_generates_social_image_with_twitter_glide_preset_only($metaProvider)
+    public function it_generates_social_image_with_twitter_glide_preset_only($viewType)
     {
         Artisan::call('statamic:glide:clear');
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'image' => 'img/stetson.jpg',
-        ]);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'image' => 'img/stetson.jpg',
+            ]);
 
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringContainsString(
-            '<meta property="og:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />',
-            $meta
-        );
-
-        $this->assertStringContainsString(
-            '<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />',
-            $meta
-        );
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_home_url_for_entry_meta($metaProvider)
+    public function it_generates_home_url_for_entry_meta($viewType)
     {
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/" rel="home" />',
-            $this->{$metaProvider}('/about')
-        );
+        $this->prepareViews($viewType);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/" rel="home" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_canonical_url_for_entry_meta($metaProvider)
+    public function it_generates_canonical_url_for_entry_meta($viewType)
     {
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/about" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $this->prepareViews($viewType);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_canonical_url_for_term_meta($metaProvider)
+    public function it_generates_canonical_url_for_term_meta($viewType)
     {
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/topics/sneakers" rel="canonical" />',
-            $this->{$metaProvider}('/topics/sneakers')
-        );
+        $this->prepareViews($viewType);
+
+        $response = $this->get('/topics/sneakers');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/topics/sneakers" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_canonical_url_meta_with_pagination($metaProvider)
+    public function it_generates_canonical_url_meta_with_pagination($viewType)
     {
-        $this->simulatePageOutOfFive(2);
+        $this->prepareViews($viewType);
 
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/about?page=2" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=2" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_canonical_url_meta_without_pagination($metaProvider)
+    public function it_generates_canonical_url_meta_without_pagination($viewType)
     {
         Config::set('statamic.seo-pro.pagination.enabled_in_canonical_url', false);
 
-        $this->simulatePageOutOfFive(2);
+        $this->prepareViews($viewType);
 
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/about" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_rel_next_prev_url_meta($metaProvider)
+    public function it_generates_rel_next_prev_url_meta($viewType)
     {
-        $this->simulatePageOutOfFive(1);
+        $this->prepareViews($viewType);
 
-        $meta = $this->{$metaProvider}('/about');
-        $this->assertStringNotContainsString('rel="prev"', $meta);
-        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=2" rel="next" />', $meta);
+        $response = $this->simulatePageOutOfFive(1);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertDontSee('rel="prev"', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=2" rel="next" />', false);
 
-        $this->simulatePageOutOfFive(2);
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="prev" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=3" rel="next" />', false);
 
-        $meta = $this->{$metaProvider}('/about');
-        $this->assertStringContainsString('<link href="http://cool-runnings.com/about" rel="prev" />', $meta);
-        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=3" rel="next" />', $meta);
+        $response = $this->simulatePageOutOfFive(3);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=2" rel="prev" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=4" rel="next" />', false);
 
-        $this->simulatePageOutOfFive(3);
-
-        $meta = $this->{$metaProvider}('/about');
-        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=2" rel="prev" />', $meta);
-        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=4" rel="next" />', $meta);
-
-        $this->simulatePageOutOfFive(5);
-
-        $meta = $this->{$metaProvider}('/about');
-        $this->assertStringContainsString('<link href="http://cool-runnings.com/about?page=4" rel="prev" />', $meta);
-        $this->assertStringNotContainsString('rel="next"', $meta);
+        $response = $this->simulatePageOutOfFive(5);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=4" rel="prev" />', false);
+        $response->assertDontSee('rel="next"', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_rel_next_prev_url_meta_with_first_page_enabled($metaProvider)
+    public function it_generates_rel_next_prev_url_meta_with_first_page_enabled($viewType)
     {
         Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
 
-        $this->simulatePageOutOfFive(2);
+        $this->prepareViews($viewType);
 
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/about?page=1" rel="prev" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=1" rel="prev" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_doesnt_generate_rel_next_prev_url_meta_without_paginator($metaProvider)
+    public function it_doesnt_generate_rel_next_prev_url_meta_without_paginator($viewType)
     {
-        $meta = $this->{$metaProvider}('/about');
+        $this->prepareViews($viewType);
 
-        $this->assertStringNotContainsString('rel="next"', $meta);
-        $this->assertStringNotContainsString('rel="prev"', $meta);
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertDontSee('rel="next"', false);
+        $response->assertDontSee('rel="prev"', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_doesnt_generate_any_pagination_when_completely_disabled($metaProvider)
+    public function it_doesnt_generate_any_pagination_when_completely_disabled($viewType)
     {
         Config::set('statamic.seo-pro.pagination', false);
 
-        $this->simulatePageOutOfFive(2);
+        $this->prepareViews($viewType);
 
-        $meta = $this->{$metaProvider}('/about');
-
-        $this->assertStringNotContainsString('page=2', $meta);
-        $this->assertStringNotContainsString('rel="next"', $meta);
-        $this->assertStringNotContainsString('rel="prev"', $meta);
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertDontSee('page=2', false);
+        $response->assertDontSee('rel="next"', false);
+        $response->assertDontSee('rel="prev"', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_canonical_url_meta_with_custom_url($metaProvider)
+    public function it_generates_canonical_url_meta_with_custom_url($viewType)
     {
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'canonical_url' => 'https://hot-walkings.com/pages/aboot',
-        ]);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'canonical_url' => 'https://hot-walkings.com/pages/aboot',
+            ]);
 
-        $this->assertStringContainsString(
-            '<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_applies_pagination_to_custom_canonical_url_on_same_domain($metaProvider)
+    public function it_applies_pagination_to_custom_canonical_url_on_same_domain($viewType)
     {
-        $this->simulatePageOutOfFive(2);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'canonical_url' => 'http://cool-runnings.com/pages/aboot',
+            ]);
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'canonical_url' => 'http://cool-runnings.com/pages/aboot',
-        ]);
-
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/pages/aboot?page=2" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/pages/aboot?page=2" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_doesnt_apply_pagination_to_external_custom_canonical_url($metaProvider)
+    public function it_doesnt_apply_pagination_to_external_custom_canonical_url($viewType)
     {
-        $this->simulatePageOutOfFive(2);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'canonical_url' => 'https://hot-walkings.com/pages/aboot',
+            ]);
 
-        $this->setSeoOnEntry(Entry::findBySlug('about', 'pages'), [
-            'canonical_url' => 'https://hot-walkings.com/pages/aboot',
-        ]);
-
-        $this->assertStringContainsString(
-            '<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(2);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_doesnt_apply_pagination_to_first_page($metaProvider)
+    public function it_doesnt_apply_pagination_to_first_page($viewType)
     {
-        $this->simulatePageOutOfFive(1);
+        $this->prepareViews($viewType);
 
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/about" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(1);
+
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page($metaProvider)
+    public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page($viewType)
     {
         Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
 
-        $this->simulatePageOutOfFive(1);
+        $this->prepareViews($viewType);
 
-        $this->assertStringContainsString(
-            '<link href="http://cool-runnings.com/about?page=1" rel="canonical" />',
-            $this->{$metaProvider}('/about')
-        );
+        $response = $this->simulatePageOutOfFive(1);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about?page=1" rel="canonical" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_robots_meta($metaProvider)
+    public function it_generates_robots_meta($viewType)
     {
+        $this->prepareViews($viewType);
+
         $this->setSeoInSiteDefaults([
             'robots' => [
                 'noindex',
             ],
         ]);
 
-        $this->assertStringContainsString(
-            '<meta name="robots" content="noindex" />',
-            $meta = $this->{$metaProvider}('/about')
-        );
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="robots" content="noindex" />', false);
 
         $this->setSeoInSiteDefaults([
             'robots' => [
@@ -519,48 +616,64 @@ EOT;
             ],
         ]);
 
-        $this->assertStringContainsString(
-            '<meta name="robots" content="noindex, nofollow" />',
-            $meta = $this->{$metaProvider}('/about')
-        );
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="robots" content="noindex, nofollow" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_custom_humans_url($metaProvider)
+    public function it_generates_custom_humans_url($viewType)
     {
         Config::set('statamic.seo-pro.humans.url', 'aliens.md');
 
-        $this->assertStringContainsString(
-            '<link type="text/plain" rel="author" href="http://cool-runnings.com/aliens.md" />',
-            $meta = $this->{$metaProvider}('/about')
-        );
+        $this->prepareViews($viewType);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link type="text/plain" rel="author" href="http://cool-runnings.com/aliens.md" />', false);
     }
 
     /**
      * @test
-     * @dataProvider metaProvider
+     *
+     * @dataProvider viewScenarioProvider
      */
-    public function it_generates_search_engine_verification_codes($metaProvider)
+    public function it_generates_search_engine_verification_codes($viewType)
     {
-        $this->setSeoInSiteDefaults([
-            'google_verification' => 'google123',
-            'bing_verification' => 'bing123',
-        ]);
+        $this
+            ->prepareViews($viewType)
+            ->setSeoInSiteDefaults([
+                'google_verification' => 'google123',
+                'bing_verification' => 'bing123',
+            ]);
 
-        $meta = $this->{$metaProvider}('/about');
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="google-site-verification" content="google123" />', false);
+        $response->assertSee('<meta name="msvalidate.01" content="bing123" />', false);
+    }
 
-        $this->assertStringContainsString(
-            '<meta name="google-site-verification" content="google123" />',
-            $meta
-        );
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_proper_404_page_title($viewType)
+    {
+        $this->prepareViews($viewType);
 
-        $this->assertStringContainsString(
-            '<meta name="msvalidate.01" content="bing123" />',
-            $meta
-        );
+        $expected = <<<'EOT'
+<title>404 Page Not Found | Site Name</title>
+EOT;
+
+        $content = $this->get('/non-existent-page')->content();
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString('<h2>404!</h2>', $content);
+        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
     }
 
     protected function setCustomGlidePresetDimensions($app)
@@ -606,6 +719,6 @@ EOT;
     {
         Blink::put('tag-paginator', new LengthAwarePaginator([], 15, 3, $currentPage));
 
-        $this->call('GET', '/about', ['page' => $currentPage]);
+        return $this->call('GET', '/about', ['page' => $currentPage]);
     }
 }

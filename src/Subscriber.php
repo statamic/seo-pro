@@ -28,7 +28,7 @@ class Subscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param \Illuminate\Events\Dispatcher $events
+     * @param  \Illuminate\Events\Dispatcher  $events
      */
     public function subscribe($events)
     {
@@ -40,7 +40,7 @@ class Subscriber
     /**
      * Ensure section blueprint has (or doesn't have) SEO fields.
      *
-     * @param mixed $event
+     * @param  mixed  $event
      */
     public function ensureSeoFields($event)
     {
@@ -60,7 +60,7 @@ class Subscriber
     /**
      * Check if SEO is enabled for section.
      *
-     * @param mixed $event
+     * @param  mixed  $event
      * @return bool
      */
     protected function seoIsEnabledForSection($event)
