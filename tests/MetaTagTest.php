@@ -33,6 +33,10 @@ class MetaTagTest extends TestCase
     {
         $this->cleanUpViews();
 
+        if ($this->files->exists($path = base_path('custom_seo.yaml'))) {
+            $this->files->delete($path);
+        }
+
         parent::tearDown();
     }
 
@@ -673,6 +677,52 @@ EOT;
         $content = $this->get('/non-existent-page')->content();
         $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsString('<h2>404!</h2>', $content);
+        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_normalized_meta_from_custom_site_defaults_path($viewType)
+    {
+        $this->files->put(base_path('custom_seo.yaml'), <<<'EOT'
+site_name: Custom Site Name
+site_name_position: after
+site_name_separator: '|'
+title: '@seo:title'
+description: '@seo:content'
+canonical_url: '@seo:permalink'
+priority: 0.8
+change_frequency: monthly
+EOT
+        );
+
+        Config::set('statamic.seo-pro.site_defaults.path', base_path('custom_seo.yaml'));
+
+        $this->prepareViews($viewType);
+
+        $expected = <<<'EOT'
+<title>Home | Custom Site Name</title>
+<meta name="description" content="I see a bad-ass mother." />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Home" />
+<meta property="og:description" content="I see a bad-ass mother." />
+<meta property="og:url" content="http://cool-runnings.com" />
+<meta property="og:site_name" content="Custom Site Name" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Home" />
+<meta name="twitter:description" content="I see a bad-ass mother." />
+<link href="http://cool-runnings.com/" rel="home" />
+<link href="http://cool-runnings.com" rel="canonical" />
+<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
+EOT;
+
+        $content = $this->get('/')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
     }
 
