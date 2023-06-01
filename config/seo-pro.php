@@ -2,6 +2,10 @@
 
 return [
 
+    'site_defaults' => [
+        'path' => base_path('content/seo.yaml'),
+    ],
+
     'assets' => [
         'container' => null,
         'twitter_preset' => [
@@ -39,5 +43,4 @@ return [
         'excluded_sites' => [],
     ],
 
-    'site_defaults_path' => base_path('content/seo.yaml'),
 ];
