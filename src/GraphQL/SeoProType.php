@@ -67,7 +67,7 @@ class SeoProType extends Type
                 'type' => GraphQL::type(SiteType::NAME),
             ],
             'alternate_locales' => [
-                'type' => GraphQL::type('Array'),
+                'type' => GraphQL::listOf(GraphQL::type(AlternateLocaleType::NAME)),
             ],
             'last_modified' => (new DateField)->setValueResolver(function ($value) {
                 return $value['last_modified'];
