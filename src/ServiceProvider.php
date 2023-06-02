@@ -57,7 +57,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
-            ->bootGraphQL();
+            ->bootAddonGraphQL();
     }
 
     protected function bootAddonConfig()
@@ -163,7 +163,7 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootGraphQL()
+    protected function bootAddonGraphQL()
     {
         $this->app->booted(function () {
             $this->app->bind('SeoPro', function () {
