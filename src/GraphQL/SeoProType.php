@@ -77,7 +77,7 @@ class SeoProType extends Type
             'image' => [
                 'type' => GraphQL::type('AssetInterface'),
                 'resolve' => function ($value) {
-                    return $value['image']->value();
+                    return optional($value['image'] ?? null)->value();
                 },
             ],
             'html' => [
