@@ -33,7 +33,10 @@ class SeoProType extends Type
                 'type' => GraphQL::string(),
             ],
             'priority' => [
-                'type' => GraphQL::string(),
+                'type' => GraphQL::float(),
+                'resolve' => function ($value) {
+                    return (float) $value['priority']->value();
+                },
             ],
             'change_frequency' => [
                 'type' => GraphQL::string(),
