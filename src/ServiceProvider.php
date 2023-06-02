@@ -161,9 +161,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonGraphQL()
     {
-        $this->app->bind('SeoPro', \Statamic\SeoPro\GraphQL\SeoProType::class);
-
-        GraphQL::addType('SeoPro');
+        GraphQL::addType(\Statamic\SeoPro\GraphQL\SeoProType::class);
 
         GraphQL::addField('EntryInterface', 'seo', function () {
             return [
