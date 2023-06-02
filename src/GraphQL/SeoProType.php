@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\GraphQL;
 
 use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
+use Statamic\GraphQL\Fields\DateField;
 use Statamic\GraphQL\Types\SiteType;
 
 class SeoProType extends Type
@@ -68,9 +69,9 @@ class SeoProType extends Type
             'alternate_locales' => [
                 'type' => GraphQL::type('Array'),
             ],
-            'last_modified' => [
-                'type' => GraphQL::string(),
-            ],
+            'last_modified' => (new DateField)->setValueResolver(function ($value) {
+                return $value['last_modified'];
+            }),
             'twitter_card' => [
                 'type' => GraphQL::string(),
             ],
