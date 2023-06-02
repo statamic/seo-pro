@@ -166,9 +166,7 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonGraphQL()
     {
         $this->app->booted(function () {
-            $this->app->bind('SeoPro', function () {
-                return new \Statamic\SeoPro\GraphQL\SeoProType();
-            });
+            $this->app->bind('SeoPro', \Statamic\SeoPro\GraphQL\SeoProType::class);
 
             GraphQL::addType('SeoPro');
 
@@ -176,7 +174,7 @@ class ServiceProvider extends AddonServiceProvider
                 return [
                     'type' => GraphQL::type('SeoPro'),
                     'resolve' => function ($entry, $args) {
-                        return (new Cascade())
+                        return (new Cascade)
                             ->with(SiteDefaults::load()->augmented())
                             ->with($this->getAugmentedSectionDefaults($entry))
                             ->with($entry->augmentedValue('seo'))
