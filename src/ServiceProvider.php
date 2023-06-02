@@ -177,7 +177,7 @@ class ServiceProvider extends AddonServiceProvider
                         return (new Cascade)
                             ->with(SiteDefaults::load()->augmented())
                             ->with($this->getAugmentedSectionDefaults($entry))
-                            ->with($entry->augmentedValue('seo'))
+                            ->with($entry->seo)
                             ->withCurrent($entry)
                             ->get();
                     },
