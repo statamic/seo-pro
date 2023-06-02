@@ -4,6 +4,7 @@ namespace Tests;
 
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -40,13 +41,7 @@ class CascadeTest extends TestCase
             'next_url' => null,
             'home_url' => 'http://cool-runnings.com/',
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
-            'site' => [
-                'handle' => 'default',
-                'name' => 'English',
-                'locale' => 'en_US',
-                'short_locale' => 'en',
-                'url' => '/',
-            ],
+            'site' => Site::get('default'),
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
@@ -84,13 +79,7 @@ class CascadeTest extends TestCase
             'next_url' => null,
             'home_url' => 'http://cool-runnings.com/',
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
-            'site' => [
-                'handle' => 'default',
-                'name' => 'English',
-                'locale' => 'en_US',
-                'short_locale' => 'en',
-                'url' => '/',
-            ],
+            'site' => Site::get('default'),
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
@@ -160,13 +149,7 @@ class CascadeTest extends TestCase
             'next_url' => null,
             'home_url' => 'http://cool-runnings.com/',
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
-            'site' => [
-                'handle' => 'default',
-                'name' => 'English',
-                'locale' => 'en_US',
-                'short_locale' => 'en',
-                'url' => '/',
-            ],
+            'site' => Site::get('default'),
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
@@ -225,13 +208,7 @@ EOT
             'next_url' => null,
             'home_url' => 'http://cool-runnings.com/',
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
-            'site' => [
-                'handle' => 'default',
-                'name' => 'English',
-                'locale' => 'en_US',
-                'short_locale' => 'en',
-                'url' => '/',
-            ],
+            'site' => Site::get('default'),
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',

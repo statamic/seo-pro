@@ -270,11 +270,9 @@ class Cascade
 
     protected function site()
     {
-        $site = method_exists($this->model, 'site')
+        return method_exists($this->model, 'site')
             ? $this->model->site()
             : Site::default();
-
-        return $site->toAugmentedArray();
     }
 
     protected function alternateLocales()
