@@ -77,7 +77,13 @@ class SeoProType extends Type
                 'type' => GraphQL::type('AssetInterface'),
                 'resolve' => function ($value) {
                     return $value['image']->value();
-                }
+                },
+            ],
+            'html' => [
+                'type' => GraphQL::string(),
+                'resolve' => function ($value) {
+                    return view('seo-pro::meta', $value)->render();
+                },
             ],
         ];
     }
