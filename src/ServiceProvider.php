@@ -44,10 +44,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $config = false;
 
-    public function boot()
+    public function bootAddon()
     {
-        parent::boot();
-
         $this
             ->bootAddonConfig()
             ->bootAddonViews()
@@ -93,16 +91,14 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonPermissions()
     {
-        $this->app->booted(function () {
-            Permission::group('seo_pro', 'SEO Pro', function () {
-                Permission::register('view seo reports', function ($permission) {
-                    $permission->children([
-                        Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
-                    ]);
-                })->label(__('seo-pro::messages.view_reports'));
-                Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
-                Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
-            });
+        Permission::group('seo_pro', 'SEO Pro', function () {
+            Permission::register('view seo reports', function ($permission) {
+                $permission->children([
+                    Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
+                ]);
+            })->label(__('seo-pro::messages.view_reports'));
+            Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
+            Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
         });
 
         return $this;
@@ -165,24 +161,22 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonGraphQL()
     {
-        $this->app->booted(function () {
-            $this->app->bind('SeoPro', \Statamic\SeoPro\GraphQL\SeoProType::class);
+        $this->app->bind('SeoPro', \Statamic\SeoPro\GraphQL\SeoProType::class);
 
-            GraphQL::addType('SeoPro');
+        GraphQL::addType('SeoPro');
 
-            GraphQL::addField('EntryInterface', 'seo', function () {
-                return [
-                    'type' => GraphQL::type('SeoPro'),
-                    'resolve' => function ($entry, $args) {
-                        return (new Cascade)
-                            ->with(SiteDefaults::load()->augmented())
-                            ->with($this->getAugmentedSectionDefaults($entry))
-                            ->with($entry->seo)
-                            ->withCurrent($entry)
-                            ->get();
-                    },
-                ];
-            });
+        GraphQL::addField('EntryInterface', 'seo', function () {
+            return [
+                'type' => GraphQL::type('SeoPro'),
+                'resolve' => function ($entry, $args) {
+                    return (new Cascade)
+                        ->with(SiteDefaults::load()->augmented())
+                        ->with($this->getAugmentedSectionDefaults($entry))
+                        ->with($entry->seo)
+                        ->withCurrent($entry)
+                        ->get();
+                },
+            ];
         });
 
         return $this;
