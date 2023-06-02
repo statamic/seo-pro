@@ -40,6 +40,7 @@ class SeoProTags extends Tags
             ->with(SiteDefaults::load()->augmented())
             ->with($this->getAugmentedSectionDefaults($current))
             ->with($this->context->value('seo'))
+            ->with($current ? [] : $this->context->except('template_content'))
             ->withCurrent($current)
             ->get();
 
@@ -62,7 +63,7 @@ class SeoProTags extends Tags
     /**
      * Render normalized view partial.
      *
-     * @param array $args
+     * @param  array  $args
      * @return string
      */
     protected function view(...$args)
@@ -85,7 +86,7 @@ class SeoProTags extends Tags
     /**
      * Check if glide preset is enabled.
      *
-     * @param string $preset
+     * @param  string  $preset
      * @return bool
      */
     protected function isGlidePresetEnabled($preset)

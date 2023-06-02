@@ -15,7 +15,7 @@ class SiteDefaults extends Collection
     /**
      * Load site defaults collection.
      *
-     * @param array|Collection|null $items
+     * @param  array|Collection|null  $items
      */
     public function __construct($items = null)
     {
@@ -29,7 +29,7 @@ class SiteDefaults extends Collection
     /**
      * Load site defaults collection.
      *
-     * @param array|Collection|null $items
+     * @param  array|Collection|null  $items
      * @return static
      */
     public static function load($items = null)
@@ -92,7 +92,7 @@ class SiteDefaults extends Collection
      */
     protected function path()
     {
-        return base_path('content/seo.yaml');
+        return config('statamic.seo-pro.site_defaults.path');
     }
 
     /**

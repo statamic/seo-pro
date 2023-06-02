@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\GraphQL;
@@ -27,8 +28,13 @@ class ServiceProvider extends AddonServiceProvider
         SeoPro\Widgets\SeoProWidget::class,
     ];
 
-    protected $scripts = [
-        __DIR__.'/../resources/dist/js/cp.js',
+    protected $vite = [
+        'input' => [
+            'resources/js/cp.js',
+            'resources/css/cp.css',
+        ],
+        'publicDirectory' => 'resources/dist',
+        'hotFile' => __DIR__.'/../resources/dist/hot',
     ];
 
     protected $routes = [
@@ -45,6 +51,7 @@ class ServiceProvider extends AddonServiceProvider
         $this
             ->bootAddonConfig()
             ->bootAddonViews()
+            ->bootAddonBladeDirective()
             ->bootAddonPermissions()
             ->bootAddonNav()
             ->bootAddonSubscriber()
@@ -71,6 +78,15 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
         ], 'seo-pro-views');
+
+        return $this;
+    }
+
+    protected function bootAddonBladeDirective()
+    {
+        Blade::directive('seo_pro', function ($tag) {
+            return '<?php echo \Facades\Statamic\SeoPro\Directives\SeoProDirective::renderTag('.$tag.', $__data) ?>';
+        });
 
         return $this;
     }
@@ -150,11 +166,11 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootGraphQL()
     {
         $this->app->booted(function () {
-            $this->app->bind("SeoPro", function () {
+            $this->app->bind('SeoPro', function () {
                 return new \Statamic\SeoPro\GraphQL\SeoProType();
             });
 
-            GraphQL::addType("SeoPro");
+            GraphQL::addType('SeoPro');
 
             GraphQL::addField('EntryInterface', 'seo', function () {
                 return [
@@ -166,7 +182,7 @@ class ServiceProvider extends AddonServiceProvider
                             ->with($entry->augmentedValue('seo'))
                             ->withCurrent($entry)
                             ->get();
-                    }
+                    },
                 ];
             });
         });

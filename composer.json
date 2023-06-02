@@ -22,9 +22,17 @@
         }
     },
     "require": {
-        "statamic/cms": "~3.1.0 || ~3.2.0 || ~3.3.0"
+        "statamic/cms": "^4.1.3"
     },
     "require-dev": {
-        "orchestra/testbench": "^6.4"
-    }
+        "orchestra/testbench": "^7.0 || ^8.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
