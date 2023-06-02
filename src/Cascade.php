@@ -297,7 +297,7 @@ class Cascade
             })
             ->map(function ($locale) {
                 return [
-                    'site' => Config::getSite($locale)->toAugmentedArray(),
+                    'site' => Config::getSite($locale),
                     'url' => $this->model->in($locale)->absoluteUrl(),
                 ];
             })
