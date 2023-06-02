@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\GraphQL;
 
 use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
+use Statamic\GraphQL\Types\SiteType;
 
 class SeoProType extends Type
 {
@@ -59,7 +60,7 @@ class SeoProType extends Type
                 'type' => GraphQL::string(),
             ],
             'site' => [
-                'type' => GraphQL::type('Array'),
+                'type' => GraphQL::type(SiteType::NAME),
             ],
             'alternate_locales' => [
                 'type' => GraphQL::type('Array'),
