@@ -6,9 +6,12 @@ use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
 use Statamic\GraphQL\Fields\DateField;
 use Statamic\GraphQL\Types\SiteType;
+use Statamic\SeoPro\RendersMetaHtml;
 
 class SeoProType extends Type
 {
+    use RendersMetaHtml;
+
     const NAME = 'SeoPro';
 
     protected $attributes = [
@@ -86,8 +89,8 @@ class SeoProType extends Type
             ],
             'html' => [
                 'type' => GraphQL::string(),
-                'resolve' => function ($value) {
-                    return view('seo-pro::meta', $value)->render();
+                'resolve' => function ($meta) {
+                    return $this->renderMetaHtml($meta);
                 },
             ],
         ];
