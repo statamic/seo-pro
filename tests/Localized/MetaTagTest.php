@@ -4,6 +4,7 @@ namespace Tests\Localized;
 
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Site;
 use Tests\TestCase;
 use Tests\ViewScenarios;
 
@@ -98,6 +99,40 @@ EOT;
         $response->assertSee('og:locale', false);
         $response->assertDontSee('og:locale:alternate', false);
         $response->assertDontSee('hreflang', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generate_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="it_IT" />
+<meta property="og:locale:alternate" content="en_US" />
+<meta property="og:locale:alternate" content="fr_FR" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link href="http://cool-runnings.com/it/about" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
+EOT;
+
+        // Though hitting a route will automatically set the current site,
+        // we want to test that the alternate locales are generated off
+        // the entry's model, not from the current site in the cp.
+        Site::setCurrent('default');
+
+        $content = $this->get('/it/about')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
     }
 
     /**
