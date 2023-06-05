@@ -287,7 +287,7 @@ class Cascade
             return [];
         }
 
-        return collect(Config::getOtherLocales())
+        return collect(Config::getOtherLocales($this->model->locale()))
             ->filter(function ($locale) {
                 return $this->model->in($locale);
             })
