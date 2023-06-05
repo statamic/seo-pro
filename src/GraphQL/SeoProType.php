@@ -38,8 +38,8 @@ class SeoProType extends Type
             ],
             'priority' => [
                 'type' => GraphQL::float(),
-                'resolve' => function ($value) {
-                    return (float) $value['priority']->value();
+                'resolve' => function ($meta) {
+                    return (float) $meta['priority']->value();
                 },
             ],
             'change_frequency' => [
@@ -72,8 +72,8 @@ class SeoProType extends Type
             'alternate_locales' => [
                 'type' => GraphQL::listOf(GraphQL::type(AlternateLocaleType::NAME)),
             ],
-            'last_modified' => (new DateField)->setValueResolver(function ($value) {
-                return $value['last_modified'];
+            'last_modified' => (new DateField)->setValueResolver(function ($meta) {
+                return $meta['last_modified'];
             }),
             'twitter_card' => [
                 'type' => GraphQL::string(),
@@ -83,8 +83,8 @@ class SeoProType extends Type
             ],
             'image' => [
                 'type' => GraphQL::type('AssetInterface'),
-                'resolve' => function ($value) {
-                    return optional($value['image'] ?? null)->value();
+                'resolve' => function ($meta) {
+                    return optional($meta['image'] ?? null)->value();
                 },
             ],
             'html' => [
