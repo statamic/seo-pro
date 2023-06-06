@@ -157,4 +157,35 @@ GQL;
                 ],
             ]]);
     }
+
+    /** @test */
+    public function it_gracefully_outputs_null_image_when_not_set()
+    {
+        $query = <<<'GQL'
+{
+    entry(slug: "dance") {
+        seo {
+            title
+            image {
+                url
+                permalink
+            }
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'seo' => [
+                        'title' => "'Dance Like No One is Watching' Is Bad Advice",
+                        'image' => null,
+                    ],
+                ],
+            ]]);
+    }
 }
