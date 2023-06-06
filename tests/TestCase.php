@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Testing\TestResponse;
 use Statamic\Extend\Manifest;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -15,6 +16,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         return [
             \Statamic\Providers\StatamicServiceProvider::class,
             \Statamic\SeoPro\ServiceProvider::class,
+            \Rebing\GraphQL\GraphQLServiceProvider::class,
         ];
     }
 
@@ -33,6 +35,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->copyDirectoryFromFixture('assets');
 
         $this->restoreSiteDefaults();
+
+        $this->addGqlMacros();
     }
 
     protected function copyDirectoryFromFixture($directory)
@@ -160,5 +164,23 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         method_exists(static::class, 'assertFileDoesNotExist')
             ? static::assertFileDoesNotExist($filename, $message)
             : parent::assertFileNotExists($filename, $message);
+    }
+
+    private function addGqlMacros()
+    {
+        TestResponse::macro('assertGqlOk', function () {
+            $this->assertOk();
+
+            $json = $this->json();
+
+            if (isset($json['errors'])) {
+                throw new \PHPUnit\Framework\ExpectationFailedException(
+                    'GraphQL response contained errors',
+                    new \SebastianBergmann\Comparator\ComparisonFailure('', '', '', json_encode($json, JSON_PRETTY_PRINT))
+                );
+            }
+
+            return $this;
+        });
     }
 }
