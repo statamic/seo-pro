@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
 
 class GraphQLTest extends TestCase
 {
@@ -28,6 +29,9 @@ class GraphQLTest extends TestCase
                 'site_name' => 'Cool Runnings',
                 'site_name_position' => 'before',
                 'site_name_separator' => '>>>',
+            ])
+            ->setSeoOnEntry(Entry::findByUri('/nectar'), [
+                'image' => 'img/stetson.jpg',
             ]);
     }
 
@@ -57,6 +61,12 @@ GQL;
             '<meta name="twitter:card" content="summary_large_image" />',
             '<meta name="twitter:title" content="Nectar of the Gods" />',
             '<meta name="twitter:description" content="The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko&#039;s Modern Life. That would have to wait until 5:30pm for that, and I am impatient.In truth, the day wou..." />',
+            '<meta property="og:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />',
+            '<meta property="og:image:width" content="900" />',
+            '<meta property="og:image:height" content="587" />',
+            '<meta property="og:image:alt" content="" />',
+            '<meta name="twitter:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />',
+            '<meta name="twitter:image:alt" content="" />',
             '<link href="http://cool-runnings.com/" rel="home" />',
             '<link href="http://cool-runnings.com/nectar" rel="canonical" />',
             '<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />',
@@ -105,6 +115,7 @@ GQL;
             twitter_handle
             image {
                 url
+                permalink
             }
             last_modified(format: "Y-m-d")
         }
@@ -137,7 +148,10 @@ GQL;
                         'humans_txt' => 'http://cool-runnings.com/humans.txt',
                         'twitter_card' => 'summary_large_image',
                         'twitter_handle' => null,
-                        'image' => null,
+                        'image' => [
+                            'url' => '/assets/img/stetson.jpg',
+                            'permalink' => 'http://cool-runnings.com/assets/img/stetson.jpg',
+                        ],
                         'last_modified' => '2023-06-06',
                     ],
                 ],
