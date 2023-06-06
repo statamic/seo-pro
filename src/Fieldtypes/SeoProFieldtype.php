@@ -77,9 +77,8 @@ class SeoProFieldtype extends Fieldtype
             ->all();
     }
 
-
     public function toGqlType()
     {
-        return GraphQL::type("SeoPro");
+        return GraphQL::type('SeoPro');
     }
 }
