@@ -13,6 +13,22 @@ class GraphQLTest extends TestCase
         $app['config']->set('statamic.editions.pro', true);
         $app['config']->set('statamic.graphql.enabled', true);
         $app['config']->set('statamic.graphql.resources.collections', true);
+        $app['config']->set('statamic.seo-pro.assets.container', 'assets');
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this
+            ->setSeoInSiteDefaults([
+                'priority' => 0.7,
+            ])
+            ->setSeoOnCollection(Collection::find('articles'), [
+                'site_name' => 'Cool Runnings',
+                'site_name_position' => 'before',
+                'site_name_separator' => '>>>',
+            ]);
     }
 
     /** @test */
@@ -47,11 +63,6 @@ GQL;
         ])->implode('');
 
         $this
-            ->setSeoOnCollection(Collection::find('articles'), [
-                'site_name' => 'Cool Runnings',
-                'site_name_position' => 'before',
-                'site_name_separator' => '>>>',
-            ])
             ->withoutExceptionHandling()
             ->post('/graphql', ['query' => $query])
             ->assertGqlOk()
@@ -102,11 +113,6 @@ GQL;
 GQL;
 
         $this
-            ->setSeoOnCollection(Collection::find('articles'), [
-                'site_name' => 'Cool Runnings',
-                'site_name_position' => 'before',
-                'site_name_separator' => '>>>',
-            ])
             ->withoutExceptionHandling()
             ->post('/graphql', ['query' => $query])
             ->assertGqlOk()
@@ -120,7 +126,7 @@ GQL;
                         'title' => 'Nectar of the Gods',
                         'compiled_title' => 'Cool Runnings >>> Nectar of the Gods',
                         'description' => "The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko's Modern Life. That would have to wait until 5:30pm for that, and I am impatient.\nIn truth, the day wou...",
-                        'priority' => 0.5,
+                        'priority' => 0.7,
                         'change_frequency' => 'monthly',
                         'og_title' => 'Nectar of the Gods',
                         'canonical_url' => 'http://cool-runnings.com/nectar',
