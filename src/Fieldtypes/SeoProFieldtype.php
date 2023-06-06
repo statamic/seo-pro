@@ -9,7 +9,6 @@ use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
 use Statamic\SeoPro\Fields as SeoProFields;
-use Statamic\SeoPro\Fields;
 use Statamic\Support\Arr;
 
 class SeoProFieldtype extends Fieldtype
