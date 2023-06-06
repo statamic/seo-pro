@@ -64,4 +64,77 @@ GQL;
                 ],
             ]]);
     }
+
+    /** @test */
+    public function it_queries_for_entry_seo_cascade_so_user_can_render_custom_meta()
+    {
+        $query = <<<'GQL'
+{
+    entry(slug: "nectar") {
+        title
+        seo {
+            site_name
+            site_name_position
+            site_name_separator
+            title
+            compiled_title
+            description
+            priority
+            change_frequency
+            og_title
+            canonical_url
+            alternate_locales {
+                url
+            }
+            prev_url
+            next_url
+            home_url
+            humans_txt
+            twitter_card
+            twitter_handle
+            image {
+                url
+            }
+            last_modified(format: "Y-m-d")
+        }
+    }
+}
+GQL;
+
+        $this
+            ->setSeoOnCollection(Collection::find('articles'), [
+                'site_name' => 'Cool Runnings',
+                'site_name_position' => 'before',
+                'site_name_separator' => '>>>',
+            ])
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'title' => 'Nectar of the Gods',
+                    'seo' => [
+                        'site_name' => 'Cool Runnings',
+                        'site_name_position' => 'before',
+                        'site_name_separator' => '>>>',
+                        'title' => 'Nectar of the Gods',
+                        'compiled_title' => 'Cool Runnings >>> Nectar of the Gods',
+                        'description' => "The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko's Modern Life. That would have to wait until 5:30pm for that, and I am impatient.\nIn truth, the day wou...",
+                        'priority' => 0.5,
+                        'change_frequency' => 'monthly',
+                        'og_title' => 'Nectar of the Gods',
+                        'canonical_url' => 'http://cool-runnings.com/nectar',
+                        'alternate_locales' => [],
+                        'prev_url' => null,
+                        'next_url' => null,
+                        'home_url' => 'http://cool-runnings.com/',
+                        'humans_txt' => 'http://cool-runnings.com/humans.txt',
+                        'twitter_card' => 'summary_large_image',
+                        'twitter_handle' => null,
+                        'image' => null,
+                        'last_modified' => '2023-06-06',
+                    ],
+                ],
+            ]]);
+    }
 }
