@@ -44,7 +44,7 @@ GQL;
             '<link href="http://cool-runnings.com/" rel="home" />',
             '<link href="http://cool-runnings.com/nectar" rel="canonical" />',
             '<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />',
-        ])->implode("\n");
+        ])->implode('');
 
         $this
             ->setSeoOnCollection(Collection::find('articles'), [

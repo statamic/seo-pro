@@ -26,7 +26,7 @@ class SeoProTags extends Tags
             return;
         }
 
-        return $this->renderMetaHtml($this->metaData());
+        return $this->renderMetaHtml($this->metaData(), true);
     }
 
     /**
