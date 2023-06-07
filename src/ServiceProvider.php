@@ -164,19 +164,22 @@ class ServiceProvider extends AddonServiceProvider
         GraphQL::addType(\Statamic\SeoPro\GraphQL\SeoProType::class);
         GraphQL::addType(\Statamic\SeoPro\GraphQL\AlternateLocaleType::class);
 
-        GraphQL::addField('EntryInterface', 'seo', function () {
+        $seoField = function () {
             return [
                 'type' => GraphQL::type('SeoPro'),
-                'resolve' => function ($entry, $args) {
+                'resolve' => function ($item) {
                     return (new Cascade)
                         ->with(SiteDefaults::load()->augmented())
-                        ->with($this->getAugmentedSectionDefaults($entry))
-                        ->with($entry->seo)
-                        ->withCurrent($entry)
+                        ->with($this->getAugmentedSectionDefaults($item))
+                        ->with($item->seo)
+                        ->withCurrent($item)
                         ->get();
                 },
             ];
-        });
+        };
+
+        GraphQL::addField('EntryInterface', 'seo', $seoField);
+        GraphQL::addField('TermInterface', 'seo', $seoField);
 
         return $this;
     }
