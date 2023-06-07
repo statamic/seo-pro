@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Support\Carbon;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 
@@ -152,7 +153,7 @@ GQL;
                             'url' => '/assets/img/stetson.jpg',
                             'permalink' => 'http://cool-runnings.com/assets/img/stetson.jpg',
                         ],
-                        'last_modified' => '2023-06-06',
+                        'last_modified' => Carbon::today()->format('Y-m-d'),
                     ],
                 ],
             ]]);
