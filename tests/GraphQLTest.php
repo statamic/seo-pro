@@ -2,9 +2,8 @@
 
 namespace Tests;
 
-use Illuminate\Support\Carbon;
 use Statamic\Facades\Collection;
-use Statamic\Facades\Entry;
+use Statamic\Facades\Data;
 
 class GraphQLTest extends TestCase
 {
@@ -15,6 +14,7 @@ class GraphQLTest extends TestCase
         $app['config']->set('statamic.editions.pro', true);
         $app['config']->set('statamic.graphql.enabled', true);
         $app['config']->set('statamic.graphql.resources.collections', true);
+        $app['config']->set('statamic.graphql.resources.taxonomies', true);
         $app['config']->set('statamic.seo-pro.assets.container', 'assets');
     }
 
@@ -24,14 +24,14 @@ class GraphQLTest extends TestCase
 
         $this
             ->setSeoInSiteDefaults([
+                'site_name' => 'Cool Runnings',
                 'priority' => 0.7,
             ])
             ->setSeoOnCollection(Collection::find('articles'), [
-                'site_name' => 'Cool Runnings',
                 'site_name_position' => 'before',
                 'site_name_separator' => '>>>',
             ])
-            ->setSeoOnEntry(Entry::findByUri('/nectar'), [
+            ->setSeoOnEntry(Data::findByUri('/nectar'), [
                 'image' => 'img/stetson.jpg',
             ]);
     }
@@ -153,7 +153,118 @@ GQL;
                             'url' => '/assets/img/stetson.jpg',
                             'permalink' => 'http://cool-runnings.com/assets/img/stetson.jpg',
                         ],
-                        'last_modified' => Carbon::today()->format('Y-m-d'),
+                        'last_modified' => Data::findByUri('/nectar')->lastModified()->format('Y-m-d'),
+                    ],
+                ],
+            ]]);
+    }
+
+    /** @test */
+    public function it_queries_for_term_seo_meta_html()
+    {
+        $query = <<<'GQL'
+{
+    term(id: "topics::dance") {
+        title
+        seo {
+            html
+        }
+    }
+}
+GQL;
+
+        $expectedHtml = collect([
+            '<title>Dance | Cool Runnings</title>',
+            '<meta property="og:type" content="website" />',
+            '<meta property="og:title" content="Dance" />',
+            '<meta property="og:url" content="http://cool-runnings.com/topics/dance" />',
+            '<meta property="og:site_name" content="Cool Runnings" />',
+            '<meta property="og:locale" content="en_US" />',
+            '<meta name="twitter:card" content="summary_large_image" />',
+            '<meta name="twitter:title" content="Dance" />',
+            '<link href="http://cool-runnings.com/" rel="home" />',
+            '<link href="http://cool-runnings.com/topics/dance" rel="canonical" />',
+            '<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />',
+        ])->implode('');
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'term' => [
+                    'title' => 'Dance',
+                    'seo' => [
+                        'html' => $expectedHtml,
+                    ],
+                ],
+            ]]);
+    }
+
+    /** @test */
+    public function it_queries_for_term_seo_cascade_so_user_can_render_custom_meta()
+    {
+        $query = <<<'GQL'
+{
+    term(id: "topics::dance") {
+        title
+        seo {
+            site_name
+            site_name_position
+            site_name_separator
+            title
+            compiled_title
+            description
+            priority
+            change_frequency
+            og_title
+            canonical_url
+            alternate_locales {
+                url
+            }
+            prev_url
+            next_url
+            home_url
+            humans_txt
+            twitter_card
+            twitter_handle
+            image {
+                url
+                permalink
+            }
+            last_modified(format: "Y-m-d")
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'term' => [
+                    'title' => 'Dance',
+                    'seo' => [
+                        'site_name' => 'Cool Runnings',
+                        'site_name_position' => 'after',
+                        'site_name_separator' => '|',
+                        'title' => 'Dance',
+                        'compiled_title' => 'Dance | Cool Runnings',
+                        'description' => null,
+                        'priority' => 0.7,
+                        'change_frequency' => 'monthly',
+                        'og_title' => 'Dance',
+                        'canonical_url' => 'http://cool-runnings.com/topics/dance',
+                        'alternate_locales' => [],
+                        'prev_url' => null,
+                        'next_url' => null,
+                        'home_url' => 'http://cool-runnings.com/',
+                        'humans_txt' => 'http://cool-runnings.com/humans.txt',
+                        'twitter_card' => 'summary_large_image',
+                        'twitter_handle' => null,
+                        'image' => null,
+                        'last_modified' => Data::findByUri('/topics/dance')->lastModified()->format('Y-m-d'),
                     ],
                 ],
             ]]);
