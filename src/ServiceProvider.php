@@ -5,6 +5,7 @@ namespace Statamic\SeoPro;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
+use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
@@ -12,6 +13,8 @@ use Statamic\SeoPro;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    use GetsSectionDefaults;
+
     protected $tags = [
         SeoPro\Tags\SeoProTags::class,
     ];
@@ -41,10 +44,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $config = false;
 
-    public function boot()
+    public function bootAddon()
     {
-        parent::boot();
-
         $this
             ->bootAddonConfig()
             ->bootAddonViews()
@@ -53,7 +54,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
-            ->bootAddonCommands();
+            ->bootAddonCommands()
+            ->bootAddonGraphQL();
     }
 
     protected function bootAddonConfig()
@@ -89,16 +91,14 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonPermissions()
     {
-        $this->app->booted(function () {
-            Permission::group('seo_pro', 'SEO Pro', function () {
-                Permission::register('view seo reports', function ($permission) {
-                    $permission->children([
-                        Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
-                    ]);
-                })->label(__('seo-pro::messages.view_reports'));
-                Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
-                Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
-            });
+        Permission::group('seo_pro', 'SEO Pro', function () {
+            Permission::register('view seo reports', function ($permission) {
+                $permission->children([
+                    Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
+                ]);
+            })->label(__('seo-pro::messages.view_reports'));
+            Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
+            Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
         });
 
         return $this;
@@ -155,6 +155,30 @@ class ServiceProvider extends AddonServiceProvider
         $this->commands([
             SeoPro\Commands\GenerateReportCommand::class,
         ]);
+
+        return $this;
+    }
+
+    protected function bootAddonGraphQL()
+    {
+        GraphQL::addType(\Statamic\SeoPro\GraphQL\SeoProType::class);
+        GraphQL::addType(\Statamic\SeoPro\GraphQL\AlternateLocaleType::class);
+
+        GraphQL::addField('EntryInterface', 'seo', function () {
+            return [
+                'type' => GraphQL::type('SeoPro'),
+                'resolve' => function ($entry, $args) {
+                    return (new Cascade)
+                        ->with(SiteDefaults::load()->augmented())
+                        ->with($this->getAugmentedSectionDefaults($entry))
+                        ->with($entry->seo)
+                        ->withCurrent($entry)
+                        ->get();
+                },
+            ];
+        });
+
+        return $this;
     }
 
     private function userHasSeoPermissions()
