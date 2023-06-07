@@ -16,7 +16,7 @@ SEO settings will cascade down from the global defaults, to the collection/taxon
 
 Empty meta tags will not be rendered, which allows you to optionally set your own tags with other means if you so choose.
 
-### Defaults
+### Site Defaults
 
 Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. The defaults will be used if you haven't set anything more specific at the collection or entry level.
 
@@ -24,9 +24,9 @@ Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. T
 
 You may choose to pull data from other fields, enter hardcoded strings, or use Antlers templating. See [File Usage](#file-usage) for more details.
 
-### Sections (Collections and Taxonomies)
+### Section Defaults
 
-Each section may be configured independently at a collection/taxonomy level. Head to `Tools > SEO Pro > Section Defaults` to configure default settings at this level. You may opt to inherit values from the defaults and tweak as necessary.
+Each section may be configured independently at the Collection / Taxonomy level. Head to `Tools > SEO Pro > Section Defaults` to configure default settings at this level. You may opt to inherit values from the defaults and tweak as necessary.
 
 > Values configured here will be saved into the `seo` array (within `inject`) in the respective section's yaml config.
 
@@ -61,13 +61,13 @@ Route::statamic('search', 'search/index', [
 
 For advanced devs, you may bypass the CP and configure your SEO settings through files. There are 3 sorts of values you may save.
 
-**Custom / hardcoded strings:**
+### Custom Hardcoded Strings
 
 ```yaml
 title: "A hardcoded string"
 ```
 
-**Field references**
+### Field References
 
 Prefix a field name with `@seo:` to have that field's value referenced automatically.
 
@@ -78,7 +78,7 @@ title: "@seo:title"
 title: "@seo:post/title"  # with optional fieldset
 ```
 
-**Antlers Templating**
+### Antlers Templating
 
 You may use Statamic Antlers templating in your strings. When doing this, the addon will not apply any automatic parsing rules (limiting the length of the description, for example).
 
