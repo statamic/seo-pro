@@ -168,12 +168,7 @@ class ServiceProvider extends AddonServiceProvider
             return [
                 'type' => GraphQL::type('SeoPro'),
                 'resolve' => function ($item) {
-                    return (new Cascade)
-                        ->with(SiteDefaults::load()->augmented())
-                        ->with($this->getAugmentedSectionDefaults($item))
-                        ->with($item->seo)
-                        ->withCurrent($item)
-                        ->get();
+                    return $this->getItemSeoCascade($item);
                 },
             ];
         };
@@ -191,5 +186,15 @@ class ServiceProvider extends AddonServiceProvider
         return $user->can('view seo reports')
             || $user->can('edit seo site defaults')
             || $user->can('edit seo section defaults');
+    }
+
+    private function getItemSeoCascade($item)
+    {
+        return (new Cascade)
+            ->with(SiteDefaults::load()->augmented())
+            ->with($this->getAugmentedSectionDefaults($item))
+            ->with($item->seo)
+            ->withCurrent($item)
+            ->get();
     }
 }
