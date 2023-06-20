@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Statamic\Facades\Collection;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
@@ -55,6 +56,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
+            ->bootAddonComputedSeoFields()
             ->bootAddonGraphQL();
     }
 
@@ -155,6 +157,17 @@ class ServiceProvider extends AddonServiceProvider
         $this->commands([
             SeoPro\Commands\GenerateReportCommand::class,
         ]);
+
+        return $this;
+    }
+
+    protected function bootAddonComputedSeoFields()
+    {
+        Collection::all()->each(function ($collection) {
+            Collection::computed($collection->handle(), 'seo', function ($entry) {
+                return $this->getItemSeoCascade($entry);
+            });
+        });
 
         return $this;
     }
