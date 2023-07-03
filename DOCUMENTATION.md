@@ -168,7 +168,7 @@ If you wish to change this to `summary`, you can [publish the SEO Pro config](#p
 
 ## GraphQL
 
-If you're accessing content through Statamic's [GraphQL API](https://statamic.dev/graphql], you can render SEO meta on your entries and terms this way as well. For example, in an [entries query](https://statamic.dev/graphql#entries-query) you can access prerendered SEO meta `html` under `seo`:
+If you're accessing content through Statamic's [GraphQL API](https://statamic.dev/graphql), you can render SEO meta on your entries and terms this way as well. For example, in an [entries query](https://statamic.dev/graphql#entries-query) you can access prerendered SEO meta `html` under `seo`:
 
 ```graphql
 {
