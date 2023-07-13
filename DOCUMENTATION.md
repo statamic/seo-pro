@@ -83,7 +83,7 @@ title: "@seo:post/title"  # with optional fieldset
 You may use Statamic Antlers templating in your strings. When doing this, the addon will not apply any automatic parsing rules (limiting the length of the description, for example).
 
 ```yaml
-description: "{{ content | strip_tags | truncate:250:... }}"
+description: "{{ content | strip_tags | truncate(250, '...') }}"
 ```
 
 ## Reports
