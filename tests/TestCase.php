@@ -84,8 +84,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
             $app['config']->set(str_replace('/', '.', $config), require("{$this->siteFixturePath}/config/{$config}.php"));
         }
-
-        $app['config']->set('statamic.antlers.version', 'runtime'); // For < Statamic 3.4
     }
 
     protected function getEnvironmentSetUp($app)
@@ -128,8 +126,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     public static function assertArraySubset($subset, $array, bool $checkForObjectIdentity = false, string $message = ''): void
     {
-        $class = version_compare(app()->version(), 7, '>=') ? \Illuminate\Testing\Assert::class : \Illuminate\Foundation\Testing\Assert::class;
-        $class::assertArraySubset($subset, $array, $checkForObjectIdentity, $message);
+        \Illuminate\Testing\Assert::class::assertArraySubset($subset, $array, $checkForObjectIdentity, $message);
     }
 
     /**
