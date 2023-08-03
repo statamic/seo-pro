@@ -124,11 +124,15 @@ class Cascade
     {
         $url = Str::trim($this->explicitUrl ?? $this->data->get('canonical_url'));
 
-        if (! app('request')->has('page')) {
+        if (! Str::startsWith($url, config('app.url'))) {
             return $url;
         }
 
-        $page = (int) app('request')->get('page');
+        if (! $paginator = Blink::get('tag-paginator')) {
+            return $url;
+        }
+
+        $page = $paginator->currentPage();
 
         switch (true) {
             case config('statamic.seo-pro.pagination') === false:
@@ -137,11 +141,7 @@ class Cascade
                 return $url;
         }
 
-        if (Str::startsWith($url, config('app.url'))) {
-            $url .= '?page='.$page;
-        }
-
-        return $url;
+        return URL::makeAbsolute($paginator->url($page));
     }
 
     protected function prevUrl()
@@ -150,21 +150,25 @@ class Cascade
             return null;
         }
 
+        $url = Str::trim($this->data->get('canonical_url'));
+
+        if (! Str::startsWith($url, config('app.url'))) {
+            return $url;
+        }
+
         if (! $paginator = Blink::get('tag-paginator')) {
             return null;
         }
 
-        $url = Str::trim($this->data->get('canonical_url'));
-
-        $page = $paginator->currentPage();
-
-        if (config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $page === 2) {
+        if (config('statamic.seo-pro.pagination.enabled_on_first_page') === false && $paginator->currentPage() === 2) {
             return $url;
         }
 
-        return $page > 1 && $page <= $paginator->lastPage()
-            ? $url.'?page='.($page - 1)
-            : null;
+        if (! $prevUrl = $paginator->previousPageUrl()) {
+            return null;
+        }
+
+        return URL::makeAbsolute($prevUrl);
     }
 
     protected function nextUrl()
@@ -173,17 +177,21 @@ class Cascade
             return null;
         }
 
+        $url = Str::trim($this->data->get('canonical_url'));
+
+        if (! Str::startsWith($url, config('app.url'))) {
+            return $url;
+        }
+
         if (! $paginator = Blink::get('tag-paginator')) {
             return null;
         }
 
-        $url = Str::trim($this->data->get('canonical_url'));
+        if (! $nextUrl = $paginator->nextPageUrl()) {
+            return null;
+        }
 
-        $page = $paginator->currentPage();
-
-        return $page < $paginator->lastPage()
-            ? $url.'?page='.($page + 1)
-            : null;
+        return URL::makeAbsolute($nextUrl);
     }
 
     protected function parse($key, $item)
