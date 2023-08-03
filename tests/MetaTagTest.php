@@ -767,8 +767,10 @@ EOT;
 
     protected function simulatePageOutOfFive($currentPage)
     {
-        Blink::put('tag-paginator', new LengthAwarePaginator([], 15, 3, $currentPage));
+        $url = '/about';
 
-        return $this->call('GET', '/about', ['page' => $currentPage]);
+        Blink::put('tag-paginator', (new LengthAwarePaginator([], 15, 3, $currentPage))->setPath($url));
+
+        return $this->call('GET', $url, ['page' => $currentPage]);
     }
 }
