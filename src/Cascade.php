@@ -132,6 +132,8 @@ class Cascade
             return $url;
         }
 
+        $paginator->setPath($url);
+
         $page = $paginator->currentPage();
 
         switch (true) {
