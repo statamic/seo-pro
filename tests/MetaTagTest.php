@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Statamic\Extensions\Pagination\LengthAwarePaginator as StatamicLengthAwarePaginator;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
@@ -598,6 +599,25 @@ EOT;
      * @test
      *
      * @dataProvider viewScenarioProvider
+     *
+     * @environment-setup useFakeSsgPaginator
+     */
+    public function it_applies_custom_pagination_routing_to_meta_urls($viewType)
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews($viewType);
+
+        $response = $this->simulatePageOutOfFive(3, FakeSsgPaginator::class);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/page/3" rel="canonical" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/page/2" rel="prev" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/page/4" rel="next" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
      */
     public function it_generates_robots_meta($viewType)
     {
@@ -765,10 +785,22 @@ EOT;
         ]);
     }
 
-    protected function simulatePageOutOfFive($currentPage)
+    protected function simulatePageOutOfFive($currentPage, $customPaginatorClass = null)
     {
-        Blink::put('tag-paginator', new LengthAwarePaginator([], 15, 3, $currentPage));
+        $url = '/about';
 
-        return $this->call('GET', '/about', ['page' => $currentPage]);
+        $paginatorClass = $customPaginatorClass ?? LengthAwarePaginator::class;
+
+        Blink::put('tag-paginator', (new $paginatorClass([], 15, 3, $currentPage))->setPath($url));
+
+        return $this->call('GET', $url, ['page' => $currentPage]);
+    }
+}
+
+class FakeSsgPaginator extends StatamicLengthAwarePaginator
+{
+    public function url($page)
+    {
+        return \Statamic\Facades\URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
     }
 }
