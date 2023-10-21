@@ -111,7 +111,6 @@ class ServiceProvider extends AddonServiceProvider
                 $nav->tools('SEO Pro')
                     ->route('seo-pro.index')
                     ->icon('seo-search-graph')
-                    ->active('seo-pro')
                     ->children(function () use ($nav) {
                         return [
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
