@@ -111,12 +111,13 @@ class ServiceProvider extends AddonServiceProvider
                 $nav->tools('SEO Pro')
                     ->route('seo-pro.index')
                     ->icon('seo-search-graph')
-                    ->active('seo-pro')
-                    ->children([
-                        $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
-                        $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
-                        $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
-                    ]);
+                    ->children(function () use ($nav) {
+                        return [
+                            $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
+                            $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
+                            $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
+                        ];
+                    });
             }
         });
 
