@@ -108,7 +108,7 @@ class Sitemap
     protected function getSiteDefaults()
     {
         return Blink::once('seo-pro.site-defaults', function () {
-            return SiteDefaults::load()->all();
+            return app(SiteDefaults::class)::load()->all();
         });
     }
 }

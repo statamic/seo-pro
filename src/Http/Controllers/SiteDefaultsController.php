@@ -14,11 +14,11 @@ class SiteDefaultsController extends CpController
     {
         abort_unless(User::current()->can('edit seo site defaults'), 403);
 
-        $blueprint = SiteDefaults::blueprint();
+        $blueprint = app(SiteDefaults::class)::blueprint();
 
         $fields = $blueprint
             ->fields()
-            ->addValues(SiteDefaults::load()->all())
+            ->addValues(app(SiteDefaults::class)::load()->all())
             ->preProcess();
 
         return view('seo-pro::edit', [
@@ -34,7 +34,7 @@ class SiteDefaultsController extends CpController
     {
         abort_unless(User::current()->can('edit seo site defaults'), 403);
 
-        $blueprint = SiteDefaults::blueprint();
+        $blueprint = app(SiteDefaults::class)::blueprint();
 
         $fields = $blueprint->fields()->addValues($request->all());
 
@@ -42,6 +42,6 @@ class SiteDefaultsController extends CpController
 
         $values = Arr::removeNullValues($fields->process()->values()->all());
 
-        SiteDefaults::load($values)->save();
+        app(SiteDefaults::class)::load($values)->save();
     }
 }

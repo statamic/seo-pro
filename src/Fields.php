@@ -241,7 +241,7 @@ class Fields
      */
     protected function getPlaceholder($handle)
     {
-        $cascade = (new Cascade)->with(SiteDefaults::load()->all());
+        $cascade = (new Cascade)->with(app(SiteDefaults::class)::load()->all());
 
         if ($this->data) {
             $cascade = $cascade

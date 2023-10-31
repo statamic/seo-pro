@@ -120,7 +120,7 @@ class Report implements Arrayable, Jsonable
                 }
 
                 $data = (new Cascade)
-                    ->with(SiteDefaults::load()->augmented())
+                    ->with(app(SiteDefaults::class)::load()->augmented())
                     ->with($this->getAugmentedSectionDefaults($content))
                     ->with($content->augmentedValue('seo')->value())
                     ->withCurrent($content)
@@ -336,7 +336,7 @@ class Report implements Arrayable, Jsonable
     public function defaults()
     {
         return collect((new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(app(SiteDefaults::class)::load()->all())
             ->get());
     }
 

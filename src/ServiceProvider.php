@@ -48,6 +48,7 @@ class ServiceProvider extends AddonServiceProvider
     {
         $this
             ->bootAddonConfig()
+            ->bootAddonBindings()
             ->bootAddonViews()
             ->bootAddonBladeDirective()
             ->bootAddonPermissions()
@@ -170,7 +171,7 @@ class ServiceProvider extends AddonServiceProvider
                 'type' => GraphQL::type('SeoPro'),
                 'resolve' => function ($item) {
                     return (new Cascade)
-                        ->with(SiteDefaults::load()->augmented())
+                        ->with(app(SiteDefaults::class)::load()->augmented())
                         ->with($this->getAugmentedSectionDefaults($item))
                         ->with($item->seo)
                         ->withCurrent($item)
@@ -181,6 +182,13 @@ class ServiceProvider extends AddonServiceProvider
 
         GraphQL::addField('EntryInterface', 'seo', $seoField);
         GraphQL::addField('TermInterface', 'seo', $seoField);
+
+        return $this;
+    }
+    
+    protected function bootAddonBindings()
+    {
+        $this->app->singleton(SiteDefaults::class, SiteDefaults::class);
 
         return $this;
     }

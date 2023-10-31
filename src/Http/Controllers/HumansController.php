@@ -13,7 +13,7 @@ class HumansController extends Controller
         abort_unless(config('statamic.seo-pro.humans.enabled'), 404);
 
         $cascade = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(app(SiteDefaults::class)::load()->all())
             ->get();
 
         $contents = view('seo-pro::humans', $cascade);
