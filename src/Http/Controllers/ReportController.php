@@ -13,11 +13,11 @@ class ReportController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        if (! $request->ajax()) {
-            return view('seo-pro::reports');
-        }
+        $reports = Report::all();
 
-        return Report::all();
+        return $reports->isNotEmpty()
+            ? view('seo-pro::reports.index', ['reports' => $reports])
+            : view('seo-pro::reports.create');
     }
 
     public function store()
