@@ -31,7 +31,9 @@ class ReportController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        return Report::find($id)->withPages();
+        $report = Report::find($id)->withPages();
+
+        return view('seo-pro::reports.show', ['report' => $report]);
     }
 
     public function destroy($id)
