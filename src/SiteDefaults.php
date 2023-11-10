@@ -34,7 +34,9 @@ class SiteDefaults extends Collection
      */
     public static function load($items = null)
     {
-        return new static($items);
+        $class = app(SiteDefaults::class);
+
+        return new $class($items);
     }
 
     /**
