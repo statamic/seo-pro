@@ -34,7 +34,9 @@ class SiteDefaults extends Collection
      */
     public static function load($items = null)
     {
-        return new static($items);
+        $class = app(SiteDefaults::class);
+
+        return new $class($items);
     }
 
     /**
@@ -51,7 +53,7 @@ class SiteDefaults extends Collection
             ->augment()
             ->values();
 
-        $defaultValues = static::blueprint()
+        $defaultValues = $this->blueprint()
             ->fields()
             ->addValues($this->items)
             ->augment()
@@ -100,7 +102,7 @@ class SiteDefaults extends Collection
      *
      * @return \Statamic\Fields\Blueprint
      */
-    public static function blueprint()
+    public function blueprint()
     {
         return Blueprint::make()->setContents([
             'sections' => [
