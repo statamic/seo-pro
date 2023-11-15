@@ -2,12 +2,12 @@
 
 namespace Tests;
 
+use Facades\Statamic\View\Cascade as StatamicViewCacade;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Statamic\Extensions\Pagination\LengthAwarePaginator as StatamicLengthAwarePaginator;
 use Statamic\Facades\Blink;
-use Statamic\Facades\Cascade as StatamicViewCacade;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
