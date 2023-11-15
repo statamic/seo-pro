@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Statamic\Extensions\Pagination\LengthAwarePaginator as StatamicLengthAwarePaginator;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Cascade as StatamicViewCacade;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
@@ -27,6 +28,14 @@ class MetaTagTest extends TestCase
                 'title' => 'The View',
                 'description' => 'A wonderful view!',
             ]);
+
+            Route::get('custom-get-route', function () {
+                StatamicViewCacade::hydrated(function ($cascade) {
+                    $cascade->set('title', 'Custom Route Entry Title');
+                });
+
+                return view('page');
+            });
         });
     }
 
@@ -744,6 +753,24 @@ EOT;
 
         $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_hydrates_cascade_on_custom_routes_using_blade_directive($viewType)
+    {
+        if ($viewType === 'antlers') {
+            $this->markTestSkipped();
+        }
+
+        $this->prepareViews($viewType);
+
+        $content = $this->get('/custom-get-route')->content();
+
+        $this->assertStringContainsString('<title>Custom Route Entry Title | Site Name</title>', $content);
     }
 
     protected function setCustomGlidePresetDimensions($app)
