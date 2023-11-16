@@ -26,7 +26,15 @@ class SeoProDirective extends SeoProTags
 
     protected function getContextFromCascade()
     {
-        return Cascade::instance()->toArray();
+        $cascade = Cascade::instance();
+
+        // If the cascade has not yet been hydrated, ensure it is hydrated.
+        // This is important for people using custom route/controller/view implementations.
+        if (empty($cascade->toArray())) {
+            $cascade->hydrate();
+        }
+
+        return $cascade->toArray();
     }
 
     protected function getContextFromCurrentRouteData()
