@@ -15,6 +15,8 @@ class SeoProFieldtype extends Fieldtype
 {
     protected $selectable = true;
     protected $icon = 'seo-search-graph';
+    protected $fieldConfig;
+    protected $fields;
 
     public function preProcess($data)
     {
@@ -47,22 +49,32 @@ class SeoProFieldtype extends Fieldtype
     }
 
     protected function fields()
-    {
-        return new BlueprintFields($this->fieldConfig());
+    {    
+        if ($this->fields) {
+            return $this->fields;
+        }
+            
+        return $this->fields = new BlueprintFields($this->fieldConfig());
     }
 
     protected function fieldConfig()
     {
-        if ($this->field()->parent() instanceof Entry || $this->field()->parent() instanceof Term) {
-            $parent = $this->field()->parent();
+        if ($this->fieldConfig) {
+            return $this->fieldConfig;
+        }
+        
+        $parent = $this->field()->parent();
+        
+        if (! ($parent instanceof Entry || $parent instanceof Term)) {
+            $parent = null;
         }
 
-        return SeoProFields::new($parent ?? null)->getConfig();
+        return $this->fieldConfig = SeoProFields::new($parent ?? null)->getConfig();
     }
 
     public function augment($data)
     {
-        if (! is_iterable($data)) {
+        if (empty($data) || ! is_iterable($data)) {
             return $data;
         }
 

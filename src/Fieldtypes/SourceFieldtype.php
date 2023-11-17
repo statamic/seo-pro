@@ -11,6 +11,8 @@ class SourceFieldtype extends Fieldtype
     public static $handle = 'seo_pro_source';
 
     public $selectable = false;
+    private $sourceField;
+    private $sourceFieldType;
 
     public function preProcess($data)
     {
@@ -93,7 +95,7 @@ class SourceFieldtype extends Fieldtype
             return $data;
         }
 
-        $fieldtype = $this->sourceField()->fieldtype();
+        $fieldtype = $this->fieldtype();
 
         if ($data === false) {
             $data = $fieldtype->defaultValue();
@@ -104,15 +106,23 @@ class SourceFieldtype extends Fieldtype
 
     protected function sourceField()
     {
-        if (! $config = $this->config('field')) {
-            return null;
+        if ($this->sourceField) {
+            return $this->sourceField;
         }
 
-        return new Field(null, $config);
+        if (! $config = $this->config('field')) {
+            return $this->sourceField = null;
+        }
+
+        return $this->sourceField = new Field(null, $config);
     }
 
     protected function fieldtype()
     {
-        return $this->sourceField()->fieldtype();
+        if ($this->sourceFieldType) {
+            return $this->sourceFieldType;
+        }
+        
+        return $this->sourceFieldType = $this->sourceField()->fieldtype();
     }
 }

@@ -11,6 +11,8 @@ use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
 class SiteDefaults extends Collection
 {
     use HasAssetField;
+    
+    private static $instance;
 
     /**
      * Load site defaults collection.
@@ -34,9 +36,13 @@ class SiteDefaults extends Collection
      */
     public static function load($items = null)
     {
+        if (self::$instance){
+            return self::$instance;
+        }
+
         $class = app(SiteDefaults::class);
 
-        return new $class($items);
+        return self::$instance = new $class($items);
     }
 
     /**
