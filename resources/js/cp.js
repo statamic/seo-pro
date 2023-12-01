@@ -4,4 +4,5 @@ import StatusIcon from './components/reporting/StatusIcon.vue';
 
 Statamic.$components.register('seo_pro-fieldtype', SeoProFieldtype);
 Statamic.$components.register('seo_pro_source-fieldtype', SourceFieldtype);
-Statamic.$components.register('seo-status-icon', StatusIcon);
+
+Statamic.$components.register('seo-pro-status-icon', StatusIcon);

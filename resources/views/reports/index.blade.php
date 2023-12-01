@@ -15,7 +15,7 @@
                     <tr>
                         <td class="text-xs whitespace-no-wrap">
                             <div class="flex items-center">
-                                <seo-status-icon status="{{ $report->status() }}" class="mr-3"></seo-status-icon>
+                                <seo-pro-status-icon status="{{ $report->status() }}" class="mr-3"></seo-pro-status-icon>
                                 {{ $report->score() }}%
                             </div>
                         </td>
