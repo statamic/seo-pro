@@ -5,6 +5,7 @@
 
     <div class="flex items-center mb-6">
         <h1 class="flex-1">{{ __('seo-pro::messages.reports') }}</h1>
+        <a href="{{ cp_route('seo-pro.reports.create') }}" class="btn-primary">{{ __('seo-pro::messages.generate_report') }}</a>
     </div>
 
     <div class="card p-0 overflow-hidden">

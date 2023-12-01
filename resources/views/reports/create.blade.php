@@ -60,7 +60,7 @@
             </div>
             <p class="text-gray-700 leading-normal my-8 text-lg antialiased">{{ __('seo-pro::messages.seo_reports_description') }}</p>
             <div>
-                <a href="generateReport" class="btn-primary btn-lg">{{ __('seo-pro::messages.generate_report') }}</a>
+                <a href="{{ cp_route('seo-pro.reports.create') }}" class="btn-primary btn-lg">{{ __('seo-pro::messages.generate_report') }}</a>
             </div>
         </div>
     </div>
