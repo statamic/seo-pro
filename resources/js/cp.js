@@ -1,8 +1,10 @@
 import SeoProFieldtype from './components/fieldtypes/SeoProFieldtype.vue';
 import SourceFieldtype from './components/fieldtypes/SourceFieldtype.vue';
 import StatusIcon from './components/reporting/StatusIcon.vue';
+import Report from './components/reporting/Report.vue';
 
 Statamic.$components.register('seo_pro-fieldtype', SeoProFieldtype);
 Statamic.$components.register('seo_pro_source-fieldtype', SourceFieldtype);
 
 Statamic.$components.register('seo-pro-status-icon', StatusIcon);
+Statamic.$components.register('seo-pro-report', Report);
