@@ -35,6 +35,10 @@ class ReportController extends CpController
 
         $report = Report::find($id)->withPages();
 
+        if ($request->ajax()) {
+            return $this->showOrGenerateReport($report);
+        }
+
         return view('seo-pro::reports.show', ['report' => $report]);
     }
 
@@ -43,5 +47,14 @@ class ReportController extends CpController
         abort_unless(User::current()->can('delete seo reports'), 403);
 
         return Report::find($id)->delete();
+    }
+
+    private function showOrGenerateReport($report)
+    {
+        if ($report->status() === 'pending') {
+            $report->queueGenerate();
+        }
+
+        return $report;
     }
 }
