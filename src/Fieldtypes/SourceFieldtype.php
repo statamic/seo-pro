@@ -122,7 +122,7 @@ class SourceFieldtype extends Fieldtype
         if ($this->sourceFieldType) {
             return $this->sourceFieldType;
         }
-        
+
         return $this->sourceFieldType = $this->sourceField()->fieldtype();
     }
 }

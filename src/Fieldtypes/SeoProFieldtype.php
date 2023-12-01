@@ -49,11 +49,11 @@ class SeoProFieldtype extends Fieldtype
     }
 
     protected function fields()
-    {    
+    {
         if ($this->fields) {
             return $this->fields;
         }
-            
+
         return $this->fields = new BlueprintFields($this->fieldConfig());
     }
 
@@ -62,9 +62,9 @@ class SeoProFieldtype extends Fieldtype
         if ($this->fieldConfig) {
             return $this->fieldConfig;
         }
-        
+
         $parent = $this->field()->parent();
-        
+
         if (! ($parent instanceof Entry || $parent instanceof Term)) {
             $parent = null;
         }

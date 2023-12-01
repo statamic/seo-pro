@@ -12,7 +12,7 @@ use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
 class SiteDefaults extends Collection
 {
     use HasAssetField;
-    
+
     private static $instance;
 
     /**
@@ -76,7 +76,7 @@ class SiteDefaults extends Collection
         File::put($this->path(), YAML::dump($this->items));
 
         SeoProSiteDefaultsSaved::dispatch($this);
-            
+
         Blink::forget('seo-pro::defaults');
     }
 
