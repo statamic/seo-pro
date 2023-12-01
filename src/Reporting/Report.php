@@ -22,6 +22,7 @@ class Report implements Arrayable, Jsonable
     protected $id;
     protected $pages;
     protected $results;
+    protected $generating = false;
     protected $generatePages = false;
     protected $date;
     protected $score;
@@ -71,11 +72,20 @@ class Report implements Arrayable, Jsonable
 
     public function generate()
     {
+        $this->save(['generating' => true]);
+
         $this->pages()->each(function ($page) {
             $page->validate();
         });
 
         $this->validateSite()->save();
+
+        return $this;
+    }
+
+    public function queueGenerate()
+    {
+        Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $this->id()]);
 
         return $this;
     }
@@ -256,12 +266,12 @@ class Report implements Arrayable, Jsonable
         return $instance->load();
     }
 
-    public function save()
+    public function save($extra = [])
     {
-        File::put($this->path(), YAML::dump([
+        File::put($this->path(), YAML::dump(array_merge([
             'date' => time(),
             'results' => $this->results,
-        ]));
+        ], $extra)));
 
         return $this;
     }
@@ -294,24 +304,18 @@ class Report implements Arrayable, Jsonable
 
         $this->date = $raw['date'];
         $this->results = $raw['results'];
+        $this->generating = $raw['generating'] ?? false;
         $this->loadPages();
 
         return $this;
     }
 
-    public static function queue()
-    {
-        $report = static::create()->save();
-
-        $id = $report->id();
-
-        Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $id]);
-
-        return $id;
-    }
-
     public function status()
     {
+        if ($this->generating) {
+            return 'generating';
+        }
+
         $results = $this->resultsToArray();
 
         if (empty($results)) {
