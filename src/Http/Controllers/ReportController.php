@@ -20,11 +20,13 @@ class ReportController extends CpController
             : view('seo-pro::reports.create');
     }
 
-    public function store()
+    public function create(Request $request)
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        return Report::queue();
+        $report = Report::create()->save();
+
+        return redirect()->cpRoute('seo-pro.reports.show', $report->id());
     }
 
     public function show(Request $request, $id)

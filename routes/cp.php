@@ -4,7 +4,7 @@ use Statamic\SeoPro\Http\Controllers;
 
 Route::view('seo-pro', 'seo-pro::index')->name('seo-pro.index');
 Route::get('seo-pro/reports', [Controllers\ReportController::class, 'index'])->name('seo-pro.reports.index');
-Route::post('seo-pro/reports', [Controllers\ReportController::class, 'store'])->name('seo-pro.reports.store');
+Route::get('seo-pro/reports/create', [Controllers\ReportController::class, 'create'])->name('seo-pro.reports.create');
 Route::get('seo-pro/reports/{seo_pro_report}', [Controllers\ReportController::class, 'show'])->name('seo-pro.reports.show');
 Route::delete('seo-pro/reports/{seo_pro_report}', [Controllers\ReportController::class, 'destroy'])->name('seo-pro.reports.destroy');
 
