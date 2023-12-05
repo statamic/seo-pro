@@ -13,8 +13,6 @@ class SiteDefaults extends Collection
 {
     use HasAssetField;
 
-    private static $instance;
-
     /**
      * Load site defaults collection.
      *
@@ -39,7 +37,7 @@ class SiteDefaults extends Collection
     {
         $class = app(SiteDefaults::class);
 
-        return self::$instance = new $class($items);
+        return new $class($items);
     }
 
     /**
