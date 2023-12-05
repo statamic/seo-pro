@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
-use Statamic\Facades\Blink;
 use Statamic\Fields\Field;
 use Statamic\Fields\Fieldtype;
 use Statamic\Support\Str;
@@ -105,19 +104,15 @@ class SourceFieldtype extends Fieldtype
 
     protected function sourceField()
     {
-        return Blink::once('seo-pro::source-field', function () {
-            if (! $config = $this->config('field')) {
-                return;
-            }
-    
-            return new Field(null, $config);
-        });
+        if (! $config = $this->config('field')) {
+            return;
+        }
+
+        return new Field(null, $config);
     }
 
     protected function fieldtype()
     {
-        return Blink::once('seo-pro::source-field-type', function () {
-            return $this->sourceField()->fieldtype();
-        });
+        return $this->sourceField()->fieldtype();
     }
 }
