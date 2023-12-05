@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Fieldtypes;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
@@ -15,8 +16,6 @@ class SeoProFieldtype extends Fieldtype
 {
     protected $selectable = true;
     protected $icon = 'seo-search-graph';
-    protected $fieldConfig;
-    protected $fields;
 
     public function preProcess($data)
     {
@@ -50,26 +49,22 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fields()
     {
-        if ($this->fields) {
-            return $this->fields;
-        }
-
-        return $this->fields = new BlueprintFields($this->fieldConfig());
+        return Blink::once('seo-pro::blueprint-fields', function () {
+            return new BlueprintFields($this->fieldConfig());
+        });
     }
 
     protected function fieldConfig()
     {
-        if ($this->fieldConfig) {
-            return $this->fieldConfig;
-        }
-
-        $parent = $this->field()->parent();
-
-        if (! ($parent instanceof Entry || $parent instanceof Term)) {
-            $parent = null;
-        }
-
-        return $this->fieldConfig = SeoProFields::new($parent ?? null)->getConfig();
+        return Blink::once('seo-pro::blueprint-fields-config', function () {
+            $parent = $this->field()->parent();
+    
+            if (! ($parent instanceof Entry || $parent instanceof Term)) {
+                $parent = null;
+            }
+    
+            return SeoProFields::new($parent ?? null)->getConfig();
+        });
     }
 
     public function augment($data)
