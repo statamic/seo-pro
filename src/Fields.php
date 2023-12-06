@@ -3,6 +3,8 @@
 namespace Statamic\SeoPro;
 
 use Statamic\Assets\Asset;
+use Statamic\Facades\Blink;
+use Statamic\Statamic;
 
 class Fields
 {
@@ -241,14 +243,22 @@ class Fields
      */
     protected function getPlaceholder($handle)
     {
-        $cascade = (new Cascade)->with(SiteDefaults::load()->all());
-
-        if ($this->data) {
-            $cascade = $cascade
-                ->with($this->getSectionDefaults($this->data))
-                ->with($this->data->value('seo', []))
-                ->withCurrent($this->data);
+        if (! Statamic::isCpRoute()) {
+            return null;
         }
+
+        $cascade = Blink::once('seo-pro::placeholder.cascade', function () {
+            $cascade = (new Cascade)->with(SiteDefaults::load()->all());
+
+            if ($this->data) {
+                $cascade = $cascade
+                    ->with($this->getSectionDefaults($this->data))
+                    ->with($this->data->value('seo', []))
+                    ->withCurrent($this->data);
+            }
+
+            return $cascade;
+        });
 
         $placeholder = $cascade->value($handle);
 

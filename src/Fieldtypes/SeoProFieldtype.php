@@ -53,8 +53,10 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fieldConfig()
     {
-        if ($this->field()->parent() instanceof Entry || $this->field()->parent() instanceof Term) {
-            $parent = $this->field()->parent();
+        $parent = $this->field()->parent();
+
+        if (! ($parent instanceof Entry || $parent instanceof Term)) {
+            $parent = null;
         }
 
         return SeoProFields::new($parent ?? null)->getConfig();
@@ -62,7 +64,7 @@ class SeoProFieldtype extends Fieldtype
 
     public function augment($data)
     {
-        if (! is_iterable($data)) {
+        if (empty($data) || ! is_iterable($data)) {
             return $data;
         }
 

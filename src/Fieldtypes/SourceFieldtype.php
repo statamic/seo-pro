@@ -93,7 +93,7 @@ class SourceFieldtype extends Fieldtype
             return $data;
         }
 
-        $fieldtype = $this->sourceField()->fieldtype();
+        $fieldtype = $this->fieldtype();
 
         if ($data === false) {
             $data = $fieldtype->defaultValue();
@@ -105,7 +105,7 @@ class SourceFieldtype extends Fieldtype
     protected function sourceField()
     {
         if (! $config = $this->config('field')) {
-            return null;
+            return;
         }
 
         return new Field(null, $config);

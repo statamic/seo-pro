@@ -27,15 +27,17 @@ trait GetsSectionDefaults
             return [];
         }
 
-        return Blueprint::make()
-            ->setContents([
-                'fields' => Fields::new()->getConfig(),
-            ])
-            ->fields()
-            ->addValues($seo = $parent->cascade('seo') ?: [])
-            ->augment()
-            ->values()
-            ->only(array_keys($seo));
+        return Blink::once($this->getCacheKey($parent).'.augmented', function () use ($parent) {
+            return Blueprint::make()
+                ->setContents([
+                    'fields' => Fields::new()->getConfig(),
+                ])
+                ->fields()
+                ->addValues($seo = $parent->cascade('seo') ?: [])
+                ->augment()
+                ->values()
+                ->only(array_keys($seo));
+        });
     }
 
     protected function getCacheKey($parent)
