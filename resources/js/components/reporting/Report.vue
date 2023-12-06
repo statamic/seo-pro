@@ -2,6 +2,11 @@
 
     <div>
 
+        <header class="flex items-center mb-6">
+            <h1 class="flex-1">{{ __('seo-pro::messages.seo_report') }}</h1>
+            <a :href="cp_url('seo-pro/reports/create')" class="btn-primary" v-if="! loading">{{ __('seo-pro::messages.generate_report') }}</a>
+        </header>
+
         <div v-if="loading" class="card loading">
             <span class="icon icon-circular-graph animation-spin"></span>
             {{ __('seo-pro::messages.report_is_being_generated')}}
@@ -112,7 +117,7 @@ export default {
             this.report = null;
 
             Statamic.$request.get(cp_url(`seo-pro/reports/${this.id}`)).then(response => {
-                if (response.data.status === 'pending') {
+                if (response.data.status === 'pending' || response.data.status === 'generating') {
                     setTimeout(() => this.load(), 1000);
                     return;
                 }

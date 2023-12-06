@@ -13,25 +13,33 @@ class ReportController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        if (! $request->ajax()) {
-            return view('seo-pro::reports');
-        }
+        $reports = Report::all();
 
-        return Report::all();
+        return $reports->isNotEmpty()
+            ? view('seo-pro::reports.index', ['reports' => $reports])
+            : view('seo-pro::reports.create');
     }
 
-    public function store()
+    public function create(Request $request)
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        return Report::queue();
+        $report = Report::create()->save();
+
+        return redirect()->cpRoute('seo-pro.reports.show', $report->id());
     }
 
     public function show(Request $request, $id)
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        return Report::find($id)->withPages();
+        $report = Report::find($id)->withPages();
+
+        if ($request->ajax()) {
+            return $this->showOrGenerateReport($report);
+        }
+
+        return view('seo-pro::reports.show', ['report' => $report]);
     }
 
     public function destroy($id)
@@ -39,5 +47,14 @@ class ReportController extends CpController
         abort_unless(User::current()->can('delete seo reports'), 403);
 
         return Report::find($id)->delete();
+    }
+
+    private function showOrGenerateReport($report)
+    {
+        if ($report->status() === 'pending') {
+            $report->queueGenerate();
+        }
+
+        return $report;
     }
 }

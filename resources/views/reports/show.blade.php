@@ -2,11 +2,13 @@
 @section('title', __('seo-pro::messages.seo_reports'))
 
 @section('content')
-    <seo-reports
-        listing-route="{{ cp_route('seo-pro.reports.index') }}"
-        generate-route="{{ cp_route('seo-pro.reports.store') }}"
-        :can-delete-reports="{{ json_encode(auth()->user()->can('delete seo reports')) }}"
-    ></seo-reports>
+
+    @include('statamic::partials.breadcrumb', [
+        'url' => cp_route('seo-pro.reports.index'),
+        'title' => __('seo-pro::messages.reports'),
+    ])
+
+    <seo-pro-report id="{{ $report->id() }}"></seo-pro-report>
 
     @include('statamic::partials.docs-callout', [
         'topic' => 'SEO Pro',
