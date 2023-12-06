@@ -4,7 +4,6 @@ namespace Statamic\SeoPro\Fieldtypes;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
-use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
@@ -49,22 +48,18 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fields()
     {
-        return Blink::once('seo-pro::blueprint-fields', function () {
-            return new BlueprintFields($this->fieldConfig());
-        });
+        return new BlueprintFields($this->fieldConfig());
     }
 
     protected function fieldConfig()
     {
-        return Blink::once('seo-pro::blueprint-fields-config', function () {
-            $parent = $this->field()->parent();
-    
-            if (! ($parent instanceof Entry || $parent instanceof Term)) {
-                $parent = null;
-            }
-    
-            return SeoProFields::new($parent ?? null)->getConfig();
-        });
+        $parent = $this->field()->parent();
+
+        if (! ($parent instanceof Entry || $parent instanceof Term)) {
+            $parent = null;
+        }
+
+        return SeoProFields::new($parent ?? null)->getConfig();
     }
 
     public function augment($data)
