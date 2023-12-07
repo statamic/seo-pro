@@ -8,7 +8,7 @@
         </header>
 
         <div v-if="loading" class="card loading">
-            <loading-graphic v-if="initialStatus === 'pending'" :text="__('seo-pro::messages.report_is_being_generated')" />
+            <loading-graphic v-if="isGenerating" :text="__('seo-pro::messages.report_is_being_generated')" />
             <loading-graphic v-else />
         </div>
 
@@ -96,17 +96,27 @@ export default {
         StatusIcon,
     },
 
-    props: [
-        'id',
-        'initialStatus',
-    ],
+    props: ['initialReport'],
 
     data() {
         return {
             loading: false,
-            report: null,
+            report: this.initialReport,
             selected: null
         }
+    },
+
+    computed: {
+
+        isGenerating() {
+            return this.initialReport.status === 'pending'
+                || this.initialReport.status === 'generating';
+        },
+
+        id() {
+            return this.report.id;
+        },
+
     },
 
     mounted() {
@@ -117,7 +127,6 @@ export default {
 
         load() {
             this.loading = true;
-            this.report = null;
 
             Statamic.$request.get(cp_url(`seo-pro/reports/${this.id}`)).then(response => {
                 if (response.data.status === 'pending' || response.data.status === 'generating') {
