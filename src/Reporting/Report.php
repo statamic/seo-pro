@@ -230,6 +230,8 @@ class Report implements Arrayable, Jsonable
     {
         $this->generatePages = true;
 
+        $this->loadPages();
+
         return $this;
     }
 
@@ -309,7 +311,6 @@ class Report implements Arrayable, Jsonable
 
         $this->date = $raw['date'];
         $this->results = $raw['results'];
-        $this->loadPages();
 
         return $this;
     }

@@ -33,7 +33,7 @@ class ReportController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        $report = Report::find($id)->withPages();
+        $report = Report::find($id);
 
         if ($request->ajax()) {
             return $this->showOrGenerateReport($report);
@@ -55,6 +55,6 @@ class ReportController extends CpController
             $report->queueGenerate();
         }
 
-        return $report;
+        return $report->withPages();
     }
 }
