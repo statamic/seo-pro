@@ -62,7 +62,7 @@ class Report implements Arrayable, Jsonable
 
     public function id()
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
     public function date()
@@ -174,7 +174,7 @@ class Report implements Arrayable, Jsonable
     public function toArray()
     {
         $array = [
-            'id' => $this->id,
+            'id' => $this->id(),
             'date' => $this->date()->timestamp,
             'status' => $this->status(),
             'score' => $this->score(),
