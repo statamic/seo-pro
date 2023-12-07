@@ -277,6 +277,7 @@ class Report implements Arrayable, Jsonable
         File::put($this->path(), YAML::dump([
             'date' => time(),
             'status' => $this->status(),
+            'score' => $this->score(),
             'results' => $this->results,
         ]));
 
@@ -311,6 +312,7 @@ class Report implements Arrayable, Jsonable
 
         $this->date = $raw['date'];
         $this->results = $raw['results'];
+        $this->score = $raw['score'] ?? null;
 
         return $this;
     }
@@ -351,6 +353,10 @@ class Report implements Arrayable, Jsonable
 
     public function score()
     {
+        if (in_array($this->status(), ['pending', 'generating'])) {
+            return null;
+        }
+
         if ($this->score) {
             return $this->score;
         }
