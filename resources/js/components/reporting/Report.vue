@@ -8,8 +8,8 @@
         </header>
 
         <div v-if="loading" class="card loading">
-            <span class="icon icon-circular-graph animation-spin"></span>
-            {{ __('seo-pro::messages.report_is_being_generated')}}
+            <loading-graphic v-if="initialStatus === 'pending'" :text="__('seo-pro::messages.report_is_being_generated')" />
+            <loading-graphic v-else />
         </div>
 
         <div v-else-if="!loading && report">
@@ -96,7 +96,10 @@ export default {
         StatusIcon,
     },
 
-    props: ['id'],
+    props: [
+        'id',
+        'initialStatus',
+    ],
 
     data() {
         return {
