@@ -20,6 +20,7 @@ class Report implements Arrayable, Jsonable
     use GetsSectionDefaults;
 
     protected $id;
+    protected $raw;
     protected $pages;
     protected $results;
     protected $generating = false;
@@ -308,11 +309,11 @@ class Report implements Arrayable, Jsonable
 
     public function load()
     {
-        $raw = YAML::parse(File::get($this->path()));
+        $this->raw = YAML::parse(File::get($this->path()));
 
-        $this->date = $raw['date'];
-        $this->results = $raw['results'];
-        $this->score = $raw['score'] ?? null;
+        $this->date = $this->raw['date'];
+        $this->results = $this->raw['results'];
+        $this->score = $this->raw['score'] ?? null;
 
         return $this;
     }
@@ -354,6 +355,8 @@ class Report implements Arrayable, Jsonable
     public function score()
     {
         if (in_array($this->status(), ['pending', 'generating'])) {
+            return null;
+        } elseif (! array_key_exists('score', $this->raw)) {
             return null;
         }
 

@@ -16,7 +16,9 @@
                         <td class="text-xs whitespace-no-wrap">
                             <div class="flex items-center">
                                 <seo-pro-status-icon status="{{ $report->status() }}" class="mr-3"></seo-pro-status-icon>
-                                {{ $report->score() }}%
+                                @unless ($report->score() === null)
+                                    {{ $report->score() }}%
+                                @endunless
                             </div>
                         </td>
                         <td>
