@@ -72,11 +72,15 @@ class Report implements Arrayable, Jsonable
 
     public function generate()
     {
-        $this->save(['generating' => true]);
+        $this->generating = true;
+
+        $this->save();
 
         $this->pages()->each(function ($page) {
             $page->validate();
         });
+
+        $this->generating = false;
 
         $this->validateSite()->save();
 
@@ -266,12 +270,13 @@ class Report implements Arrayable, Jsonable
         return $instance->load();
     }
 
-    public function save($extra = [])
+    public function save()
     {
-        File::put($this->path(), YAML::dump(array_merge([
+        File::put($this->path(), YAML::dump([
             'date' => time(),
+            'status' => $this->status(),
             'results' => $this->results,
-        ], $extra)));
+        ]));
 
         return $this;
     }
@@ -304,7 +309,6 @@ class Report implements Arrayable, Jsonable
 
         $this->date = $raw['date'];
         $this->results = $raw['results'];
-        $this->generating = $raw['generating'] ?? false;
         $this->loadPages();
 
         return $this;
