@@ -273,9 +273,14 @@ class Report implements Arrayable, Jsonable
         return $instance->load();
     }
 
+    public function fresh()
+    {
+        return static::find($this->id());
+    }
+
     public function save()
     {
-        File::put($this->path(), YAML::dump([
+        File::put($this->path(), YAML::dump($this->raw = [
             'date' => time(),
             'status' => $this->status(),
             'score' => $this->score(),
@@ -360,6 +365,10 @@ class Report implements Arrayable, Jsonable
     public function score()
     {
         if (! $this->isGenerated()) {
+            return null;
+        }
+
+        if ($this->isLegacyReport()) {
             return null;
         }
 
