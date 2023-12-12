@@ -1,8 +1,11 @@
 <template>
 
-    <div v-if="score">
-        <seo-pro-status-icon :status="status" class="inline-block mr-3"></seo-pro-status-icon>
-        {{ score }}%
+    <div>
+        <div v-if="score">
+            <seo-pro-status-icon :status="status" class="inline-block ml-1 mr-3"></seo-pro-status-icon>
+            {{ score }}%
+        </div>
+        <loading-graphic v-else :text="null" :inline="true" />
     </div>
 
 </template>
