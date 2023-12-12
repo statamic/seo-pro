@@ -51,7 +51,7 @@ class ReportController extends CpController
 
     private function showOrGenerateReport($report)
     {
-        if ($report->status() === 'pending') {
+        if ($report->status() === 'pending' || $report->isLegacyReport()) {
             $report->queueGenerate();
         }
 

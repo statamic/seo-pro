@@ -15,8 +15,8 @@
                     <tr>
                         <td class="text-xs whitespace-no-wrap">
                             <div class="flex items-center">
-                                <seo-pro-status-icon status="{{ $report->status() }}" class="mr-3"></seo-pro-status-icon>
-                                @unless ($report->score() === null)
+                                @unless ($report->isLegacyReport())
+                                    <seo-pro-status-icon status="{{ $report->status() }}" class="mr-3"></seo-pro-status-icon>
                                     {{ $report->score() }}%
                                 @endunless
                             </div>

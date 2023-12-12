@@ -345,6 +345,11 @@ class Report implements Arrayable, Jsonable
         return $status;
     }
 
+    public function isGenerated()
+    {
+        return ! in_array($this->status(), ['pending', 'generating']);
+    }
+
     public function defaults()
     {
         return collect((new Cascade)
@@ -354,9 +359,7 @@ class Report implements Arrayable, Jsonable
 
     public function score()
     {
-        if (in_array($this->status(), ['pending', 'generating'])) {
-            return null;
-        } elseif (! array_key_exists('score', $this->raw)) {
+        if (! $this->isGenerated()) {
             return null;
         }
 
@@ -402,5 +405,10 @@ class Report implements Arrayable, Jsonable
             ->merge(Entry::all())
             ->merge(Term::all())
             ->values();
+    }
+
+    public function isLegacyReport()
+    {
+        return $this->isGenerated() && ! array_key_exists('score', $this->raw ?? []);
     }
 }
