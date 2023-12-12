@@ -253,7 +253,7 @@ class Report implements Arrayable, Jsonable
             })
             ->filter()
             ->sortByDesc
-            ->date()
+            ->id()
             ->values();
     }
 
