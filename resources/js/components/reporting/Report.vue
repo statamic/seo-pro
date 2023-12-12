@@ -7,53 +7,58 @@
             <a :href="cp_url('seo-pro/reports/create')" class="btn-primary" v-if="! loading">{{ __('seo-pro::messages.generate_report') }}</a>
         </header>
 
-        <div v-if="loading" class="card loading">
-            <loading-graphic v-if="isGenerating" :text="__('seo-pro::messages.report_is_being_generated')" />
-            <loading-graphic v-else />
-        </div>
+        <div v-if="report">
 
-        <div v-else-if="!loading && report">
-            <div class="flex flex-wrap -mx-4">
-                <div class="w-1/3 px-4">
-                    <div class="card py-2">
-                        <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.generated') }}</h2>
-                        <div class="text-lg"><relative-date :date="report.date"></relative-date></div>
+            <div v-if="isCachedHeaderReady">
+
+                <div class="flex flex-wrap -mx-4">
+                    <div class="w-1/3 px-4">
+                        <div class="card py-2">
+                            <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.generated') }}</h2>
+                            <div class="text-lg"><relative-date :date="report.date" /></div>
+                        </div>
                     </div>
-                </div>
-                <div class="w-1/3 px-4">
-                    <div class="card py-2">
-                        <h2 class="text-sm text-gray-700">{{ __('Pages Crawled') }}</h2>
-                        <div class="text-lg">{{ report.pages.length }}</div>
+                    <div class="w-1/3 px-4">
+                        <div class="card py-2">
+                            <h2 class="text-sm text-gray-700">{{ __('Pages Crawled') }}</h2>
+                            <div class="text-lg">{{ report.pages_crawled }}</div>
+                        </div>
                     </div>
-                </div>
-                <div class="w-1/3 px-4">
-                    <div class="card py-2">
-                        <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
-                        <div class="text-lg flex items-center">
-                            <div class="bg-gray-200 h-3 w-full rounded flex mr-2 ">
-                                <div class="h-3 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-yellow-dark': report.score < 90, 'bg-green-500': report.score >= 90 }" />
+                    <div class="w-1/3 px-4">
+                        <div class="card py-2">
+                            <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
+                            <div class="text-lg flex items-center">
+                                <div class="bg-gray-200 h-3 w-full rounded flex mr-2 ">
+                                    <div class="h-3 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-yellow-dark': report.score < 90, 'bg-green-500': report.score >= 90 }" />
+                                </div>
+                                <span>{{ report.score }}%</span>
                             </div>
-                            <span>{{ report.score }}%</span>
                         </div>
                     </div>
                 </div>
+
+                <div class="card p-0 mt-6">
+                    <table class="data-table">
+                        <tbody>
+                            <tr v-for="item in report.results">
+                                <td class="w-8 text-center">
+                                    <status-icon :status="item.status"></status-icon>
+                                </td>
+                                <td class="pl-0">{{ item.description }}</td>
+                                <td class="text-grey text-right">{{ item.comment }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
-            <div class="card p-0 mt-6">
-                <table class="data-table">
-                    <tbody>
-                        <tr v-for="item in report.results">
-                            <td class="w-8 text-center">
-                                <status-icon :status="item.status"></status-icon>
-                            </td>
-                            <td class="pl-0">{{ item.description }}</td>
-                            <td class="text-grey text-right">{{ item.comment }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div v-if="loading" class="card loading mt-6">
+                <loading-graphic v-if="isGenerating" :text="__('seo-pro::messages.report_is_being_generated')" />
+                <loading-graphic v-else />
             </div>
 
-            <div class="card p-0 mt-6">
+            <div v-else class="card p-0 mt-6">
                 <table class="data-table">
                     <tbody>
                         <tr v-for="item in report.pages">
@@ -116,6 +121,12 @@ export default {
         id() {
             return this.report.id;
         },
+
+        isCachedHeaderReady() {
+            return this.report.date
+                && this.report.pages_crawled
+                && this.report.score;
+        }
 
     },
 
