@@ -22,6 +22,7 @@ class Report implements Arrayable, Jsonable
     protected $id;
     protected $raw;
     protected $pages;
+    protected $pagesCrawled;
     protected $results;
     protected $generating = false;
     protected $generatePages = false;
@@ -126,6 +127,15 @@ class Report implements Arrayable, Jsonable
         return $this->pages = $this->pagesFromContent();
     }
 
+    public function pagesCrawled()
+    {
+        if ($this->pagesCrawled) {
+            return $this->pagesCrawled;
+        }
+
+        return $this->pagesCrawled = $this->pages?->count();
+    }
+
     protected function pagesFromContent()
     {
         return $this->allContent()
@@ -179,6 +189,7 @@ class Report implements Arrayable, Jsonable
             'date' => $this->date()->timestamp,
             'status' => $this->status(),
             'score' => $this->score(),
+            'pages_crawled' => $this->pagesCrawled(),
             'results' => $this->resultsToArray(),
         ];
 
@@ -284,6 +295,7 @@ class Report implements Arrayable, Jsonable
             'date' => time(),
             'status' => $this->status(),
             'score' => $this->score(),
+            'pages_crawled' => $this->pagesCrawled(),
             'results' => $this->results,
         ]));
 
@@ -319,6 +331,7 @@ class Report implements Arrayable, Jsonable
         $this->date = $this->raw['date'];
         $this->results = $this->raw['results'];
         $this->score = $this->raw['score'] ?? null;
+        $this->pagesCrawled = $this->raw['pages_crawled'] ?? null;
 
         return $this;
     }
