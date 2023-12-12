@@ -292,7 +292,7 @@ class Report implements Arrayable, Jsonable
     public function save()
     {
         File::put($this->path(), YAML::dump($this->raw = [
-            'date' => time(),
+            'date' => $this->date ?? time(),
             'status' => $this->status(),
             'score' => $this->score(),
             'pages_crawled' => $this->pagesCrawled(),
