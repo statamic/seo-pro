@@ -8,7 +8,7 @@
         'title' => __('seo-pro::messages.reports'),
     ])
 
-    <seo-pro-report id="{{ $report->id() }}"></seo-pro-report>
+    <seo-pro-report :initial-report="{{ $report->toJson() }}"></seo-pro-report>
 
     @include('statamic::partials.docs-callout', [
         'topic' => 'SEO Pro',

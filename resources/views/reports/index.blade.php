@@ -15,8 +15,11 @@
                     <tr>
                         <td class="text-xs whitespace-no-wrap">
                             <div class="flex items-center">
-                                <seo-pro-status-icon status="{{ $report->status() }}" class="mr-3"></seo-pro-status-icon>
-                                {{ $report->score() }}%
+                                <seo-pro-index-score
+                                    id="{{ $report->id() }}"
+                                    initial-status="{{ $report->status() }}"
+                                    initial-score="{{ $report->score() }}"
+                                ></seo-pro-index-score>
                             </div>
                         </td>
                         <td>

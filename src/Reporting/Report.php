@@ -20,7 +20,9 @@ class Report implements Arrayable, Jsonable
     use GetsSectionDefaults;
 
     protected $id;
+    protected $raw;
     protected $pages;
+    protected $pagesCrawled;
     protected $results;
     protected $generating = false;
     protected $generatePages = false;
@@ -62,7 +64,7 @@ class Report implements Arrayable, Jsonable
 
     public function id()
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
     public function date()
@@ -72,11 +74,15 @@ class Report implements Arrayable, Jsonable
 
     public function generate()
     {
-        $this->save(['generating' => true]);
+        $this->generating = true;
+
+        $this->save();
 
         $this->pages()->each(function ($page) {
             $page->validate();
         });
+
+        $this->generating = false;
 
         $this->validateSite()->save();
 
@@ -119,6 +125,15 @@ class Report implements Arrayable, Jsonable
     protected function createPages()
     {
         return $this->pages = $this->pagesFromContent();
+    }
+
+    public function pagesCrawled()
+    {
+        if ($this->pagesCrawled) {
+            return $this->pagesCrawled;
+        }
+
+        return $this->pagesCrawled = $this->pages?->count();
     }
 
     protected function pagesFromContent()
@@ -170,10 +185,11 @@ class Report implements Arrayable, Jsonable
     public function toArray()
     {
         $array = [
-            'id' => $this->id,
+            'id' => $this->id(),
             'date' => $this->date()->timestamp,
             'status' => $this->status(),
             'score' => $this->score(),
+            'pages_crawled' => $this->pagesCrawled(),
             'results' => $this->resultsToArray(),
         ];
 
@@ -226,6 +242,8 @@ class Report implements Arrayable, Jsonable
     {
         $this->generatePages = true;
 
+        $this->loadPages();
+
         return $this;
     }
 
@@ -246,7 +264,7 @@ class Report implements Arrayable, Jsonable
             })
             ->filter()
             ->sortByDesc
-            ->date()
+            ->id()
             ->values();
     }
 
@@ -266,12 +284,20 @@ class Report implements Arrayable, Jsonable
         return $instance->load();
     }
 
-    public function save($extra = [])
+    public function fresh()
     {
-        File::put($this->path(), YAML::dump(array_merge([
-            'date' => time(),
+        return static::find($this->id());
+    }
+
+    public function save()
+    {
+        File::put($this->path(), YAML::dump($this->raw = [
+            'date' => $this->date ?? time(),
+            'status' => $this->status(),
+            'score' => $this->score(),
+            'pages_crawled' => $this->pagesCrawled(),
             'results' => $this->results,
-        ], $extra)));
+        ]));
 
         return $this;
     }
@@ -300,12 +326,12 @@ class Report implements Arrayable, Jsonable
 
     public function load()
     {
-        $raw = YAML::parse(File::get($this->path()));
+        $this->raw = YAML::parse(File::get($this->path()));
 
-        $this->date = $raw['date'];
-        $this->results = $raw['results'];
-        $this->generating = $raw['generating'] ?? false;
-        $this->loadPages();
+        $this->date = $this->raw['date'];
+        $this->results = $this->raw['results'];
+        $this->score = $this->raw['score'] ?? null;
+        $this->pagesCrawled = $this->raw['pages_crawled'] ?? null;
 
         return $this;
     }
@@ -337,6 +363,11 @@ class Report implements Arrayable, Jsonable
         return $status;
     }
 
+    public function isGenerated()
+    {
+        return ! in_array($this->status(), ['pending', 'generating']);
+    }
+
     public function defaults()
     {
         return collect((new Cascade)
@@ -346,10 +377,25 @@ class Report implements Arrayable, Jsonable
 
     public function score()
     {
+        if (! $this->isGenerated()) {
+            return null;
+        }
+
+        if ($this->isLegacyReport()) {
+            return $this->score;
+        }
+
         if ($this->score) {
             return $this->score;
         }
 
+        $this->generateScore();
+
+        return $this->score;
+    }
+
+    protected function generateScore()
+    {
         $demerits = 0;
         $maxPoints = 0;
 
@@ -368,7 +414,9 @@ class Report implements Arrayable, Jsonable
 
         $score = ($maxPoints - $demerits) / $maxPoints * 100;
 
-        return $this->score = round($score);
+        $this->score = round($score);
+
+        return $this;
     }
 
     public static function preparePath($path = null)
@@ -388,5 +436,19 @@ class Report implements Arrayable, Jsonable
             ->merge(Entry::all())
             ->merge(Term::all())
             ->values();
+    }
+
+    public function isLegacyReport()
+    {
+        return $this->isGenerated() && ! array_key_exists('score', $this->raw ?? []);
+    }
+
+    public function updateLegacyReport()
+    {
+        return $this
+            ->withPages()
+            ->generateScore()
+            ->save()
+            ->fresh();
     }
 }
