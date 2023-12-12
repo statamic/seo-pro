@@ -369,13 +369,20 @@ class Report implements Arrayable, Jsonable
         }
 
         if ($this->isLegacyReport()) {
-            return null;
+            return $this->score;
         }
 
         if ($this->score) {
             return $this->score;
         }
 
+        $this->generateScore();
+
+        return $this->score;
+    }
+
+    protected function generateScore()
+    {
         $demerits = 0;
         $maxPoints = 0;
 
@@ -394,7 +401,9 @@ class Report implements Arrayable, Jsonable
 
         $score = ($maxPoints - $demerits) / $maxPoints * 100;
 
-        return $this->score = round($score);
+        $this->score = round($score);
+
+        return $this;
     }
 
     public static function preparePath($path = null)
@@ -419,5 +428,14 @@ class Report implements Arrayable, Jsonable
     public function isLegacyReport()
     {
         return $this->isGenerated() && ! array_key_exists('score', $this->raw ?? []);
+    }
+
+    public function updateLegacyReport()
+    {
+        return $this
+            ->withPages()
+            ->generateScore()
+            ->save()
+            ->fresh();
     }
 }

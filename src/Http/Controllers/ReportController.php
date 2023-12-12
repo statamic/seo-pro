@@ -51,8 +51,10 @@ class ReportController extends CpController
 
     private function showOrGenerateReport($report)
     {
-        if ($report->status() === 'pending' || $report->isLegacyReport()) {
-            $report = $report->queueGenerate()->fresh();
+        if ($report->status() === 'pending') {
+            $report = $report->queueGenerate();
+        } elseif ($report->isLegacyReport()) {
+            $report = $report->updateLegacyReport();
         }
 
         return $report->withPages();
