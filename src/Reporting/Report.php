@@ -247,6 +247,17 @@ class Report implements Arrayable, Jsonable
         return $this;
     }
 
+    public function data()
+    {
+        if ($this->status() === 'pending') {
+            return $this->queueGenerate()->withPages();
+        } elseif ($this->isLegacyReport()) {
+            return $this->updateLegacyReport()->withPages();
+        }
+
+        return $this->withPages();
+    }
+
     public static function all()
     {
         $folders = collect(Folder::getFolders(static::preparePath()));
