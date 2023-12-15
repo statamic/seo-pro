@@ -129,4 +129,16 @@ EXPECTED;
 
         return $this;
     }
+
+    /**
+     * Normalize line endings before performing assertion in windows.
+     */
+    public static function assertEquals($needle, $haystack, $message = ''): void
+    {
+        parent::assertEquals(
+            is_string($needle) ? static::normalizeMultilineString($needle) : $needle,
+            is_string($haystack) ? static::normalizeMultilineString($haystack) : $haystack,
+            $message
+        );
+    }
 }
