@@ -91,7 +91,7 @@ EXPECTED;
         $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
 
         $this->assertFileExists($this->reportsPath('1/pages'));
-        $this->assertCount(10, $this->files->directories($this->reportsPath('1/pages')));
+        $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
     public function reportsPath($path = null)
