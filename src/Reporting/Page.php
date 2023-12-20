@@ -5,13 +5,14 @@ namespace Statamic\SeoPro\Reporting;
 use Statamic\Facades\Data;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
+use Statamic\Support\Arr;
 
 class Page
 {
-    protected $report;
-    protected $data;
-    protected $results;
     protected $id;
+    protected $data;
+    protected $report;
+    protected $results;
 
     protected $rules = [
         Rules\UniqueTitleTag::class,
@@ -20,23 +21,16 @@ class Page
         Rules\ThreeSegmentUrls::class,
     ];
 
-    public function setData($data)
+    public function __construct($id, $data, Report $report)
     {
-        $this->data = collect($data);
-
-        return $this;
+        $this->id = $id;
+        $this->data = $data;
+        $this->report = $report;
     }
 
     public function setResults($results)
     {
         $this->results = $results;
-
-        return $this;
-    }
-
-    public function setReport(Report $report)
-    {
-        $this->report = $report;
 
         return $this;
     }
@@ -75,7 +69,7 @@ class Page
 
     public function get($key)
     {
-        return $this->data->get($key);
+        return Arr::get($this->data, $key);
     }
 
     public function status()
@@ -129,18 +123,11 @@ class Page
         return $this->id;
     }
 
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     public function save()
     {
         $data = [
             'id' => $this->id,
-            'data' => $this->data->all(),
+            'data' => $this->data,
             'results' => $this->results,
         ];
 

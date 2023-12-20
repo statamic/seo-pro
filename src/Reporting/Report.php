@@ -151,10 +151,7 @@ class Report implements Arrayable, Jsonable
                     ->withCurrent($content)
                     ->get();
 
-                return (new Page)
-                    ->setId($content->id())
-                    ->setData($data)
-                    ->setReport($this);
+                return new Page($content->id(), $data, $this);
             })
             ->filter();
     }
@@ -167,11 +164,7 @@ class Report implements Arrayable, Jsonable
         $this->pages = collect($files)->map(function ($file) {
             $yaml = YAML::parse(File::get($file));
 
-            return (new Page)
-                ->setId($yaml['id'])
-                ->setData($yaml['data'])
-                ->setResults($yaml['results'])
-                ->setReport($this);
+            return (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']);
         });
 
         return $this;
