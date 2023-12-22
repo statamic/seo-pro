@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Folder;
@@ -69,9 +70,25 @@ class Report implements Arrayable, Jsonable
 
     public function queueGenerate()
     {
+        if ($this->isGenerating()) {
+            return $this;
+        }
+
+        Cache::put($this->isGeneratingCacheKey(), true);
+
         Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $this->id()]);
 
         return $this;
+    }
+
+    protected function isGeneratingCacheKey()
+    {
+        return 'seo-pro-generating-report-'.$this->id();
+    }
+
+    protected function isGenerating()
+    {
+        return Cache::has($this->isGeneratingCacheKey());
     }
 
     public function generate()
@@ -98,16 +115,6 @@ class Report implements Arrayable, Jsonable
 
     protected function chunks()
     {
-        if ($this->status() === 'pending') {
-            return $this->createChunks();
-        }
-
-        // TODO: Get remaining not-in-progress chunks from yaml for queue jobs.
-        // Default sync queue connection should never get here.
-    }
-
-    protected function createChunks()
-    {
         $chunks = $this
             ->allContent()
             ->chunk(50)
@@ -132,10 +139,14 @@ class Report implements Arrayable, Jsonable
             File::delete($dir);
         }
 
-        return $this
+        $report = $this
             ->validatePages()
-            ->validateSite()
-            ->save();
+            ->validateSite();
+
+        // Clear generating status before saving!
+        Cache::forget($this->isGeneratingCacheKey());
+
+        return $report->save();
     }
 
     protected function validatePages()
@@ -261,7 +272,9 @@ class Report implements Arrayable, Jsonable
 
     public function data()
     {
-        if ($this->status() === 'pending') {
+        if ($this->isGenerating()) {
+            return $this;
+        } elseif ($this->status() === 'pending') {
             return $this->queueGenerate()->withPages();
         } elseif ($this->isLegacyReport()) {
             return $this->updateLegacyReport()->withPages();
@@ -366,7 +379,7 @@ class Report implements Arrayable, Jsonable
 
     public function status()
     {
-        if ($this->hasRemainingChunks()) {
+        if ($this->isGenerating()) {
             return 'generating';
         }
 
