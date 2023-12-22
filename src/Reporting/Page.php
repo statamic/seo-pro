@@ -74,6 +74,10 @@ class Page
 
     public function status()
     {
+        if (! $this->results) {
+            return 'pending';
+        }
+
         $status = 'pass';
 
         foreach ($this->getRuleResults() as $result) {
@@ -92,6 +96,10 @@ class Page
     public function getRuleResults()
     {
         $results = collect();
+
+        if (! $this->results) {
+            return $results;
+        }
 
         foreach ($this->results as $class => $array) {
             $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
