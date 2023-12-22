@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Reporting\Rules;
 
+use Statamic\Facades\Blink;
 use Statamic\SeoPro\Reporting\Rule;
 
 class UniqueTitleTag extends Rule
@@ -43,9 +44,19 @@ class UniqueTitleTag extends Rule
 
     public function processPage()
     {
-        $this->count = $this->page->report()->pages()->filter(function ($page) {
-            return $page->get('title') === $this->title();
-        })->count();
+        $this->count = $this
+            ->groupAllPagesByTitle()
+            ->get($this->title())
+            ->count();
+    }
+
+    protected function groupAllPagesByTitle()
+    {
+        return Blink::once('seo-pro-report-'.$this->report->id().'-page-titles-grouped', function () {
+            return $this->page->report()->pages()->mapToGroups(function ($page) {
+                return [$page->get('title') => $page->id()];
+            });
+        });
     }
 
     public function savePage()
