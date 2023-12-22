@@ -3,8 +3,10 @@
 namespace Tests;
 
 use Illuminate\Support\Carbon;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Term;
+use Statamic\SeoPro\Reporting\Chunk;
 use Statamic\SeoPro\Reporting\Report;
 use Statamic\Support\Str;
 
@@ -94,6 +96,50 @@ EXPECTED;
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
+    /** @test */
+    public function it_can_generate_a_large_report_with_multiple_chunked_jobs()
+    {
+        // We chunk content into chunks of 50.
+        // 60 entries and 60 terms totals 120 pages.
+        // This should mean 3 chunks, which we'll assert below.
+        $this
+            ->generateEntries(60)
+            ->generateTerms(60);
+
+        $this->assertFileNotExists($this->reportsPath());
+
+        // Bind our test chunk class so we can detect how many are generated.
+        app()->bind(Chunk::class, TestChunk::class);
+
+        Carbon::setTestNow($now = now());
+        Report::create()->save()->generate();
+
+        // Assert we saved exactly three chunks.
+        $this->assertEquals(3, Blink::get('saving-chunk'));
+
+        $expected = <<<"EXPECTED"
+date: $now->timestamp
+status: fail
+score: 68.0
+pages_crawled: 120
+results:
+  SiteName: true
+  UniqueTitleTag: 0
+  UniqueMetaDescription: 120
+  NoUnderscoresInUrl: 0
+  ThreeSegmentUrls: 0
+
+EXPECTED;
+
+        $this->assertFileNotExists($this->reportsPath('1/chunks'));
+
+        $this->assertCount(1, $this->files->files($this->reportsPath('1')));
+        $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+
+        $this->assertFileExists($this->reportsPath('1/pages'));
+        $this->assertCount(120, $this->files->allFiles($this->reportsPath('1/pages')));
+    }
+
     public function reportsPath($path = null)
     {
         if ($path) {
@@ -140,5 +186,15 @@ EXPECTED;
             is_string($haystack) ? static::normalizeMultilineString($haystack) : $haystack,
             $message
         );
+    }
+}
+
+class TestChunk extends Chunk
+{
+    public function save()
+    {
+        Blink::increment('saving-chunk');
+
+        return parent::save();
     }
 }

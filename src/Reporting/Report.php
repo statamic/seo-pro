@@ -112,7 +112,13 @@ class Report implements Arrayable, Jsonable
             ->allContent()
             ->chunk(50)
             ->map(function ($chunk, $id) {
-                return (new Chunk($id + 1, $chunk->map->id()->values()->all(), $this))->save();
+                return app()
+                    ->makeWith(Chunk::class, [
+                        'id' => $id + 1,
+                        'contentIds' => $chunk->map->id()->values()->all(),
+                        'report' => $this,
+                    ])
+                    ->save();
             });
 
         $this->save(); // Save to update report status now that we have chunks in storage
