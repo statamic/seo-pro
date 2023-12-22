@@ -14,13 +14,6 @@ class Page
     protected $report;
     protected $results;
 
-    protected $rules = [
-        Rules\UniqueTitleTag::class,
-        Rules\UniqueMetaDescription::class,
-        Rules\NoUnderscoresInUrl::class,
-        Rules\ThreeSegmentUrls::class,
-    ];
-
     public function __construct($id, $data, Report $report)
     {
         $this->id = $id;
