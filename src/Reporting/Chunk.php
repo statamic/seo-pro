@@ -55,7 +55,7 @@ class Chunk
     {
         collect($this->contentIds)
             ->map(fn ($id) => $this->createPage(Data::find($id)))
-            ->each(fn ($page) => $page->validate());
+            ->each(fn ($page) => $page->save());
 
         File::delete($this->folderPath());
     }

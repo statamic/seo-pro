@@ -127,8 +127,19 @@ class Report implements Arrayable, Jsonable
         }
 
         return $this
+            ->validatePages()
             ->validateSite()
             ->save();
+    }
+
+    protected function validatePages()
+    {
+        $this
+            ->withPages()
+            ->pages()
+            ->each(fn ($page) => $page->validate());
+
+        return $this;
     }
 
     protected function validateSite()
