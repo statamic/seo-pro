@@ -42,9 +42,9 @@ class Report implements Arrayable, Jsonable
     {
         $report = new static;
 
-        $report->setId($id ?: static::nextId());
-
-        return $report;
+        return $report
+            ->clearCaches()
+            ->setId($id ?: static::nextId());
     }
 
     public function setId($id)
@@ -78,6 +78,8 @@ class Report implements Arrayable, Jsonable
         if ($this->isGenerating()) {
             return $this;
         }
+
+        $this->clearCaches();
 
         Cache::put($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX), true);
 
@@ -354,7 +356,7 @@ class Report implements Arrayable, Jsonable
     {
         File::delete($this->parentFolder());
 
-        return $this;
+        return $this->clearCaches();
     }
 
     public function parentFolder()
@@ -500,6 +502,16 @@ class Report implements Arrayable, Jsonable
     public function cacheKey($name)
     {
         return 'seo-pro-report-'.$this->id().'-'.$name;
+    }
+
+    public function clearCaches()
+    {
+        Cache::forget($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX));
+        Cache::forget($this->cacheKey(static::CONTENT_CACHE_KEY_SUFFIX));
+        Cache::forget($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX));
+        Cache::forget($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX));
+
+        return $this;
     }
 
     public function isLegacyReport()
