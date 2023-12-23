@@ -17,6 +17,11 @@ use Statamic\SeoPro\SiteDefaults;
 
 class Report implements Arrayable, Jsonable
 {
+    const GENERATING_CACHE_KEY_SUFFIX = 'generating';
+    const CONTENT_CACHE_KEY_SUFFIX = 'content';
+    const PAGES_CACHE_KEY_SUFFIX = 'pages';
+    const TO_ARRAY_CACHE_KEY_SUFFIX = 'to-array';
+
     protected $id;
     protected $raw;
     protected $pages;
@@ -74,16 +79,11 @@ class Report implements Arrayable, Jsonable
             return $this;
         }
 
-        Cache::put($this->isGeneratingCacheKey(), true);
+        Cache::put($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX), true);
 
         Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $this->id()]);
 
         return $this;
-    }
-
-    protected function isGeneratingCacheKey()
-    {
-        return 'seo-pro-generating-report-'.$this->id();
     }
 
     protected function isPending()
@@ -93,7 +93,7 @@ class Report implements Arrayable, Jsonable
 
     protected function isGenerating()
     {
-        return Cache::has($this->isGeneratingCacheKey());
+        return Cache::has($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX));
     }
 
     public function generate()
@@ -146,10 +146,10 @@ class Report implements Arrayable, Jsonable
             ->validateSite();
 
         // Cache the pages for first load, since we already have them in memory here.
-        Cache::put($this->loadedPagesCacheKey(), $this->pages());
+        Cache::put($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX), $this->pages());
 
         // Clear generating status before saving!
-        Cache::forget($this->isGeneratingCacheKey());
+        Cache::forget($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX));
 
         return $this->save();
     }
@@ -196,6 +196,10 @@ class Report implements Arrayable, Jsonable
 
     public function toArray()
     {
+        if ($this->isGenerated() && $array = Cache::get($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX))) {
+            return $array;
+        }
+
         $array = [
             'id' => $this->id(),
             'date' => $this->date()->timestamp,
@@ -205,7 +209,7 @@ class Report implements Arrayable, Jsonable
             'results' => $this->resultsToArray(),
         ];
 
-        if ($pages = $this->pages()) {
+        if ($this->isGenerated() && $pages = $this->pages()) {
             $array['pages'] = $pages->map(function ($page) {
                 return [
                     'status' => $page->status(),
@@ -215,6 +219,10 @@ class Report implements Arrayable, Jsonable
                     'results' => $page->getRuleResults(),
                 ];
             });
+        }
+
+        if ($this->isGenerated()) {
+            Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);
         }
 
         return $array;
@@ -250,14 +258,9 @@ class Report implements Arrayable, Jsonable
         return json_encode($this->toArray());
     }
 
-    public function loadedPagesCacheKey()
-    {
-        return 'seo-pro-report-'.$this->id().'-loaded-pages';
-    }
-
     public function pages()
     {
-        if ($this->isGenerated() && $pages = Cache::get($this->loadedPagesCacheKey())) {
+        if ($this->isGenerated() && $pages = Cache::get($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX))) {
             return $pages;
         }
 
@@ -279,7 +282,7 @@ class Report implements Arrayable, Jsonable
             ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']));
 
         if ($this->isGenerated()) {
-            Cache::put($this->loadedPagesCacheKey(), $this->pages);
+            Cache::put($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX), $this->pages);
         }
 
         return $this;
@@ -491,14 +494,14 @@ class Report implements Arrayable, Jsonable
             ->id();
 
         // Cache this for use when generating chunks of pages in the queue by other processes.
-        Cache::put($this->contentCacheKey(), $content);
+        Cache::put($this->cacheKey(static::CONTENT_CACHE_KEY_SUFFIX), $content);
 
         return $content;
     }
 
-    public function contentCacheKey()
+    public function cacheKey($name)
     {
-        return 'seo-pro-report-'.$this->id().'-content';
+        return 'seo-pro-report-'.$this->id().'-'.$name;
     }
 
     public function isLegacyReport()

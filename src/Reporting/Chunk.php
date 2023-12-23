@@ -55,7 +55,7 @@ class Chunk
 
     protected function generate($ids)
     {
-        $content = Cache::get($this->report->contentCacheKey());
+        $content = Cache::get($this->report->cacheKey(Report::CONTENT_CACHE_KEY_SUFFIX));
 
         foreach ($ids as $id) {
             $this->createPage($content[$id] ?? Data::find($id))->save();
