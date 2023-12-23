@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Reporting;
 
+use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Data;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
@@ -45,19 +46,31 @@ class Chunk
 
     public function queueGenerate()
     {
-        // TODO: Create queueable `generate-chunk` command/job.
-        // Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $this->id()]);
+        $ids = $this->contentIds;
 
-        return $this;
+        dispatch(function () use ($ids) {
+            $this->generate($ids);
+        });
     }
 
-    public function generate()
+    protected function generate($ids)
     {
-        collect($this->contentIds)
-            ->map(fn ($id) => $this->createPage(Data::find($id)))
-            ->each(fn ($page) => $page->save());
+        $content = Cache::get($this->report->contentCacheKey());
+
+        foreach ($ids as $id) {
+            $this->createPage($content[$id] ?? Data::find($id))->save();
+        }
 
         File::delete($this->folderPath());
+
+        if ($this->wasLastChunk()) {
+            $this->report->finalize();
+        }
+    }
+
+    protected function wasLastChunk()
+    {
+        return File::getFolders($this->report->chunksFolder())->isEmpty();
     }
 
     protected function createPage($content)

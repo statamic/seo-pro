@@ -86,6 +86,11 @@ class Report implements Arrayable, Jsonable
         return 'seo-pro-generating-report-'.$this->id();
     }
 
+    protected function isPending()
+    {
+        return $this->status() === 'pending';
+    }
+
     protected function isGenerating()
     {
         return Cache::has($this->isGeneratingCacheKey());
@@ -93,18 +98,13 @@ class Report implements Arrayable, Jsonable
 
     public function generate()
     {
+        // The last chunk will trigger a `finalize()` call on our report,
+        // which is important when chunks are being run asyncronously.
         $this
             ->chunks()
-            ->each(fn ($chunk) => $chunk->generate());
+            ->each(fn ($chunk) => $chunk->queueGenerate());
 
-        // If there are still remaining chunks at this point, then generation is happening
-        // asyncronously, so we'll exit early and allow the queue and the ajax polling
-        // to complete generation before cleaning up and saving the final report.
-        if ($this->hasRemainingChunks()) {
-            return $this;
-        }
-
-        return $this->finalizeReport();
+        return $this;
     }
 
     protected function hasRemainingChunks()
@@ -117,7 +117,7 @@ class Report implements Arrayable, Jsonable
     {
         $chunks = $this
             ->allContent()
-            ->chunk(50)
+            ->chunk(1000)
             ->map(function ($chunk, $id) {
                 return app()
                     ->makeWith(Chunk::class, [
@@ -128,31 +128,35 @@ class Report implements Arrayable, Jsonable
                     ->save();
             });
 
-        $this->save(); // Save to update report status now that we have chunks in storage
+        // Save to update report status now that we have chunks in storage
+        $this->save();
 
         return $chunks;
     }
 
-    protected function finalizeReport()
+    public function finalize()
     {
         if (File::exists($dir = $this->chunksFolder())) {
             File::delete($dir);
         }
 
-        $report = $this
+        $this
+            ->withPages()
             ->validatePages()
             ->validateSite();
+
+        // Cache the pages for first load, since we already have them in memory here.
+        Cache::put($this->loadedPagesCacheKey(), $this->pages());
 
         // Clear generating status before saving!
         Cache::forget($this->isGeneratingCacheKey());
 
-        return $report->save();
+        return $this->save();
     }
 
     protected function validatePages()
     {
         $this
-            ->withPages()
             ->pages()
             ->each(fn ($page) => $page->validate());
 
@@ -166,7 +170,7 @@ class Report implements Arrayable, Jsonable
         foreach (static::$rules as $class) {
             $rule = new $class;
 
-            $rule->setReport($this->withPages())->process();
+            $rule->setReport($this)->process();
 
             $results[$rule->id()] = $rule->save();
         }
@@ -176,18 +180,13 @@ class Report implements Arrayable, Jsonable
         return $this;
     }
 
-    public function pages()
-    {
-        return $this->pages;
-    }
-
     public function pagesCrawled()
     {
         if ($this->pagesCrawled) {
             return $this->pagesCrawled;
         }
 
-        return $this->pagesCrawled = $this->pages?->count();
+        return $this->pagesCrawled = $this->pages()?->count();
     }
 
     public function results()
@@ -206,8 +205,8 @@ class Report implements Arrayable, Jsonable
             'results' => $this->resultsToArray(),
         ];
 
-        if ($this->pages) {
-            $array['pages'] = $this->pages->map(function ($page) {
+        if ($pages = $this->pages()) {
+            $array['pages'] = $pages->map(function ($page) {
                 return [
                     'status' => $page->status(),
                     'url' => $page->url(),
@@ -251,9 +250,23 @@ class Report implements Arrayable, Jsonable
         return json_encode($this->toArray());
     }
 
-    public function withPages()
+    public function loadedPagesCacheKey()
     {
-        if ($this->pages && $this->pages->isNotEmpty()) {
+        return 'seo-pro-report-'.$this->id().'-loaded-pages';
+    }
+
+    public function pages()
+    {
+        if ($this->isGenerated() && $pages = Cache::get($this->loadedPagesCacheKey())) {
+            return $pages;
+        }
+
+        return $this->pages;
+    }
+
+    public function withPages($preferCache = false)
+    {
+        if ($preferCache && $this->pages() && $this->pages()->isNotEmpty()) {
             return $this;
         }
 
@@ -261,11 +274,13 @@ class Report implements Arrayable, Jsonable
 
         $files = Folder::getFilesRecursively($dir);
 
-        $this->pages = collect($files)->map(function ($file) {
-            $yaml = YAML::parse(File::get($file));
+        $this->pages = collect($files)
+            ->map(fn ($file) => YAML::parse(File::get($file)))
+            ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']));
 
-            return (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']);
-        });
+        if ($this->isGenerated()) {
+            Cache::put($this->loadedPagesCacheKey(), $this->pages);
+        }
 
         return $this;
     }
@@ -274,13 +289,13 @@ class Report implements Arrayable, Jsonable
     {
         if ($this->isGenerating()) {
             return $this;
-        } elseif ($this->status() === 'pending') {
-            return $this->queueGenerate()->withPages();
+        } elseif ($this->isPending()) {
+            return $this->queueGenerate();
         } elseif ($this->isLegacyReport()) {
-            return $this->updateLegacyReport()->withPages();
+            return $this->updateLegacyReport();
         }
 
-        return $this->withPages();
+        return $this->withPages(true);
     }
 
     public static function all()
@@ -292,12 +307,8 @@ class Report implements Arrayable, Jsonable
         }
 
         return $folders
-            ->map(function ($path) {
-                return (int) pathinfo($path)['filename'];
-            })
-            ->map(function ($id) {
-                return static::find($id);
-            })
+            ->map(fn ($path) => (int) pathinfo($path)['filename'])
+            ->map(fn ($id) => static::find($id))
             ->filter()
             ->sortByDesc
             ->id()
@@ -473,10 +484,21 @@ class Report implements Arrayable, Jsonable
 
     protected function allContent()
     {
-        return collect()
+        $content = collect()
             ->merge(Entry::all())
             ->merge(Term::all())
-            ->values();
+            ->keyBy
+            ->id();
+
+        // Cache this for use when generating chunks of pages in the queue by other processes.
+        Cache::put($this->contentCacheKey(), $content);
+
+        return $content;
+    }
+
+    public function contentCacheKey()
+    {
+        return 'seo-pro-report-'.$this->id().'-content';
     }
 
     public function isLegacyReport()
@@ -487,9 +509,10 @@ class Report implements Arrayable, Jsonable
     public function updateLegacyReport()
     {
         return $this
-            ->withPages()
+            ->withPages(false)
             ->generateScore()
             ->save()
-            ->fresh();
+            ->fresh()
+            ->withPages();
     }
 }
