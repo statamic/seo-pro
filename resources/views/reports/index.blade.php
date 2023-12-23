@@ -28,9 +28,9 @@
                         @can('delete seo reports')
                             <td class="float-right">
                                 <dropdown-list>
-                                    <dropdown-item :text="__('seo-pro::messages.delete_report')" class="warning" @click="$refs.deleter.confirm()">
+                                    <dropdown-item :text="__('seo-pro::messages.delete_report')" class="warning" @click="$refs.deleter_{{ $report->id() }}.confirm()">
                                         <resource-deleter
-                                            ref="deleter"
+                                            ref="deleter_{{ $report->id() }}"
                                             resource-title="Report"
                                             route="{{ cp_route('seo-pro.reports.destroy', $report->id()) }}"
                                             redirect="{{ cp_route('seo-pro.reports.index') }}"
