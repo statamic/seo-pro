@@ -219,9 +219,7 @@ class Report implements Arrayable, Jsonable
                     'results' => $page->getRuleResults(),
                 ];
             });
-        }
 
-        if ($this->isGenerated()) {
             Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);
         }
 
