@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Reporting\Rules;
 
+use Statamic\Facades\Blink;
 use Statamic\SeoPro\Reporting\Rule;
 
 class UniqueMetaDescription extends Rule
@@ -43,9 +44,19 @@ class UniqueMetaDescription extends Rule
 
     public function processPage()
     {
-        $this->count = $this->page->report()->pages()->filter(function ($page) {
-            return $page->get('description') === $this->metaDescription();
-        })->count();
+        $this->count = $this
+            ->groupAllPagesByDescription()
+            ->get($this->metaDescription())
+            ->count();
+    }
+
+    protected function groupAllPagesByDescription()
+    {
+        return Blink::once('seo-pro-report-'.$this->report->id().'-page-descriptions-grouped', function () {
+            return $this->page->report()->pages()->mapToGroups(function ($page) {
+                return [$page->get('description') => $page->id()];
+            });
+        });
     }
 
     public function savePage()

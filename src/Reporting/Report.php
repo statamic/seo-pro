@@ -6,26 +6,27 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
 
 class Report implements Arrayable, Jsonable
 {
-    use GetsSectionDefaults;
+    const GENERATING_CACHE_KEY_SUFFIX = 'generating';
+    const CONTENT_CACHE_KEY_SUFFIX = 'content';
+    const PAGES_CACHE_KEY_SUFFIX = 'pages';
+    const TO_ARRAY_CACHE_KEY_SUFFIX = 'to-array';
 
     protected $id;
     protected $raw;
     protected $pages;
     protected $pagesCrawled;
     protected $results;
-    protected $generating = false;
-    protected $generatePages = false;
     protected $date;
     protected $score;
 
@@ -41,9 +42,9 @@ class Report implements Arrayable, Jsonable
     {
         $report = new static;
 
-        $report->setId($id ?: static::nextId());
-
-        return $report;
+        return $report
+            ->clearCaches()
+            ->setId($id ?: static::nextId());
     }
 
     public function setId($id)
@@ -72,26 +73,94 @@ class Report implements Arrayable, Jsonable
         return Carbon::parse($this->date);
     }
 
-    public function generate()
+    public function queueGenerate()
     {
-        $this->generating = true;
+        if ($this->isGenerating()) {
+            return $this;
+        }
 
-        $this->save();
+        $this->clearCaches();
 
-        $this->pages()->each(function ($page) {
-            $page->validate();
-        });
+        Cache::put($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX), true);
 
-        $this->generating = false;
-
-        $this->validateSite()->save();
+        Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $this->id()]);
 
         return $this;
     }
 
-    public function queueGenerate()
+    protected function isPending()
     {
-        Artisan::queue('statamic:seo-pro:generate-report', ['--report' => $this->id()]);
+        return $this->status() === 'pending';
+    }
+
+    protected function isGenerating()
+    {
+        return Cache::has($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX));
+    }
+
+    public function generate()
+    {
+        // The last chunk will trigger a `finalize()` call on our report,
+        // which is important when chunks are being run asyncronously.
+        $this
+            ->chunks()
+            ->each(fn ($chunk) => $chunk->queueGenerate());
+
+        return $this;
+    }
+
+    protected function hasRemainingChunks()
+    {
+        return File::exists($this->chunksFolder())
+            && File::getFolders($this->chunksFolder())->isNotEmpty();
+    }
+
+    protected function chunks()
+    {
+        $chunks = $this
+            ->allContent()
+            ->chunk(config('statamic.seo-pro.reports.queue_chunk_size'))
+            ->map(function ($chunk, $id) {
+                return app()
+                    ->makeWith(Chunk::class, [
+                        'id' => $id + 1,
+                        'contentIds' => $chunk->map->id()->values()->all(),
+                        'report' => $this,
+                    ])
+                    ->save();
+            });
+
+        // Save to update report status now that we have chunks in storage
+        $this->save();
+
+        return $chunks;
+    }
+
+    public function finalize()
+    {
+        if (File::exists($dir = $this->chunksFolder())) {
+            File::delete($dir);
+        }
+
+        $this
+            ->withPages()
+            ->validatePages()
+            ->validateSite();
+
+        // Cache the pages for first load, since we already have them in memory here.
+        Cache::put($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX), $this->pages());
+
+        // Clear generating status before saving!
+        Cache::forget($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX));
+
+        return $this->save();
+    }
+
+    protected function validatePages()
+    {
+        $this
+            ->pages()
+            ->each(fn ($page) => $page->validate());
 
         return $this;
     }
@@ -113,68 +182,13 @@ class Report implements Arrayable, Jsonable
         return $this;
     }
 
-    public function pages()
-    {
-        if ($this->pages) {
-            return $this->pages;
-        }
-
-        return $this->createPages();
-    }
-
-    protected function createPages()
-    {
-        return $this->pages = $this->pagesFromContent();
-    }
-
     public function pagesCrawled()
     {
         if ($this->pagesCrawled) {
             return $this->pagesCrawled;
         }
 
-        return $this->pagesCrawled = $this->pages?->count();
-    }
-
-    protected function pagesFromContent()
-    {
-        return $this->allContent()
-            ->map(function ($content) {
-                if ($content->value('seo') === false || is_null($content->uri())) {
-                    return;
-                }
-
-                $data = (new Cascade)
-                    ->with(SiteDefaults::load()->augmented())
-                    ->with($this->getAugmentedSectionDefaults($content))
-                    ->with($content->augmentedValue('seo')->value())
-                    ->withCurrent($content)
-                    ->get();
-
-                return (new Page)
-                    ->setId($content->id())
-                    ->setData($data)
-                    ->setReport($this);
-            })
-            ->filter();
-    }
-
-    public function loadPages()
-    {
-        $dir = storage_path(sprintf('statamic/seopro/reports/%s/pages', $this->id));
-        $files = Folder::getFilesRecursively($dir);
-
-        $this->pages = collect($files)->map(function ($file) {
-            $yaml = YAML::parse(File::get($file));
-
-            return (new Page)
-                ->setId($yaml['id'])
-                ->setData($yaml['data'])
-                ->setResults($yaml['results'])
-                ->setReport($this);
-        });
-
-        return $this;
+        return $this->pagesCrawled = $this->pages()?->count();
     }
 
     public function results()
@@ -184,6 +198,10 @@ class Report implements Arrayable, Jsonable
 
     public function toArray()
     {
+        if ($this->isGenerated() && $array = Cache::get($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX))) {
+            return $array;
+        }
+
         $array = [
             'id' => $this->id(),
             'date' => $this->date()->timestamp,
@@ -193,8 +211,8 @@ class Report implements Arrayable, Jsonable
             'results' => $this->resultsToArray(),
         ];
 
-        if ($this->generatePages) {
-            $array['pages'] = $this->pages()->map(function ($page) {
+        if ($this->isGenerated() && $pages = $this->pages()) {
+            $array['pages'] = $pages->map(function ($page) {
                 return [
                     'status' => $page->status(),
                     'url' => $page->url(),
@@ -203,6 +221,8 @@ class Report implements Arrayable, Jsonable
                     'results' => $page->getRuleResults(),
                 ];
             });
+
+            Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);
         }
 
         return $array;
@@ -216,7 +236,7 @@ class Report implements Arrayable, Jsonable
 
         $array = [];
 
-        foreach ($this->results() as $class => $result) {
+        foreach ($results as $class => $result) {
             $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
 
             $rule = (new $class)->setReport($this);
@@ -238,13 +258,47 @@ class Report implements Arrayable, Jsonable
         return json_encode($this->toArray());
     }
 
-    public function withPages()
+    public function pages()
     {
-        $this->generatePages = true;
+        if ($this->isGenerated() && $pages = Cache::get($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX))) {
+            return $pages;
+        }
 
-        $this->loadPages();
+        return $this->pages;
+    }
+
+    public function withPages($preferCache = false)
+    {
+        if ($preferCache && $this->pages() && $this->pages()->isNotEmpty()) {
+            return $this;
+        }
+
+        $dir = storage_path(sprintf('statamic/seopro/reports/%s/pages', $this->id));
+
+        $files = Folder::getFilesRecursively($dir);
+
+        $this->pages = collect($files)
+            ->map(fn ($file) => YAML::parse(File::get($file)))
+            ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']));
+
+        if ($this->isGenerated()) {
+            Cache::put($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX), $this->pages);
+        }
 
         return $this;
+    }
+
+    public function data()
+    {
+        if ($this->isGenerating()) {
+            return $this;
+        } elseif ($this->isPending()) {
+            return $this->queueGenerate();
+        } elseif ($this->isLegacyReport()) {
+            return $this->updateLegacyReport();
+        }
+
+        return $this->withPages(true);
     }
 
     public static function all()
@@ -256,12 +310,8 @@ class Report implements Arrayable, Jsonable
         }
 
         return $folders
-            ->map(function ($path) {
-                return (int) pathinfo($path)['filename'];
-            })
-            ->map(function ($id) {
-                return static::find($id);
-            })
+            ->map(fn ($path) => (int) pathinfo($path)['filename'])
+            ->map(fn ($id) => static::find($id))
             ->filter()
             ->sortByDesc
             ->id()
@@ -292,7 +342,7 @@ class Report implements Arrayable, Jsonable
     public function save()
     {
         File::put($this->path(), YAML::dump($this->raw = [
-            'date' => $this->date ?? time(),
+            'date' => $this->date ?? now()->timestamp,
             'status' => $this->status(),
             'score' => $this->score(),
             'pages_crawled' => $this->pagesCrawled(),
@@ -306,12 +356,17 @@ class Report implements Arrayable, Jsonable
     {
         File::delete($this->parentFolder());
 
-        return $this;
+        return $this->clearCaches();
     }
 
-    private function parentFolder()
+    public function parentFolder()
     {
         return storage_path('statamic/seopro/reports/'.$this->id);
+    }
+
+    public function chunksFolder()
+    {
+        return storage_path('statamic/seopro/reports/'.$this->id.'/chunks');
     }
 
     public function path()
@@ -338,7 +393,7 @@ class Report implements Arrayable, Jsonable
 
     public function status()
     {
-        if ($this->generating) {
+        if ($this->isGenerating()) {
             return 'generating';
         }
 
@@ -432,10 +487,31 @@ class Report implements Arrayable, Jsonable
 
     protected function allContent()
     {
-        return collect()
+        $content = collect()
             ->merge(Entry::all())
             ->merge(Term::all())
-            ->values();
+            ->keyBy
+            ->id();
+
+        // Cache this for use when generating chunks of pages in the queue by other processes.
+        Cache::put($this->cacheKey(static::CONTENT_CACHE_KEY_SUFFIX), $content);
+
+        return $content;
+    }
+
+    public function cacheKey($name)
+    {
+        return 'seo-pro-report-'.$this->id().'-'.$name;
+    }
+
+    public function clearCaches()
+    {
+        Cache::forget($this->cacheKey(static::GENERATING_CACHE_KEY_SUFFIX));
+        Cache::forget($this->cacheKey(static::CONTENT_CACHE_KEY_SUFFIX));
+        Cache::forget($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX));
+        Cache::forget($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX));
+
+        return $this;
     }
 
     public function isLegacyReport()
@@ -446,9 +522,10 @@ class Report implements Arrayable, Jsonable
     public function updateLegacyReport()
     {
         return $this
-            ->withPages()
+            ->withPages(false)
             ->generateScore()
             ->save()
-            ->fresh();
+            ->fresh()
+            ->withPages();
     }
 }

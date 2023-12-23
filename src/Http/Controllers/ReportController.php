@@ -36,7 +36,7 @@ class ReportController extends CpController
         $report = Report::find($id);
 
         if ($request->ajax()) {
-            return $this->showOrGenerateReport($report);
+            return $report->data();
         }
 
         return view('seo-pro::reports.show', ['report' => $report]);
@@ -47,16 +47,5 @@ class ReportController extends CpController
         abort_unless(User::current()->can('delete seo reports'), 403);
 
         return Report::find($id)->delete();
-    }
-
-    private function showOrGenerateReport($report)
-    {
-        if ($report->status() === 'pending') {
-            $report = $report->queueGenerate();
-        } elseif ($report->isLegacyReport()) {
-            $report = $report->updateLegacyReport();
-        }
-
-        return $report->withPages();
     }
 }
