@@ -117,7 +117,7 @@ class Report implements Arrayable, Jsonable
     {
         $chunks = $this
             ->allContent()
-            ->chunk(1000)
+            ->chunk(config('statamic.seo-pro.reports.queue_chunk_size'))
             ->map(function ($chunk, $id) {
                 return app()
                     ->makeWith(Chunk::class, [

@@ -43,4 +43,8 @@ return [
         'excluded_sites' => [],
     ],
 
+    'reports' => [
+        'queue_chunk_size' => 1000,
+    ],
+
 ];
