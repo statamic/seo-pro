@@ -279,7 +279,10 @@ class Report implements Arrayable, Jsonable
 
         $this->pages = collect($files)
             ->map(fn ($file) => YAML::parse(File::get($file)))
-            ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']));
+            ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']))
+            ->sortBy
+            ->url()
+            ->values();
 
         if ($this->isGenerated()) {
             Cache::put($this->cacheKey(static::PAGES_CACHE_KEY_SUFFIX), $this->pages);
