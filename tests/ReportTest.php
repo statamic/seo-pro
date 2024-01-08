@@ -140,6 +140,41 @@ EXPECTED;
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
+    /** @test */
+    public function it_skips_over_pages_with_disabled_seo()
+    {
+        $this
+            ->generateEntries(5)
+            ->generateTerms(5);
+
+        $this->assertFileNotExists($this->reportsPath());
+
+        Entry::all()->first()->set('seo', false)->save();
+
+        Carbon::setTestNow($now = now());
+        Report::create()->save()->generate();
+
+        $expected = <<<"EXPECTED"
+date: $now->timestamp
+status: fail
+score: 76.0
+pages_crawled: 9
+results:
+  SiteName: true
+  UniqueTitleTag: 0
+  UniqueMetaDescription: 9
+  NoUnderscoresInUrl: 0
+  ThreeSegmentUrls: 0
+
+EXPECTED;
+
+        $this->assertCount(1, $this->files->files($this->reportsPath('1')));
+        $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+
+        $this->assertFileExists($this->reportsPath('1/pages'));
+        $this->assertCount(9, $this->files->allFiles($this->reportsPath('1/pages')));
+    }
+
     public function reportsPath($path = null)
     {
         if ($path) {
