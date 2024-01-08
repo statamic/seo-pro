@@ -58,7 +58,7 @@ class Chunk
         $content = Cache::get($this->report->cacheKey(Report::CONTENT_CACHE_KEY_SUFFIX));
 
         foreach ($ids as $id) {
-            $this->createPage($content[$id] ?? Data::find($id))->save();
+            $this->createPage($content[$id] ?? Data::find($id))?->save();
         }
 
         File::delete($this->folderPath());
