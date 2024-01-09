@@ -37,7 +37,8 @@
                     </div>
                 </div>
 
-                <div class="card p-0 mt-6">
+                <h3 class="little-heading pl-0 mt-4">{{ __('Summary') }}</h3>
+                <div class="card p-0 mt-2">
                     <table class="data-table">
                         <tbody>
                             <tr v-for="item in report.results">
@@ -53,33 +54,39 @@
 
             </div>
 
-            <div v-if="loading" class="card loading mt-6">
-                <loading-graphic v-if="isGenerating" :text="__('seo-pro::messages.report_is_being_generated')" />
-                <loading-graphic v-else />
+            <div v-if="loading && isGenerating" class="card loading">
+                <loading-graphic :text="__('seo-pro::messages.report_is_being_generated')" />
             </div>
 
-            <div v-else class="card p-0 mt-6">
-                <table class="data-table">
-                    <tbody>
-                        <tr v-for="item in report.pages">
-                            <td class="w-8 text-center">
-                                <status-icon :status="item.status"></status-icon>
+            <div v-else>
+                <h3 class="little-heading pl-0 mt-4 mb-2">{{ __('Pages') }}</h3>
+                <div v-if="loading" class="card loading">
+                    <loading-graphic />
+                </div>
+                <data-list v-else ref="dataList" :columns="report.columns" :rows="report.pages">
+                    <div class="card overflow-hidden p-0" slot-scope="{ filteredRows: rows }">
+                        <data-list-table :rows="report.pages">
+                            <template slot="cell-page" slot-scope="{ row: page }">
+                                <status-icon :status="page.status" class="mr-4 inline-block"/>
+                                <a href="" @click.prevent="selected = page.id">{{ page.url }}</a>
+                                <report-details v-if="selected === page.id" :item="page" @closed="selected = null" />
+                            </template>
+                            <template slot="cell-actionable" slot-scope="{ row: page }">
+                                <a @click.prevent="selected = page.id">
+                                    <span
+                                        v-for="pill in actionablePageResults(page)"
+                                        :key="page.id+'_actionable_pill_'+pill"
+                                        class="text-xs text-gray-700 hover:text-gray-800 bg-gray-300 rounded-full px-3 mr-2"
+                                        style="padding-top: 2px; padding-bottom: 2px;"
+                                    >{{ pill }}</span>
+                                </a>
+                            </template>
+                            <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs pr-0 whitespace-no-wrap">
+                                <a v-if="page.edit_url" target="_blank" :href="page.edit_url" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="__('Edit')"></a>
                             </td>
-                            <td class="pl-0">
-                                <a href="" @click.prevent="selected = item.id">{{ item.url }}</a>
-                                <report-details
-                                    v-if="selected === item.id"
-                                    :item="item"
-                                    @closed="selected = null"
-                                ></report-details>
-                            </td>
-                            <td class="text-right text-xs pr-0 whitespace-no-wrap">
-                                <a @click.prevent="selected = item.id" class="text-gray-700 mr-4 hover:text-grey-80" v-text="__('Details')"></a>
-                                <a v-if="item.edit_url" target="_blank" :href="item.edit_url" class="mr-4 text-gray-700 hover:text-gray-800" v-text="__('Edit')"></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </data-list-table>
+                    </div>
+                </data-list>
             </div>
 
         </div>
@@ -148,7 +155,15 @@ export default {
                 this.report = response.data;
                 this.loading = false;
             });
-        }
+        },
+
+        actionablePageResults(page) {
+            return _.chain(page.results)
+                .reject(result => result.status === 'pass')
+                .map(result => result.actionable_pill)
+                .unique()
+                .value();
+        },
 
     }
 
