@@ -149,6 +149,11 @@ abstract class Rule
         return $this->isValidatingPage() ? $this->pageStatus() : $this->siteStatus();
     }
 
+    public function actionablePill()
+    {
+        //
+    }
+
     public function siteStatus()
     {
         //

@@ -22,7 +22,7 @@
             </div>
 
             <footer class="px-5 py-3 bg-gray-200 rounded-b-lg border-t flex items-center font-mono text-xs">
-                {{ item.url }}
+                <a :href="item.url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="item.url" />
             </footer>
         </div>
     </modal>

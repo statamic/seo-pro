@@ -11,6 +11,11 @@ class NoUnderscoresInUrl extends Rule
 
     protected $passes;
 
+    public function actionablePill()
+    {
+        return __('seo-pro::messages.rules.no_underscores_in_url_actionable_pill');
+    }
+
     public function siteDescription()
     {
         return __('seo-pro::messages.rules.no_underscores_in_url_site');

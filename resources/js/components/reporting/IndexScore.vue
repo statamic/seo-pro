@@ -2,7 +2,7 @@
 
     <div>
         <div v-if="score">
-            <seo-pro-status-icon :status="status" class="inline-block ml-1 mr-3"></seo-pro-status-icon>
+            <seo-pro-status-icon :status="status" class="inline-block ml-1 mr-3" />
             {{ score }}%
         </div>
         <loading-graphic v-else :text="null" :inline="true" />

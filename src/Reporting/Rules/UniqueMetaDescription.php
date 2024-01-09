@@ -14,6 +14,11 @@ class UniqueMetaDescription extends Rule
      */
     protected $count;
 
+    public function actionablePill()
+    {
+        return __('seo-pro::messages.rules.unique_description_actionable_pill');
+    }
+
     public function siteDescription()
     {
         return __('seo-pro::messages.rules.unique_description_site');
