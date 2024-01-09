@@ -59,30 +59,33 @@
             </div>
 
             <div v-else>
-                <h3 class="little-heading pl-0 mt-4 mb-2">{{ __('Pages') }}</h3>
+                <h3 class="little-heading pl-0 mt-4 mb-2">{{ __('seo-pro::messages.page_details') }}</h3>
                 <div v-if="loading" class="card loading">
                     <loading-graphic />
                 </div>
                 <data-list v-else ref="dataList" :columns="report.columns" :rows="report.pages">
                     <div class="card overflow-hidden p-0" slot-scope="{ filteredRows: rows }">
                         <data-list-table :rows="report.pages">
+                            <template slot="cell-status" slot-scope="{ row: page }">
+                                <status-icon :status="page.status" class="inline-block w-5" />
+                                {{ __('seo-pro::messages.rules.'+page.status) }}
+                            </template>
                             <template slot="cell-page" slot-scope="{ row: page }">
-                                <status-icon :status="page.status" class="mr-4 inline-block"/>
-                                <a :href="page.url" target="_blank" v-text="page.url" />
-                                <report-details v-if="selected === page.id" :item="page" @closed="selected = null" />
+                                <a :href="page.edit_url" target="_blank" v-text="page.url" />
                             </template>
                             <template slot="cell-actionable" slot-scope="{ row: page }">
-                                <a @click.prevent="selected = page.id">
+                                <page-details v-if="selected === page.id" :item="page" @closed="selected = null" />
+                                <a @click.prevent="selected = page.id" class="flex" style="gap: 0.25rem;">
                                     <span
                                         v-for="pill in actionablePageResults(page)"
                                         :key="page.id+'_actionable_pill_'+pill"
-                                        class="inline-block text-xs bg-gray-300 hover:bg-gray-800 text-gray-800 shrink rounded-full px-2 py-0.5 text-center justify-center mr-2"
+                                        class="inline-block text-xs bg-gray-300 hover:bg-gray-800 text-gray-800 shrink rounded-full px-2 py-0.5 text-center justify-center"
                                         style="padding-top: 2px; padding-bottom: 2px;"
                                     >{{ pill }}</span>
                                 </a>
                             </template>
                             <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs pr-0 whitespace-no-wrap">
-                                <a v-if="page.edit_url" :href="page.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="__('Edit')" />
+                                <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="__('Visit')" />
                             </td>
                         </data-list-table>
                     </div>
@@ -96,14 +99,14 @@
 </template>
 
 <script>
-import ReportDetails from './Details.vue';
+import PageDetails from './PageDetails.vue';
 import RelativeDate from './RelativeDate.vue';
 import StatusIcon from './StatusIcon.vue';
 
 export default {
 
     components: {
-        ReportDetails,
+        PageDetails,
         RelativeDate,
         StatusIcon,
     },

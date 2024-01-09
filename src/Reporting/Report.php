@@ -215,8 +215,9 @@ class Report implements Arrayable, Jsonable
         if ($this->isGenerated() && $this->pages()) {
             $array['pages'] = $this->pagesToArray();
             $array['columns'] = [
+                Column::make('status')->label(__('Status')),
                 Column::make('page')->label(__('URL')),
-                Column::make('actionable')->label(__('Actionable')),
+                Column::make('actionable')->label(__('Actionable'))->sortable(false),
             ];
 
             Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);

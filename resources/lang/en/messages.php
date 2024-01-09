@@ -49,6 +49,9 @@ return [
     'never' => 'Never',
 
     'rules' => [
+        'pass' => 'Pass',
+        'warning' => 'Warning',
+        'fail' => 'Fail',
         'site_name' => 'A site name must be defined.',
         'unique_title_actionable_pill' => 'Title',
         'unique_title_site' => 'Each page should have a unique title tag.',
