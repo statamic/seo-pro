@@ -68,7 +68,7 @@
                         <data-list-table :rows="report.pages">
                             <template slot="cell-page" slot-scope="{ row: page }">
                                 <status-icon :status="page.status" class="mr-4 inline-block"/>
-                                <a href="" @click.prevent="selected = page.id">{{ page.url }}</a>
+                                <a :href="page.url" target="_blank" v-text="page.url" />
                                 <report-details v-if="selected === page.id" :item="page" @closed="selected = null" />
                             </template>
                             <template slot="cell-actionable" slot-scope="{ row: page }">
@@ -82,7 +82,7 @@
                                 </a>
                             </template>
                             <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs pr-0 whitespace-no-wrap">
-                                <a v-if="page.edit_url" target="_blank" :href="page.edit_url" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="__('Edit')"></a>
+                                <a v-if="page.edit_url" :href="page.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="__('Edit')" />
                             </td>
                         </data-list-table>
                     </div>
