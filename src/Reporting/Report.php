@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Statamic\CP\Column;
 use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Folder;
@@ -211,16 +212,12 @@ class Report implements Arrayable, Jsonable
             'results' => $this->resultsToArray(),
         ];
 
-        if ($this->isGenerated() && $pages = $this->pages()) {
-            $array['pages'] = $pages->map(function ($page) {
-                return [
-                    'status' => $page->status(),
-                    'url' => $page->url(),
-                    'id' => $page->id(),
-                    'edit_url' => $page->editUrl(),
-                    'results' => $page->getRuleResults(),
-                ];
-            });
+        if ($this->isGenerated() && $this->pages()) {
+            $array['pages'] = $this->pagesToArray();
+            $array['columns'] = [
+                Column::make('page')->label(__('URL')),
+                Column::make('actionable')->label(__('Actionable')),
+            ];
 
             Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);
         }
@@ -251,6 +248,24 @@ class Report implements Arrayable, Jsonable
         }
 
         return $array;
+    }
+
+    protected function pagesToArray()
+    {
+        return $this
+            ->pages()
+            ->map(fn ($page) => $this->pageToArray($page));
+    }
+
+    protected function pageToArray($page)
+    {
+        return [
+            'status' => $page->status(),
+            'url' => $page->url(),
+            'id' => $page->id(),
+            'edit_url' => $page->editUrl(),
+            'results' => $page->getRuleResults(),
+        ];
     }
 
     public function toJson($options = 0)
