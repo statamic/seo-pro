@@ -108,6 +108,7 @@ class Page
                 'description' => $rule->description(),
                 'status' => $rule->status(),
                 'comment' => $rule->comment(),
+                'actionable_pill' => $rule->actionablePill(),
             ];
         }
 
