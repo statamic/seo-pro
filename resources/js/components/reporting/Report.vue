@@ -76,7 +76,7 @@
                                     <span
                                         v-for="pill in actionablePageResults(page)"
                                         :key="page.id+'_actionable_pill_'+pill"
-                                        class="text-xs text-gray-700 hover:text-gray-800 bg-gray-300 rounded-full px-3 mr-2"
+                                        class="inline-block text-xs bg-gray-300 hover:bg-gray-800 text-gray-800 shrink rounded-full px-2 py-0.5 text-center justify-center mr-2"
                                         style="padding-top: 2px; padding-bottom: 2px;"
                                     >{{ pill }}</span>
                                 </a>
