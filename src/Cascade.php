@@ -10,6 +10,7 @@ use Statamic\Facades\Parse;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Value;
+use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\View\Cascade as ViewCascade;
 
@@ -73,7 +74,7 @@ class Cascade
             return $this->getForSitemap();
         }
 
-        if (array_get($this->data, 'response_code') === 404) {
+        if (Arr::get($this->data, 'response_code') === 404) {
             $this->current['title'] = '404 Page Not Found';
         }
 
@@ -222,7 +223,7 @@ class Cascade
                 $field = explode('/', $field)[1];
             }
 
-            $item = array_get($this->current, $field);
+            $item = Arr::get($this->current, $field);
 
             if ($item instanceof Value) {
                 $item = $item->value();
