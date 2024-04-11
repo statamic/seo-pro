@@ -188,6 +188,17 @@ EXPECTED;
         $this->assertEquals(0, $this->getReportResult('UniqueTitleTag'));
     }
 
+    /** @test */
+    public function it_properly_reports_on_unique_custom_description_values()
+    {
+        $this->generateEntries(5);
+
+        Entry::all()
+            ->each(fn ($entry, $id) => $entry->set('seo', ['description' => 'Custom Description'.$id])->save());
+
+        $this->assertEquals(0, $this->getReportResult('UniqueMetaDescription'));
+    }
+
     public function reportsPath($path = null)
     {
         if ($path) {
