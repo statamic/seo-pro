@@ -88,9 +88,9 @@
 {{ /if }}
 
 {{ if alternate_locales }}
-    <link rel="alternate" href="{{ canonical_url }}" hreflang="{{ site:short_locale }}" />
+    <link rel="alternate" href="{{ canonical_url }}" hreflang="{{ current_hreflang }}" />
     {{ alternate_locales }}
-        <link rel="alternate" href="{{ url }}" hreflang="{{ site:short_locale }}" />
+        <link rel="alternate" href="{{ url }}" hreflang="{{ hreflang }}" />
     {{ /alternate_locales }}
 {{ /if }}
 
