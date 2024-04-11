@@ -108,7 +108,7 @@ EOT;
      *
      * @dataProvider viewScenarioProvider
      */
-    public function it_generate_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
+    public function it_generates_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
     {
         $this->prepareViews($viewType);
 
