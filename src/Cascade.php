@@ -344,6 +344,15 @@ class Cascade
         return strtolower(str_replace('_', '-', $locale));
     }
 
+    protected function parseTitleField($value)
+    {
+        if ($value instanceof Value) {
+            $value = $value->value();
+        }
+
+        return trim($value);
+    }
+
     protected function parseDescriptionField($value)
     {
         if ($value instanceof Value) {

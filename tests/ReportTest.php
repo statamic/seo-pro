@@ -7,6 +7,7 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Term;
+use Statamic\Facades\YAML;
 use Statamic\SeoPro\Reporting\Chunk;
 use Statamic\SeoPro\Reporting\Report;
 use Statamic\Support\Str;
@@ -175,6 +176,29 @@ EXPECTED;
         $this->assertCount(9, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
+    /** @test */
+    public function it_properly_reports_on_unique_custom_title_values()
+    {
+        $this->generateEntries(5);
+
+        Entry::all()
+            ->take(2)
+            ->each(fn ($entry, $id) => $entry->set('seo', ['title' => 'Custom Title'.$id])->save());
+
+        $this->assertEquals(0, $this->getReportResult('UniqueTitleTag'));
+    }
+
+    /** @test */
+    public function it_properly_reports_on_unique_custom_description_values()
+    {
+        $this->generateEntries(5);
+
+        Entry::all()
+            ->each(fn ($entry, $id) => $entry->set('seo', ['description' => 'Custom Description'.$id])->save());
+
+        $this->assertEquals(0, $this->getReportResult('UniqueMetaDescription'));
+    }
+
     public function reportsPath($path = null)
     {
         if ($path) {
@@ -209,6 +233,15 @@ EXPECTED;
         });
 
         return $this;
+    }
+
+    protected function getReportResult($key)
+    {
+        Carbon::setTestNow($now = now());
+
+        Report::create()->save()->generate();
+
+        return YAML::file($this->reportsPath('1/report.yaml'))->parse()['results'][$key];
     }
 
     /**
