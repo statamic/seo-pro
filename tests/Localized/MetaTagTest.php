@@ -42,12 +42,14 @@ class MetaTagTest extends TestCase
 <meta property="og:locale" content="en_US" />
 <meta property="og:locale:alternate" content="fr_FR" />
 <meta property="og:locale:alternate" content="it_IT" />
+<meta property="og:locale:alternate" content="en_GB" />
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link rel="alternate" href="http://cool-runnings.com" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 EOT;
 
         $content = $this->get('/')->content();
@@ -170,11 +172,11 @@ EOT;
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link rel="alternate" href="http://cool-runnings.com" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
-        $content = $this->get('/')->content();
+        $content = $this->get('/about')->content();
 
         $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsString($expectedOgLocaleMeta, $content);
