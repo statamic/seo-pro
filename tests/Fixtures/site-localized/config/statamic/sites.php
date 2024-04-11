@@ -33,5 +33,11 @@ return [
             'url' => '/it/',
         ],
 
+        'british' => [
+            'name' => 'English (Great Britain)',
+            'locale' => 'en_GB',
+            'url' => '/en-gb/',
+        ],
+
     ],
 ];

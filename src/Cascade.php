@@ -91,7 +91,8 @@ class Cascade
             'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
-            'alternate_locales' => $this->alternateLocales(),
+            'alternate_locales' => $alternateLocales = $this->alternateLocales(),
+            'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
         ])->all();
@@ -296,23 +297,51 @@ class Cascade
             return [];
         }
 
-        return collect(Config::getOtherLocales($this->model->locale()))
-            ->filter(function ($locale) {
-                return $this->model->in($locale);
-            })
-            ->filter(function ($locale) {
-                return $this->model->in($locale)->status() === 'published';
-            })
-            ->reject(function ($locale) {
-                return collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale);
-            })
+        $alternateLocales = collect(Config::getOtherLocales($this->model->locale()))
+            ->filter(fn ($locale) => $this->model->in($locale))
+            ->filter(fn ($locale) => $this->model->in($locale)->status() === 'published')
+            ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
             ->map(function ($locale) {
                 return [
                     'site' => Config::getSite($locale),
                     'url' => $this->model->in($locale)->absoluteUrl(),
                 ];
-            })
-            ->all();
+            });
+
+        $duplicates = $alternateLocales
+            ->merge([['site' => $this->site()]])
+            ->groupBy(fn ($locale) => $locale['site']->shortLocale())
+            ->filter(fn ($locales) => $locales->count() > 1)
+            ->keys();
+
+        $alternateLocales->transform(function ($locale) use ($duplicates) {
+            return array_merge($locale, [
+                'hreflang' => $duplicates->contains($locale['site']->shortLocale())
+                    ? $this->formatHreflangLocale($locale['site']->locale())
+                    : $locale['site']->shortLocale(),
+            ]);
+        });
+
+        return $alternateLocales->all();
+    }
+
+    protected function currentHreflang($alternateLocales)
+    {
+        $currentShortLocale = $this->site()->shortLocale();
+
+        $alternateShortLocales = collect($alternateLocales)
+            ->map(fn ($locale) => $locale['site']->shortLocale());
+
+        if ($alternateShortLocales->contains($currentShortLocale)) {
+            return $this->formatHreflangLocale($this->site()->locale());
+        }
+
+        return $currentShortLocale;
+    }
+
+    protected function formatHreflangLocale($locale)
+    {
+        return strtolower(str_replace('_', '-', $locale));
     }
 
     protected function parseDescriptionField($value)
