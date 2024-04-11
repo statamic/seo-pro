@@ -142,6 +142,62 @@ EOT;
      *
      * @dataProvider viewScenarioProvider
      */
+    public function it_handles_duplicate_alternate_hreflangs($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link href="http://cool-runnings.com/it" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
+EOT;
+
+        // Though hitting a route will automatically set the current site,
+        // we want to test that the alternate locales are generated off
+        // the entry's model, not from the current site in the cp.
+        Site::setCurrent('default');
+
+        $content = $this->get('/it')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_handles_duplicate_current_hreflang($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link href="http://cool-runnings.com/en-gb" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+EOT;
+
+        // Though hitting a route will automatically set the current site,
+        // we want to test that the alternate locales are generated off
+        // the entry's model, not from the current site in the cp.
+        Site::setCurrent('default');
+
+        $content = $this->get('/en-gb')->content();
+
+        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
     public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled($viewType)
     {
         Config::set('statamic.seo-pro.alternate_locales', false);
