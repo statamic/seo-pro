@@ -81,6 +81,7 @@ class CascadeTest extends TestCase
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
             'site' => Site::get('default'),
             'alternate_locales' => [],
+            'current_hreflang' => 'en',
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
         ];
