@@ -29,7 +29,7 @@ class ReportTest extends TestCase
     /** @test */
     public function it_can_save_pending_report()
     {
-        $this->assertFileNotExists($this->reportsPath());
+        $this->assertFileDoesNotExist($this->reportsPath());
 
         Carbon::setTestNow($now = now());
         Report::create()->save();
@@ -53,7 +53,7 @@ EXPECTED;
     /** @test */
     public function it_increments_report_folder_numbers()
     {
-        $this->assertFileNotExists($this->reportsPath());
+        $this->assertFileDoesNotExist($this->reportsPath());
 
         Report::create()->save();
         Report::create()->save();
@@ -72,7 +72,7 @@ EXPECTED;
             ->generateEntries(5)
             ->generateTerms(5);
 
-        $this->assertFileNotExists($this->reportsPath());
+        $this->assertFileDoesNotExist($this->reportsPath());
 
         Carbon::setTestNow($now = now());
         Report::create()->save()->generate();
@@ -107,7 +107,7 @@ EXPECTED;
             ->generateEntries(5)
             ->generateTerms(5);
 
-        $this->assertFileNotExists($this->reportsPath());
+        $this->assertFileDoesNotExist($this->reportsPath());
 
         // Bind our test chunk class so we can detect how many are generated.
         app()->bind(Chunk::class, TestChunk::class);
@@ -132,7 +132,7 @@ results:
 
 EXPECTED;
 
-        $this->assertFileNotExists($this->reportsPath('1/chunks'));
+        $this->assertFileDoesNotExist($this->reportsPath('1/chunks'));
 
         $this->assertCount(1, $this->files->files($this->reportsPath('1')));
         $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
@@ -148,7 +148,7 @@ EXPECTED;
             ->generateEntries(5)
             ->generateTerms(5);
 
-        $this->assertFileNotExists($this->reportsPath());
+        $this->assertFileDoesNotExist($this->reportsPath());
 
         Entry::all()->first()->set('seo', false)->save();
 
