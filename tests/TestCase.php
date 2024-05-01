@@ -3,7 +3,6 @@
 namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\File;
 use Illuminate\Testing\TestResponse;
 use Statamic\Extend\Manifest;
 use Statamic\Facades\Site;
@@ -37,8 +36,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->copyDirectoryFromFixture('content');
         $this->copyDirectoryFromFixture('assets');
 
-        // can this be extracted to a method? (would copying the file be enough or do we NEED to setSites?)
-        Site::setSites(YAML::parse(File::get("{$this->siteFixturePath}/resources/sites.yaml")));
+        Site::setSites(YAML::file("{$this->siteFixturePath}/resources/sites.yaml")->parse());
 
         $this->restoreSiteDefaults();
 
