@@ -20,6 +20,7 @@ class MetaTagTest extends TestCase
 
         $app['config']->set('view.paths', [$this->viewsPath()]);
         $app['config']->set('statamic.editions.pro', true);
+        $app['config']->set('statamic.system.multisite', true);
     }
 
     public function tearDown(): void
