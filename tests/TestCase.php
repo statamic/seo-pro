@@ -135,19 +135,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringContainsString($needle, $haystack, $message = ''): void
-    {
-        parent::assertStringContainsString(
-            static::normalizeMultilineString($needle),
-            static::normalizeMultilineString($haystack),
-            $message
-        );
-    }
-
-    /**
-     * Normalize line endings before performing assertion in windows.
-     */
-    public static function assertStringNotContainsString($needle, $haystack, $message = ''): void
+    public static function assertStringNotContainsStringIgnoringLineEndings($needle, $haystack, $message = ''): void
     {
         parent::assertStringNotContainsString(
             static::normalizeMultilineString($needle),

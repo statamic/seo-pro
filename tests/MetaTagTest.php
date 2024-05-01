@@ -78,8 +78,8 @@ EOT;
 
         $content = $this->get('/')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -109,8 +109,8 @@ EOT;
 EOT;
 
         $content = $this->get('/the-view')->content();
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -704,9 +704,9 @@ EOT;
 EOT;
 
         $content = $this->get('/non-existent-page')->content();
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString('<h2>404!</h2>', $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -751,8 +751,8 @@ EOT;
 
         $content = $this->get('/')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -770,7 +770,7 @@ EOT;
 
         $content = $this->get('/custom-get-route')->content();
 
-        $this->assertStringContainsString('<title>Custom Route Entry Title | Site Name</title>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
     }
 
     protected function setCustomGlidePresetDimensions($app)

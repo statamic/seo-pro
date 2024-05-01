@@ -119,7 +119,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $this->assertStringContainsString('<loc>http://cool-runnings.com</loc>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<loc>http://cool-runnings.com</loc>', $content);
     }
 
     /** @test */

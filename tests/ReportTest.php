@@ -47,7 +47,7 @@ results: null
 EXPECTED;
 
         $this->assertCount(1, $this->files->allFiles($this->reportsPath('1')));
-        $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+        $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
     }
 
     /** @test */
@@ -92,7 +92,7 @@ results:
 EXPECTED;
 
         $this->assertCount(1, $this->files->files($this->reportsPath('1')));
-        $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+        $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
 
         $this->assertFileExists($this->reportsPath('1/pages'));
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
@@ -116,7 +116,7 @@ EXPECTED;
         Report::create()->save()->generate();
 
         // Assert we saved exactly four chunks, based on our above config, and the number of pages being generated.
-        $this->assertEquals(4, Blink::get('saving-chunk'));
+        $this->assertEqualsIgnoringLineEndings(4, Blink::get('saving-chunk'));
 
         $expected = <<<"EXPECTED"
 date: $now->timestamp
@@ -135,7 +135,7 @@ EXPECTED;
         $this->assertFileDoesNotExist($this->reportsPath('1/chunks'));
 
         $this->assertCount(1, $this->files->files($this->reportsPath('1')));
-        $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+        $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
 
         $this->assertFileExists($this->reportsPath('1/pages'));
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
@@ -170,7 +170,7 @@ results:
 EXPECTED;
 
         $this->assertCount(1, $this->files->files($this->reportsPath('1')));
-        $this->assertEquals($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+        $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
 
         $this->assertFileExists($this->reportsPath('1/pages'));
         $this->assertCount(9, $this->files->allFiles($this->reportsPath('1/pages')));
@@ -185,7 +185,7 @@ EXPECTED;
             ->take(2)
             ->each(fn ($entry, $id) => $entry->set('seo', ['title' => 'Custom Title'.$id])->save());
 
-        $this->assertEquals(0, $this->getReportResult('UniqueTitleTag'));
+        $this->assertEqualsIgnoringLineEndings(0, $this->getReportResult('UniqueTitleTag'));
     }
 
     /** @test */
@@ -196,7 +196,7 @@ EXPECTED;
         Entry::all()
             ->each(fn ($entry, $id) => $entry->set('seo', ['description' => 'Custom Description'.$id])->save());
 
-        $this->assertEquals(0, $this->getReportResult('UniqueMetaDescription'));
+        $this->assertEqualsIgnoringLineEndings(0, $this->getReportResult('UniqueMetaDescription'));
     }
 
     public function reportsPath($path = null)
@@ -247,7 +247,7 @@ EXPECTED;
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertEquals($needle, $haystack, $message = ''): void
+    public static function assertEqualsIgnoringLineEndings($needle, $haystack, $message = ''): void
     {
         parent::assertEquals(
             is_string($needle) ? static::normalizeMultilineString($needle) : $needle,
