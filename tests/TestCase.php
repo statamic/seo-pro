@@ -3,8 +3,11 @@
 namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 use Illuminate\Testing\TestResponse;
 use Statamic\Extend\Manifest;
+use Statamic\Facades\Site;
+use Statamic\Facades\YAML;
 use Statamic\SeoPro\SiteDefaults;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
@@ -33,6 +36,9 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->copyDirectoryFromFixture('content');
         $this->copyDirectoryFromFixture('assets');
+
+        // can this be extracted to a method? (would copying the file be enough or do we NEED to setSites?)
+        Site::setSites(YAML::parse(File::get("{$this->siteFixturePath}/resources/sites.yaml")));
 
         $this->restoreSiteDefaults();
 
@@ -76,13 +82,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'filesystems',
             'statamic/users',
             'statamic/stache',
-            'statamic/sites',
         ];
 
         foreach ($configs as $config) {
             $files->delete(config_path("{$config}.php"));
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
-            $app['config']->set(str_replace('/', '.', $config), require("{$this->siteFixturePath}/config/{$config}.php"));
+            $app['config']->set(str_replace('/', '.', $config), require ("{$this->siteFixturePath}/config/{$config}.php"));
         }
     }
 
