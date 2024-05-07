@@ -1,6 +1,6 @@
 ## Installation
 
-1. Install SEO Pro from the `Tools > Addons` section of your control panel, or via composer:
+1. Install SEO Pro with Composer:
 
     ```
     composer require statamic/seo-pro
