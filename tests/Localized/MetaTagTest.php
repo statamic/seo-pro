@@ -20,6 +20,7 @@ class MetaTagTest extends TestCase
 
         $app['config']->set('view.paths', [$this->viewsPath()]);
         $app['config']->set('statamic.editions.pro', true);
+        $app['config']->set('statamic.system.multisite', true);
     }
 
     public function tearDown(): void
@@ -54,9 +55,9 @@ EOT;
 
         $content = $this->get('/')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -82,9 +83,9 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -132,9 +133,9 @@ EOT;
 
         $content = $this->get('/it/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -161,8 +162,8 @@ EOT;
 
         $content = $this->get('/it')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -189,8 +190,8 @@ EOT;
 
         $content = $this->get('/en-gb')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -234,11 +235,11 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
-        $this->assertStringNotContainsString('content="fr_FR"', $content);
-        $this->assertStringNotContainsString('hreflang="fr"', $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+        $this->assertStringNotContainsStringIgnoringLineEndings('content="fr_FR"', $content);
+        $this->assertStringNotContainsStringIgnoringLineEndings('hreflang="fr"', $content);
     }
 
     /**
@@ -264,9 +265,9 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -298,9 +299,9 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -332,8 +333,8 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 }

@@ -13,6 +13,7 @@ class GraphQLTest extends TestCase
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('statamic.editions.pro', true);
+        $app['config']->set('statamic.system.multisite', true);
         $app['config']->set('statamic.graphql.enabled', true);
         $app['config']->set('statamic.graphql.resources.collections', true);
     }

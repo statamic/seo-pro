@@ -5,6 +5,8 @@ namespace Tests;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Testing\TestResponse;
 use Statamic\Extend\Manifest;
+use Statamic\Facades\Site;
+use Statamic\Facades\YAML;
 use Statamic\SeoPro\SiteDefaults;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
@@ -34,6 +36,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->copyDirectoryFromFixture('content');
         $this->copyDirectoryFromFixture('assets');
 
+        Site::setSites(YAML::file("{$this->siteFixturePath}/resources/sites.yaml")->parse());
+
         $this->restoreSiteDefaults();
 
         $this->addGqlMacros();
@@ -61,11 +65,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
         $configs = [
             'assets', 'cp', 'forms', 'routes', 'static_caching',
-            'sites', 'stache', 'system', 'users',
+            'stache', 'system', 'users',
         ];
 
         foreach ($configs as $config) {
-            $app['config']->set("statamic.$config", require(__DIR__."/../vendor/statamic/cms/config/{$config}.php"));
+            $app['config']->set("statamic.$config", require (__DIR__."/../vendor/statamic/cms/config/{$config}.php"));
         }
 
         $files = new Filesystem;
@@ -76,13 +80,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'filesystems',
             'statamic/users',
             'statamic/stache',
-            'statamic/sites',
         ];
 
         foreach ($configs as $config) {
             $files->delete(config_path("{$config}.php"));
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
-            $app['config']->set(str_replace('/', '.', $config), require("{$this->siteFixturePath}/config/{$config}.php"));
+            $app['config']->set(str_replace('/', '.', $config), require ("{$this->siteFixturePath}/config/{$config}.php"));
         }
     }
 
@@ -132,35 +135,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringContainsString($needle, $haystack, $message = ''): void
-    {
-        parent::assertStringContainsString(
-            static::normalizeMultilineString($needle),
-            static::normalizeMultilineString($haystack),
-            $message
-        );
-    }
-
-    /**
-     * Normalize line endings before performing assertion in windows.
-     */
-    public static function assertStringNotContainsString($needle, $haystack, $message = ''): void
+    public static function assertStringNotContainsStringIgnoringLineEndings($needle, $haystack, $message = ''): void
     {
         parent::assertStringNotContainsString(
             static::normalizeMultilineString($needle),
             static::normalizeMultilineString($haystack),
             $message
         );
-    }
-
-    /**
-     * @deprecated
-     */
-    public static function assertFileNotExists(string $filename, string $message = ''): void
-    {
-        method_exists(static::class, 'assertFileDoesNotExist')
-            ? static::assertFileDoesNotExist($filename, $message)
-            : parent::assertFileNotExists($filename, $message);
     }
 
     private function addGqlMacros()

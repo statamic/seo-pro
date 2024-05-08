@@ -16,6 +16,7 @@ class CascadeTest extends TestCase
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('statamic.editions.pro', true);
+        $app['config']->set('statamic.system.multisite', true);
     }
 
     /** @test */
