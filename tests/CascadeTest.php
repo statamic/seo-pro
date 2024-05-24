@@ -109,6 +109,24 @@ class CascadeTest extends TestCase
     }
 
     /** @test */
+    public function it_parses_antlers()
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $entry->data(['favourite_colour' => 'Red'])->save();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => '{{ favourite_colour | upper }}',
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('RED', $data['description']);
+    }
+
+    /** @test */
     public function it_parses_field_references()
     {
         $entry = Entry::findByUri('/about')->entry();
