@@ -212,13 +212,13 @@ class Cascade
             : $item;
 
         // If they have antlers in the string, they are on their own.
-        if (is_string($raw) && Str::contains($item, '{{')) {
-            return $this->parseAntlers($item);
+        if (is_string($raw) && Str::contains($raw, '{{')) {
+            return $this->parseAntlers($raw);
         }
 
         // For source-based strings, we should get the value from the source.
-        if (is_string($raw) && Str::startsWith($item, '@seo:')) {
-            $field = explode('@seo:', $item)[1];
+        if (is_string($raw) && Str::startsWith($raw, '@seo:')) {
+            $field = explode('@seo:', $raw)[1];
 
             if (Str::contains($field, '/')) {
                 $field = explode('/', $field)[1];
