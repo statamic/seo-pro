@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
@@ -31,6 +32,62 @@ class Sitemap
             ->toArray();
     }
 
+    public static function paginatedPages(int $page)
+    {
+        $sitemap = new static;
+
+        $perPage = config('statamic.seo-pro.sitemap.paginated_limit', 100);
+        $offset = ($page - 1) * $perPage;
+        $remaining = $perPage;
+
+        $pages = collect([]);
+
+        $entryCount = $sitemap->publishedEntriesCount() - 1;
+
+        if ($offset < $entryCount) {
+            $entries = $sitemap->publishedEntries()->skip($offset)->take($perPage);
+
+            if ($entries->count() < $remaining) {
+                $remaining -= $entries->count();
+            }
+
+            $pages = $pages->merge($entries);
+        }
+
+        if ($remaining > 0) {
+            $offset = max($offset - $entryCount, 0);
+
+            $pages = $pages->merge(
+                collect($sitemap->publishedTerms())
+                    ->merge($sitemap->publishedCollectionTerms())
+                    ->skip($offset)
+                    ->take($remaining)
+            );
+        }
+
+        return $sitemap->getPages($pages)
+            ->values()
+            ->map
+            ->toArray();
+    }
+
+    public static function paginatedSitemaps()
+    {
+        $sitemap = new static;
+
+        // at the moment we have to get all entries to get this count, not ideal
+        $count = $sitemap->publishedEntriesCount() + $sitemap->publishedTerms()->count() + $sitemap->publishedCollectionTerms()->count();
+
+        $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.paginated_limit', 100));
+
+        $sitemaps = [];
+        for ($i=1; $i <= $sitemapCount; $i++) {
+            $sitemaps[] = ['url' => route('statamic.seo-pro.sitemap.paginated', ['id' => $i])];
+        }
+
+        return $sitemaps;
+    }
+
     protected function getPages($items)
     {
         return $items
@@ -54,20 +111,32 @@ class Sitemap
             ->filter();
     }
 
+    private function publishedEntriesQuery()
+    {
+        $collections = Collection::all()
+            ->map(function ($collection) {
+                return $collection->cascade('seo') !== false
+                    ? $collection->handle()
+                    : false;
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        return Entry::query()
+            ->whereIn('collection', $collections)
+            ->whereNotNull('uri')
+            ->whereStatus('published');
+    }
+
     protected function publishedEntries()
     {
-        return Collection::all()
-            ->flatMap(function ($collection) {
-                return $collection->cascade('seo') !== false
-                    ? $collection->queryEntries()->get()
-                    : collect();
-            })
-            ->filter(function ($entry) {
-                return $entry->status() === 'published';
-            })
-            ->reject(function ($entry) {
-                return is_null($entry->uri());
-            });
+        return $this->publishedEntriesQuery()->lazy();
+    }
+
+    protected function publishedEntriesCount()
+    {
+        return $this->publishedEntriesQuery()->count();
     }
 
     protected function publishedTerms()
