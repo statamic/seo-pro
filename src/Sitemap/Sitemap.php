@@ -75,7 +75,7 @@ class Sitemap
     {
         $sitemap = new static;
 
-        // at the moment we have to get all entries to get this count, not ideal
+        // would be nice to make terms a count query rather than getting the count from the terms collection
         $count = $sitemap->publishedEntriesCount() + $sitemap->publishedTerms()->count() + $sitemap->publishedCollectionTerms()->count();
 
         $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.paginated_limit', 100));
