@@ -43,6 +43,10 @@ class SitemapController extends Controller
                     $view = 'seo-pro::sitemap_index';
                 } else {
                     $data['pages'] = Sitemap::paginatedPages($page);
+
+                    if (empty($data['pages'])) {
+                        abort(404);
+                    }
                 }
             }
 

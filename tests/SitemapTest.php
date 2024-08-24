@@ -44,15 +44,15 @@ class SitemapTest extends TestCase
     </url>
 
     <url>
-        <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>$today</lastmod>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-01-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
 
     <url>
-        <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>$today</lastmod>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
@@ -65,15 +65,15 @@ class SitemapTest extends TestCase
     </url>
 
     <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-01-17</lastmod>
+        <loc>http://cool-runnings.com/magic</loc>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
 
     <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
+        <loc>http://cool-runnings.com/nectar</loc>
+        <lastmod>$today</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
@@ -218,5 +218,150 @@ EOT;
         $data = json_decode(json_encode(simplexml_load_string($content)), true);
 
         return collect($data['url']);
+    }
+
+    /** @test */
+    public function it_outputs_paginated_sitemap_index_xml()
+    {
+        config()->set('statamic.seo-pro.sitemap.paginated', true);
+        config()->set('statamic.seo-pro.sitemap.paginated_limit', 5);
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $expected = <<<'EOT'
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <sitemap>
+        <loc>http://cool-runnings.com/sitemap_1.xml</loc>
+    </sitemap>
+    
+    <sitemap>
+        <loc>http://cool-runnings.com/sitemap_2.xml</loc>
+    </sitemap>
+    
+</sitemapindex>
+EOT;
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_outputs_paginated_sitemap_page_xml()
+    {
+        config()->set('statamic.seo-pro.sitemap.paginated', true);
+        config()->set('statamic.seo-pro.sitemap.paginated_limit', 5);
+
+        $content = $this
+            ->get('/sitemap_1.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertCount(5, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<"EOT"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://cool-runnings.com</loc>
+        <lastmod>2020-11-24</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/dance</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/magic</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+
+        $content = $this
+            ->get('/sitemap_2.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertCount(2, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<"EOT"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://cool-runnings.com/nectar</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/topics</loc>
+        <lastmod>2020-01-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_404s_on_invalid_pagination_urls()
+    {
+        config()->set('statamic.seo-pro.sitemap.paginated', true);
+        config()->set('statamic.seo-pro.sitemap.paginated_limit', 5);
+
+        $this
+            ->get('/sitemap_3.xml')
+            ->assertNotFound();
+
+        $this
+            ->get('/sitemap_3a.xml')
+            ->assertNotFound();
+
+        $this
+            ->get('/sitemap_a.xml')
+            ->assertNotFound();
     }
 }

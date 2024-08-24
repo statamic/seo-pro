@@ -65,6 +65,10 @@ class Sitemap
             );
         }
 
+        if ($pages->isEmpty()) {
+            return [];
+        }
+
         return $sitemap->getPages($pages)
             ->values()
             ->map
@@ -81,7 +85,7 @@ class Sitemap
         $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.paginated_limit', 100));
 
         $sitemaps = [];
-        for ($i=1; $i <= $sitemapCount; $i++) {
+        for ($i = 1; $i <= $sitemapCount; $i++) {
             $sitemaps[] = ['url' => route('statamic.seo-pro.sitemap.paginated', ['id' => $i])];
         }
 
@@ -126,7 +130,8 @@ class Sitemap
         return Entry::query()
             ->whereIn('collection', $collections)
             ->whereNotNull('uri')
-            ->whereStatus('published');
+            ->whereStatus('published')
+            ->orderBy('uri');
     }
 
     protected function publishedEntries()
