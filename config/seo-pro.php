@@ -23,7 +23,7 @@ return [
         'url' => 'sitemap.xml',
         'expire' => 60,
         'paginated' => false,
-        'paginated_limit' => 25,
+        'paginated_limit' => 100,
         'paginated_url' => 'sitemap_{id}.xml',
     ],
 
