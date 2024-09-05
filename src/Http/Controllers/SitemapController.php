@@ -9,48 +9,48 @@ use Statamic\SeoPro\Sitemap\Sitemap;
 
 class SitemapController extends Controller
 {
-    public function show($page = null)
+    public function index()
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
-        $cacheKey = Sitemap::CACHE_KEY;
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-            if ($page !== null) {
-                if (! filter_var($page, FILTER_VALIDATE_INT)) {
-                    abort(404);
-                }
-
-                $cacheKey .= '_'.$page;
-            }
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
+               return view('seo-pro::sitemap_index', [
+                   'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
+                   'sitemaps' => Sitemap::paginatedSitemaps(),
+               ])->render();
+           });
+        } else {
+            $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
+                return view('seo-pro::sitemap', [
+                    'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
+                    'pages' => Sitemap::pages(),
+                ])->render();
+            });
         }
 
+        return response($content)->header('Content-Type', 'text/xml');
+    }
+
+    public function show($page)
+    {
+        abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
+        abort_unless(config('statamic.seo-pro.sitemap.pagination.enabled'), 404);
+        abort_unless(filter_var($page, FILTER_VALIDATE_INT), 404);
+
+        $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
+
+        $cacheKey = Sitemap::CACHE_KEY.'_'.$page;
+
         $content = Cache::remember($cacheKey, $cacheUntil, function () use ($page) {
-            $data = [
+            abort_if(empty($pages = Sitemap::paginatedPages($page)), 404);
+
+            return view('seo-pro::sitemap', [
                 'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-            ];
-
-            $view = 'seo-pro::sitemap';
-
-            if (! config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-                $data['pages'] = Sitemap::pages();
-            }
-
-            if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-                if ($page === null) {
-                    $data['sitemaps'] = Sitemap::paginatedSitemaps();
-                    $view = 'seo-pro::sitemap_index';
-                } else {
-                    $data['pages'] = Sitemap::paginatedPages($page);
-
-                    if (empty($data['pages'])) {
-                        abort(404);
-                    }
-                }
-            }
-
-            return view($view, $data)->render();
+                'pages' => $pages,
+            ])->render();
         });
 
         return response($content)->header('Content-Type', 'text/xml');
