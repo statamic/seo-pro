@@ -24,8 +24,8 @@ return [
         'expire' => 60,
         'pagination' => [
             'enabled' => false,
-            'limit' => 100,
             'url' => 'sitemap_{page}.xml',
+            'limit' => 100,
         ],
     ],
 
