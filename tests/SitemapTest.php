@@ -235,16 +235,17 @@ EOT;
         $expected = <<<'EOT'
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    
+
     <sitemap>
         <loc>http://cool-runnings.com/sitemap_1.xml</loc>
     </sitemap>
-    
+
     <sitemap>
         <loc>http://cool-runnings.com/sitemap_2.xml</loc>
     </sitemap>
-    
+
 </sitemapindex>
+
 EOT;
 
         $this->assertEquals($expected, $content);
