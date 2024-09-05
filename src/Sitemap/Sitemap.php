@@ -36,7 +36,7 @@ class Sitemap
     {
         $sitemap = new static;
 
-        $perPage = config('statamic.seo-pro.sitemap.paginated_limit', 100);
+        $perPage = config('statamic.seo-pro.sitemap.pagination.limit', 100);
         $offset = ($page - 1) * $perPage;
         $remaining = $perPage;
 
@@ -82,7 +82,7 @@ class Sitemap
         // would be nice to make terms a count query rather than getting the count from the terms collection
         $count = $sitemap->publishedEntriesCount() + $sitemap->publishedTerms()->count() + $sitemap->publishedCollectionTerms()->count();
 
-        $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.paginated_limit', 100));
+        $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
 
         $sitemaps = [];
         for ($i = 1; $i <= $sitemapCount; $i++) {

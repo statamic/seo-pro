@@ -223,8 +223,8 @@ EOT;
     /** @test */
     public function it_outputs_paginated_sitemap_index_xml()
     {
-        config()->set('statamic.seo-pro.sitemap.paginated', true);
-        config()->set('statamic.seo-pro.sitemap.paginated_limit', 5);
+        config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
+        config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
         $content = $this
             ->get('/sitemap.xml')
@@ -254,8 +254,8 @@ EOT;
     /** @test */
     public function it_outputs_paginated_sitemap_page_xml()
     {
-        config()->set('statamic.seo-pro.sitemap.paginated', true);
-        config()->set('statamic.seo-pro.sitemap.paginated_limit', 5);
+        config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
+        config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
         $content = $this
             ->get('/sitemap_1.xml')
@@ -350,8 +350,8 @@ EOT;
     /** @test */
     public function it_404s_on_invalid_pagination_urls()
     {
-        config()->set('statamic.seo-pro.sitemap.paginated', true);
-        config()->set('statamic.seo-pro.sitemap.paginated_limit', 5);
+        config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
+        config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
         $this
             ->get('/sitemap_3.xml')

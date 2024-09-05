@@ -16,7 +16,7 @@ class SitemapController extends Controller
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
         $cacheKey = Sitemap::CACHE_KEY;
 
-        if (config('statamic.seo-pro.sitemap.paginated', false)) {
+        if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
             if ($page !== null) {
                 if (! filter_var($page, FILTER_VALIDATE_INT)) {
                     abort(404);
@@ -33,11 +33,11 @@ class SitemapController extends Controller
 
             $view = 'seo-pro::sitemap';
 
-            if (! config('statamic.seo-pro.sitemap.paginated', false)) {
+            if (! config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
                 $data['pages'] = Sitemap::pages();
             }
 
-            if (config('statamic.seo-pro.sitemap.paginated', false)) {
+            if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
                 if ($page === null) {
                     $data['sitemaps'] = Sitemap::paginatedSitemaps();
                     $view = 'seo-pro::sitemap_index';
