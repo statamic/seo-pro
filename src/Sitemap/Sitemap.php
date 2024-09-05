@@ -84,12 +84,9 @@ class Sitemap
 
         $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
 
-        $sitemaps = [];
-        for ($i = 1; $i <= $sitemapCount; $i++) {
-            $sitemaps[] = ['url' => route('statamic.seo-pro.sitemap.paginated', ['id' => $i])];
-        }
-
-        return $sitemaps;
+        return collect(range(1, $sitemapCount))
+            ->map(fn ($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
+            ->all();
     }
 
     protected function getPages($items)

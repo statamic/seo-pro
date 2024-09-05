@@ -25,7 +25,7 @@ return [
         'pagination' => [
             'enabled' => false,
             'limit' => 100,
-            'url' => 'sitemap_{id}.xml',
+            'url' => 'sitemap_{page}.xml',
         ],
     ],
 
