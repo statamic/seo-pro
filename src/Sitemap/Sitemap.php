@@ -45,7 +45,7 @@ class Sitemap
         $entryCount = $sitemap->publishedEntriesCount() - 1;
 
         if ($offset < $entryCount) {
-            $entries = $sitemap->publishedEntries()->skip($offset)->take($perPage);
+            $entries = $sitemap->publishedEntriesQuery()->offset($offset)->limit($perPage)->get();
 
             if ($entries->count() < $remaining) {
                 $remaining -= $entries->count();
