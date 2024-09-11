@@ -5,6 +5,7 @@ namespace Statamic\SeoPro\Tags;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\RendersMetaHtml;
+use Statamic\SeoPro\SeoPro;
 use Statamic\SeoPro\SiteDefaults;
 use Statamic\Tags\Tags;
 
@@ -60,6 +61,15 @@ class SeoProTags extends Tags
     public function dumpMetaData()
     {
         return dd($this->metaData());
+    }
+
+    public function content()
+    {
+        if (! SeoPro::isSeoProProcess()) {
+            return $this->parse();
+        }
+
+        return '<!--statamic:content-->'.$this->parse().'<!--/statamic:content-->';
     }
 
     /**

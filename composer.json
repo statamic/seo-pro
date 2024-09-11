@@ -22,7 +22,10 @@
         }
     },
     "require": {
-        "statamic/cms": "^5.0.0"
+        "statamic/cms": "^5.0.0",
+        "donatello-za/rake-php-plus": "^1.0",
+        "openai-php/client": "^0.10.1",
+        "ext-dom": "*"
     },
     "require-dev": {
         "orchestra/testbench": "^8.0 || ^9.0",
@@ -30,7 +33,8 @@
     },
     "config": {
         "allow-plugins": {
-            "pixelfear/composer-dist-plugin": true
+            "pixelfear/composer-dist-plugin": true,
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "dev",

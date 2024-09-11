@@ -66,4 +66,6 @@ return [
         'three_segment_urls_site_warning' => ':count page with more than 3 segments in URL.|:count pages with more than 3 segments in their URLs.',
     ],
 
+    'link_manager' => 'Link Manager',
+    'links_description' => 'View internal entry link suggestions and related link statistics.',
 ];
