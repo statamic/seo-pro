@@ -22,12 +22,17 @@ class SuggestionEngine
         return $this;
     }
 
+    private function canExtractContext(mixed $value): bool
+    {
+        return is_string($value);
+    }
+
     protected function getPhraseContext(array $contentMapping, string $phrase): PhraseContext
     {
         $context = new PhraseContext();
 
         foreach ($contentMapping as $handle => $content) {
-            if (! is_string($content)) {
+            if (! $this->canExtractContext($content)) {
                 continue;
             }
 
@@ -63,13 +68,25 @@ class SuggestionEngine
                                 $context->fieldHandle($handle);
                                 $context->context($line);
                                 $context->canReplace(true);
+
                                 break 2;
                             }
                         }
 
                         $context->context($curLine);
-                        break;
+                    } else {
+                        $contextPhrase = $this->getSurroundingWords($content, $phrase);
+
+                        if (! $contextPhrase) {
+                            continue;
+                        }
+
+                        $context->fieldHandle($handle);
+                        $context->context($contextPhrase);
+                        $context->canReplace(true);
+
                     }
+                    break;
                 }
             }
         }
@@ -77,20 +94,27 @@ class SuggestionEngine
         return $context;
     }
 
-    protected function contentIndexToMapping(array $index): array
+    protected function getSurroundingWords(string $content, string $phrase, int $surroundingWords = 4): ?string
     {
-        return collect($index)
-            ->mapWithKeys(function ($item) {
-                return [$item['fqn_path'] => $item['value']];
-            })
-            ->all();
+        preg_match('/^(.*?)('.preg_quote($phrase, '/').')(.*)$/iu', $content, $matches);
+
+        if (empty($matches)) {
+            return null;
+        }
+
+        $words = array_filter(array_slice(explode(' ', $matches[1]), -$surroundingWords));
+        $words[] = $phrase;
+
+        $words = array_merge($words, array_filter(array_slice(explode(' ', $matches[3]), 0, $surroundingWords)));
+
+        return implode(' ', $words);
     }
 
     public function suggest(Entry $entry)
     {
         $entryLink = EntryLink::where('entry_id', $entry->id())->firstOrFail();
         $linkResults = LinkCrawler::getLinkResultsFromEntryLink($entryLink);
-        $contentMapping = self::contentIndexToMapping($entryLink->content_mapping ?? []);
+        $contentMapping = $entryLink->content_mapping;
 
         $internalLinks = [];
         $usedPhrases = [];
@@ -116,7 +140,7 @@ class SuggestionEngine
                     array_key_exists($keyword, $suggestions) ||
                     array_key_exists($keyword, $usedPhrases)
                 ) {
-                   continue;
+                    continue;
                 }
 
                 $context = $this->getPhraseContext($contentMapping, $keyword);
