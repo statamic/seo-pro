@@ -4,11 +4,11 @@ namespace Statamic\SeoPro\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Statamic\Facades\Entry;
-use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
 use Statamic\SeoPro\Jobs\Concerns\DispatchesSeoProJobs;
+use Statamic\SeoPro\TextProcessing\Links\LinkScanOptions;
 
 class ScanEntryLinks implements ShouldQueue
 {
@@ -21,7 +21,6 @@ class ScanEntryLinks implements ShouldQueue
     public function handle(
         LinksRepository $linksRepository,
         KeywordsRepository $keywordsRepository,
-        EntryEmbeddingsRepository $entryEmbeddingsRepository,
         LinkCrawler $linkCrawler,
     ): void
     {
@@ -31,7 +30,10 @@ class ScanEntryLinks implements ShouldQueue
             return;
         }
 
-        $linkCrawler->scanEntry($entry);
+        $linkCrawler->scanEntry($entry, new LinkScanOptions(
+            withInternalChangeSets: true
+        ));
+
         $linkCrawler->updateInboundInternalLinkCount($entry);
 
         if ($linksRepository->isLinkingEnabledForEntry($entry)) {
