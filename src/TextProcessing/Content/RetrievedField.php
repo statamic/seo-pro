@@ -96,7 +96,11 @@ class RetrievedField
         $data = $this->getRootData();
 
         if (is_array($data)) {
-            Arr::set($data, $this->path, $newValue);
+            if (strlen($this->path) > 0) {
+                Arr::set($data, $this->path, $newValue);
+            } else {
+                $data = $newValue;
+            }
         } else if (is_string($data) && is_string($newValue)) {
             $data = $newValue;
         }
