@@ -67,6 +67,9 @@ class ServiceProvider extends AddonServiceProvider
         CollectionDeleted::class => [
             SeoPro\Listeners\CollectionDeletedListener::class,
         ],
+        SeoPro\Events\InternalLinksUpdated::class => [
+            SeoPro\Listeners\InternalLinksUpdatedListener::class,
+        ],
     ];
 
     public function bootAddon()
@@ -163,6 +166,7 @@ class ServiceProvider extends AddonServiceProvider
             SeoPro\TextProcessing\Content\LinkReplacers\MarkdownReplacer::class,
             SeoPro\TextProcessing\Content\LinkReplacers\TextReplacer::class,
             SeoPro\TextProcessing\Content\LinkReplacers\TextareaReplacer::class,
+            SeoPro\TextProcessing\Content\LinkReplacers\Bard\BardReplacer::class,
         ]);
 
         return $this;
