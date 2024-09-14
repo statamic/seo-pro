@@ -186,9 +186,8 @@ export default {
     methods: {
 
         getFieldDetails() {
-            this.$axios.get(cp_url(`seo-pro/links/field-details/${this.suggestion.entry}/${this.suggestion.context.field_handle}`)).then(response => {
+            this.$axios.get(cp_url(`seo-pro/links/field-details/${this.entryId}/${this.suggestion.context.field_handle}`)).then(response => {
                 this.fieldConfig = response.data;
-                console.log('yo', this.fieldConfig);
             });
         },
 
