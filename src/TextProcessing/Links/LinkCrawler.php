@@ -29,14 +29,19 @@ readonly class LinkCrawler implements LinkCrawlerContract
         }
     }
 
-    public function scanEntry(Entry $entry): void
+    public function scanEntry(Entry $entry, ?LinkScanOptions $options = null): void
     {
-        $this->linksRepository->scanEntry($entry);
+        $this->linksRepository->scanEntry($entry, $options);
     }
 
     public static function getLinkResultsFromEntryLink(EntryLink $entryLink): LinkResults
     {
         return self::getLinkResults($entryLink->analyzed_content);
+    }
+
+    public function updateLinkStatistics(Entry $entry): void
+    {
+        $this->updateInboundInternalLinkCount($entry);
     }
 
     public function updateInboundInternalLinkCount(Entry $entry): void

@@ -8,6 +8,7 @@ use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Entry as EntryApi;
 use Statamic\SeoPro\Contracts\TextProcessing\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository as LinkRepositoryContract;
+use Statamic\SeoPro\Events\InternalLinksUpdated;
 use Statamic\SeoPro\TextProcessing\Models\CollectionLinkSettings;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Models\SiteLinkSetting;
@@ -156,12 +157,16 @@ readonly class LinkRepository implements LinkRepositoryContract
         $entryLink->saveQuietly();
     }
 
-    public function scanEntry(Entry $entry): ?EntryLink
+    public function scanEntry(Entry $entry, ?LinkScanOptions $options = null): ?EntryLink
     {
+        if (! $options) {
+            $options = new LinkScanOptions();
+        }
+
         /** @var EntryLink $entryLinks */
         $entryLinks = EntryLink::firstOrNew(['entry_id' => $entry->id()]);
         $linkContent = $this->contentRetriever->getContent($entry, false);
-        $contentMapping = $this->contentRetriever->getContentMappingIndexArray($entry);
+        $contentMapping = $this->contentRetriever->getContentMapping($entry);
         $linkResults = LinkCrawler::getLinkResults($linkContent);
         $collection = $entry->collection()->handle();
         $site = $entry->site()->handle();
@@ -195,9 +200,32 @@ readonly class LinkRepository implements LinkRepositoryContract
         $entryLinks->normalized_external_links = $this->normalizeLinks($externalLinks);
         $entryLinks->normalized_internal_links = $this->normalizeLinks($internalLinks);
 
+        $linkChangeSet = null;
+
+        if ($options->withInternalChangeSets && $entryLinks->isDirty('internal_links')) {
+            $linkChangeSet = $this->makeLinkChangeSet(
+                $entryLinks->entry_id,
+                $entryLinks->getOriginal('internal_links') ?? [],
+                $entryLinks->internal_links ?? [],
+            );
+        }
+
         $entryLinks->saveQuietly();
 
+        if ($linkChangeSet) {
+            InternalLinksUpdated::dispatch($linkChangeSet);
+        }
+
         return $entryLinks;
+    }
+
+    protected function makeLinkChangeSet(string $entryId, array $original, array $new): LinkChangeSet
+    {
+        return new LinkChangeSet(
+            $entryId,
+            array_diff($new, $original),
+            array_diff($original, $new),
+        );
     }
 
     protected function normalizeLinks(Collection $links): array

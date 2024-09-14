@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Contracts\TextProcessing\Links;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\SeoPro\TextProcessing\Links\IgnoredSuggestion;
+use Statamic\SeoPro\TextProcessing\Links\LinkScanOptions;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 
 interface LinksRepository
@@ -12,7 +13,7 @@ interface LinksRepository
 
     public function isLinkingEnabledForEntry(Entry $entry): bool;
 
-    public function scanEntry(Entry $entry): ?EntryLink;
+    public function scanEntry(Entry $entry, ?LinkScanOptions $options = null): ?EntryLink;
 
     public function deleteLinksForSite(string $handle): void;
 
