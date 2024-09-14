@@ -122,7 +122,8 @@ class LinksController extends CpController
         if (request('search')) {
             $query->where(function (Builder $q) {
                 $q->where('analyzed_content', 'like', '%'.request('search').'%')
-                    ->orWhere('cached_title', 'like', '%'.request('search').'%');
+                    ->orWhere('cached_title', 'like', '%'.request('search').'%')
+                    ->orWhere('cached_uri', 'like', '%'.request('search').'%');
             });
         }
 
