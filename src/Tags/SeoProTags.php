@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Tags;
 
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\RendersMetaHtml;
@@ -70,7 +71,11 @@ class SeoProTags extends Tags
             $content = $this->parse();
 
             if ($this->params->get('auto_link', false)) {
-                return app(AutomaticLinkManager::class)->inject($content);
+                return app(AutomaticLinkManager::class)
+                    ->inject(
+                        $content,
+                        Site::current()?->handle() ?? 'default',
+                    );
             }
 
             return $content;
