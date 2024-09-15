@@ -29,6 +29,9 @@
                                 <span>{{ suggestion.phrase }}</span>
                             </div>
                         </template>
+                        <template slot="cell-context.can_replace" slot-scope="{ row: suggestion }">
+                            <span>{{ suggestion.context.can_replace ? '✅' : '❌' }}</span>
+                        </template>
                         <template slot="cell-context.field_handle" slot-scope="{ row: suggestion }">
                             <span>{{ suggestion.context.field_handle ?? '' }}</span>
                         </template>
@@ -37,8 +40,9 @@
                         </template>
                         <template slot="actions" slot-scope="{ row: suggestion }">
                             <dropdown-list>
+                                <dropdown-item text="Edit Entry" :redirect="editUrl"></dropdown-item>
                                 <dropdown-item text="Accept Suggestion" @click="activeSuggestion = suggestion" v-if="suggestion.context.can_replace" />
-                                <div class="divider" v-if="suggestion.context.can_replace"></div>
+                                <div class="divider"></div>
                                 <dropdown-item text="Ignore Suggestion" @click="ignoringSuggestion = suggestion" class="warning" />
                             </dropdown-list>
                         </template>
@@ -95,8 +99,9 @@ export default {
             activeSuggestion: null,
             columns: [
                 { label: 'Phrase', field: 'phrase' },
+                { label: 'Can Auto Apply', field: 'context.can_replace' },
                 { label: 'Rank', field: 'score' },
-                { label: 'URI', field: 'uri' }
+                { label: 'Target URI', field: 'uri' }
             ],
             suggestions: [],
         };
@@ -109,6 +114,7 @@ export default {
 
             this.$axios.get(cp_url(`seo-pro/links/${this.entry}/suggestions`)).then(response => {
                 this.suggestions = response.data;
+                console.log(this.suggestions);
                 this.loading = false;
             });
         },
