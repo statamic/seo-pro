@@ -7,6 +7,7 @@ use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\RendersMetaHtml;
 use Statamic\SeoPro\SeoPro;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\TextProcessing\Links\AutomaticLinkManager;
 use Statamic\Tags\Tags;
 
 class SeoProTags extends Tags
@@ -66,7 +67,13 @@ class SeoProTags extends Tags
     public function content()
     {
         if (! SeoPro::isSeoProProcess()) {
-            return $this->parse();
+            $content = $this->parse();
+
+            if ($this->params->get('auto_link', false)) {
+                return app(AutomaticLinkManager::class)->inject($content);
+            }
+
+            return $content;
         }
 
         return '<!--statamic:content-->'.$this->parse().'<!--/statamic:content-->';

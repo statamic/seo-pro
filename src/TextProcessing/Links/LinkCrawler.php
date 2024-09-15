@@ -134,6 +134,7 @@ readonly class LinkCrawler implements LinkCrawlerContract
             $result = [
                 'href' => $href,
                 'text' => $linkText,
+                'content' => $link['content'],
             ];
 
             if (URL::isExternal($href)) {
