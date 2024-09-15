@@ -54,24 +54,6 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $config = false;
 
-    protected $listen = [
-        EntrySaved::class => [
-            SeoPro\Listeners\EntrySavedListener::class,
-        ],
-        EntryDeleted::class => [
-            SeoPro\Listeners\EntryDeletedListener::class,
-        ],
-        SiteDeleted::class => [
-            SeoPro\Listeners\SiteDeletedListener::class,
-        ],
-        CollectionDeleted::class => [
-            SeoPro\Listeners\CollectionDeletedListener::class,
-        ],
-        SeoPro\Events\InternalLinksUpdated::class => [
-            SeoPro\Listeners\InternalLinksUpdatedListener::class,
-        ],
-    ];
-
     public function bootAddon()
     {
         $this
@@ -88,8 +70,42 @@ class ServiceProvider extends AddonServiceProvider
             ->bootTextAnalysis();
     }
 
+    protected function isLinkingEnabled(): bool
+    {
+        return config('statamic.seo-pro.text_analysis.enabled', false);
+    }
+
+    public function bootEvents()
+    {
+        if ($this->isLinkingEnabled()) {
+            $this->listen = array_merge($this->listen, [
+                EntrySaved::class => [
+                    SeoPro\Listeners\EntrySavedListener::class,
+                ],
+                EntryDeleted::class => [
+                    SeoPro\Listeners\EntryDeletedListener::class,
+                ],
+                SiteDeleted::class => [
+                    SeoPro\Listeners\SiteDeletedListener::class,
+                ],
+                CollectionDeleted::class => [
+                    SeoPro\Listeners\CollectionDeletedListener::class,
+                ],
+                SeoPro\Events\InternalLinksUpdated::class => [
+                    SeoPro\Listeners\InternalLinksUpdatedListener::class,
+                ],
+            ]);
+        }
+
+        return parent::bootEvents();
+    }
+
     protected function bootTextAnalysis()
     {
+        if (! $this->isLinkingEnabled()) {
+            return $this;
+        }
+
         SeoPro\Actions\ViewLinkSuggestions::register();
 
         $this->app->bind(
