@@ -91,11 +91,6 @@ readonly class ContentRetriever implements ContentRetrieverContract
         return $this->mapper->getContentMapping($entry);
     }
 
-    public function getContentMappingIndexArray(Entry $entry): array
-    {
-        return $this->mapper->getContentMappingIndexArray($entry);
-    }
-
     /**
      * @param Entry $entry
      * @return array{id:string,text:string}

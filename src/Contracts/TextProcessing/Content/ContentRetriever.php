@@ -12,8 +12,6 @@ interface ContentRetriever
 
     public function getContentMapping(Entry $entry): array;
 
-    public function getContentMappingIndexArray(Entry $entry): array;
-
     public function getSections(Entry $entry): array;
 
     public function stripTags(string $content): string;

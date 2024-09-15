@@ -320,35 +320,10 @@ class ContentMapper
         return $this->contentMapping;
     }
 
-    public function getContentMappingIndexArray(Entry $entry)
-    {
-        return collect($this->getContentFields($entry))
-            ->map(fn(RetrievedField $field) => $field->toArray())
-            ->values()
-            ->all();
-    }
-
     public function getContentFields(Entry $entry): Collection
     {
         return collect($this->getContentMapping($entry))
             ->map(fn($_, $path) => $this->retrieveField($entry, $path));
-    }
-
-    public function findFields(Entry $entry, string $pattern): Collection
-    {
-        $pattern = '/'.$pattern.'/';
-        $results = [];
-        $mapping = $this->getContentMapping($entry);
-
-        foreach ($mapping as $path => $value) {
-            if (! preg_match($pattern, $path)) {
-                continue;
-            }
-
-            $results[] = $this->retrieveField($entry, $path);
-        }
-
-        return collect($results);
     }
 
     public function retrieveField(Entry $entry, string $path): RetrievedField
