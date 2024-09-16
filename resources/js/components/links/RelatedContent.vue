@@ -31,6 +31,8 @@
                         </template>
                         <template slot="actions" slot-scope="{ row: related }">
                             <dropdown-list>
+                                <dropdown-item text="Edit Entry" :redirect="related.entry.edit_url"></dropdown-item>
+                                <div class="divider"></div>
                                 <dropdown-item text="Not Related" class="warning" @click="ignoringSuggestion = makeSuggestion(related)" />
                             </dropdown-list>
                         </template>
