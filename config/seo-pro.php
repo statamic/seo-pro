@@ -59,6 +59,8 @@ return [
 
     'text_analysis' => [
 
+        'enabled' => true,
+
         'openai' => [
             'api_key' => env('SEO_PRO_OPENAI_API_KEY'),
             'model' => 'text-embedding-3-small',
