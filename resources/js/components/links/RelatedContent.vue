@@ -29,11 +29,11 @@
                         <template slot="cell-score" slot-scope="{ row: item }">
                             <span>{{ item.score.toFixed(2) }}</span>
                         </template>
-                        <template slot="actions" slot-scope="{ row: related }">
+                        <template slot="actions" slot-scope="{ row: item }">
                             <dropdown-list>
-                                <dropdown-item text="Edit Entry" :redirect="related.entry.edit_url"></dropdown-item>
+                                <dropdown-item text="Edit Entry" :redirect="item.entry.edit_url"></dropdown-item>
                                 <div class="divider"></div>
-                                <dropdown-item text="Not Related" class="warning" @click="ignoringSuggestion = makeSuggestion(related)" />
+                                <dropdown-item text="Not Related" class="warning" @click="ignoringSuggestion = makeSuggestion(item)" />
                             </dropdown-list>
                         </template>
                     </data-list-table>
