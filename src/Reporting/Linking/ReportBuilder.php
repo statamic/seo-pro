@@ -192,7 +192,7 @@ class ReportBuilder
             $uri = Str::before($link, '#');
 
             if (str_ends_with($uri, '/')) {
-                $uri = mb_substr($uri, -1);
+                $uri = mb_substr($uri, 0, mb_strlen($uri) - 1);
             }
 
             $toLookup[] = [
