@@ -73,8 +73,12 @@ class BaseLinkReport implements Arrayable, Jsonable
         return [];
     }
 
-    protected function dumpEntry(Entry $entry): ?array
+    protected function dumpEntry(?Entry $entry): ?array
     {
+        if (! $entry) {
+            return [];
+        }
+
         return [
             'title' => $entry->title,
             'url' => $entry->absoluteUrl(),
