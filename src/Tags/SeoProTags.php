@@ -2,13 +2,17 @@
 
 namespace Statamic\SeoPro\Tags;
 
+use Statamic\Contracts\Entries\Entry;
+use Statamic\Facades\Entry as EntryApi;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\RendersMetaHtml;
+use Statamic\SeoPro\Reporting\Linking\ReportBuilder;
 use Statamic\SeoPro\SeoPro;
 use Statamic\SeoPro\SiteDefaults;
 use Statamic\SeoPro\TextProcessing\Links\AutomaticLinkManager;
+use Statamic\Structures\Page;
 use Statamic\Tags\Tags;
 
 class SeoProTags extends Tags
@@ -82,6 +86,46 @@ class SeoProTags extends Tags
         }
 
         return '<!--statamic:content-->'.$this->parse().'<!--/statamic:content-->';
+    }
+
+    protected function makeRelatedContentReport(Entry $entry)
+    {
+        $related = app(ReportBuilder::class)
+            ->getRelatedContentReport($entry, $this->params->get('limit', 10))
+            ->getRelated(true);
+
+        if ($as = $this->params->get('as')) {
+            return [
+                $as => $related,
+            ];
+        }
+
+        return $related;
+    }
+
+    public function relatedContent()
+    {
+        $id = $this->params->get('for', $this->context->get('page.id'));
+
+        if (! $id) {
+            return [];
+        }
+
+        if ($id instanceof Page) {
+            $id = $id->entry();
+        }
+
+        if ($id instanceof Entry) {
+            return $this->makeRelatedContentReport($id);
+        }
+
+        $entry = EntryApi::find($id);
+
+        if (! $entry) {
+            return [];
+        }
+
+        return $this->makeRelatedContentReport($entry);
     }
 
     /**

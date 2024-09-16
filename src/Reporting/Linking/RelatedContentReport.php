@@ -15,11 +15,11 @@ class RelatedContentReport extends BaseLinkReport
             ->args(func_get_args());
     }
 
-    public function getRelated(): array
+    public function getRelated(bool $returnFullEntry = false): array
     {
-        return collect($this->relatedContent)->map(function (Result $result) {
+        return collect($this->relatedContent)->map(function (Result $result) use ($returnFullEntry) {
             return [
-                'entry' => $this->dumpEntry($result->entry()),
+                'entry' => $returnFullEntry ? $result->entry() : $this->dumpEntry($result->entry()),
                 'score' => $result->score(),
                 'keyword_score' => $result->keywordScore(),
                 'related_keywords' => implode(', ', array_keys($result->similarKeywords()))
