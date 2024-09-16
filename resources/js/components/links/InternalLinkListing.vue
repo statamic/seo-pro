@@ -22,9 +22,14 @@
                         :sortable="true"
                     >
                         <template slot="cell-entry.title" slot-scope="{ row: item }">
-                            <a class="title-index-field inline-flex items-center" :href="item.entry.edit_url" @click.stop target="_blank">
+                            <a class="title-index-field inline-flex items-center" :href="makeSuggestionsUrl(item.entry.id)" @click.stop>
                                 <span>{{ item.entry.title ?? item.entry.uri }}</span>
                             </a>
+                        </template>
+                        <template slot="actions" slot-scope="{ row: item }">
+                            <dropdown-list>
+                                <dropdown-item text="Edit Entry" :redirect="item.entry.edit_url"></dropdown-item>
+                            </dropdown-list>
                         </template>
                     </data-list-table>
                 </div>
@@ -51,6 +56,10 @@ export default  {
     },
 
     methods: {
+
+        makeSuggestionsUrl(entryId) {
+            return cp_url(`seo-pro/links/${entryId}/suggestions`);
+        },
 
         loadData() {
             this.loading = true;
