@@ -28,6 +28,18 @@
             <div>
                 <div class="card overflow-hidden p-0 relative">
                     <div class="flex flex-wrap items-center justify-between px-2 pb-2 text-sm border-b dark:border-dark-900">
+                        <data-list-filter-presets
+                            ref="presets"
+                            :active-preset="activePreset"
+                            :active-preset-payload="activePresetPayload"
+                            :active-filters="activeFilters"
+                            :has-active-filters="hasActiveFilters"
+                            :preferences-prefix="preferencesPrefix"
+                            :search-query="searchQuery"
+                            @selected="selectPreset"
+                            @reset="filtersReset"
+                        />
+
                         <data-list-search class="h-8 mt-2 min-w-[240px] w-full" ref="search" v-model="searchQuery" :placeholder="searchPlaceholder" />
                     </div>
                     <data-list-filters
