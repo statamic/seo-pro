@@ -55,6 +55,7 @@
             :suggestion="ignoringSuggestion"
             :entry-id="entry"
             @closed="ignoringSuggestion = null"
+            mode="suggestion"
             :site="site"
             @saved="handleSuggestionIgnored"
         ></IgnoreConfirmation>

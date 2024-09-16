@@ -27,7 +27,7 @@ class IgnoredSuggestionsController extends CpController
         $this->linksRepository->ignoreSuggestion(new IgnoredSuggestion(
             $data['action'],
             $data['scope'],
-            $data['phrase'],
+            $data['phrase'] ?? '',
             $data['entry'],
             $data['ignored_entry'],
             $data['site']

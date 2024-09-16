@@ -29,21 +29,43 @@
                         <template slot="cell-score" slot-scope="{ row: item }">
                             <span>{{ item.score.toFixed(2) }}</span>
                         </template>
+                        <template slot="actions" slot-scope="{ row: related }">
+                            <dropdown-list>
+                                <dropdown-item text="Not Related" class="warning" @click="ignoringSuggestion = makeSuggestion(related)" />
+                            </dropdown-list>
+                        </template>
                     </data-list-table>
                 </div>
             </div>
         </data-list>
+
+        <IgnoreConfirmation
+            :suggestion="ignoringSuggestion"
+            :entry-id="entry"
+            @closed="ignoringSuggestion = null"
+            mode="related"
+            :site="site"
+            @saved="handleRelatedContentIgnored"
+        ></IgnoreConfirmation>
     </div>
 </template>
 
 <script>
+import IgnoreConfirmation from './suggestions/IgnoreConfirmation.vue';
+
 export default  {
     props: [
         'entry',
+        'site',
     ],
+
+    components: {
+        IgnoreConfirmation,
+    },
 
     data() {
         return {
+            ignoringSuggestion: null,
             columns: [
                 { label: 'Entry', field: 'entry.title' },
                 { label: 'Score', field: 'score' },
@@ -55,6 +77,18 @@ export default  {
     },
 
     methods: {
+
+        makeSuggestion(related) {
+            return {
+                phrase: '',
+                entry: related.entry.id,
+            };
+        },
+
+        handleRelatedContentIgnored() {
+            this.ignoringSuggestion = null;
+            this.loadData();
+        },
 
         loadData() {
             this.loading = true;
