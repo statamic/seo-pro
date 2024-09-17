@@ -268,18 +268,24 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonNav()
     {
+
         Nav::extend(function ($nav) {
             if ($this->userHasSeoPermissions()) {
                 $nav->tools('SEO Pro')
                     ->route('seo-pro.index')
                     ->icon('seo-search-graph')
                     ->children(function () use ($nav) {
-                        return [
+                        $menuItems = [
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
-                            $nav->item(__('seo-pro::messages.link_manager'))->route('seo-pro.internal-links.index')->can('view seo links'),
                         ];
+
+                        if ($this->isLinkingEnabled()) {
+                            $menuItems[] = $nav->item(__('seo-pro::messages.link_manager'))->route('seo-pro.internal-links.index')->can('view seo links');
+                        }
+
+                        return $menuItems;
                     });
             }
         });
