@@ -117,8 +117,7 @@ class BardManipulator
         $middle = array_slice($index, $replacementStarts, $replacementLength);
         $after = array_slice($index, $replacementStarts + $replacementLength);
 
-        $textMerger = function ($group)
-        {
+        $textMerger = function ($group) {
             $first = $group->first();
             $firstNode = $first['node'];
 
@@ -142,7 +141,7 @@ class BardManipulator
                 collect($this->mergeNodes($middle))->map(function ($node) use ($link) {
                     $newNode = $node['node'];
 
-                    $newNode['text'] = $node['text']. $this->findTrailingWhitespace($newNode['text'], $node['text']);
+                    $newNode['text'] = $node['text'].$this->findTrailingWhitespace($newNode['text'], $node['text']);
 
                     return $this->setLinkMark($newNode, $link);
                 })->all()
@@ -217,6 +216,7 @@ class BardManipulator
 
                 $lastNode = $node;
                 $lastMark = $currentMark;
+
                 continue;
             }
 
@@ -257,6 +257,6 @@ class BardManipulator
 
     protected function hasLinkMark(array $node): bool
     {
-        return collect($node['marks'] ?? [])->where(fn($node) => $node['type'] === 'link')->count() > 0;
+        return collect($node['marks'] ?? [])->where(fn ($node) => $node['type'] === 'link')->count() > 0;
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 trait DispatchesSeoProJobs
 {
-    use Queueable, InteractsWithQueue, Dispatchable;
+    use Dispatchable, InteractsWithQueue, Queueable;
 
     public static function dispatchSeoProJob(...$args): void
     {

@@ -11,7 +11,7 @@ class ContentMatching
 
     public static function isLikelyFilePath(string $value): bool
     {
-        if (!str_contains($value, '/') && !str_contains($value, '\\')) {
+        if (! str_contains($value, '/') && ! str_contains($value, '\\')) {
             return false;
         }
 

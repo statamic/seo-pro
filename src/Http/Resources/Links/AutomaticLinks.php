@@ -14,7 +14,7 @@ class AutomaticLinks extends BaseResourceCollection
 
     protected function setColumns(): void
     {
-        $this->columns = new Columns();
+        $this->columns = new Columns;
 
         $this->addColumn('link_text', 'Link Text')
             ->addColumn('link_target', 'Link Target')

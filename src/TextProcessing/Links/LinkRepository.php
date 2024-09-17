@@ -23,7 +23,7 @@ readonly class LinkRepository implements LinkRepositoryContract
     {
         if ($suggestion->action === 'ignore_entry') {
             $this->ignoreEntrySuggestion($suggestion);
-        } else if ($suggestion->action === 'ignore_phrase') {
+        } elseif ($suggestion->action === 'ignore_phrase') {
             $this->ignorePhraseSuggestion($suggestion);
         }
     }
@@ -43,8 +43,8 @@ readonly class LinkRepository implements LinkRepositoryContract
     {
         if ($suggestion->scope === 'all_entries') {
             $this->addIgnoredPhraseToSite($suggestion);
-        } else if ($suggestion->scope === 'entry') {
-            $this->whenEntryExists($suggestion->entry, fn($entry) => $this->addIgnoredPhraseToEntry($entry, $suggestion->phrase));
+        } elseif ($suggestion->scope === 'entry') {
+            $this->whenEntryExists($suggestion->entry, fn ($entry) => $this->addIgnoredPhraseToEntry($entry, $suggestion->phrase));
         }
     }
 
@@ -75,9 +75,9 @@ readonly class LinkRepository implements LinkRepositoryContract
     protected function ignoreEntrySuggestion(IgnoredSuggestion $suggestion): void
     {
         if ($suggestion->scope === 'all_entries') {
-            $this->whenEntryExists($suggestion->ignoredEntry, fn($entry) => $this->ignoreEntry($entry));
-        } else if ($suggestion->scope === 'entry') {
-            $this->whenEntryExists($suggestion->entry, fn($entry) => $this->addIgnoredEntryToEntry($entry, $suggestion->ignoredEntry));
+            $this->whenEntryExists($suggestion->ignoredEntry, fn ($entry) => $this->ignoreEntry($entry));
+        } elseif ($suggestion->scope === 'entry') {
+            $this->whenEntryExists($suggestion->entry, fn ($entry) => $this->addIgnoredEntryToEntry($entry, $suggestion->ignoredEntry));
         }
     }
 
@@ -160,7 +160,7 @@ readonly class LinkRepository implements LinkRepositoryContract
     public function scanEntry(Entry $entry, ?LinkScanOptions $options = null): ?EntryLink
     {
         if (! $options) {
-            $options = new LinkScanOptions();
+            $options = new LinkScanOptions;
         }
 
         /** @var EntryLink $entryLinks */
@@ -230,7 +230,7 @@ readonly class LinkRepository implements LinkRepositoryContract
 
     protected function normalizeLinks(Collection $links): array
     {
-        return $links->map(fn(string $link) => $this->normalizeLink($link))->unique()->all();
+        return $links->map(fn (string $link) => $this->normalizeLink($link))->unique()->all();
     }
 
     protected function normalizeLink(string $link): string
@@ -248,7 +248,7 @@ readonly class LinkRepository implements LinkRepositoryContract
 
     public function isLinkingEnabledForEntry(Entry $entry): bool
     {
-        /** @var CollectionLinkSettings  $collectionSetting */
+        /** @var CollectionLinkSettings $collectionSetting */
         $collectionSetting = CollectionLinkSettings::where('collection', $entry->collection()->handle())->first();
 
         if ($collectionSetting && ! $collectionSetting->linking_enabled) {

@@ -15,7 +15,6 @@ class PhraseContext
     protected bool $canReplace = false;
 
     /**
-     * @param string|null $handle
      * @return ($handle is null ? string : null))
      */
     public function fieldHandle(?string $handle = null)
@@ -25,7 +24,6 @@ class PhraseContext
     }
 
     /**
-     * @param string|null $context
      * @return ($context is null ? string : null)
      */
     public function context(?string $context = null)
@@ -35,7 +33,6 @@ class PhraseContext
     }
 
     /**
-     * @param bool|null $canReplace
      * @return ($canReplace is null ? bool : null)
      */
     public function canReplace(?bool $canReplace = null)

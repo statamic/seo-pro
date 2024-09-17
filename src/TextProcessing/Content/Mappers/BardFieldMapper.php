@@ -35,12 +35,11 @@ class BardFieldMapper extends AbstractFieldMapper
             }
             $this->mapper->pushIndex($index);
 
-
             if ($value['type'] === 'paragraph') {
                 $this->mapper->append('{node:paragraph}');
                 $this->mapper->finish($this->getParagraphContent($value));
                 $this->mapper->popIndex();
-            } else if ($value['type'] === 'set') {
+            } elseif ($value['type'] === 'set') {
                 $setValues = $value['attrs']['values'] ?? null;
 
                 if (! $setValues) {
@@ -54,7 +53,6 @@ class BardFieldMapper extends AbstractFieldMapper
                 if (! array_key_exists($setValues['type'], $sets)) {
                     continue;
                 }
-
 
                 $this->mapper->append('{set:'.$setValues['type'].'}');
 

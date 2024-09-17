@@ -20,8 +20,7 @@ class StartTheEnginesCommand extends Command
         LinkCrawler $crawler,
         KeywordsRepository $keywordsRepository,
         EntryEmbeddingsRepository $entryEmbeddingsRepository,
-    )
-    {
+    ) {
         $this->line('Getting things ready...');
 
         $crawler->scanAllEntries();
@@ -30,5 +29,4 @@ class StartTheEnginesCommand extends Command
 
         $this->info('Vroom vroom.');
     }
-
 }

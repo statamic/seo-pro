@@ -5,16 +5,15 @@ namespace Statamic\SeoPro\Reporting\Linking;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
+use Statamic\Facades\Entry as EntryApi;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Reporting\Linking\Concerns\ResolvesSimilarItems;
 use Statamic\SeoPro\TextProcessing\Config\ConfigurationRepository;
 use Statamic\SeoPro\TextProcessing\Config\SiteConfig;
 use Statamic\SeoPro\TextProcessing\Keywords\KeywordsRepository;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
-use Statamic\SeoPro\TextProcessing\Similarity\Finder;
 use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
 use Statamic\SeoPro\TextProcessing\Suggestions\SuggestionEngine;
-use Statamic\Facades\Entry as EntryApi;
 
 class ReportBuilder
 {
@@ -24,14 +23,12 @@ class ReportBuilder
 
     private ?SiteConfig $siteConfig = null;
 
-    function __construct(
+    public function __construct(
         protected readonly ConfigurationRepository $configurationRepository,
         protected readonly SuggestionEngine $suggestionEngine,
         protected readonly EntryEmbeddingsRepository $embeddingsRepository,
         protected readonly KeywordsRepository $keywordsRepository,
-    )
-    {
-    }
+    ) {}
 
     protected function fillBaseReportData(Entry $entry, BaseLinkReport $report): void
     {
@@ -56,7 +53,7 @@ class ReportBuilder
 
     public function getBaseReport(Entry $entry): BaseLinkReport
     {
-        $baseReport = new BaseLinkReport();
+        $baseReport = new BaseLinkReport;
 
         $this->fillBaseReportData($entry, $baseReport);
 
@@ -74,7 +71,7 @@ class ReportBuilder
 
     public function getSuggestionsReport(Entry $entry, int $limit = 10): SuggestionsReport
     {
-        $report = new SuggestionsReport();
+        $report = new SuggestionsReport;
 
         $siteConfig = $this->configurationRepository->getSiteConfiguration($entry->site()?->handle() ?? 'default');
 
@@ -91,7 +88,7 @@ class ReportBuilder
 
     public function getRelatedContentReport(Entry $entry, int $limit = 10): RelatedContentReport
     {
-        $report = new RelatedContentReport();
+        $report = new RelatedContentReport;
 
         $report->relatedContent($this->getResolvedSimilarItems($entry, $limit, new ResolverOptions(keywordThreshold: -1))->all());
 
@@ -102,7 +99,7 @@ class ReportBuilder
 
     public function getExternalLinks(Entry $entry): ExternalLinksReport
     {
-        $report = new ExternalLinksReport();
+        $report = new ExternalLinksReport;
         $this->fillBaseReportData($entry, $report);
 
         if (! $this->lastLinks) {
@@ -116,7 +113,7 @@ class ReportBuilder
 
     public function getInboundInternalLinks(Entry $entry): InternalLinksReport
     {
-        $report = new InternalLinksReport();
+        $report = new InternalLinksReport;
         $this->fillBaseReportData($entry, $report);
 
         if (! $this->lastLinks) {
@@ -143,7 +140,7 @@ class ReportBuilder
 
                     $matches[] = [
                         'entry_id' => $link->entry_id,
-                        'uri' => $linkUri
+                        'uri' => $linkUri,
                     ];
 
                     break;
@@ -173,7 +170,7 @@ class ReportBuilder
 
     public function getInternalLinks(Entry $entry): InternalLinksReport
     {
-        $report = new InternalLinksReport();
+        $report = new InternalLinksReport;
         $this->fillBaseReportData($entry, $report);
 
         if (! $this->lastLinks) {

@@ -17,20 +17,19 @@ class CollectionLinkSettingsController extends CpController
     public function __construct(
         Request $request,
         protected readonly ConfigurationRepository $configurationRepository,
-    )
-    {
+    ) {
         parent::__construct($request);
     }
 
     public function index()
     {
         if (request()->ajax()) {
-            return $this->configurationRepository->getCollections()->map(fn(CollectionConfig $config) => $config->toArray());
+            return $this->configurationRepository->getCollections()->map(fn (CollectionConfig $config) => $config->toArray());
         }
 
         return view('seo-pro::config.link_collections', $this->mergeBlueprintIntoContext(
             CollectionConfigBlueprint::blueprint(),
-            callback: fn(&$values) => $values['allowed_collections'] = [],
+            callback: fn (&$values) => $values['allowed_collections'] = [],
         ));
     }
 

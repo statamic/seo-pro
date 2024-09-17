@@ -153,7 +153,7 @@ class ContentMapper
 
     public function newMapper(): ContentMapper
     {
-        $mapper = new ContentMapper();
+        $mapper = new ContentMapper;
 
         $mapper->registerMappers($this->fieldtypeMappers);
 
@@ -205,9 +205,9 @@ class ContentMapper
 
     public function getFieldConfigForEntry(Entry $entry, string $path): ?RetrievedConfig
     {
-        $parsedPath = (new ContentPathParser())->parse($path);
+        $parsedPath = (new ContentPathParser)->parse($path);
         $fields = $entry->blueprint()->fields()->all();
-        $field  = $fields[$parsedPath->root->name] ?? null;
+        $field = $fields[$parsedPath->root->name] ?? null;
 
         if (! $field) {
             return null;
@@ -323,7 +323,7 @@ class ContentMapper
     public function getContentFields(Entry $entry): Collection
     {
         return collect($this->getContentMapping($entry))
-            ->map(fn($_, $path) => $this->retrieveField($entry, $path));
+            ->map(fn ($_, $path) => $this->retrieveField($entry, $path));
     }
 
     public function retrieveField(Entry $entry, string $path): RetrievedField

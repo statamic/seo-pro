@@ -22,8 +22,7 @@ class ScanEntryLinks implements ShouldQueue
         LinksRepository $linksRepository,
         KeywordsRepository $keywordsRepository,
         LinkCrawler $linkCrawler,
-    ): void
-    {
+    ): void {
         $entry = Entry::find($this->entryId);
 
         if (! $entry) {

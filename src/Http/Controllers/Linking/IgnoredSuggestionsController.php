@@ -13,11 +13,9 @@ class IgnoredSuggestionsController extends CpController
     public function __construct(
         Request $request,
         protected readonly LinksRepository $linksRepository,
-    )
-    {
+    ) {
         parent::__construct($request);
     }
-
 
     public function create(IgnoreSuggestionRequest $request)
     {

@@ -18,7 +18,6 @@ class EntryLinksIndexQuery
             'query' => $this->query,
         ]);
 
-
         return $payload->query->paginate($perPage);
     }
 }

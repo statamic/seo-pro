@@ -69,7 +69,7 @@ class SiteConfigBlueprint
                             'field' => [
                                 'display' => 'Ignored Phrases',
                                 'type' => 'list',
-                            ]
+                            ],
                         ],
                     ],
                 ],

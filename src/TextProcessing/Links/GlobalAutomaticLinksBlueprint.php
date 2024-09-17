@@ -16,22 +16,22 @@ class GlobalAutomaticLinksBlueprint
                             'handle' => 'link_text',
                             'field' => [
                                 'display' => 'Link Text',
-                                'type' => 'text'
-                            ]
+                                'type' => 'text',
+                            ],
                         ],
                         [
                             'handle' => 'link_target',
                             'field' => [
                                 'display' => 'Link Target',
-                                'type' => 'text'
-                            ]
+                                'type' => 'text',
+                            ],
                         ],
                         [
                             'handle' => 'is_active',
                             'field' => [
                                 'display' => 'Active Link',
-                                'type' => 'toggle'
-                            ]
+                                'type' => 'toggle',
+                            ],
                         ],
                     ],
                 ],

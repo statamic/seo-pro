@@ -25,14 +25,13 @@ class ContentPath
         return $lastType;
     }
 
-
     public function __toString(): string
     {
         return str(
-                collect($this->parts)
-                ->map(fn($part) => (string)$part)
+            collect($this->parts)
+                ->map(fn ($part) => (string) $part)
                 ->implode('.')
-            )
+        )
             ->trim('.')
             ->value();
     }

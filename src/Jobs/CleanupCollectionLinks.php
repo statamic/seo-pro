@@ -10,7 +10,7 @@ use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
 use Statamic\SeoPro\Jobs\Concerns\DispatchesSeoProJobs;
 
-class CleanupCollectionLinks implements ShouldQueue, ShouldBeUnique
+class CleanupCollectionLinks implements ShouldBeUnique, ShouldQueue
 {
     use DispatchesSeoProJobs;
 
@@ -23,8 +23,7 @@ class CleanupCollectionLinks implements ShouldQueue, ShouldBeUnique
         LinksRepository $linksRepository,
         KeywordsRepository $keywordsRepository,
         EntryEmbeddingsRepository $entryEmbeddingsRepository,
-    ): void
-    {
+    ): void {
         if (! $this->handle) {
             return;
         }

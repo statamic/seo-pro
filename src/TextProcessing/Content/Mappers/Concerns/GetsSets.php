@@ -24,5 +24,4 @@ trait GetsSets
 
         return $sets;
     }
-
 }

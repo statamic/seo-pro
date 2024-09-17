@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\Reporting\Linking;
 
-
 use Statamic\SeoPro\TextProcessing\Similarity\Result;
 
 class RelatedContentReport extends BaseLinkReport
@@ -22,7 +21,7 @@ class RelatedContentReport extends BaseLinkReport
                 'entry' => $returnFullEntry ? $result->entry() : $this->dumpEntry($result->entry()),
                 'score' => $result->score(),
                 'keyword_score' => $result->keywordScore(),
-                'related_keywords' => implode(', ', array_keys($result->similarKeywords()))
+                'related_keywords' => implode(', ', array_keys($result->similarKeywords())),
             ];
         })->all();
     }

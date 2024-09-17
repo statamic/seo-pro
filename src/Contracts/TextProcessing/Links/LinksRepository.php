@@ -20,5 +20,4 @@ interface LinksRepository
     public function deleteLinksForEntry(string $entryId): void;
 
     public function deleteLinksForCollection(string $handle): void;
-
 }

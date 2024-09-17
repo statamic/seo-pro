@@ -16,8 +16,8 @@ class CollectionConfigBlueprint
                             'handle' => 'linking_enabled',
                             'field' => [
                                 'display' => 'Linking Enabled',
-                                'type' => 'toggle'
-                            ]
+                                'type' => 'toggle',
+                            ],
                         ],
                         [
                             'handle' => 'allow_cross_site_linking',
@@ -25,14 +25,14 @@ class CollectionConfigBlueprint
                                 'display' => 'Allow Cross-Site Suggestions',
                                 'type' => 'toggle',
                                 'default' => false,
-                            ]
+                            ],
                         ],
                         [
                             'handle' => 'allow_cross_collection_suggestions',
                             'field' => [
                                 'display' => 'Allow Suggestions from all Collections',
-                                'type' => 'toggle'
-                            ]
+                                'type' => 'toggle',
+                            ],
                         ],
                         [
                             'handle' => 'allowed_collections',

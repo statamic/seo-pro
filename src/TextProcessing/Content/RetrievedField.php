@@ -73,7 +73,7 @@ class RetrievedField
         while (count($keys) > 1) {
             $key = array_shift($keys);
 
-            if (!isset($array[$key]) || !is_array($array[$key])) {
+            if (! isset($array[$key]) || ! is_array($array[$key])) {
                 return;
             }
 
@@ -101,7 +101,7 @@ class RetrievedField
             } else {
                 $data = $newValue;
             }
-        } else if (is_string($data) && is_string($newValue)) {
+        } elseif (is_string($data) && is_string($newValue)) {
             $data = $newValue;
         }
 

@@ -9,7 +9,7 @@ use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
 use Statamic\SeoPro\Jobs\Concerns\DispatchesSeoProJobs;
 
-class CleanupEntryLinks implements ShouldQueue, ShouldBeUnique
+class CleanupEntryLinks implements ShouldBeUnique, ShouldQueue
 {
     use DispatchesSeoProJobs;
 
@@ -21,8 +21,7 @@ class CleanupEntryLinks implements ShouldQueue, ShouldBeUnique
         LinksRepository $linksRepository,
         KeywordsRepository $keywordsRepository,
         EntryEmbeddingsRepository $entryEmbeddingsRepository,
-    ): void
-    {
+    ): void {
         $linksRepository->deleteLinksForEntry($this->entryId);
         $keywordsRepository->deleteKeywordsForEntry($this->entryId);
         $entryEmbeddingsRepository->deleteEmbeddingsForEntry($this->entryId);

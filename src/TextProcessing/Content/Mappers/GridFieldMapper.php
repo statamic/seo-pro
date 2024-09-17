@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\TextProcessing\Content\Mappers;
 
 use Statamic\Fieldtypes\Grid;
-use Statamic\SeoPro\TextProcessing\Content\ContentMapper;
 
 class GridFieldMapper extends AbstractFieldMapper
 {
@@ -26,7 +25,6 @@ class GridFieldMapper extends AbstractFieldMapper
         $fields = collect($this->fieldConfig['fields'] ?? [])
             ->keyBy('handle')
             ->all();
-
 
         foreach ($this->getValues() as $index => $values) {
             if (count($values) === 0) {

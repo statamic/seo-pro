@@ -6,7 +6,6 @@ use Statamic\SeoPro\Contracts\TextProcessing\Content\Tokenizer as TokenizerContr
 
 class Tokenizer implements TokenizerContract
 {
-
     public function tokenize(string $content): array
     {
         // Normalize white space.

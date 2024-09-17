@@ -10,9 +10,7 @@ readonly class ReplacementContext
         public Entry $entry,
         public LinkReplacement $replacement,
         public RetrievedField $field,
-    )
-    {
-    }
+    ) {}
 
     public function toViewData(): array
     {
@@ -25,6 +23,6 @@ readonly class ReplacementContext
 
     public function render(string $view): string
     {
-        return (string)view('seo-pro::'.$view, $this->toViewData());
+        return (string) view('seo-pro::'.$view, $this->toViewData());
     }
 }

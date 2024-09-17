@@ -73,7 +73,7 @@ trait ResolvesSimilarItems
                 continue;
             }
 
-            $result = new Result();
+            $result = new Result;
 
             $result->entry($entries[$id]);
             $result->score($score);
@@ -90,12 +90,11 @@ trait ResolvesSimilarItems
     protected function addKeywordsToResults(Entry $entry, Collection $results, ?ResolverOptions $options = null): Collection
     {
         if (! $options) {
-            $options = new ResolverOptions();
+            $options = new ResolverOptions;
         }
 
-        $entryIds = array_merge([$entry->id()], $results->map(fn(Result $result) => $result->entry()->id())->all());
+        $entryIds = array_merge([$entry->id()], $results->map(fn (Result $result) => $result->entry()->id())->all());
         $ignoredKeywords = array_flip($this->keywordsRepository->getIgnoredKeywordsForEntry($entry));
-        /** @var  $keywords */
         $keywords = $this->keywordsRepository->getKeywordsForEntries($entryIds);
         $primaryKeywords = $keywords[$entry->id()] ?? null;
 
@@ -112,7 +111,7 @@ trait ResolvesSimilarItems
             ));
         });
 
-        return collect((new KeywordComparator())->compare($primaryKeywords)->to($results->all()))
+        return collect((new KeywordComparator)->compare($primaryKeywords)->to($results->all()))
             ->each(function (Result $result) use ($options) {
                 // Reset the keywords.
                 $result->similarKeywords(
@@ -121,8 +120,8 @@ trait ResolvesSimilarItems
                     })->take($options->keywordLimit)->all()
                 );
             })
-            ->where(fn(Result $result) => $result->keywordScore() > $options->keywordThreshold)
-            ->sortByDesc(fn(Result $result) => $result->keywordScore())
+            ->where(fn (Result $result) => $result->keywordScore() > $options->keywordThreshold)
+            ->sortByDesc(fn (Result $result) => $result->keywordScore())
             ->values();
     }
 }

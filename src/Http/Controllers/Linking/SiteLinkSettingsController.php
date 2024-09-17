@@ -17,21 +17,19 @@ class SiteLinkSettingsController extends CpController
     public function __construct(
         Request $request,
         protected readonly ConfigurationRepository $configurationRepository,
-    )
-    {
+    ) {
         parent::__construct($request);
     }
 
     public function index()
     {
-        if (request()->ajax())
-        {
-            return $this->configurationRepository->getSites()->map(fn(SiteConfig $config) => $config->toArray());
+        if (request()->ajax()) {
+            return $this->configurationRepository->getSites()->map(fn (SiteConfig $config) => $config->toArray());
         }
 
         return view('seo-pro::config.sites', $this->mergeBlueprintIntoContext(
             SiteConfigBlueprint::blueprint(),
-            callback: fn(&$values) => $values['ignored_phrases'] = [],
+            callback: fn (&$values) => $values['ignored_phrases'] = [],
         ));
     }
 
@@ -45,11 +43,11 @@ class SiteLinkSettingsController extends CpController
                 $site->handle(),
                 '',
                 request('ignored_phrases') ?? [],
-                (int)request('keyword_threshold'),
-                (int)request('min_internal_links'),
-                (int)request('max_internal_links'),
-                (int)request('min_external_links'),
-                (int)request('max_external_links'),
+                (int) request('keyword_threshold'),
+                (int) request('min_internal_links'),
+                (int) request('max_internal_links'),
+                (int) request('min_external_links'),
+                (int) request('max_external_links'),
             )
         );
     }

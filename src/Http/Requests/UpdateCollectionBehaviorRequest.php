@@ -11,7 +11,7 @@ class UpdateCollectionBehaviorRequest extends FormRequest
         return [
             'allow_cross_site_linking' => 'required|boolean',
             'allow_cross_collection_suggestions' => 'required|boolean',
-            'allowed_collections' => 'array'
+            'allowed_collections' => 'array',
         ];
     }
 }

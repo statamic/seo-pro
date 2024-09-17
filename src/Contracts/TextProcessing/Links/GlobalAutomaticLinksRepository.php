@@ -9,5 +9,4 @@ interface GlobalAutomaticLinksRepository
     public function deleteAutomaticLinksForSite(string $handle): void;
 
     public function getLinksForSite(string $handle): Collection;
-
 }

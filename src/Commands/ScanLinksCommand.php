@@ -22,5 +22,4 @@ class ScanLinksCommand extends Command
 
         $this->info('Links scanned.');
     }
-
 }

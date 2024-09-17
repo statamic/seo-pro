@@ -15,7 +15,7 @@ class EntryLinks extends BaseResourceCollection
 
     protected function setColumns(): void
     {
-        $this->columns = new Columns();
+        $this->columns = new Columns;
 
         $this->addColumn('title', 'Title')
             ->addColumn('uri', 'URI')
@@ -24,7 +24,6 @@ class EntryLinks extends BaseResourceCollection
             ->addColumn('internal_link_count', 'Internal Link Count')
             ->addColumn('external_link_count', 'External Link Count')
             ->addColumn('inbound_internal_link_count', 'Inbound Internal Link Count');
-
 
         if ($this->columnPreferenceKey) {
             $this->columns->setPreferred($this->columnPreferenceKey);

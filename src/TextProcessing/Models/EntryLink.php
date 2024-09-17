@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $content_hash
  * @property array $ignored_entries
  * @property array $ignored_phrases
- * @property boolean $can_be_suggested
- * @property boolean $include_in_reporting
+ * @property bool $can_be_suggested
+ * @property bool $include_in_reporting
  */
 class EntryLink extends Model
 {

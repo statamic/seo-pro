@@ -101,8 +101,7 @@ class KeywordComparator
     }
 
     /**
-     * @param Result[] $results
-     * @return array
+     * @param  Result[]  $results
      */
     public function to(array $results): array
     {

@@ -28,7 +28,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
 
     protected string $configurationHash;
 
-    function __construct(
+    public function __construct(
         protected readonly Extractor $embeddingsExtractor,
         protected readonly ContentRetriever $contentRetriever,
         protected readonly ConfigurationRepository $configurationRepository,
@@ -72,8 +72,8 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         return sha1(implode('', [
             'embeddings',
             get_class(app(Tokenizer::class)),
-            (string)config('statamic.seo-pro.text_analysis.openai.token_limit', 8000),
-            config('statamic.seo-pro.text_analysis.openai.model', 'text-embeddings-3-small')
+            (string) config('statamic.seo-pro.text_analysis.openai.token_limit', 8000),
+            config('statamic.seo-pro.text_analysis.openai.model', 'text-embeddings-3-small'),
         ]));
     }
 
@@ -176,8 +176,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
             );
 
             $embedding->saveQuietly();
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             Log::error($exception);
         }
     }
@@ -193,7 +192,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
 
     protected function makeVector(string $id, ?Entry $entry, ?EntryEmbedding $embedding): ?Vector
     {
-        $entryVector = new Vector();
+        $entryVector = new Vector;
         $entryVector->id($id);
         $entryVector->entry($entry);
         $entryVector->vector($embedding?->embedding ?? []);

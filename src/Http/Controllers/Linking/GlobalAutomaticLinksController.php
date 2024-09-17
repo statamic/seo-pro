@@ -15,7 +15,7 @@ use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
 
 class GlobalAutomaticLinksController extends CpController
 {
-    use QueriesFilters, MergesBlueprintFields;
+    use MergesBlueprintFields, QueriesFilters;
 
     public function index(Request $request)
     {

@@ -8,9 +8,9 @@ class CollectionConfig
         public string $handle,
         public string $title,
         public bool $linkingEnabled,
-        public bool   $allowLinkingAcrossSites,
-        public bool   $allowLinkingToAllCollections,
-        public array  $linkableCollections,
+        public bool $allowLinkingAcrossSites,
+        public bool $allowLinkingToAllCollections,
+        public array $linkableCollections,
     ) {}
 
     public function toArray(): array

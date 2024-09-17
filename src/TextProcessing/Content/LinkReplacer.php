@@ -31,7 +31,7 @@ class LinkReplacer
     }
 
     /**
-     * @param string[] $replacers
+     * @param  string[]  $replacers
      * @return $this
      */
     public function registerReplacers(array $replacers): static
@@ -77,7 +77,7 @@ class LinkReplacer
 
     public function canReplace(Entry $entry, LinkReplacement $replacement): bool
     {
-        return $this->withReplacer($entry, $replacement, fn(FieldtypeLinkReplacer $replacer, ReplacementContext $context) => $replacer->canReplace($context));
+        return $this->withReplacer($entry, $replacement, fn (FieldtypeLinkReplacer $replacer, ReplacementContext $context) => $replacer->canReplace($context));
     }
 
     public function replaceLink(Entry $entry, LinkReplacement $replacement): bool
@@ -86,6 +86,6 @@ class LinkReplacer
             return false;
         }
 
-        return $this->withReplacer($entry, $replacement, fn(FieldtypeLinkReplacer $replacer, ReplacementContext $context) => $replacer->replace($context));
+        return $this->withReplacer($entry, $replacement, fn (FieldtypeLinkReplacer $replacer, ReplacementContext $context) => $replacer->replace($context));
     }
 }

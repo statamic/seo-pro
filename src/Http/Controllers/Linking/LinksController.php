@@ -29,7 +29,7 @@ use Statamic\SeoPro\TextProcessing\Models\EntryLink as EntryLinksModel;
 
 class LinksController extends CpController
 {
-    use QueriesFilters, MergesBlueprintFields;
+    use MergesBlueprintFields, QueriesFilters;
 
     protected array $sortFieldMappings = [
         'title' => 'cached_title',
@@ -43,8 +43,7 @@ class LinksController extends CpController
         protected readonly ContentRetriever $contentRetriever,
         protected readonly LinkReplacer $linkReplacer,
         protected readonly ContentMapper $contentMapper,
-    )
-    {
+    ) {
         parent::__construct($request);
     }
 
@@ -148,7 +147,7 @@ class LinksController extends CpController
         return [
             'total' => $entriesAnalyzed,
             'orphaned' => $orphanedEntries,
-            'needs_links' => $entriesNeedingMoreLinks
+            'needs_links' => $entriesNeedingMoreLinks,
         ];
     }
 
@@ -245,7 +244,7 @@ class LinksController extends CpController
             $site = $entry->site()?->handle() ?? $request->site ? Site::get($request->site) : Site::selected();
             $autoLinkEntry = Entry::find(request('auto_link_entry'));
 
-            $link = new AutomaticLink();
+            $link = new AutomaticLink;
             $link->site = $site->handle();
             $link->is_active = true;
             $link->link_text = request('phrase');
@@ -289,12 +288,12 @@ class LinksController extends CpController
     {
         $collections = $this->configurationRepository
             ->getCollections()
-            ->where(fn(CollectionConfig $config) => $config->linkingEnabled)
-            ->map(fn(CollectionConfig $config) => $config->handle)
+            ->where(fn (CollectionConfig $config) => $config->linkingEnabled)
+            ->map(fn (CollectionConfig $config) => $config->handle)
             ->all();
 
         $sites = Site::all()
-            ->map(fn($site) => $site->handle())
+            ->map(fn ($site) => $site->handle())
             ->values()
             ->all();
 

@@ -128,7 +128,6 @@ class ServiceProvider extends AddonServiceProvider
             config('statamic.seo-pro.text_analysis.drivers.keywords'),
         );
 
-
         $this->app->bind(
             Contracts\TextProcessing\ConfigurationRepository::class,
             TextProcessing\Config\ConfigurationRepository::class,
@@ -160,7 +159,7 @@ class ServiceProvider extends AddonServiceProvider
         );
 
         $this->app->singleton(SeoPro\TextProcessing\Content\ContentMapper::class, function () {
-            return new SeoPro\TextProcessing\Content\ContentMapper();
+            return new SeoPro\TextProcessing\Content\ContentMapper;
         });
 
         $this->app->singleton(SeoPro\TextProcessing\Content\LinkReplacer::class, function () {

@@ -41,18 +41,18 @@ class AutomaticLinkManager
     {
         $existingLinkTargets = $existingLinks
             ->pluck('href')
-            ->map(fn($target) => $this->normalizeLink($target))
+            ->map(fn ($target) => $this->normalizeLink($target))
             ->unique()
             ->flip();
 
         $existingLinkText = $existingLinks
             ->pluck('text')
-            ->map(fn($text) => mb_strtolower($text))
+            ->map(fn ($text) => mb_strtolower($text))
             ->unique()
             ->all();
 
         return $automaticLinks
-            ->filter(fn($link) => $this->shouldKeepLink($link, $existingLinkTargets, $existingLinkText));
+            ->filter(fn ($link) => $this->shouldKeepLink($link, $existingLinkTargets, $existingLinkText));
     }
 
     protected function exceedsLinkThreshold(int $linkCount, int $threshold): bool
@@ -127,7 +127,7 @@ class AutomaticLinkManager
     {
         return view('seo-pro::links.automatic', [
             'url' => $link->link_target,
-            'text' => $link->link_text
+            'text' => $link->link_text,
         ])->render();
     }
 
@@ -188,7 +188,7 @@ class AutomaticLinkManager
         return $shouldInsertExternal ? $this->insertLinks($content, $linkRanges, collect($autoExternalLinks), $this->currentExternalLinks, $this->maxExternalLinks) : $content;
     }
 
-    protected function getTextRanges(array $needles, string $content, string $encoding = null): Collection
+    protected function getTextRanges(array $needles, string $content, ?string $encoding = null): Collection
     {
         return collect($needles)
             ->unique()

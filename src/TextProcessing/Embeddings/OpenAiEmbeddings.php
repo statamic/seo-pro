@@ -14,7 +14,7 @@ class OpenAiEmbeddings implements Extractor
 
     protected Tokenizer $tokenizer;
 
-    function __construct(Tokenizer $tokenizer)
+    public function __construct(Tokenizer $tokenizer)
     {
         $this->tokenizer = $tokenizer;
         $this->tokenLimit = config('statamic.seo-pro.text_analysis.openai.token_limit', 8000);
@@ -32,7 +32,7 @@ class OpenAiEmbeddings implements Extractor
     {
         $vector = [];
 
-        foreach ($this->tokenizer->chunk($content, $this->tokenLimit)  as $chunk) {
+        foreach ($this->tokenizer->chunk($content, $this->tokenLimit) as $chunk) {
             $vector = array_merge($vector, $this->getEmbeddingFromApi($chunk));
         }
 
@@ -43,7 +43,7 @@ class OpenAiEmbeddings implements Extractor
     {
         $response = $this->makeClient()->embeddings()->create([
             'model' => $this->embeddingsModel,
-            'input' => $content
+            'input' => $content,
         ]);
 
         $vector = [];

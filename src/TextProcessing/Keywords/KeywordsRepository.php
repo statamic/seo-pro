@@ -21,7 +21,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
     /** @var array<string, EntryKeyword> */
     protected array $keywordInstanceCache = [];
 
-    function __construct(
+    public function __construct(
         protected readonly KeywordRetriever $keywordRetriever,
         protected readonly ContentRetriever $contentRetriever,
     ) {}
@@ -159,7 +159,6 @@ class KeywordsRepository implements KeywordsRepositoryContract
     }
 
     /**
-     * @param array $entryIds
      * @return array<string, EntryKeyword>
      */
     public function getKeywordsForEntries(array $entryIds): array

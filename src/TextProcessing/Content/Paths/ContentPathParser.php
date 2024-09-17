@@ -52,7 +52,7 @@ class ContentPathParser
                 $metaBuffer[] = $cur;
 
                 continue;
-            } else if ($next === null || $next === '[') {
+            } elseif ($next === null || $next === '[') {
                 $buffer[] = $cur;
 
                 $part = [
@@ -67,7 +67,7 @@ class ContentPathParser
                 $buffer = [];
 
                 continue;
-            } else if ($cur === ']') {
+            } elseif ($cur === ']') {
                 array_shift($buffer);
 
                 $parts[] = [
@@ -86,7 +86,7 @@ class ContentPathParser
         }
 
         if (count($metaBuffer) > 0) {
-            $metaData [] = implode('', $metaBuffer);
+            $metaData[] = implode('', $metaBuffer);
         }
 
         if (count($buffer) > 0) {

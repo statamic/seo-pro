@@ -29,7 +29,7 @@ class SuggestionEngine
 
     protected function getPhraseContext(array $contentMapping, string $phrase): PhraseContext
     {
-        $context = new PhraseContext();
+        $context = new PhraseContext;
 
         foreach ($contentMapping as $handle => $content) {
             if (! $this->canExtractContext($content)) {
@@ -44,7 +44,7 @@ class SuggestionEngine
                     continue;
                 }
 
-                $regex = '/([^.!?]*' . preg_quote($phrase, '/') . '[^.!?]*[.!?])|([^.!?]*' . preg_quote($phrase, '/') . '[^.!?]*$)/i';
+                $regex = '/([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*[.!?])|([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*$)/i';
 
                 if (preg_match($regex, $searchText, $matches)) {
 
@@ -99,14 +99,13 @@ class SuggestionEngine
     /**
      * Attempts to locate a target phrase within a value and capture the surrounding context.
      *
-     * @param string $content The text to search within.
-     * @param string $phrase The value to search for within $content.
-     * @param int $surroundingWords The number of words to attempt to retrieve around the $phrase.
-     * @return string|null
+     * @param  string  $content  The text to search within.
+     * @param  string  $phrase  The value to search for within $content.
+     * @param  int  $surroundingWords  The number of words to attempt to retrieve around the $phrase.
      */
     protected function getSurroundingWords(string $content, string $phrase, int $surroundingWords = 4): ?string
     {
-        $pattern = '/(?P<before>(?:[^\s\n]+[ \t]+){0,'.$surroundingWords.'})(?P<phrase>' . preg_quote($phrase, '/') . ')(?P<after>(?:[ \t]+[^\s\n]+){0,'.$surroundingWords.'})/iu';
+        $pattern = '/(?P<before>(?:[^\s\n]+[ \t]+){0,'.$surroundingWords.'})(?P<phrase>'.preg_quote($phrase, '/').')(?P<after>(?:[ \t]+[^\s\n]+){0,'.$surroundingWords.'})/iu';
 
         preg_match($pattern, $content, $matches);
 
@@ -171,7 +170,7 @@ class SuggestionEngine
                 ->whereIn('link_text', $keywordPhrases)
                 ->where('is_active', true)
                 ->get()
-                ->keyBy(fn(AutomaticLink $link) => mb_strtolower($link->link_text))
+                ->keyBy(fn (AutomaticLink $link) => mb_strtolower($link->link_text))
                 ->all();
 
             foreach ($suggestions as $keyword => $suggestion) {
@@ -191,6 +190,6 @@ class SuggestionEngine
             }
         }
 
-        return collect($suggestions)->sortByDesc(fn($suggestion) => $suggestion['score'])->values();
+        return collect($suggestions)->sortByDesc(fn ($suggestion) => $suggestion['score'])->values();
     }
 }

@@ -8,12 +8,12 @@ use Statamic\SeoPro\Events\InternalLinksUpdated;
 
 class InternalLinksUpdatedListener
 {
-    function __construct(
+    public function __construct(
         protected LinkCrawler $crawler,
     ) {}
 
     public function handle(InternalLinksUpdated $event)
     {
-        $event->changeSet->entries()->each(fn(Entry $entry) => $this->crawler->updateLinkStatistics($entry));
+        $event->changeSet->entries()->each(fn (Entry $entry) => $this->crawler->updateLinkStatistics($entry));
     }
 }

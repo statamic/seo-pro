@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\Contracts\TextProcessing\Content;
 
 use Statamic\Contracts\Entries\Entry;
-use Statamic\Fields\Field;
 use Statamic\SeoPro\TextProcessing\Content\ContentMapper;
 
 interface FieldtypeContentMapper

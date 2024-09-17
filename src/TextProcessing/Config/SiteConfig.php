@@ -7,12 +7,12 @@ readonly class SiteConfig
     public function __construct(
         public string $handle,
         public string $name,
-        public array  $ignoredPhrases,
-        public int    $keywordThreshold,
-        public int    $minInternalLinks,
-        public int    $maxInternalLinks,
-        public int    $minExternalLinks,
-        public int    $maxExternalLinks,
+        public array $ignoredPhrases,
+        public int $keywordThreshold,
+        public int $minInternalLinks,
+        public int $maxInternalLinks,
+        public int $minExternalLinks,
+        public int $maxExternalLinks,
     ) {}
 
     public function toArray(): array

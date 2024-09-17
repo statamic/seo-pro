@@ -8,16 +8,16 @@ use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler as LinkCrawlerCon
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
 use Statamic\SeoPro\TextProcessing\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
-use Statamic\SeoPro\TextProcessing\Suggestions\SuggestionEngine;
 use Statamic\SeoPro\TextProcessing\Suggestions\LinkResults;
+use Statamic\SeoPro\TextProcessing\Suggestions\SuggestionEngine;
 
 readonly class LinkCrawler implements LinkCrawlerContract
 {
-    function __construct(
+    public function __construct(
         protected SuggestionEngine $suggestionEngine,
-        protected LinksRepository  $linksRepository,
+        protected LinksRepository $linksRepository,
     ) {}
-    
+
     public function scanAllEntries(): void
     {
         foreach (EntryQuery::query()->lazy() as $entry) {
@@ -77,7 +77,6 @@ readonly class LinkCrawler implements LinkCrawlerContract
     }
 
     /**
-     * @param string $content
      * @return array{array{href:string, content:string}}
      */
     public static function getLinksInContent(string $content): array
@@ -92,7 +91,7 @@ readonly class LinkCrawler implements LinkCrawlerContract
 
             $links[] = [
                 'href' => $href,
-                'content' => $match[0]
+                'content' => $match[0],
             ];
         }
 
@@ -119,7 +118,7 @@ readonly class LinkCrawler implements LinkCrawlerContract
 
     public static function getLinkResults(string $content): LinkResults
     {
-        $results = new LinkResults();
+        $results = new LinkResults;
         $internalLinks = [];
         $externalLinks = [];
 

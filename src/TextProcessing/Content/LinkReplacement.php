@@ -23,7 +23,6 @@ class LinkReplacement
 
         $linkTarget = $this->target;
 
-
         if (str_starts_with($this->target, 'entry::')) {
             $targetEntry = EntryApi::find(substr($this->target, 7));
 

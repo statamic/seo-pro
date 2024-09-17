@@ -6,7 +6,7 @@ use Statamic\Fields\Blueprint;
 
 trait MergesBlueprintFields
 {
-    protected function mergeBlueprintIntoContext(Blueprint $blueprint, array $target = [], callable $callback = null): array
+    protected function mergeBlueprintIntoContext(Blueprint $blueprint, array $target = [], ?callable $callback = null): array
     {
         $fields = $blueprint->fields();
         $values = $fields->values()->all();

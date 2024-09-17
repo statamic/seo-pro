@@ -13,7 +13,6 @@ class LinkResults
     protected array $externalLinks = [];
 
     /**
-     * @param array|null $links
      * @return ($links is null ? (array{array{href:string,text:string,content:string}}) : null)
      */
     public function internalLinks(?array $links = null)
@@ -23,7 +22,6 @@ class LinkResults
     }
 
     /**
-     * @param array|null $links
      * @return ($links is null ? array{array{href:string,text:string,content:string}} : null)
      */
     public function externalLinks(?array $links = null)

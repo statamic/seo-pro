@@ -29,7 +29,7 @@ readonly class ContentRetriever implements ContentRetrieverContract
         $content = html_entity_decode($content);
 
         return strtr($content, [
-            '’', '\''
+            '’', '\'',
         ]);
     }
 
@@ -92,18 +92,19 @@ readonly class ContentRetriever implements ContentRetrieverContract
     }
 
     /**
-     * @param Entry $entry
      * @return array{id:string,text:string}
      */
     public function getSections(Entry $entry): array
     {
         $entryLink = EntryLink::where('entry_id', $entry->id())->first();
 
-        if (! $entryLink) { return []; }
+        if (! $entryLink) {
+            return [];
+        }
 
         $sections = [];
 
-        $dom = new DOMDocument();
+        $dom = new DOMDocument;
 
         @$dom->loadHTML($entryLink->analyzed_content);
         $xpath = new DOMXPath($dom);
@@ -117,12 +118,12 @@ readonly class ContentRetriever implements ContentRetrieverContract
             if ($id) {
                 $sections[] = [
                     'id' => $id,
-                    'text' => trim($heading->textContent)
+                    'text' => trim($heading->textContent),
                 ];
             } elseif ($name) {
                 $sections[] = [
                     'id' => $name,
-                    'text' => trim($heading->textContent)
+                    'text' => trim($heading->textContent),
                 ];
             }
         }

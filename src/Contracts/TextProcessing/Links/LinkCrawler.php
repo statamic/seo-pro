@@ -14,5 +14,4 @@ interface LinkCrawler
     public function updateInboundInternalLinkCount(Entry $entry): void;
 
     public function updateLinkStatistics(Entry $entry): void;
-
 }
