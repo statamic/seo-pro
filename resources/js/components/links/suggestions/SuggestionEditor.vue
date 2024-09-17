@@ -363,7 +363,7 @@ export default {
             const phraseWords = phrase.split(' '),
                 phraseLength = phraseWords.length;
 
-            for (let i = 0; i < this.suggestionWords.length - phraseLength; i++) {
+            for (let i = 0; i < this.suggestionWords.length - phraseLength + 1; i++) {
                 let match = true;
 
                 for (let j = 0; j < phraseLength; j++) {
