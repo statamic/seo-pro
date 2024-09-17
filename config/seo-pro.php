@@ -59,7 +59,7 @@ return [
 
     'text_analysis' => [
 
-        'enabled' => true,
+        'enabled' => false,
 
         'openai' => [
             'api_key' => env('SEO_PRO_OPENAI_API_KEY'),
