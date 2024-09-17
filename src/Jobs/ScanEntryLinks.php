@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Statamic\Facades\Entry;
+use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
@@ -22,6 +23,7 @@ class ScanEntryLinks implements ShouldQueue
         LinksRepository $linksRepository,
         KeywordsRepository $keywordsRepository,
         LinkCrawler $linkCrawler,
+        EntryEmbeddingsRepository $entryEmbeddingsRepository,
     ): void {
         $entry = Entry::find($this->entryId);
 
