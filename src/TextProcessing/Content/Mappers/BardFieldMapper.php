@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\TextProcessing\Content\Mappers;
 
+use Illuminate\Support\Str;
 use Statamic\Fieldtypes\Bard;
 use Statamic\SeoPro\TextProcessing\Content\Mappers\Concerns\GetsSets;
 use Stringy\StaticStringy as Stringy;
@@ -13,6 +14,47 @@ class BardFieldMapper extends AbstractFieldMapper
     public static function fieldtype(): string
     {
         return Bard::handle();
+    }
+
+    protected function mapParagraph($value, $sets)
+    {
+        $this->mapper->append('{node:paragraph}');
+        $this->mapper->finish($this->getParagraphContent($value));
+
+        $this->mapper->popIndex();
+    }
+
+    protected function mapSets($value, $sets)
+    {
+        $setValues = $value['attrs']['values'] ?? null;
+
+        if (! $setValues) {
+            return;
+        }
+
+        if (! array_key_exists('type', $setValues)) {
+            return;
+        }
+
+        if (! array_key_exists($setValues['type'], $sets)) {
+            return;
+        }
+
+        $this->mapper->append('{set:'.$setValues['type'].'}');
+
+        $set = $sets[$setValues['type']];
+        $setFields = collect($set['fields'])->keyBy('handle')->all();
+        $setValues = collect($setValues)->except(['type'])->all();
+        $mapper = $this->mapper->newMapper();
+
+        $mappedContent = $mapper->getContentMappingFromArray($setFields, $setValues);
+        $currentPath = $this->mapper->getPath();
+
+        foreach ($mappedContent as $mappedPath => $mappedValue) {
+            $this->mapper->addMapping($currentPath.$mappedPath, $mappedValue);
+        }
+
+        $this->mapper->popIndex();
     }
 
     public function getContent(): void
@@ -33,43 +75,16 @@ class BardFieldMapper extends AbstractFieldMapper
             if (! array_key_exists('type', $value)) {
                 continue;
             }
+
+            $handlerMethod = 'map'.Str::studly($value['type']);
+
+            if (! method_exists($this, $handlerMethod)) {
+                continue;
+            }
+
             $this->mapper->pushIndex($index);
 
-            if ($value['type'] === 'paragraph') {
-                $this->mapper->append('{node:paragraph}');
-                $this->mapper->finish($this->getParagraphContent($value));
-                $this->mapper->popIndex();
-            } elseif ($value['type'] === 'set') {
-                $setValues = $value['attrs']['values'] ?? null;
-
-                if (! $setValues) {
-                    continue;
-                }
-
-                if (! array_key_exists('type', $setValues)) {
-                    continue;
-                }
-
-                if (! array_key_exists($setValues['type'], $sets)) {
-                    continue;
-                }
-
-                $this->mapper->append('{set:'.$setValues['type'].'}');
-
-                $set = $sets[$setValues['type']];
-                $setFields = collect($set['fields'])->keyBy('handle')->all();
-                $setValues = collect($setValues)->except(['type'])->all();
-                $mapper = $this->mapper->newMapper();
-
-                $mappedContent = $mapper->getContentMappingFromArray($setFields, $setValues);
-                $currentPath = $this->mapper->getPath();
-
-                foreach ($mappedContent as $mappedPath => $mappedValue) {
-                    $this->mapper->addMapping($currentPath.$mappedPath, $mappedValue);
-                }
-
-                $this->mapper->popIndex();
-            }
+            $this->$handlerMethod($value, $sets);
         }
     }
 
