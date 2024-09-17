@@ -69,17 +69,22 @@ class SeoProTags extends Tags
         return dd($this->metaData());
     }
 
+    protected function getAutoLinkedContent(string $content)
+    {
+        return app(AutomaticLinkManager::class)
+            ->inject(
+                $content,
+                Site::current()?->handle() ?? 'default',
+            );
+    }
+
     public function content()
     {
         if (! SeoPro::isSeoProProcess()) {
             $content = $this->parse();
 
             if ($this->params->get('auto_link', false)) {
-                return app(AutomaticLinkManager::class)
-                    ->inject(
-                        $content,
-                        Site::current()?->handle() ?? 'default',
-                    );
+                return $this->getAutoLinkedContent($content);
             }
 
             return $content;
