@@ -17,11 +17,11 @@ class SitemapController extends Controller
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
             $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
-               return view('seo-pro::sitemap_index', [
-                   'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                   'sitemaps' => Sitemap::paginatedSitemaps(),
-               ])->render();
-           });
+                return view('seo-pro::sitemap_index', [
+                    'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
+                    'sitemaps' => Sitemap::paginatedSitemaps(),
+                ])->render();
+            });
         } else {
             $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
                 return view('seo-pro::sitemap', [
