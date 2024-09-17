@@ -8,7 +8,7 @@ use Statamic\Statamic;
 
 class Fields
 {
-    use HasAssetField, GetsSectionDefaults;
+    use GetsSectionDefaults, HasAssetField;
 
     protected $data;
     protected $isContent;
