@@ -65,7 +65,7 @@
                         </label>
                     </div>
 
-                    <p class="border rounded p-3">
+                    <p class="suggestion-phrase border rounded p-3">
                         <span
                             v-for="word in suggestionWords"
                             v-text="word.text"
@@ -104,6 +104,12 @@
     </div>
 </div>
 </template>
+
+<style scoped>
+.suggestion-phrase {
+    overflow-wrap: anywhere;
+}
+</style>
 
 <script>
 export default {
