@@ -3,7 +3,7 @@
 return [
 
     'site_defaults' => [
-        'path' => base_path('content/seo.yaml'),
+        'path' => base_path('content/seo'),
     ],
 
     'assets' => [
