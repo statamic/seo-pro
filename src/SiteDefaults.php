@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
@@ -100,13 +101,15 @@ class SiteDefaults extends Collection
      */
     protected function path()
     {
-        $path = str_replace('.yaml', '', config()->string('statamic.seo-pro.site_defaults.path'));
-
-        if (! config()->boolean('statamic.system.multisite')) {
-            return $path.'.yaml';
-        }
-
-        return $path.'/'.Site::selected()->handle.'/seo.yaml';
+        return Str::of(config()->string("statamic.seo-pro.site_defaults.path"))
+            ->chopEnd(".yaml")
+            ->when(
+                config()->boolean("statamic.system.multisite"),
+                fn($path) => $path->append(
+                    vsprintf("%s/%s", [Site::selected()->handle, "defaults"])
+                )
+            )
+            ->append(".yaml");
     }
 
     /**
