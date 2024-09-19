@@ -109,7 +109,8 @@ class SiteDefaults extends Collection
                     vsprintf("/%s/%s", [Site::selected()->handle, "defaults"])
                 )
             )
-            ->append(".yaml");
+            ->append(".yaml")
+            ->__toString();
     }
 
     /**
