@@ -3,14 +3,12 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
 use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
-use Illuminate\Support\Stringable;
 
 class SiteDefaults extends Collection
 {
@@ -102,16 +100,21 @@ class SiteDefaults extends Collection
      */
     protected function path()
     {
-        return Str::of((string) config("statamic.seo-pro.site_defaults.path"))
-            ->chopEnd([".yaml", "/"])
-            ->when(
-                (bool) config("statamic.system.multisite"),
-                fn(Stringable $path) => $path->append(
-                    vsprintf("/%s/%s", [Site::selected()->handle, "defaults"])
-                )
-            )
-            ->append(".yaml")
-            ->__toString();
+        $path = config('statamic.seo-pro.site_defaults.path');
+
+        if (str_ends_with($path, '.yaml')) {
+            $path = str_replace('.yaml', '', $path);
+        }
+
+        if (str_ends_with($path, '/')) {
+            $path = rtrim($path, '/');
+        }
+
+        if (config('statamic.system.multisite')) {
+            return vsprintf('%s/%s/%s.yaml', [$path, Site::selected()->handle, 'defaults']);
+        }
+
+        return $path.'.yaml';
     }
 
     /**
