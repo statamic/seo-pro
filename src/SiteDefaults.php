@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
+use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
 
@@ -99,7 +100,13 @@ class SiteDefaults extends Collection
      */
     protected function path()
     {
-        return config('statamic.seo-pro.site_defaults.path');
+        $path = str_replace('.yaml', '', config()->string('statamic.seo-pro.site_defaults.path'));
+
+        if (! config()->boolean('statamic.system.multisite')) {
+            return $path.'.yaml';
+        }
+
+        return $path.'/'.Site::selected()->handle.'/seo.yaml';
     }
 
     /**
