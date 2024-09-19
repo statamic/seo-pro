@@ -102,10 +102,10 @@ class SiteDefaults extends Collection
      */
     protected function path()
     {
-        return Str::of(config()->string("statamic.seo-pro.site_defaults.path"))
+        return Str::of((string) config("statamic.seo-pro.site_defaults.path"))
             ->chopEnd([".yaml", "/"])
             ->when(
-                config()->boolean("statamic.system.multisite"),
+                (bool) config("statamic.system.multisite"),
                 fn(Stringable $path) => $path->append(
                     vsprintf("/%s/%s", [Site::selected()->handle, "defaults"])
                 )
