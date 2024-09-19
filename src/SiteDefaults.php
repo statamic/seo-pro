@@ -10,6 +10,7 @@ use Statamic\Facades\File;
 use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
+use Illuminate\Support\Stringable;
 
 class SiteDefaults extends Collection
 {
@@ -105,7 +106,7 @@ class SiteDefaults extends Collection
             ->chopEnd([".yaml", "/"])
             ->when(
                 config()->boolean("statamic.system.multisite"),
-                fn($path) => $path->append(
+                fn(Stringable $path) => $path->append(
                     vsprintf("/%s/%s", [Site::selected()->handle, "defaults"])
                 )
             )
