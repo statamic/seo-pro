@@ -67,7 +67,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
             ->bootAddonGraphQL()
-            ->bootTextAnalysis();
+            ->bootTextAnalysis()
+            ->bootEvents();
     }
 
     protected function isLinkingEnabled(): bool
