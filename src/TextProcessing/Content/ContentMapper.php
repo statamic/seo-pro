@@ -300,23 +300,18 @@ class ContentMapper
 
     public function getContentMapping(Entry $entry): array
     {
-        $this->reset();
-
-        $this->indexValues($entry);
-
-        $fields = $entry->blueprint()->fields()->all();
+        $this->reset()->indexValues($entry);
 
         /** @var Field $field */
-        foreach ($fields as $field) {
+        foreach ($entry->blueprint()->fields()->all() as $field) {
             $type = $field->type();
 
             if (! $this->hasMapper($type)) {
                 continue;
             }
 
-            $this->startFieldPath($field->handle());
-
-            $this->getFieldtypeMapper($type)
+            $this->startFieldPath($field->handle())
+                ->getFieldtypeMapper($type)
                 ->withEntry($entry)
                 ->withFieldConfig($field->config())
                 ->withValue($this->values[$field->handle()]?->raw() ?? null)
