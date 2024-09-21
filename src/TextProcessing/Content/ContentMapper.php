@@ -192,24 +192,19 @@ class ContentMapper
         $this->values = $values;
 
         foreach ($fields as $handle => $field) {
-            if (! array_key_exists('field', $field)) {
+            if (! Arr::get($field, 'field.type')) {
                 continue;
             }
 
             $field = $field['field'];
-            $type = $field['type'] ?? null;
+            $type = $field['type'];
 
-            if (! $type) {
+            if (! $this->hasMapper($type)) {
                 continue;
             }
 
-            if (! array_key_exists($type, $this->fieldtypeMappers)) {
-                continue;
-            }
-
-            $this->startFieldPath($handle);
-
-            $this->getFieldtypeMapper($type)
+            $this->startFieldPath($handle)
+                ->getFieldtypeMapper($type)
                 ->withFieldConfig($field)
                 ->withValue($this->values[$handle] ?? null)
                 ->getContent();
@@ -319,7 +314,7 @@ class ContentMapper
         foreach ($fields as $field) {
             $type = $field->type();
 
-            if (! array_key_exists($type, $this->fieldtypeMappers)) {
+            if (! $this->hasMapper($type)) {
                 continue;
             }
 
