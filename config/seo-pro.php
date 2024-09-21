@@ -69,6 +69,8 @@ return [
 
         'keyword_threshold' => 65,
 
+        'prevent_circular_links' => false,
+
         'internal_links' => [
             'min_desired' => 3,
             'max_desired' => 6,
