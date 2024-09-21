@@ -230,7 +230,7 @@ readonly class LinkRepository implements LinkRepositoryContract
 
     protected function normalizeLinks(Collection $links): array
     {
-        return $links->map(fn (string $link) => $this->normalizeLink($link))->unique()->all();
+        return $links->map(fn (string $link) => $this->normalizeLink($link))->unique()->values()->all();
     }
 
     protected function normalizeLink(string $link): string
