@@ -98,6 +98,7 @@ export default {
             max_internal_links: this.site.max_internal_links,
             min_external_links: this.site.min_external_links,
             max_external_links: this.site.max_external_links,
+            prevent_circular_links: this.site.prevent_circular_links,
         };
     },
 

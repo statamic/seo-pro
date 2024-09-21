@@ -64,7 +64,7 @@ class ReportBuilder
     {
         return $this->addKeywordsToResults(
             $entry,
-            $this->findSimilarTo($entry, $limit),
+            $this->findSimilarTo($entry, $limit, $options),
             $options
         )->take($limit);
     }
@@ -74,9 +74,13 @@ class ReportBuilder
         $report = new SuggestionsReport;
 
         $siteConfig = $this->configurationRepository->getSiteConfiguration($entry->site()?->handle() ?? 'default');
+        $resolverOptions = new ResolverOptions(
+            keywordThreshold: $siteConfig->keywordThreshold / 100,
+            preventCircularLinks: $siteConfig->preventCircularLinks,
+        );
 
         $suggestions = $this->suggestionEngine
-            ->withResults($this->getResolvedSimilarItems($entry, $limit, new ResolverOptions(keywordThreshold: $siteConfig->keywordThreshold / 100)))
+            ->withResults($this->getResolvedSimilarItems($entry, $limit, $resolverOptions))
             ->suggest($entry);
 
         $this->fillBaseReportData($entry, $report);

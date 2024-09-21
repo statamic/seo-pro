@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('max_internal_links');
             $table->integer('min_external_links');
             $table->integer('max_external_links');
+            $table->boolean('prevent_circular_links')->default(false);
             $table->timestamps();
         });
     }

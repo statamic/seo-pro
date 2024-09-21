@@ -13,6 +13,7 @@ readonly class SiteConfig
         public int $maxInternalLinks,
         public int $minExternalLinks,
         public int $maxExternalLinks,
+        public bool $preventCircularLinks,
     ) {}
 
     public function toArray(): array
@@ -26,6 +27,7 @@ readonly class SiteConfig
             'max_internal_links' => $this->maxInternalLinks,
             'min_external_links' => $this->minExternalLinks,
             'max_external_links' => $this->maxExternalLinks,
+            'prevent_circular_links' => $this->preventCircularLinks,
         ];
     }
 }

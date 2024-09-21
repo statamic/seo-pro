@@ -4,13 +4,14 @@ namespace Statamic\SeoPro\Contracts\TextProcessing\Embeddings;
 
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\Entry;
+use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
 use Statamic\SeoPro\TextProcessing\Vectors\Vector;
 
 interface EntryEmbeddingsRepository
 {
-    public function getRelatedEmbeddingsForEntryLazy(Entry $entry);
+    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options);
 
-    public function getRelatedEmbeddingsForEntry(Entry $entry): Collection;
+    public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options): Collection;
 
     public function generateEmbeddingsForEntry(Entry $entry): void;
 

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $max_internal_links
  * @property int $min_external_links
  * @property int $max_external_links
+ * @property bool $prevent_circular_links
  */
 class SiteLinkSetting extends Model
 {

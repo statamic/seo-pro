@@ -38,15 +38,19 @@ trait ResolvesSimilarItems
         ];
     }
 
-    protected function findSimilarTo(Entry $entry, int $limit): Collection
+    protected function findSimilarTo(Entry $entry, int $limit, ?ResolverOptions $options = null): Collection
     {
+        if (! $options) {
+            $options = new ResolverOptions;
+        }
+
         $entryId = $entry->id();
         $targetVectors = $this->embeddingsRepository->getEmbeddingsForEntry($entry)?->vector() ?? [];
 
         $tmpMapping = [];
 
         /** @var Vector $vector */
-        foreach ($this->embeddingsRepository->getRelatedEmbeddingsForEntryLazy($entry) as $vector) {
+        foreach ($this->embeddingsRepository->getRelatedEmbeddingsForEntryLazy($entry, $options) as $vector) {
             if ($vector->id() === $entryId) {
                 continue;
             }

@@ -17,6 +17,7 @@ use Statamic\SeoPro\TextProcessing\Concerns\ChecksForContentChanges;
 use Statamic\SeoPro\TextProcessing\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Models\EntryEmbedding;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
+use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
 use Statamic\SeoPro\TextProcessing\Vectors\Vector;
 
 class EmbeddingsRepository implements EntryEmbeddingsRepository
@@ -36,7 +37,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         $this->configurationHash = self::getConfigurationHash();
     }
 
-    protected function relatedEmbeddingsQuery(Entry $entry): Builder
+    protected function relatedEmbeddingsQuery(Entry $entry, ResolverOptions $options): Builder
     {
         $site = $entry->site()?->handle() ?? 'default';
         $entryLink = EntryLink::where('entry_id', $entry->id())->first();
@@ -50,8 +51,14 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         $ignoredEntries[] = $entry->id();
 
         $query = EntryEmbedding::query()
-            ->whereHas('entryLink', function (Builder $query) {
-                return $query->where('can_be_suggested', true);
+            ->whereHas('entryLink', function (Builder $query) use ($entry, $options) {
+                $query = $query->where('can_be_suggested', true);
+
+                if ($options->preventCircularLinks) {
+                    $query = $query->whereJsonDoesntContain('normalized_internal_links', $entry->uri);
+                }
+
+                return $query;
             })
             ->whereNotIn('entry_id', $ignoredEntries)
             ->whereNotIn('collection', $disabledCollections);
@@ -77,10 +84,10 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         ]));
     }
 
-    public function getRelatedEmbeddingsForEntryLazy(Entry $entry)
+    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options)
     {
         /** @var EntryEmbedding $embedding */
-        foreach ($this->relatedEmbeddingsQuery($entry)->lazy(200) as $embedding) {
+        foreach ($this->relatedEmbeddingsQuery($entry, $options)->lazy(200) as $embedding) {
             yield $this->makeVector(
                 $embedding->entry_id,
                 null,
@@ -89,10 +96,10 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         }
     }
 
-    public function getRelatedEmbeddingsForEntry(Entry $entry): Collection
+    public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options): Collection
     {
         return $this->makeVectorCollection(
-            $this->relatedEmbeddingsQuery($entry)->get()
+            $this->relatedEmbeddingsQuery($entry, $options)->get()
         );
     }
 

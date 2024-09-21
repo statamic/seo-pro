@@ -112,6 +112,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             $config->max_internal_links,
             $config->min_external_links,
             $config->max_external_links,
+            $config->prevent_circular_links,
         );
     }
 
@@ -126,6 +127,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             config('statamic.seo-pro.text_analysis.internal_links.max_desired', 6),
             config('statamic.seo-pro.text_analysis.external_links.min_desired', 0),
             config('statamic.seo-pro.text_analysis.external_links.max_desired', 0),
+            config('statamic.seo-pro.text_analysis.prevent_circular_links', false)
         );
     }
 
@@ -153,6 +155,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         $siteSettings->max_internal_links = $config->maxInternalLinks;
         $siteSettings->min_external_links = $config->minExternalLinks;
         $siteSettings->max_external_links = $config->maxExternalLinks;
+        $siteSettings->prevent_circular_links = $config->preventCircularLinks;
 
         $siteSettings->saveQuietly();
     }
@@ -195,6 +198,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         $settings->max_internal_links = config('statamic.seo-pro.text_analysis.internal_links.max_desired', 6);
         $settings->min_external_links = config('statamic.seo-pro.text_analysis.external_links.min_desired', 0);
         $settings->max_external_links = config('statamic.seo-pro.text_analysis.external_links.max_desired', 0);
+        $settings->prevent_circular_links = config('statamic.seo-pro.text_analysis.prevent_circular_links', false);
 
         $settings->ignored_phrases = [];
 

@@ -18,6 +18,15 @@ class SiteConfigBlueprint
                                 'display' => 'Keyword Threshold',
                                 'type' => 'range',
                                 'default' => config('statamic.seo-pro.text_analysis.keyword_threshold', 65),
+                                'width' => 50,
+                            ],
+                        ],
+                        [
+                            'handle' => 'prevent_circular_links',
+                            'field' => [
+                                'display' => 'Prevent Circular Link Suggestions',
+                                'type' => 'toggle',
+                                'width' => 50,
                             ],
                         ],
                     ],

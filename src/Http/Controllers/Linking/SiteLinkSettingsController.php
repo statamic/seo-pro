@@ -48,6 +48,7 @@ class SiteLinkSettingsController extends CpController
                 (int) request('max_internal_links'),
                 (int) request('min_external_links'),
                 (int) request('max_external_links'),
+                request('prevent_circular_links'),
             )
         );
     }

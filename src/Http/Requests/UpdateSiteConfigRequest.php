@@ -15,6 +15,7 @@ class UpdateSiteConfigRequest extends FormRequest
             'max_internal_links' => 'required|int',
             'min_external_links' => 'required|int',
             'max_external_links' => 'required|int',
+            'prevent_circular_links' => 'required|boolean',
         ];
     }
 }
