@@ -157,7 +157,7 @@ class ContentMapper
         if (count($this->pushedIndexStack) > 0) {
             $this->contentMapping[$valuePath] = $value;
 
-            return;
+            return $this;
         }
 
         $this->contentMapping[$valuePath] = $value;
