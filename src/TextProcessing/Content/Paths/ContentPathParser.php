@@ -71,7 +71,7 @@ class ContentPathParser
                 array_shift($buffer);
 
                 $parts[] = [
-                    'name' => (int) implode($buffer),
+                    'name' => implode($buffer),
                     'meta' => $metaData,
                     'type' => 'index',
                 ];
