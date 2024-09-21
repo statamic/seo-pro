@@ -195,6 +195,21 @@ class SuggestionEngine
             }
         }
 
-        return collect($suggestions)->sortByDesc(fn ($suggestion) => $suggestion['score'])->values();
+        return $this->filterSuggestsByReplaceable($suggestions)
+            ->sortByDesc(fn ($suggestion) => $suggestion['score'])
+            ->values();
+    }
+
+    protected function filterSuggestsByReplaceable(array $suggestions): Collection
+    {
+        $replaceable = collect($suggestions)->where('context.can_replace', true)->pluck('entry')->flip()->all();
+
+        return collect($suggestions)->filter(function ($suggestion) use ($replaceable) {
+            if (! $suggestion['context']['can_replace'] && array_key_exists($suggestion['entry'], $replaceable)) {
+                return false;
+            }
+
+            return true;
+        });
     }
 }
