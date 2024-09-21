@@ -38,6 +38,9 @@
                         <template slot="cell-score" slot-scope="{ row: suggestion }">
                             <span>{{ suggestion.score.toFixed(0) }}</span>
                         </template>
+                        <template slot="cell-uri" slot-scope="{ row: suggestion }">
+                            <a :href="makeSuggestionsUrl(suggestion.entry)">{{ suggestion.uri }}</a>
+                        </template>
                         <template slot="actions" slot-scope="{ row: suggestion }">
                             <dropdown-list>
                                 <dropdown-item text="Edit Entry" :redirect="editUrl"></dropdown-item>
@@ -80,6 +83,7 @@
 <script>
 import SuggestionEditor from './suggestions/SuggestionEditor.vue';
 import IgnoreConfirmation from './suggestions/IgnoreConfirmation.vue';
+import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
 
 export default {
     props: [
@@ -87,6 +91,8 @@ export default {
         'editUrl',
         'site',
     ],
+
+    mixins: [ProvidesControlPanelLinks],
 
     components: {
         SuggestionEditor,
@@ -113,9 +119,8 @@ export default {
         loadData() {
             this.loading = true;
 
-            this.$axios.get(cp_url(`seo-pro/links/${this.entry}/suggestions`)).then(response => {
+            this.$axios.get(this.makeSuggestionsUrl(this.entry)).then(response => {
                 this.suggestions = response.data;
-                console.log(this.suggestions);
                 this.loading = false;
             });
         },

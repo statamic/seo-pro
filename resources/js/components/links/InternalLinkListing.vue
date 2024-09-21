@@ -39,10 +39,14 @@
 </template>
 
 <script>
+import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
+
 export default  {
     props: [
         'entry',
     ],
+
+    mixins: [ProvidesControlPanelLinks],
 
     data() {
         return {
@@ -57,14 +61,10 @@ export default  {
 
     methods: {
 
-        makeSuggestionsUrl(entryId) {
-            return cp_url(`seo-pro/links/${entryId}/suggestions`);
-        },
-
         loadData() {
             this.loading = true;
 
-            this.$axios.get(cp_url(`seo-pro/links/${this.entry}/internal`)).then(response => {
+            this.$axios.get(this.makeInternalLinksUrl(this.entry)).then(response => {
                 this.internalLinks = response.data;
                 this.loading = false;
             });

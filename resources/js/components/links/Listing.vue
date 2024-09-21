@@ -69,12 +69,12 @@
                         @sorted="sorted"
                     >
                         <template slot="cell-title" slot-scope="{ row: entry }">
-                            <a class="title-index-field inline-flex items-center" :href="linksUrl(entry)" @click.stop>
+                            <a class="title-index-field inline-flex items-center" :href="makeSuggestionsUrl(entry.entry_id)" @click.stop>
                                 <span v-text="entry.title" />
                             </a>
                         </template>
                         <template slot="cell-uri" slot-scope="{ row: entry }">
-                            <a class="title-index-field inline-flex items-center" :href="linksUrl(entry)" @click.stop>
+                            <a class="title-index-field inline-flex items-center" :href="makeSuggestionsUrl(entry.entry_id)" @click.stop>
                                 <span v-text="entry.uri" />
                             </a>
                         </template>
@@ -133,9 +133,10 @@ import Listing from '../../../../vendor/statamic/cms/resources/js/components/Lis
 import EntryConfigEditor from './config/EntryConfigEditor.vue';
 import FakesResources from './FakesResources.vue';
 import ConfigResetter from './config/ConfigResetter.vue';
+import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
 
 export default  {
-    mixins: [Listing, FakesResources],
+    mixins: [Listing, FakesResources, ProvidesControlPanelLinks],
 
     props: [
         'site',
@@ -167,10 +168,6 @@ export default  {
         handleEntryConfigSaved() {
             this.editingEntryConfig = null;
         },
-
-        linksUrl(item) {
-            return cp_url(`seo-pro/links/${item.entry_id}/suggestions`);
-        }
 
     },
 }

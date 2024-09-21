@@ -54,12 +54,15 @@
 
 <script>
 import IgnoreConfirmation from './suggestions/IgnoreConfirmation.vue';
+import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
 
 export default  {
     props: [
         'entry',
         'site',
     ],
+
+    mixins: [ProvidesControlPanelLinks],
 
     components: {
         IgnoreConfirmation,
@@ -80,10 +83,6 @@ export default  {
 
     methods: {
 
-        makeSuggestionsUrl(entryId) {
-            return cp_url(`seo-pro/links/${entryId}/suggestions`);
-        },
-
         makeSuggestion(related) {
             return {
                 phrase: '',
@@ -99,7 +98,7 @@ export default  {
         loadData() {
             this.loading = true;
 
-            this.$axios.get(cp_url(`seo-pro/links/${this.entry}/related`)).then(response => {
+            this.$axios.get(this.makeRelatedUrl(this.entry)).then(response => {
                 this.relatedItems = response.data;
                 this.loading = false;
             });
