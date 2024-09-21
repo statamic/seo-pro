@@ -199,6 +199,7 @@ class ServiceProvider extends AddonServiceProvider
             SeoPro\TextProcessing\Content\Mappers\GridFieldMapper::class,
             SeoPro\TextProcessing\Content\Mappers\ReplicatorFieldMapper::class,
             SeoPro\TextProcessing\Content\Mappers\BardFieldMapper::class,
+            SeoPro\TextProcessing\Content\Mappers\GroupFieldMapper::class,
         ]);
 
         return $this;
