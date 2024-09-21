@@ -227,9 +227,6 @@ class ContentMapper
         $config = $field->config();
         $names = [];
 
-        // TODO: This can get refactored/cleaned up a bit.
-        // TODO: Groups/how to handle third-party fieldtypes/etc.
-
         if (array_key_exists('display', $config)) {
             $names[] = $config['display'];
         }
@@ -287,8 +284,6 @@ class ContentMapper
                 if (array_key_exists('display', $config)) {
                     $names[] = $config['display'];
                 }
-
-                continue;
             }
         }
 
