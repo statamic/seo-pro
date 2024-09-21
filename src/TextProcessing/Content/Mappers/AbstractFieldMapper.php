@@ -29,16 +29,12 @@ abstract class AbstractFieldMapper implements FieldtypeContentMapper
     protected function mapNestedFields(array $values, array $fields): void
     {
         foreach ($values as $fieldName => $fieldValue) {
-            if (! array_key_exists($fieldName, $fields)) {
+            if (! Arr::get($fields, $fieldName.'.field.type')) {
                 continue;
             }
 
             $field = $fields[$fieldName];
-            $type = $field['field']['type'] ?? null;
-
-            if (! $type) {
-                continue;
-            }
+            $type = $field['field']['type'];
 
             $this->mapper
                 ->append($fieldName)
