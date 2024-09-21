@@ -55,11 +55,31 @@ class ContentMapper
         return $this;
     }
 
-    public function appendFieldType(string $type): static
+    public function append(string $value): static
     {
-        $this->path[] = '{type:'.$type.'}';
+        $this->path[] = $value;
 
         return $this;
+    }
+
+    public function appendMeta(string $name, string $value): static
+    {
+        return $this->append('{'.$name.':'.$value.'}');
+    }
+
+    public function appendFieldType(string $type): static
+    {
+        return $this->appendMeta('type', $type);
+    }
+
+    public function appendSetName(string $set): static
+    {
+        return $this->appendMeta('set', $set);
+    }
+
+    public function appendNode(string $name): static
+    {
+        return $this->appendMeta('node', $name);
     }
 
     public function pushIndex(string $index): static
@@ -88,13 +108,6 @@ class ContentMapper
     protected function indexValues(Entry $entry): void
     {
         $this->values = $entry->toDeferredAugmentedArray();
-    }
-
-    public function append(string $handle): static
-    {
-        $this->path[] = $handle;
-
-        return $this;
     }
 
     public function dropNestingLevel(): static
@@ -137,7 +150,7 @@ class ContentMapper
         return $this;
     }
 
-    public function finish(string $value): void
+    public function finish(string $value): static
     {
         $valuePath = implode('', $this->path);
 
@@ -149,6 +162,8 @@ class ContentMapper
 
         $this->contentMapping[$valuePath] = $value;
         $this->path = [];
+
+        return $this;
     }
 
     public function newMapper(): ContentMapper

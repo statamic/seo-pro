@@ -16,12 +16,11 @@ class BardFieldMapper extends AbstractFieldMapper
         return Bard::handle();
     }
 
-    protected function mapParagraph($value, $sets)
+    protected function mapParagraph($value, $sets): void
     {
-        $this->mapper->append('{node:paragraph}');
-        $this->mapper->finish($this->getParagraphContent($value));
-
-        $this->mapper->popIndex();
+        $this->mapper->appendNode('paragraph')
+            ->finish($this->getParagraphContent($value))
+            ->popIndex();
     }
 
     protected function mapSets($value, $sets)
@@ -40,7 +39,7 @@ class BardFieldMapper extends AbstractFieldMapper
             return;
         }
 
-        $this->mapper->append('{set:'.$setValues['type'].'}');
+        $this->mapper->appendSetName($setValues['type']);
 
         $set = $sets[$setValues['type']];
         $setFields = collect($set['fields'])->keyBy('handle')->all();
