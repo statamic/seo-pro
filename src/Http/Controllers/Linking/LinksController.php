@@ -164,7 +164,9 @@ class LinksController extends CpController
     {
         $entry = Entry::findOrFail($entryId);
 
-        return $this->contentMapper->getFieldConfigForEntry($entry, $fieldPath)?->toArray() ?? [];
+        return [
+            'field_names' => $this->contentMapper->getFieldNames($fieldPath),
+        ];
     }
 
     public function getRelatedContent($entryId)

@@ -25,6 +25,15 @@ class ContentPath
         return $lastType;
     }
 
+    public function getDisplayNames(): array
+    {
+        return collect($this->parts)
+            ->map(fn (ContentPathPart $part) => $part->displayName())
+            ->prepend($this->root->displayName())
+            ->filter()
+            ->all();
+    }
+
     public function __toString(): string
     {
         return str(

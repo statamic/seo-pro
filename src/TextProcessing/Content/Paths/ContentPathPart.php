@@ -19,14 +19,9 @@ class ContentPathPart
         }
     }
 
-    public function isIndex(): bool
+    public function displayName(): ?string
     {
-        return $this->type === 'index';
-    }
-
-    public function isSet(): bool
-    {
-        return array_key_exists('set', $this->attributes);
+        return $this->getAttribute('display_name');
     }
 
     public function getAttribute(string $key): mixed

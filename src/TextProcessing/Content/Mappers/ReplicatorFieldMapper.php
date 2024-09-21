@@ -39,7 +39,7 @@ class ReplicatorFieldMapper extends AbstractFieldMapper
                 continue;
             }
 
-            $this->mapper->pushIndex($index);
+            $this->mapper->pushIndex($index)->appendSetName($type);
 
             $this->mapNestedFields(
                 collect($values)->except(['id', 'type', 'enabled'])->all(),

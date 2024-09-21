@@ -23,6 +23,13 @@ class ContentPathParser
             }
 
             if ($inMeta) {
+                if ($cur === '\\') {
+                    $metaBuffer[] = $next;
+                    $i += 1;
+
+                    continue;
+                }
+
                 $metaBuffer[] = $cur;
 
                 if ($cur === '}') {

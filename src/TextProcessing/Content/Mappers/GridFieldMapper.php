@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\TextProcessing\Content\Mappers;
 
+use Illuminate\Support\Arr;
 use Statamic\Fieldtypes\Grid;
 
 class GridFieldMapper extends AbstractFieldMapper
@@ -37,6 +38,7 @@ class GridFieldMapper extends AbstractFieldMapper
 
                 $this->mapper
                     ->append($handle)
+                    ->appendDisplayName(Arr::get($fields[$handle], 'field.display'))
                     ->getFieldtypeMapper($fieldType)
                     ->withFieldConfig($fields[$handle]['field'])
                     ->withValue($value)

@@ -7,9 +7,8 @@ use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Fields\Field;
 use Statamic\SeoPro\Contracts\TextProcessing\Content\FieldtypeContentMapper;
-use Statamic\SeoPro\TextProcessing\Content\Paths\ContentPath;
 use Statamic\SeoPro\TextProcessing\Content\Paths\ContentPathParser;
-use Statamic\SeoPro\TextProcessing\Content\Paths\ContentPathPart;
+use Statamic\Support\Str;
 
 class ContentMapper
 {
@@ -62,9 +61,29 @@ class ContentMapper
         return $this;
     }
 
+    public function escapeMetaValue(string $value): string
+    {
+        return Str::swap([
+            '\\' => '\\\\',
+            '{' => '\\{',
+            '}' => '\\}',
+            '[' => '\\[',
+            ']' => '\\]',
+        ], $value);
+    }
+
     public function appendMeta(string $name, string $value): static
     {
-        return $this->append('{'.$name.':'.$value.'}');
+        return $this->append('{'.$name.':'.$this->escapeMetaValue($value).'}');
+    }
+
+    public function appendDisplayName(?string $display): static
+    {
+        if (! $display) {
+            return $this;
+        }
+
+        return $this->appendMeta('display_name', $display);
     }
 
     public function appendFieldType(string $type): static
@@ -200,6 +219,7 @@ class ContentMapper
             }
 
             $this->startFieldPath($handle)
+                ->appendDisplayName(Arr::get($field, 'field.display'))
                 ->getFieldtypeMapper($type)
                 ->withFieldConfig($field)
                 ->withValue($this->values[$handle] ?? null)
@@ -207,90 +227,6 @@ class ContentMapper
         }
 
         return $this->contentMapping;
-    }
-
-    public function getFieldConfigForEntry(Entry $entry, string $path): ?RetrievedConfig
-    {
-        $parsedPath = (new ContentPathParser)->parse($path);
-        $fields = $entry->blueprint()->fields()->all();
-        $field = $fields[$parsedPath->root->name] ?? null;
-
-        if (! $field) {
-            return null;
-        }
-
-        return $this->getFieldConfig($field, $parsedPath);
-    }
-
-    public function getFieldConfig(Field $field, ContentPath $path): RetrievedConfig
-    {
-        $config = $field->config();
-        $names = [];
-
-        if (array_key_exists('display', $config)) {
-            $names[] = $config['display'];
-        }
-
-        /** @var ContentPathPart $part */
-        foreach ($path->parts as $part) {
-            if ($part->isIndex()) {
-                continue;
-            }
-
-            if ($part->isSet()) {
-                if (! array_key_exists('sets', $config)) {
-                    break;
-                }
-
-                $sets = $config['sets'];
-                $set = $part->getAttribute('set');
-
-                foreach ($sets as $group) {
-                    foreach ($group['sets'] as $setName => $setConfig) {
-                        if ($setName != $set) {
-                            continue;
-                        }
-
-                        $matchingField = collect($setConfig['fields'])->where('handle', $part->name)->first();
-
-                        if (! $matchingField) {
-                            $config = null;
-                            break 3;
-                        }
-
-                        $config = $matchingField['field'];
-
-                        if (array_key_exists('display', $config)) {
-                            $names[] = $config['display'];
-                        }
-
-                        break 2;
-                    }
-                }
-
-                continue;
-            }
-
-            if (array_key_exists('fields', $config)) {
-                $matchingField = collect($config['fields'])->where('handle', $part->name)->first();
-
-                if (! $matchingField) {
-                    $config = null;
-                    break;
-                }
-
-                $config = $matchingField['field'];
-
-                if (array_key_exists('display', $config)) {
-                    $names[] = $config['display'];
-                }
-            }
-        }
-
-        return new RetrievedConfig(
-            $config,
-            $names
-        );
     }
 
     public function getContentMapping(Entry $entry): array
@@ -306,6 +242,7 @@ class ContentMapper
             }
 
             $this->startFieldPath($field->handle())
+                ->appendDisplayName($field->display())
                 ->getFieldtypeMapper($type)
                 ->withEntry($entry)
                 ->withFieldConfig($field->config())
@@ -320,6 +257,11 @@ class ContentMapper
     {
         return collect($this->getContentMapping($entry))
             ->map(fn ($_, $path) => $this->retrieveField($entry, $path));
+    }
+
+    public function getFieldNames(string $path): array
+    {
+        return (new ContentPathParser)->parse($path)->getDisplayNames();
     }
 
     public function retrieveField(Entry $entry, string $path): RetrievedField

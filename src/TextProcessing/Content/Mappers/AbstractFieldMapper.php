@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\TextProcessing\Content\Mappers;
 
+use Illuminate\Support\Arr;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\SeoPro\Contracts\TextProcessing\Content\FieldtypeContentMapper;
 use Statamic\SeoPro\TextProcessing\Content\ContentMapper;
@@ -41,6 +42,7 @@ abstract class AbstractFieldMapper implements FieldtypeContentMapper
 
             $this->mapper
                 ->append($fieldName)
+                ->appendDisplayName(Arr::get($field, 'field.display'))
                 ->getFieldtypeMapper($type)
                 ->withFieldConfig($field['field'])
                 ->withValue($fieldValue)
