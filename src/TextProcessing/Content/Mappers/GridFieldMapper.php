@@ -11,15 +11,6 @@ class GridFieldMapper extends AbstractFieldMapper
         return Grid::handle();
     }
 
-    protected function getValues(): array
-    {
-        if (! is_array($this->value)) {
-            return [];
-        }
-
-        return $this->value;
-    }
-
     public function getContent(): void
     {
         $fields = collect($this->fieldConfig['fields'] ?? [])

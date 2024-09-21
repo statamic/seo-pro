@@ -16,6 +16,40 @@ abstract class AbstractFieldMapper implements FieldtypeContentMapper
 
     protected ?ContentMapper $mapper = null;
 
+    protected function getValues(): array
+    {
+        if (! is_array($this->value)) {
+            return [];
+        }
+
+        return $this->value;
+    }
+
+    protected function mapNestedFields(array $values, array $fields)
+    {
+        foreach ($values as $fieldName => $fieldValue) {
+            if (! array_key_exists($fieldName, $fields)) {
+                continue;
+            }
+
+            $field = $fields[$fieldName];
+            $type = $field['field']['type'] ?? null;
+
+            if (! $type) {
+                continue;
+            }
+
+            $this->mapper
+                ->append($fieldName)
+                ->getFieldtypeMapper($type)
+                ->withFieldConfig($field['field'])
+                ->withValue($fieldValue)
+                ->getContent();
+
+            $this->mapper->dropNestingLevel();
+        }
+    }
+
     public function withMapper(ContentMapper $mapper): static
     {
         $this->mapper = $mapper;

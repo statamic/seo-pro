@@ -14,15 +14,6 @@ class ReplicatorFieldMapper extends AbstractFieldMapper
         return Replicator::handle();
     }
 
-    protected function getValues(): array
-    {
-        if (! is_array($this->value)) {
-            return [];
-        }
-
-        return $this->value;
-    }
-
     public function getContent(): void
     {
         $sets = $this->getSets();
@@ -50,32 +41,12 @@ class ReplicatorFieldMapper extends AbstractFieldMapper
 
             $this->mapper->pushIndex($index);
 
-            $setFields = collect($set['fields'])->keyBy('handle')->all();
-            $values = collect($values)->except(['id', 'type', 'enabled'])->all();
+            $this->mapNestedFields(
+                collect($values)->except(['id', 'type', 'enabled'])->all(),
+                collect($set['fields'])->keyBy('handle')->all()
+            );
 
-            foreach ($values as $fieldName => $fieldValue) {
-                if (! array_key_exists($fieldName, $setFields)) {
-                    continue;
-                }
-
-                $field = $setFields[$fieldName];
-                $type = $field['field']['type'] ?? null;
-
-                if (! $type) {
-                    continue;
-                }
-
-                $this->mapper
-                    ->append($fieldName)
-                    ->getFieldtypeMapper($type)
-                    ->withFieldConfig($field['field'])
-                    ->withValue($fieldValue)
-                    ->getContent();
-
-                $this->mapper->dropNestingLevel();
-            }
             $this->mapper->popIndex();
-
         }
     }
 }
