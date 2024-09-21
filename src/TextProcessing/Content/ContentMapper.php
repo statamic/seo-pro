@@ -168,11 +168,7 @@ class ContentMapper
 
     public function newMapper(): ContentMapper
     {
-        $mapper = new ContentMapper;
-
-        $mapper->registerMappers($this->fieldtypeMappers);
-
-        return $mapper;
+        return tap(new ContentMapper)->registerMappers($this->fieldtypeMappers);
     }
 
     public function reset(): static
