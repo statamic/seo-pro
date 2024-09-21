@@ -25,7 +25,7 @@ abstract class AbstractFieldMapper implements FieldtypeContentMapper
         return $this->value;
     }
 
-    protected function mapNestedFields(array $values, array $fields)
+    protected function mapNestedFields(array $values, array $fields): void
     {
         foreach ($values as $fieldName => $fieldValue) {
             if (! array_key_exists($fieldName, $fields)) {
