@@ -147,17 +147,13 @@ class ReportBuilder
                 continue;
             }
 
-            foreach ($link->internal_links as $linkUri) {
-                if ($linkUri === $targetUri) {
-                    $lookupIds[$link->entry_id] = 1;
+            if (in_array($targetUri, $link->internal_links)) {
+                $lookupIds[$link->entry_id] = 1;
 
-                    $matches[] = [
-                        'entry_id' => $link->entry_id,
-                        'uri' => $linkUri,
-                    ];
-
-                    break;
-                }
+                $matches[] = [
+                    'entry_id' => $link->entry_id,
+                    'uri' => $targetUri,
+                ];
             }
         }
 
