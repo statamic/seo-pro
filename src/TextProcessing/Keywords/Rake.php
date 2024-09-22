@@ -18,8 +18,8 @@ class Rake implements Extractor, KeywordRetriever
         return RakePlus::create(
             null,
             stopwords: $this->getStopWords(),
-            phrase_min_length: config('statamic.seo-pro.text_analysis.rake.phrase_min_length', 0),
-            filter_numerics: config('statamic.seo-pro.text_analysis.rake.filter_numerics', true)
+            phrase_min_length: config('statamic.seo-pro.linking.rake.phrase_min_length', 0),
+            filter_numerics: config('statamic.seo-pro.linking.rake.filter_numerics', true)
         );
     }
 

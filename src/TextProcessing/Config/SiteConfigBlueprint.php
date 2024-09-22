@@ -17,7 +17,7 @@ class SiteConfigBlueprint
                             'field' => [
                                 'display' => 'Keyword Threshold',
                                 'type' => 'range',
-                                'default' => config('statamic.seo-pro.text_analysis.keyword_threshold', 65),
+                                'default' => config('statamic.seo-pro.linking.keyword_threshold', 65),
                                 'width' => 50,
                             ],
                         ],
@@ -38,7 +38,7 @@ class SiteConfigBlueprint
                             'field' => [
                                 'display' => 'Min. Internal Links',
                                 'type' => 'integer',
-                                'default' => config('statamic.seo-pro.text_analysis.internal_links.min_desired', 3),
+                                'default' => config('statamic.seo-pro.linking.internal_links.min_desired', 3),
                                 'width' => 50,
                             ],
                         ],
@@ -47,7 +47,7 @@ class SiteConfigBlueprint
                             'field' => [
                                 'display' => 'Max. Internal Links',
                                 'type' => 'integer',
-                                'default' => config('statamic.seo-pro.text_analysis.internal_links.max_desired', 6),
+                                'default' => config('statamic.seo-pro.linking.internal_links.max_desired', 6),
                                 'width' => 50,
                             ],
                         ],
@@ -56,7 +56,7 @@ class SiteConfigBlueprint
                             'field' => [
                                 'display' => 'Min. External Links',
                                 'type' => 'integer',
-                                'default' => config('statamic.seo-pro.text_analysis.external_links.min_desired', 0),
+                                'default' => config('statamic.seo-pro.linking.external_links.min_desired', 0),
                                 'width' => 50,
                             ],
                         ],
@@ -65,7 +65,7 @@ class SiteConfigBlueprint
                             'field' => [
                                 'display' => 'Max. External Links',
                                 'type' => 'integer',
-                                'default' => config('statamic.seo-pro.text_analysis.external_links.max_desired', 0),
+                                'default' => config('statamic.seo-pro.linking.external_links.max_desired', 0),
                                 'width' => 50,
                             ],
                         ],

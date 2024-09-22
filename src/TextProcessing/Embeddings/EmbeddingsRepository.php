@@ -79,8 +79,8 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         return sha1(implode('', [
             'embeddings',
             get_class(app(Tokenizer::class)),
-            (string) config('statamic.seo-pro.text_analysis.openai.token_limit', 8000),
-            config('statamic.seo-pro.text_analysis.openai.model', 'text-embeddings-3-small'),
+            (string) config('statamic.seo-pro.linking.openai.token_limit', 8000),
+            config('statamic.seo-pro.linking.openai.model', 'text-embeddings-3-small'),
         ]));
     }
 

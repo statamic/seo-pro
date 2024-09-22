@@ -73,7 +73,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function isLinkingEnabled(): bool
     {
-        return config('statamic.seo-pro.text_analysis.enabled', false);
+        return config('statamic.seo-pro.linking.enabled', false);
     }
 
     public function bootEvents()
@@ -111,22 +111,22 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->app->bind(
             Contracts\TextProcessing\Content\ContentRetriever::class,
-            config('statamic.seo-pro.text_analysis.drivers.content'),
+            config('statamic.seo-pro.linking.drivers.content'),
         );
 
         $this->app->bind(
             Contracts\TextProcessing\Content\Tokenizer::class,
-            config('statamic.seo-pro.text_analysis.drivers.tokenizer'),
+            config('statamic.seo-pro.linking.drivers.tokenizer'),
         );
 
         $this->app->bind(
             Contracts\TextProcessing\Embeddings\Extractor::class,
-            config('statamic.seo-pro.text_analysis.drivers.embeddings'),
+            config('statamic.seo-pro.linking.drivers.embeddings'),
         );
 
         $this->app->bind(
             Contracts\TextProcessing\Keywords\KeywordRetriever::class,
-            config('statamic.seo-pro.text_analysis.drivers.keywords'),
+            config('statamic.seo-pro.linking.drivers.keywords'),
         );
 
         $this->app->bind(
@@ -141,7 +141,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->app->bind(
             Contracts\TextProcessing\Links\LinkCrawler::class,
-            config('statamic.seo-pro.text_analysis.drivers.link_scanner'),
+            config('statamic.seo-pro.linking.drivers.link_scanner'),
         );
 
         $this->app->bind(

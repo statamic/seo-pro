@@ -17,14 +17,14 @@ class OpenAiEmbeddings implements Extractor
     public function __construct(Tokenizer $tokenizer)
     {
         $this->tokenizer = $tokenizer;
-        $this->tokenLimit = config('statamic.seo-pro.text_analysis.openai.token_limit', 8000);
-        $this->embeddingsModel = config('statamic.seo-pro.text_analysis.openai.model', 'text-embeddings-3-small');
+        $this->tokenLimit = config('statamic.seo-pro.linking.openai.token_limit', 8000);
+        $this->embeddingsModel = config('statamic.seo-pro.linking.openai.model', 'text-embeddings-3-small');
     }
 
     protected function makeClient(): OpenAI\Client
     {
         return OpenAI::factory()
-            ->withApiKey(config('statamic.seo-pro.text_analysis.openai.api_key'))
+            ->withApiKey(config('statamic.seo-pro.linking.openai.api_key'))
             ->make();
     }
 

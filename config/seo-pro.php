@@ -57,7 +57,7 @@ return [
         'queue' => env('SEO_PRO_JOB_QUEUE'),
     ],
 
-    'text_analysis' => [
+    'linking' => [
 
         'enabled' => false,
 

@@ -122,12 +122,12 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             $handle,
             $name,
             [],
-            config('statamic.seo-pro.text_analysis.keyword_threshold', 65),
-            config('statamic.seo-pro.text_analysis.internal_links.min_desired', 3),
-            config('statamic.seo-pro.text_analysis.internal_links.max_desired', 6),
-            config('statamic.seo-pro.text_analysis.external_links.min_desired', 0),
-            config('statamic.seo-pro.text_analysis.external_links.max_desired', 0),
-            config('statamic.seo-pro.text_analysis.prevent_circular_links', false)
+            config('statamic.seo-pro.linking.keyword_threshold', 65),
+            config('statamic.seo-pro.linking.internal_links.min_desired', 3),
+            config('statamic.seo-pro.linking.internal_links.max_desired', 6),
+            config('statamic.seo-pro.linking.external_links.min_desired', 0),
+            config('statamic.seo-pro.linking.external_links.max_desired', 0),
+            config('statamic.seo-pro.linking.prevent_circular_links', false)
         );
     }
 
@@ -193,12 +193,12 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             return;
         }
 
-        $settings->keyword_threshold = config('statamic.seo-pro.text_analysis.keyword_threshold', 65) / 100;
-        $settings->min_internal_links = config('statamic.seo-pro.text_analysis.internal_links.min_desired', 3);
-        $settings->max_internal_links = config('statamic.seo-pro.text_analysis.internal_links.max_desired', 6);
-        $settings->min_external_links = config('statamic.seo-pro.text_analysis.external_links.min_desired', 0);
-        $settings->max_external_links = config('statamic.seo-pro.text_analysis.external_links.max_desired', 0);
-        $settings->prevent_circular_links = config('statamic.seo-pro.text_analysis.prevent_circular_links', false);
+        $settings->keyword_threshold = config('statamic.seo-pro.linking.keyword_threshold', 65) / 100;
+        $settings->min_internal_links = config('statamic.seo-pro.linking.internal_links.min_desired', 3);
+        $settings->max_internal_links = config('statamic.seo-pro.linking.internal_links.max_desired', 6);
+        $settings->min_external_links = config('statamic.seo-pro.linking.external_links.min_desired', 0);
+        $settings->max_external_links = config('statamic.seo-pro.linking.external_links.max_desired', 0);
+        $settings->prevent_circular_links = config('statamic.seo-pro.linking.prevent_circular_links', false);
 
         $settings->ignored_phrases = [];
 
