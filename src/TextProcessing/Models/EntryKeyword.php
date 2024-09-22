@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $entry_id
  * @property string $site
  * @property string $collection
+ * @property string $blueprint
  * @property array $meta_keywords
  * @property array $content_keywords
  * @property string $content_hash

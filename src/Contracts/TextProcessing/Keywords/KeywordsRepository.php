@@ -8,13 +8,13 @@ interface KeywordsRepository
 {
     public function getIgnoredKeywordsForEntry(Entry $entry): array;
 
-    public function generateKeywordsForAllEntries();
+    public function generateKeywordsForAllEntries(int $chunkSize = 100): void;
 
     public function getKeywordsForEntries(array $entryIds): array;
 
-    public function generateKeywordsForEntry(Entry $entry);
+    public function generateKeywordsForEntry(Entry $entry): void;
 
-    public function deleteKeywordsForEntry(string $entryId);
+    public function deleteKeywordsForEntry(string $entryId): void;
 
     public function deleteKeywordsForSite(string $handle): void;
 

@@ -26,9 +26,9 @@ class KeywordsRepository implements KeywordsRepositoryContract
         protected readonly ContentRetriever $contentRetriever,
     ) {}
 
-    public function generateKeywordsForAllEntries()
+    public function generateKeywordsForAllEntries(int $chunkSize = 100): void
     {
-        EntryQuery::query()->chunk(100, function ($entries) {
+        EntryQuery::query()->chunk($chunkSize, function ($entries) {
             $entryIds = $entries->pluck('id')->all();
             $this->fillKeywordInstanceCache($entryIds);
 
@@ -100,7 +100,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
         return $returnKeywords;
     }
 
-    protected function getMetaKeywords(Entry $entry, $stopWords = [])
+    protected function getMetaKeywords(Entry $entry, $stopWords = []): array
     {
         $uri = str($entry->uri ?? '')
             ->afterLast('/')
@@ -123,7 +123,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
         return EntryKeyword::query()->firstOrNew(['entry_id' => $entryId]);
     }
 
-    public function generateKeywordsForEntry(Entry $entry)
+    public function generateKeywordsForEntry(Entry $entry): void
     {
         $id = $entry->id();
 
@@ -161,7 +161,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
         $keywords->saveQuietly();
     }
 
-    public function deleteKeywordsForEntry(string $entryId)
+    public function deleteKeywordsForEntry(string $entryId): void
     {
         EntryKeyword::query()->where('entry_id', $entryId)->delete();
     }
