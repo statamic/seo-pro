@@ -192,7 +192,6 @@ class ReportBuilder
 
         $toLookup = [];
         $uris = [];
-        $results = [];
 
         foreach ($this->lastLinks->internal_links as $link) {
             if (str_starts_with($link, '#')) {
@@ -219,14 +218,14 @@ class ReportBuilder
             ->keyBy('uri')
             ->all();
 
-        foreach ($toLookup as $link) {
-            $results[] = [
-                'entry' => $entries[$link['uri']] ?? null,
-                'uri' => $link['original'],
-            ];
-        }
-
-        $report->internalLinks($results);
+        $report->internalLinks(
+            collect($toLookup)->map(function ($link) use ($entries) {
+                return [
+                    'entry' => $entries[$link['uri']] ?? null,
+                    'uri' => $link['original'],
+                ];
+            })->all()
+        );
 
         return $report;
     }
