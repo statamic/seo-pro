@@ -12,6 +12,15 @@ use Statamic\SeoPro\Hooks\Keywords\StopWordsHook;
 class Rake implements Extractor, KeywordRetriever
 {
     protected string $locale = 'en_US';
+    protected array $stopWordFiles = [];
+
+    public function __construct()
+    {
+        $this->stopWordFiles = collect(scandir($this->stopWordDir()))
+            ->filter(fn ($fileName) => str_ends_with($fileName, '.php'))
+            ->map(fn ($fileName) => (string) str($fileName)->substr(0, mb_strlen($fileName) - 4)->lower())
+            ->all();
+    }
 
     private function rake(): RakePlus
     {
@@ -23,11 +32,16 @@ class Rake implements Extractor, KeywordRetriever
         );
     }
 
+    protected function stopWordDir(): string
+    {
+        return base_path('vendor/donatello-za/rake-php-plus/lang/');
+    }
+
     public function getStopWords(): array
     {
-        $path = base_path('vendor/donatello-za/rake-php-plus/lang/'.$this->locale.'.php');
+        $path = $this->stopWordDir().$this->locale.'.php';
 
-        if (! file_exists($path)) {
+        if (! in_array(mb_strtolower($this->locale), $this->stopWordFiles) || ! file_exists($path)) {
             return $this->runStopWordsHook();
         }
 
