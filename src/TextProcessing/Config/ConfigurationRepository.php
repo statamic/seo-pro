@@ -57,7 +57,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function getCollectionConfiguration(string $handle): ?CollectionConfig
     {
-        $config = CollectionLinkSettings::where('collection', $handle)->first();
+        $config = CollectionLinkSettings::query()->where('collection', $handle)->first();
 
         if ($config) {
             // TODO: Hydrate title.
@@ -68,10 +68,10 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         return $this->makeDefaultCollectionConfig($handle, '');
     }
 
-    public function updateCollectionConfiguration(string $handle, CollectionConfig $config)
+    public function updateCollectionConfiguration(string $handle, CollectionConfig $config): void
     {
         /** @var CollectionLinkSettings $collectionSettings */
-        $collectionSettings = CollectionLinkSettings::firstOrNew(['collection' => $handle]);
+        $collectionSettings = CollectionLinkSettings::query()->firstOrNew(['collection' => $handle]);
 
         $collectionSettings->linkable_collections = $config->linkableCollections;
         $collectionSettings->allow_linking_to_all_collections = $config->allowLinkingToAllCollections;
@@ -133,7 +133,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function getSiteConfiguration(string $handle): ?SiteConfig
     {
-        $config = SiteLinkSetting::where('site', $handle)->first();
+        $config = SiteLinkSetting::query()->where('site', $handle)->first();
 
         if ($config) {
             // TODO: Hydrate name.
@@ -144,10 +144,10 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         return $this->makeDefaultSiteConfig($handle, '');
     }
 
-    public function updateSiteConfiguration(string $handle, SiteConfig $config)
+    public function updateSiteConfiguration(string $handle, SiteConfig $config): void
     {
         /** @var SiteLinkSetting $siteSettings */
-        $siteSettings = SiteLinkSetting::firstOrNew(['site' => $handle]);
+        $siteSettings = SiteLinkSetting::query()->firstOrNew(['site' => $handle]);
 
         $siteSettings->ignored_phrases = $config->ignoredPhrases;
         $siteSettings->keyword_threshold = $config->keywordThreshold / 100;
@@ -162,7 +162,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function getDisabledCollections(): array
     {
-        $disabled = CollectionLinkSettings::where('linking_enabled', false)
+        $disabled = CollectionLinkSettings::query()->where('linking_enabled', false)
             ->select('collection')
             ->get()
             ->pluck('collection')
@@ -174,20 +174,20 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         );
     }
 
-    public function deleteSiteConfiguration(string $handle)
+    public function deleteSiteConfiguration(string $handle): void
     {
-        SiteLinkSetting::where('site', $handle)->delete();
+        SiteLinkSetting::query()->where('site', $handle)->delete();
     }
 
-    public function deleteCollectionConfiguration(string $handle)
+    public function deleteCollectionConfiguration(string $handle): void
     {
-        CollectionLinkSettings::where('collection', $handle)->delete();
+        CollectionLinkSettings::query()->where('collection', $handle)->delete();
     }
 
-    public function resetSiteConfiguration(string $handle)
+    public function resetSiteConfiguration(string $handle): void
     {
         /** @var SiteLinkSetting $settings */
-        $settings = SiteLinkSetting::where('site', $handle)->first();
+        $settings = SiteLinkSetting::query()->where('site', $handle)->first();
 
         if (! $settings) {
             return;
@@ -205,10 +205,10 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         $settings->save();
     }
 
-    public function resetCollectionConfiguration(string $handle)
+    public function resetCollectionConfiguration(string $handle): void
     {
         /** @var CollectionLinkSettings $settings */
-        $settings = CollectionLinkSettings::where('collection', $handle)->first();
+        $settings = CollectionLinkSettings::query()->where('collection', $handle)->first();
 
         if (! $settings) {
             return;
