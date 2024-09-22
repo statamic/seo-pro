@@ -4,11 +4,11 @@ namespace Statamic\SeoPro\TextProcessing\Keywords;
 
 use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
-use Statamic\SeoPro\Contracts\TextProcessing\Content\ContentRetriever;
+use Statamic\SeoPro\Content\ContentRemoval;
+use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository as KeywordsRepositoryContract;
 use Statamic\SeoPro\TextProcessing\Concerns\ChecksForContentChanges;
-use Statamic\SeoPro\TextProcessing\Content\ContentRemoval;
 use Statamic\SeoPro\TextProcessing\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Models\EntryKeyword;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;

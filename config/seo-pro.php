@@ -89,8 +89,8 @@ return [
         'drivers' => [
             'embeddings' => \Statamic\SeoPro\TextProcessing\Embeddings\OpenAiEmbeddings::class,
             'keywords' => \Statamic\SeoPro\TextProcessing\Keywords\Rake::class,
-            'tokenizer' => \Statamic\SeoPro\TextProcessing\Content\Tokenizer::class,
-            'content' => \Statamic\SeoPro\TextProcessing\Content\ContentRetriever::class,
+            'tokenizer' => \Statamic\SeoPro\Content\Tokenizer::class,
+            'content' => \Statamic\SeoPro\Content\ContentRetriever::class,
             'link_scanner' => \Statamic\SeoPro\TextProcessing\Links\LinkCrawler::class,
         ],
 

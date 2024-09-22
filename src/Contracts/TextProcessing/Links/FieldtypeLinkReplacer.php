@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro\Contracts\TextProcessing\Links;
 
-use Statamic\SeoPro\TextProcessing\Content\ReplacementContext;
+use Statamic\SeoPro\Content\ReplacementContext;
 
 interface FieldtypeLinkReplacer
 {

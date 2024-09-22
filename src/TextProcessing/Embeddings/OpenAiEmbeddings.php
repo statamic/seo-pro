@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\TextProcessing\Embeddings;
 
 use OpenAI;
-use Statamic\SeoPro\Contracts\TextProcessing\Content\Tokenizer;
+use Statamic\SeoPro\Contracts\Content\Tokenizer;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\Extractor;
 
 class OpenAiEmbeddings implements Extractor

@@ -110,12 +110,12 @@ class ServiceProvider extends AddonServiceProvider
         SeoPro\Actions\ViewLinkSuggestions::register();
 
         $this->app->bind(
-            Contracts\TextProcessing\Content\ContentRetriever::class,
+            Contracts\Content\ContentRetriever::class,
             config('statamic.seo-pro.linking.drivers.content'),
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Content\Tokenizer::class,
+            Contracts\Content\Tokenizer::class,
             config('statamic.seo-pro.linking.drivers.tokenizer'),
         );
 
@@ -159,13 +159,13 @@ class ServiceProvider extends AddonServiceProvider
             TextProcessing\Links\LinkRepository::class,
         );
 
-        $this->app->singleton(SeoPro\TextProcessing\Content\ContentMapper::class, function () {
-            return new SeoPro\TextProcessing\Content\ContentMapper;
+        $this->app->singleton(Content\ContentMapper::class, function () {
+            return new Content\ContentMapper;
         });
 
-        $this->app->singleton(SeoPro\TextProcessing\Content\LinkReplacer::class, function () {
-            return new SeoPro\TextProcessing\Content\LinkReplacer(
-                app(SeoPro\TextProcessing\Content\ContentMapper::class),
+        $this->app->singleton(Content\LinkReplacer::class, function () {
+            return new Content\LinkReplacer(
+                app(Content\ContentMapper::class),
             );
         });
 
@@ -175,14 +175,14 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function registerDefaultFieldtypeReplacers(): static
     {
-        /** @var SeoPro\TextProcessing\Content\LinkReplacer $linkReplacer */
-        $linkReplacer = $this->app->make(SeoPro\TextProcessing\Content\LinkReplacer::class);
+        /** @var \Statamic\SeoPro\Content\LinkReplacer $linkReplacer */
+        $linkReplacer = $this->app->make(Content\LinkReplacer::class);
 
         $linkReplacer->registerReplacers([
-            SeoPro\TextProcessing\Content\LinkReplacers\MarkdownReplacer::class,
-            SeoPro\TextProcessing\Content\LinkReplacers\TextReplacer::class,
-            SeoPro\TextProcessing\Content\LinkReplacers\TextareaReplacer::class,
-            SeoPro\TextProcessing\Content\LinkReplacers\Bard\BardReplacer::class,
+            Content\LinkReplacers\MarkdownReplacer::class,
+            Content\LinkReplacers\TextReplacer::class,
+            Content\LinkReplacers\TextareaReplacer::class,
+            Content\LinkReplacers\Bard\BardReplacer::class,
         ]);
 
         return $this;
@@ -190,17 +190,17 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function registerDefaultContentMappers(): static
     {
-        /** @var SeoPro\TextProcessing\Content\ContentMapper $contentMapper */
-        $contentMapper = $this->app->make(SeoPro\TextProcessing\Content\ContentMapper::class);
+        /** @var \Statamic\SeoPro\Content\ContentMapper $contentMapper */
+        $contentMapper = $this->app->make(Content\ContentMapper::class);
 
         $contentMapper->registerMappers([
-            SeoPro\TextProcessing\Content\Mappers\TextFieldMapper::class,
-            SeoPro\TextProcessing\Content\Mappers\TextareaFieldMapper::class,
-            SeoPro\TextProcessing\Content\Mappers\MarkdownFieldMapper::class,
-            SeoPro\TextProcessing\Content\Mappers\GridFieldMapper::class,
-            SeoPro\TextProcessing\Content\Mappers\ReplicatorFieldMapper::class,
-            SeoPro\TextProcessing\Content\Mappers\BardFieldMapper::class,
-            SeoPro\TextProcessing\Content\Mappers\GroupFieldMapper::class,
+            Content\Mappers\TextFieldMapper::class,
+            Content\Mappers\TextareaFieldMapper::class,
+            Content\Mappers\MarkdownFieldMapper::class,
+            Content\Mappers\GridFieldMapper::class,
+            Content\Mappers\ReplicatorFieldMapper::class,
+            Content\Mappers\BardFieldMapper::class,
+            Content\Mappers\GroupFieldMapper::class,
         ]);
 
         return $this;

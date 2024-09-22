@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Entry as EntryApi;
-use Statamic\SeoPro\Contracts\TextProcessing\Content\ContentRetriever;
+use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository as LinkRepositoryContract;
 use Statamic\SeoPro\Events\InternalLinksUpdated;
 use Statamic\SeoPro\TextProcessing\Models\CollectionLinkSettings;
