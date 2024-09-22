@@ -52,9 +52,9 @@ class SuggestionEngine
                 continue;
             }
 
-            $regex = '/([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*[.!?])|([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*$)/i';
+            $pattern = '/([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*[.!?])|([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*$)/i';
 
-            if (! preg_match($regex, $searchText, $matches)) {
+            if (! preg_match($pattern, $searchText, $matches)) {
                 continue;
             }
 
