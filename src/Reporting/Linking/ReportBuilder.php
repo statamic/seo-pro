@@ -74,6 +74,7 @@ class ReportBuilder
         $report = new SuggestionsReport;
 
         $siteConfig = $this->configurationRepository->getSiteConfiguration($entry->site()?->handle() ?? 'default');
+
         $resolverOptions = new ResolverOptions(
             keywordThreshold: $siteConfig->keywordThreshold / 100,
             preventCircularLinks: $siteConfig->preventCircularLinks,
@@ -131,6 +132,7 @@ class ReportBuilder
         }
 
         $targetUri = $entry->uri;
+        /** @var EntryLink[] $entryLinks */
         $entryLinks = EntryLink::query()->whereJsonContains('internal_links', $targetUri)->get();
         $matches = [];
         $lookupIds = [];
