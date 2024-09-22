@@ -27,9 +27,9 @@ class SuggestionEngine
         return $this;
     }
 
-    private function canExtractContext(mixed $value): bool
+    private function canExtractContext(mixed $value, string $phrase): bool
     {
-        return is_string($value);
+        return is_string($value) && Str::contains($value, $phrase);
     }
 
     protected function getPhraseContext(array $contentMapping, string $phrase): PhraseContext
@@ -37,11 +37,7 @@ class SuggestionEngine
         $context = new PhraseContext;
 
         foreach ($contentMapping as $handle => $content) {
-            if (! $this->canExtractContext($content)) {
-                continue;
-            }
-
-            if (! Str::contains($content, $phrase)) {
+            if (! $this->canExtractContext($content, $phrase)) {
                 continue;
             }
 
@@ -113,7 +109,7 @@ class SuggestionEngine
 
     public function suggest(Entry $entry)
     {
-        $entryLink = EntryLink::where('entry_id', $entry->id())->firstOrFail();
+        $entryLink = EntryLink::query()->where('entry_id', $entry->id())->firstOrFail();
         $linkResults = LinkCrawler::getLinkResultsFromEntryLink($entryLink);
         $contentMapping = $this->mapper->getContentMapping($entry);
 
