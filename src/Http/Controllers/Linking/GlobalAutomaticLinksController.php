@@ -7,10 +7,10 @@ use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
+use Statamic\SeoPro\Blueprints\GlobalAutomaticLinksBlueprint;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Requests\AutomaticLinkRequest;
 use Statamic\SeoPro\Http\Resources\Links\AutomaticLinks;
-use Statamic\SeoPro\TextProcessing\Links\GlobalAutomaticLinksBlueprint;
 use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
 
 class GlobalAutomaticLinksController extends CpController
