@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Fields\Field;
 use Statamic\SeoPro\Content\Paths\ContentPathParser;
-use Statamic\SeoPro\Contracts\Content\FieldtypeContentMapper;
 use Statamic\Support\Str;
 
 class ContentMapper
