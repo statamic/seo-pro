@@ -41,60 +41,62 @@ class SuggestionEngine
                 continue;
             }
 
-            if (Str::contains($content, $phrase)) {
-                $searchText = strip_tags($content);
-                $pos = stripos($searchText, $phrase);
+            if (! Str::contains($content, $phrase)) {
+                continue;
+            }
 
-                if ($pos === false) {
-                    continue;
-                }
+            $searchText = strip_tags($content);
+            $pos = stripos($searchText, $phrase);
 
-                $regex = '/([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*[.!?])|([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*$)/i';
+            if ($pos === false) {
+                continue;
+            }
 
-                if (preg_match($regex, $searchText, $matches)) {
+            $regex = '/([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*[.!?])|([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*$)/i';
 
-                    $firstMatch = trim($matches[0]);
+            if (preg_match($regex, $searchText, $matches)) {
 
-                    if (Str::contains($firstMatch, "\n")) {
+                $firstMatch = trim($matches[0]);
 
-                        $lines = explode("\n", $firstMatch);
+                if (Str::contains($firstMatch, "\n")) {
 
-                        $curLine = '';
+                    $lines = explode("\n", $firstMatch);
 
-                        foreach ($lines as $line) {
+                    $curLine = '';
 
-                            if (mb_strlen($line) > mb_strlen($curLine)) {
-                                $curLine = $line;
-                            }
+                    foreach ($lines as $line) {
 
-                            if (count(explode(' ', trim($line))) <= 2) {
-                                continue;
-                            }
-
-                            if (Str::contains(mb_strtolower($line), $phrase)) {
-                                $context->fieldHandle($handle);
-                                $context->context($line);
-                                $context->canReplace(true);
-
-                                break 2;
-                            }
+                        if (mb_strlen($line) > mb_strlen($curLine)) {
+                            $curLine = $line;
                         }
 
-                        $context->context($curLine);
-                    } else {
-                        $contextPhrase = $this->getSurroundingWords($content, $phrase);
-
-                        if (! $contextPhrase) {
+                        if (count(explode(' ', trim($line))) <= 2) {
                             continue;
                         }
 
-                        $context->fieldHandle($handle);
-                        $context->context($contextPhrase);
-                        $context->canReplace(true);
+                        if (Str::contains(mb_strtolower($line), $phrase)) {
+                            $context->fieldHandle($handle);
+                            $context->context($line);
+                            $context->canReplace(true);
 
+                            break 2;
+                        }
                     }
-                    break;
+
+                    $context->context($curLine);
+                } else {
+                    $contextPhrase = $this->getSurroundingWords($content, $phrase);
+
+                    if (! $contextPhrase) {
+                        continue;
+                    }
+
+                    $context->fieldHandle($handle);
+                    $context->context($contextPhrase);
+                    $context->canReplace(true);
+
                 }
+                break;
             }
         }
 
