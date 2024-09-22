@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\Query\Scopes\Filters;
 
 use Statamic\Query\Scopes\Filters\Fields as CoreFields;
-use Statamic\SeoPro\TextProcessing\Links\LinkBlueprint;
+use Statamic\SeoPro\Blueprints\LinkBlueprint;
 
 class Fields extends CoreFields
 {

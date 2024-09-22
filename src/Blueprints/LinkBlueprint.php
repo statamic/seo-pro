@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\SeoPro\TextProcessing\Links;
+namespace Statamic\SeoPro\Blueprints;
 
 use Statamic\Facades\Blueprint;
 
