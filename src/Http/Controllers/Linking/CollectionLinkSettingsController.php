@@ -4,11 +4,11 @@ namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
+use Statamic\SeoPro\Blueprints\CollectionConfigBlueprint;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Requests\UpdateCollectionBehaviorRequest;
 use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
-use Statamic\SeoPro\TextProcessing\Config\CollectionConfigBlueprint;
 
 class CollectionLinkSettingsController extends CpController
 {

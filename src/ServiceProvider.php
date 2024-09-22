@@ -131,7 +131,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->app->bind(
             Contracts\TextProcessing\ConfigurationRepository::class,
-            TextProcessing\Config\ConfigurationRepository::class,
+            Blueprints\ConfigurationRepository::class,
         );
 
         $this->app->bind(

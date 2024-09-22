@@ -4,11 +4,11 @@ namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
+use Statamic\SeoPro\Blueprints\SiteConfigBlueprint;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Requests\UpdateSiteConfigRequest;
 use Statamic\SeoPro\TextProcessing\Config\SiteConfig;
-use Statamic\SeoPro\TextProcessing\Config\SiteConfigBlueprint;
 
 class SiteLinkSettingsController extends CpController
 {

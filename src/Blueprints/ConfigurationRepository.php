@@ -1,11 +1,13 @@
 <?php
 
-namespace Statamic\SeoPro\TextProcessing\Config;
+namespace Statamic\SeoPro\Blueprints;
 
 use Illuminate\Support\Collection;
 use Statamic\Facades\Collection as CollectionApi;
 use Statamic\Facades\Site as SiteApi;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository as ConfigurationRepositoryContract;
+use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
+use Statamic\SeoPro\TextProcessing\Config\SiteConfig;
 use Statamic\SeoPro\TextProcessing\Models\CollectionLinkSettings;
 use Statamic\SeoPro\TextProcessing\Models\SiteLinkSetting;
 
