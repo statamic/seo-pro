@@ -54,50 +54,51 @@ class SuggestionEngine
 
             $regex = '/([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*[.!?])|([^.!?]*'.preg_quote($phrase, '/').'[^.!?]*$)/i';
 
-            if (preg_match($regex, $searchText, $matches)) {
+            if (! preg_match($regex, $searchText, $matches)) {
+                continue;
+            }
 
-                $firstMatch = trim($matches[0]);
+            $firstMatch = trim($matches[0]);
 
-                if (Str::contains($firstMatch, "\n")) {
+            if (Str::contains($firstMatch, "\n")) {
 
-                    $lines = explode("\n", $firstMatch);
+                $lines = explode("\n", $firstMatch);
 
-                    $curLine = '';
+                $curLine = '';
 
-                    foreach ($lines as $line) {
+                foreach ($lines as $line) {
 
-                        if (mb_strlen($line) > mb_strlen($curLine)) {
-                            $curLine = $line;
-                        }
-
-                        if (count(explode(' ', trim($line))) <= 2) {
-                            continue;
-                        }
-
-                        if (Str::contains(mb_strtolower($line), $phrase)) {
-                            $context->fieldHandle($handle);
-                            $context->context($line);
-                            $context->canReplace(true);
-
-                            break 2;
-                        }
+                    if (mb_strlen($line) > mb_strlen($curLine)) {
+                        $curLine = $line;
                     }
 
-                    $context->context($curLine);
-                } else {
-                    $contextPhrase = $this->getSurroundingWords($content, $phrase);
-
-                    if (! $contextPhrase) {
+                    if (count(explode(' ', trim($line))) <= 2) {
                         continue;
                     }
 
-                    $context->fieldHandle($handle);
-                    $context->context($contextPhrase);
-                    $context->canReplace(true);
+                    if (Str::contains(mb_strtolower($line), $phrase)) {
+                        $context->fieldHandle($handle);
+                        $context->context($line);
+                        $context->canReplace(true);
 
+                        break 2;
+                    }
                 }
-                break;
+
+                $context->context($curLine);
+            } else {
+                $contextPhrase = $this->getSurroundingWords($content, $phrase);
+
+                if (! $contextPhrase) {
+                    continue;
+                }
+
+                $context->fieldHandle($handle);
+                $context->context($contextPhrase);
+                $context->canReplace(true);
+
             }
+            break;
         }
 
         return $context;
