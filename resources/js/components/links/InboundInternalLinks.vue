@@ -22,7 +22,7 @@
                         :sortable="true"
                     >
                         <template slot="cell-entry.title" slot-scope="{ row: item }">
-                            <a class="title-index-field inline-flex items-center" :href="item.entry.edit_url" @click.stop target="_blank">
+                            <a class="title-index-field inline-flex items-center" :href="item.entry.edit_url" @click.stop>
                                 <span>{{ item.entry.title ?? item.entry.uri }}</span>
                             </a>
                         </template>
