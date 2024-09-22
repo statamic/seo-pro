@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\SeoPro\TextProcessing;
+namespace Statamic\SeoPro\TextProcessing\Queries;
 
 use Statamic\Facades\Entry as EntryApi;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;

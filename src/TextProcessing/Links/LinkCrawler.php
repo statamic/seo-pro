@@ -6,8 +6,8 @@ use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler as LinkCrawlerContract;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
-use Statamic\SeoPro\TextProcessing\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
+use Statamic\SeoPro\TextProcessing\Queries\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Suggestions\LinkResults;
 use Statamic\SeoPro\TextProcessing\Suggestions\SuggestionEngine;
 

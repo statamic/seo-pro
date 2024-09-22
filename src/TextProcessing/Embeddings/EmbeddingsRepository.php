@@ -14,9 +14,9 @@ use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\Extractor;
 use Statamic\SeoPro\TextProcessing\Concerns\ChecksForContentChanges;
-use Statamic\SeoPro\TextProcessing\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Models\EntryEmbedding;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
+use Statamic\SeoPro\TextProcessing\Queries\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
 use Statamic\SeoPro\TextProcessing\Vectors\Vector;
 

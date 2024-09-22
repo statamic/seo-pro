@@ -9,10 +9,10 @@ use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository as KeywordsRepositoryContract;
 use Statamic\SeoPro\TextProcessing\Concerns\ChecksForContentChanges;
-use Statamic\SeoPro\TextProcessing\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Models\EntryKeyword;
 use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Models\SiteLinkSetting;
+use Statamic\SeoPro\TextProcessing\Queries\EntryQuery;
 
 class KeywordsRepository implements KeywordsRepositoryContract
 {
