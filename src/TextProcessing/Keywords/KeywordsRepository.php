@@ -75,10 +75,10 @@ class KeywordsRepository implements KeywordsRepositoryContract
 
     protected function expandKeywords(array $keywords, $stopWords = []): array
     {
-        $returnKeywords = [];
+        $keywordsToReturn = [];
 
         foreach ($keywords as $keyword) {
-            $returnKeywords[] = $keyword;
+            $keywordsToReturn[] = $keyword;
 
             if (! Str::contains($keyword, ' ')) {
                 continue;
@@ -93,11 +93,11 @@ class KeywordsRepository implements KeywordsRepositoryContract
                     continue;
                 }
 
-                $returnKeywords[] = $newKeyword;
+                $keywordsToReturn[] = $newKeyword;
             }
         }
 
-        return $returnKeywords;
+        return $keywordsToReturn;
     }
 
     protected function getMetaKeywords(Entry $entry, $stopWords = []): array
