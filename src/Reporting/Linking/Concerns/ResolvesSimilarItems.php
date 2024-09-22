@@ -19,6 +19,15 @@ trait ResolvesSimilarItems
         return array_diff_key($keywords, $ignoredKeywords);
     }
 
+    protected function getOptions(?ResolverOptions $options): ResolverOptions
+    {
+        if (! $options) {
+            return new ResolverOptions;
+        }
+
+        return $options;
+    }
+
     protected function convertEntryKeywords(?EntryKeyword $keywords, array $ignoredKeywords): array
     {
         if ($keywords == null) {
@@ -40,9 +49,7 @@ trait ResolvesSimilarItems
 
     protected function findSimilarTo(Entry $entry, int $limit, ?ResolverOptions $options = null): Collection
     {
-        if (! $options) {
-            $options = new ResolverOptions;
-        }
+        $options = $this->getOptions($options);
 
         $entryId = $entry->id();
         $targetVectors = $this->embeddingsRepository->getEmbeddingsForEntry($entry)?->vector() ?? [];
@@ -93,9 +100,7 @@ trait ResolvesSimilarItems
 
     protected function addKeywordsToResults(Entry $entry, Collection $results, ?ResolverOptions $options = null): Collection
     {
-        if (! $options) {
-            $options = new ResolverOptions;
-        }
+        $options = $this->getOptions($options);
 
         $entryIds = array_merge([$entry->id()], $results->map(fn (Result $result) => $result->entry()->id())->all());
         $ignoredKeywords = array_flip($this->keywordsRepository->getIgnoredKeywordsForEntry($entry));
