@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Contracts\TextProcessing\Embeddings;
 
+use Generator;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
@@ -9,13 +10,13 @@ use Statamic\SeoPro\TextProcessing\Vectors\Vector;
 
 interface EntryEmbeddingsRepository
 {
-    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options);
+    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator;
 
     public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options): Collection;
 
     public function generateEmbeddingsForEntry(Entry $entry): void;
 
-    public function generateEmbeddingsForAllEntries(): void;
+    public function generateEmbeddingsForAllEntries(int $chunkSize = 100): void;
 
     public function getEmbeddingsForEntry(Entry $entry): ?Vector;
 

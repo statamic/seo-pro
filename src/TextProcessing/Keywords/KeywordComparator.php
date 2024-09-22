@@ -19,11 +19,7 @@ class KeywordComparator
 
     protected function getAdjustedScores(array $contentKeywords): array
     {
-        $base = 0;
-
-        if (count($contentKeywords) > 0) {
-            $base = max($contentKeywords);
-        }
+        $base = count($contentKeywords) > 0 ? max($contentKeywords) : 0;
 
         if ($base <= 0) {
             $base = 1;

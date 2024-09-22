@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\TextProcessing\Embeddings;
 
 use Exception;
+use Generator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +41,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
     protected function relatedEmbeddingsQuery(Entry $entry, ResolverOptions $options): Builder
     {
         $site = $entry->site()?->handle() ?? 'default';
-        $entryLink = EntryLink::where('entry_id', $entry->id())->first();
+        $entryLink = EntryLink::query()->where('entry_id', $entry->id())->first();
 
         $collection = $entry->collection()->handle();
         $collectionConfig = $this->configurationRepository->getCollectionConfiguration($collection);
@@ -84,10 +85,10 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         ]));
     }
 
-    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options)
+    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator
     {
         /** @var EntryEmbedding $embedding */
-        foreach ($this->relatedEmbeddingsQuery($entry, $options)->lazy(200) as $embedding) {
+        foreach ($this->relatedEmbeddingsQuery($entry, $options)->lazy($chunkSize) as $embedding) {
             yield $this->makeVector(
                 $embedding->entry_id,
                 null,
@@ -103,14 +104,18 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         );
     }
 
-    public function generateEmbeddingsForAllEntries(): void
+    public function generateEmbeddingsForAllEntries(int $chunkSize = 100): void
     {
-        EntryQuery::query()->chunk(100, function ($entries) {
+        EntryQuery::query()->chunk($chunkSize, function ($entries) {
             $entryIds = $entries->pluck('id')->all();
             $this->fillEmbeddingInstanceCache($entryIds);
 
             /** @var array<string, EntryLink> $entryLinks */
-            $entryLinks = EntryLink::whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
+            $entryLinks = EntryLink::query()
+                ->whereIn('entry_id', $entryIds)
+                ->get()
+                ->keyBy('entry_id')
+                ->all();
 
             foreach ($entries as $entry) {
                 $entryId = $entry->id();
@@ -134,7 +139,11 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
 
     protected function fillEmbeddingInstanceCache(array $entryIds): void
     {
-        $this->embeddingInstanceCache = EntryEmbedding::whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
+        $this->embeddingInstanceCache = EntryEmbedding::query()
+            ->whereIn('entry_id', $entryIds)
+            ->get()
+            ->keyBy('entry_id')
+            ->all();
     }
 
     protected function clearEmbeddingInstanceCache(): void
@@ -148,7 +157,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
             return $this->embeddingInstanceCache[$entryId];
         }
 
-        return EntryEmbedding::firstOrNew(['entry_id' => $entryId]);
+        return EntryEmbedding::query()->firstOrNew(['entry_id' => $entryId]);
     }
 
     public function generateEmbeddingsForEntry(Entry $entry): void
@@ -214,7 +223,10 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         $entries = collect();
 
         if ($withEntries) {
-            $entries = EntryApi::query()->whereIn('id', $entryIds)->get()->keyBy('id');
+            $entries = EntryApi::query()
+                ->whereIn('id', $entryIds)
+                ->get()
+                ->keyBy('id');
         }
 
         $results = [];
@@ -246,16 +258,16 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
 
     public function deleteEmbeddingsForEntry(string $entryId): void
     {
-        EntryEmbedding::where('entry_id', $entryId)->delete();
+        EntryEmbedding::query()->where('entry_id', $entryId)->delete();
     }
 
     public function deleteEmbeddingsForCollection(string $handle): void
     {
-        EntryEmbedding::where('collection', $handle)->delete();
+        EntryEmbedding::query()->where('collection', $handle)->delete();
     }
 
     public function deleteEmbeddingsForSite(string $handle): void
     {
-        EntryEmbedding::where('site', $handle)->delete();
+        EntryEmbedding::query()->where('site', $handle)->delete();
     }
 }
