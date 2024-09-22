@@ -154,7 +154,11 @@ class LinksController extends CpController
     public function getSuggestions($entryId)
     {
         if (request()->ajax()) {
-            return $this->reportBuilder->getSuggestionsReport(Entry::findOrFail($entryId))->suggestions();
+            return $this->reportBuilder->getSuggestionsReport(
+                Entry::findOrFail($entryId),
+                config('statamic.seo-pro.linking.suggestions.result_limit', 10),
+                config('statamic.seo-pro.linking.suggestions.related_entry_limit', 20),
+            )->suggestions();
         }
 
         return $this->makeDashboardResponse($entryId, 'suggestions', 'Link Suggestions');
@@ -172,7 +176,10 @@ class LinksController extends CpController
     public function getRelatedContent($entryId)
     {
         if (request()->ajax()) {
-            return $this->reportBuilder->getRelatedContentReport(Entry::findOrFail($entryId))->getRelated();
+            return $this->reportBuilder->getRelatedContentReport(
+                Entry::findOrFail($entryId),
+                config('statamic.seo-pro.linking.suggestions.related_entry_limit', 20),
+            )->getRelated();
         }
 
         return $this->makeDashboardResponse($entryId, 'related', 'Related Content');

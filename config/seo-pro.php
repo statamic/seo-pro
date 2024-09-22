@@ -81,6 +81,11 @@ return [
             'max_desired' => 3,
         ],
 
+        'suggestions' => [
+            'result_limit' => 10,
+            'related_entry_limit' => 20,
+        ],
+
         'rake' => [
             'phrase_min_length' => 0,
             'filter_numerics' => true,

@@ -60,16 +60,16 @@ class ReportBuilder
         return $baseReport;
     }
 
-    protected function getResolvedSimilarItems(Entry $entry, int $limit, ?ResolverOptions $options = null): Collection
+    protected function getResolvedSimilarItems(Entry $entry, int $resultLimit, int $relatedEntryLimit, ?ResolverOptions $options = null): Collection
     {
         return $this->addKeywordsToResults(
             $entry,
-            $this->findSimilarTo($entry, $limit, $options),
+            $this->findSimilarTo($entry, $relatedEntryLimit, $options),
             $options
-        )->take($limit);
+        )->take($resultLimit);
     }
 
-    public function getSuggestionsReport(Entry $entry, int $limit = 10): SuggestionsReport
+    public function getSuggestionsReport(Entry $entry, int $resultLimit = 10, int $similarEntryLimit = 20): SuggestionsReport
     {
         $report = new SuggestionsReport;
 
@@ -81,7 +81,7 @@ class ReportBuilder
         );
 
         $suggestions = $this->suggestionEngine
-            ->withResults($this->getResolvedSimilarItems($entry, $limit, $resolverOptions))
+            ->withResults($this->getResolvedSimilarItems($entry, $similarEntryLimit, $resultLimit, $resolverOptions))
             ->suggest($entry);
 
         $this->fillBaseReportData($entry, $report);
@@ -91,14 +91,15 @@ class ReportBuilder
         return $report;
     }
 
-    public function getRelatedContentReport(Entry $entry, int $limit = 10): RelatedContentReport
+    public function getRelatedContentReport(Entry $entry, int $relatedEntryLimit = 20): RelatedContentReport
     {
         $report = new RelatedContentReport;
 
         $report->relatedContent(
             $this->getResolvedSimilarItems(
                 $entry,
-                $limit,
+                $relatedEntryLimit,
+                $relatedEntryLimit,
                 new ResolverOptions(keywordThreshold: -1)
             )->all()
         );
