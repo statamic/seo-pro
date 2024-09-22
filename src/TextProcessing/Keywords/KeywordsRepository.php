@@ -120,7 +120,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
             return $this->keywordInstanceCache[$entryId];
         }
 
-        return EntryKeyword::firstOrNew(['entry_id' => $entryId]);
+        return EntryKeyword::query()->firstOrNew(['entry_id' => $entryId]);
     }
 
     public function generateKeywordsForEntry(Entry $entry)
@@ -171,7 +171,11 @@ class KeywordsRepository implements KeywordsRepositoryContract
      */
     public function getKeywordsForEntries(array $entryIds): array
     {
-        return EntryKeyword::query()->whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
+        return EntryKeyword::query()
+            ->whereIn('entry_id', $entryIds)
+            ->get()
+            ->keyBy('entry_id')
+            ->all();
     }
 
     public function getIgnoredKeywordsForEntry(Entry $entry): array
@@ -180,10 +184,10 @@ class KeywordsRepository implements KeywordsRepositoryContract
         $ignoredKeywords = [];
 
         /** @var EntryLink $entryLink */
-        $entryLink = EntryLink::where('entry_id', $entry->id())->first();
+        $entryLink = EntryLink::query()->where('entry_id', $entry->id())->first();
 
         /** @var SiteLinkSetting $siteSettings */
-        $siteSettings = SiteLinkSetting::where('site', $site)->first();
+        $siteSettings = SiteLinkSetting::query()->where('site', $site)->first();
 
         if ($entryLink) {
             $ignoredKeywords = array_merge($ignoredKeywords, $entryLink->ignored_phrases ?? []);
