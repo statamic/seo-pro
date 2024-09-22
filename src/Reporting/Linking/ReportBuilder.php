@@ -94,7 +94,13 @@ class ReportBuilder
     {
         $report = new RelatedContentReport;
 
-        $report->relatedContent($this->getResolvedSimilarItems($entry, $limit, new ResolverOptions(keywordThreshold: -1))->all());
+        $report->relatedContent(
+            $this->getResolvedSimilarItems(
+                $entry,
+                $limit,
+                new ResolverOptions(keywordThreshold: -1)
+            )->all()
+        );
 
         $this->fillBaseReportData($entry, $report);
 
