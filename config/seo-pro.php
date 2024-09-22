@@ -52,4 +52,55 @@ return [
         'queue_chunk_size' => 1000,
     ],
 
+    'jobs' => [
+        'connection' => env('SEO_PRO_JOB_CONNECTION'),
+        'queue' => env('SEO_PRO_JOB_QUEUE'),
+    ],
+
+    'linking' => [
+
+        'enabled' => false,
+
+        'openai' => [
+            'api_key' => env('SEO_PRO_OPENAI_API_KEY'),
+            'model' => 'text-embedding-3-small',
+            'token_limit' => 8000,
+        ],
+
+        'keyword_threshold' => 65,
+
+        'prevent_circular_links' => false,
+
+        'internal_links' => [
+            'min_desired' => 3,
+            'max_desired' => 6,
+        ],
+
+        'external_links' => [
+            'min_desired' => 0,
+            'max_desired' => 3,
+        ],
+
+        'suggestions' => [
+            'result_limit' => 10,
+            'related_entry_limit' => 20,
+        ],
+
+        'rake' => [
+            'phrase_min_length' => 0,
+            'filter_numerics' => true,
+        ],
+
+        'drivers' => [
+            'embeddings' => \Statamic\SeoPro\TextProcessing\Embeddings\OpenAiEmbeddings::class,
+            'keywords' => \Statamic\SeoPro\TextProcessing\Keywords\Rake::class,
+            'tokenizer' => \Statamic\SeoPro\Content\Tokenizer::class,
+            'content' => \Statamic\SeoPro\Content\ContentRetriever::class,
+            'link_scanner' => \Statamic\SeoPro\TextProcessing\Links\LinkCrawler::class,
+        ],
+
+        'disabled_collections' => [
+        ],
+
+    ],
 ];

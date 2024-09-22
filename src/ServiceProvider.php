@@ -4,6 +4,10 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Statamic\Events\CollectionDeleted;
+use Statamic\Events\EntryDeleted;
+use Statamic\Events\EntrySaved;
+use Statamic\Events\SiteDeleted;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
@@ -42,12 +46,19 @@ class ServiceProvider extends AddonServiceProvider
         'web' => __DIR__.'/../routes/web.php',
     ];
 
+    protected $scopes = [
+        Query\Scopes\Filters\Collection::class,
+        Query\Scopes\Filters\Site::class,
+        Query\Scopes\Filters\Fields::class,
+    ];
+
     protected $config = false;
 
     public function bootAddon()
     {
         $this
             ->bootAddonConfig()
+            ->bootAddonMigrations()
             ->bootAddonViews()
             ->bootAddonBladeDirective()
             ->bootAddonPermissions()
@@ -55,7 +66,144 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
-            ->bootAddonGraphQL();
+            ->bootAddonGraphQL()
+            ->bootTextAnalysis()
+            ->bootEvents();
+    }
+
+    protected function isLinkingEnabled(): bool
+    {
+        return config('statamic.seo-pro.linking.enabled', false);
+    }
+
+    public function bootEvents()
+    {
+        if ($this->isLinkingEnabled()) {
+            $this->listen = array_merge($this->listen, [
+                EntrySaved::class => [
+                    SeoPro\Listeners\EntrySavedListener::class,
+                ],
+                EntryDeleted::class => [
+                    SeoPro\Listeners\EntryDeletedListener::class,
+                ],
+                SiteDeleted::class => [
+                    SeoPro\Listeners\SiteDeletedListener::class,
+                ],
+                CollectionDeleted::class => [
+                    SeoPro\Listeners\CollectionDeletedListener::class,
+                ],
+                SeoPro\Events\InternalLinksUpdated::class => [
+                    SeoPro\Listeners\InternalLinksUpdatedListener::class,
+                ],
+            ]);
+        }
+
+        return parent::bootEvents();
+    }
+
+    protected function bootTextAnalysis()
+    {
+        if (! $this->isLinkingEnabled()) {
+            return $this;
+        }
+
+        SeoPro\Actions\ViewLinkSuggestions::register();
+
+        $this->app->bind(
+            Contracts\Content\ContentRetriever::class,
+            config('statamic.seo-pro.linking.drivers.content'),
+        );
+
+        $this->app->bind(
+            Contracts\Content\Tokenizer::class,
+            config('statamic.seo-pro.linking.drivers.tokenizer'),
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Embeddings\Extractor::class,
+            config('statamic.seo-pro.linking.drivers.embeddings'),
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Keywords\KeywordRetriever::class,
+            config('statamic.seo-pro.linking.drivers.keywords'),
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\ConfigurationRepository::class,
+            TextProcessing\Config\ConfigurationRepository::class,
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Keywords\KeywordsRepository::class,
+            TextProcessing\Keywords\KeywordsRepository::class,
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Links\LinkCrawler::class,
+            config('statamic.seo-pro.linking.drivers.link_scanner'),
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository::class,
+            TextProcessing\Embeddings\EmbeddingsRepository::class,
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Links\GlobalAutomaticLinksRepository::class,
+            TextProcessing\Links\GlobalAutomaticLinksRepository::class,
+        );
+
+        $this->app->bind(
+            Contracts\TextProcessing\Links\LinksRepository::class,
+            TextProcessing\Links\LinkRepository::class,
+        );
+
+        $this->app->singleton(Content\ContentMapper::class, function () {
+            return new Content\ContentMapper;
+        });
+
+        $this->app->singleton(Content\LinkReplacer::class, function () {
+            return new Content\LinkReplacer(
+                app(Content\ContentMapper::class),
+            );
+        });
+
+        return $this->registerDefaultFieldtypeReplacers()
+            ->registerDefaultContentMappers();
+    }
+
+    protected function registerDefaultFieldtypeReplacers(): static
+    {
+        /** @var \Statamic\SeoPro\Content\LinkReplacer $linkReplacer */
+        $linkReplacer = $this->app->make(Content\LinkReplacer::class);
+
+        $linkReplacer->registerReplacers([
+            Content\LinkReplacers\MarkdownReplacer::class,
+            Content\LinkReplacers\TextReplacer::class,
+            Content\LinkReplacers\TextareaReplacer::class,
+            Content\LinkReplacers\Bard\BardReplacer::class,
+        ]);
+
+        return $this;
+    }
+
+    protected function registerDefaultContentMappers(): static
+    {
+        /** @var \Statamic\SeoPro\Content\ContentMapper $contentMapper */
+        $contentMapper = $this->app->make(Content\ContentMapper::class);
+
+        $contentMapper->registerMappers([
+            Content\Mappers\TextFieldMapper::class,
+            Content\Mappers\TextareaFieldMapper::class,
+            Content\Mappers\MarkdownFieldMapper::class,
+            Content\Mappers\GridFieldMapper::class,
+            Content\Mappers\ReplicatorFieldMapper::class,
+            Content\Mappers\BardFieldMapper::class,
+            Content\Mappers\GroupFieldMapper::class,
+        ]);
+
+        return $this;
     }
 
     protected function bootAddonConfig()
@@ -69,12 +217,28 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
+    protected function bootAddonMigrations()
+    {
+        $this->publishes([
+            __DIR__.'/../database/migrations/2024_07_26_184745_create_seopro_entry_embeddings_table.php' => database_path('migrations/2024_07_26_184745_create_seopro_entry_embeddings_table.php'),
+            __DIR__.'/../database/migrations/2024_08_10_154109_create_seopro_entry_links_table.php' => database_path('migrations/2024_08_10_154109_create_seopro_entry_links_table.php'),
+            __DIR__.'/../database/migrations/2024_08_17_123712_create_seopro_entry_keywords_table.php' => database_path('migrations/2024_08_17_123712_create_seopro_entry_keywords_table.php'),
+            __DIR__.'/../database/migrations/2024_09_02_135012_create_seopro_site_link_settings_table.php' => database_path('migrations/2024_09_02_135012_create_seopro_site_link_settings_table.php'),
+            __DIR__.'/../database/migrations/2024_09_02_135056_create_seopro_global_automatic_links_table.php' => database_path('migrations/2024_09_02_135056_create_seopro_global_automatic_links_table.php'),
+            __DIR__.'/../database/migrations/2024_09_03_102233_create_seopro_collection_link_settings_table.php' => database_path('migrations/2024_09_03_102233_create_seopro_collection_link_settings_table.php'),
+        ], 'seo-pro-migrations');
+
+        return $this;
+    }
+
     protected function bootAddonViews()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views/generated', 'seo-pro');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/links', 'seo-pro');
 
         $this->publishes([
             __DIR__.'/../resources/views/generated' => resource_path('views/vendor/seo-pro'),
+            __DIR__.'/../resources/views/links' => resource_path('views/vendor/seo-pro/links'),
         ], 'seo-pro-views');
 
         return $this;
@@ -106,17 +270,24 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonNav()
     {
+
         Nav::extend(function ($nav) {
             if ($this->userHasSeoPermissions()) {
                 $nav->tools('SEO Pro')
                     ->route('seo-pro.index')
                     ->icon('seo-search-graph')
                     ->children(function () use ($nav) {
-                        return [
+                        $menuItems = [
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
                         ];
+
+                        if ($this->isLinkingEnabled()) {
+                            $menuItems[] = $nav->item(__('seo-pro::messages.link_manager'))->route('seo-pro.internal-links.index')->can('view seo links');
+                        }
+
+                        return $menuItems;
                     });
             }
         });
@@ -155,6 +326,10 @@ class ServiceProvider extends AddonServiceProvider
     {
         $this->commands([
             SeoPro\Commands\GenerateReportCommand::class,
+            SeoPro\Commands\GenerateEmbeddingsCommand::class,
+            SeoPro\Commands\GenerateKeywordsCommand::class,
+            SeoPro\Commands\ScanLinksCommand::class,
+            SeoPro\Commands\StartTheEnginesCommand::class,
         ]);
 
         return $this;
