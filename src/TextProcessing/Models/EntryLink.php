@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
+ * @property int $id
  * @property string $entry_id
  * @property string $cached_title
  * @property string $cached_uri
