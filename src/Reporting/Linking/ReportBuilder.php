@@ -131,7 +131,7 @@ class ReportBuilder
         }
 
         $targetUri = $entry->uri;
-        $entryLinks = EntryLink::whereJsonContains('internal_links', $targetUri)->get();
+        $entryLinks = EntryLink::query()->whereJsonContains('internal_links', $targetUri)->get();
         $matches = [];
         $lookupIds = [];
 
@@ -162,7 +162,11 @@ class ReportBuilder
             return $report;
         }
 
-        $entries = EntryApi::query()->whereIn('id', array_keys($lookupIds))->get()->keyBy('id')->all();
+        $entries = EntryApi::query()
+            ->whereIn('id', array_keys($lookupIds))
+            ->get()
+            ->keyBy('id')
+            ->all();
 
         $results = [];
 
@@ -210,7 +214,11 @@ class ReportBuilder
             $uris[] = $uri;
         }
 
-        $entries = EntryApi::query()->whereIn('uri', $uris)->get()->keyBy('uri')->all();
+        $entries = EntryApi::query()
+            ->whereIn('uri', $uris)
+            ->get()
+            ->keyBy('uri')
+            ->all();
 
         foreach ($toLookup as $link) {
             $results[] = [
