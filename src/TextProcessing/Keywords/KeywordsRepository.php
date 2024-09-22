@@ -33,7 +33,11 @@ class KeywordsRepository implements KeywordsRepositoryContract
             $this->fillKeywordInstanceCache($entryIds);
 
             /** @var array<string, EntryLink> $entryLinks */
-            $entryLinks = EntryLink::whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
+            $entryLinks = EntryLink::query()
+                ->whereIn('entry_id', $entryIds)
+                ->get()
+                ->keyBy('entry_id')
+                ->all();
 
             foreach ($entries as $entry) {
                 $entryId = $entry->id();
@@ -57,7 +61,11 @@ class KeywordsRepository implements KeywordsRepositoryContract
 
     protected function fillKeywordInstanceCache(array $entryIds): void
     {
-        $this->keywordInstanceCache = EntryKeyword::whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
+        $this->keywordInstanceCache = EntryKeyword::query()
+            ->whereIn('entry_id', $entryIds)
+            ->get()
+            ->keyBy('entry_id')
+            ->all();
     }
 
     protected function clearKeywordInstanceCache(): void
@@ -155,7 +163,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
 
     public function deleteKeywordsForEntry(string $entryId)
     {
-        EntryKeyword::where('entry_id', $entryId)->delete();
+        EntryKeyword::query()->where('entry_id', $entryId)->delete();
     }
 
     /**
@@ -163,7 +171,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
      */
     public function getKeywordsForEntries(array $entryIds): array
     {
-        return EntryKeyword::whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
+        return EntryKeyword::query()->whereIn('entry_id', $entryIds)->get()->keyBy('entry_id')->all();
     }
 
     public function getIgnoredKeywordsForEntry(Entry $entry): array
@@ -190,11 +198,11 @@ class KeywordsRepository implements KeywordsRepositoryContract
 
     public function deleteKeywordsForSite(string $handle): void
     {
-        EntryKeyword::where('site', $handle)->delete();
+        EntryKeyword::query()->where('site', $handle)->delete();
     }
 
     public function deleteKeywordsForCollection(string $handle): void
     {
-        EntryKeyword::where('collection', $handle)->delete();
+        EntryKeyword::query()->where('collection', $handle)->delete();
     }
 }
