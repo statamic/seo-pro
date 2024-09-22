@@ -53,6 +53,7 @@ readonly class LinkCrawler implements LinkCrawlerContract
             return;
         }
 
+        /** @var EntryLink[] $entryLinks */
         $entryLinks = EntryLink::query()->whereJsonContains('internal_links', $targetUri)->get();
         $totalInbound = 0;
 
