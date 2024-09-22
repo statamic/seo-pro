@@ -92,8 +92,7 @@ trait ResolvesSimilarItems
             $results[$id] = $result;
         }
 
-        unset($entries);
-        unset($tmpMapping);
+        unset($entries, $tmpMapping);
 
         return collect(array_values($results));
     }
