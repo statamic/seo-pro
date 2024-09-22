@@ -59,49 +59,36 @@ class SuggestionEngine
             }
 
             $firstMatch = trim($matches[0]);
+            $matchingLine = null;
 
             if (Str::contains($firstMatch, "\n")) {
-
-                $lines = explode("\n", $firstMatch);
-
-                $curLine = '';
-
-                foreach ($lines as $line) {
-
-                    if (mb_strlen($line) > mb_strlen($curLine)) {
-                        $curLine = $line;
-                    }
-
-                    if (count(explode(' ', trim($line))) <= 2) {
-                        continue;
-                    }
-
-                    if (Str::contains(mb_strtolower($line), $phrase)) {
-                        $context->fieldHandle($handle);
-                        $context->context($line);
-                        $context->canReplace(true);
-
-                        break 2;
-                    }
-                }
-
-                $context->context($curLine);
+                $matchingLine = $this->getMatchingLine($firstMatch, $phrase);
             } else {
-                $contextPhrase = $this->getSurroundingWords($content, $phrase);
-
-                if (! $contextPhrase) {
-                    continue;
-                }
-
-                $context->fieldHandle($handle);
-                $context->context($contextPhrase);
-                $context->canReplace(true);
-
+                $matchingLine = $this->getSurroundingWords($content, $phrase);
             }
+
+            if (! $matchingLine) {
+                continue;
+            }
+
+            $context->fieldHandle($handle);
+            $context->context($matchingLine);
+            $context->canReplace(true);
+
             break;
         }
 
         return $context;
+    }
+
+    protected function getMatchingLine(string $content, string $phrase)
+    {
+        return str($content)->explode("\n")
+            ->filter(function ($line) use ($phrase) {
+                return str($line)->lower()->contains($phrase) && str($line)->substrCount(' ') > 2;
+            })
+            ->sortByDesc(fn ($line) => str($line)->length())
+            ->first();
     }
 
     /**
