@@ -6,12 +6,6 @@ use Statamic\SeoPro\TextProcessing\Similarity\Result;
 
 class KeywordComparator
 {
-    protected array $weights = [
-        'title' => 3,
-        'uri' => 3,
-        'content' => 1,
-    ];
-
     protected int $keywordThreshold = 70;
 
     protected array $primaryKeywords = [];
@@ -31,7 +25,7 @@ class KeywordComparator
             $base = max($contentKeywords);
         }
 
-        if ($base == 0) {
+        if ($base <= 0) {
             $base = 1;
         }
 
@@ -74,21 +68,16 @@ class KeywordComparator
 
     protected function compareKeywords(array $keywordsA, $keywordsB): array
     {
-        $scoreValues = $this->getAdjustedScores($keywordsB);
         $score = 0;
         $keywords = [];
 
         foreach ($keywordsA as $keywordA => $scoreA) {
             foreach ($keywordsB as $keywordB => $scoreB) {
                 if ($this->keywordMatch($keywordA, $keywordB)) {
-                    $source = ($scoreB == $scoreValues['title']) ? 'title' : (($scoreB == $scoreValues['uri']) ? 'uri' : 'content');
-                    $weightedScore = $this->weights[$source] * $scoreA;
-
-                    $score += $weightedScore;
+                    $score += $scoreB;
                     $keywords[] = [
                         'keyword' => $keywordA,
-                        'score' => $weightedScore,
-                        'source' => $source,
+                        'score' => $scoreB,
                     ];
                 }
             }
