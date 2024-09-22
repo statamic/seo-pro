@@ -77,7 +77,11 @@ trait ResolvesSimilarItems
         /** @var Result[] $results */
         $results = [];
 
-        $entries = EntryApi::query()->whereIn('id', array_keys($tmpMapping))->get()->keyBy('id')->all();
+        $entries = EntryApi::query()
+            ->whereIn('id', array_keys($tmpMapping))
+            ->get()
+            ->keyBy('id')
+            ->all();
 
         foreach ($tmpMapping as $id => $score) {
             if (! array_key_exists($id, $entries)) {
