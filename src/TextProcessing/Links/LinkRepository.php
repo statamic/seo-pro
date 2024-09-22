@@ -51,7 +51,7 @@ readonly class LinkRepository implements LinkRepositoryContract
     protected function addIgnoredPhraseToSite(IgnoredSuggestion $suggestion): void
     {
         /** @var SiteLinkSetting $siteSettings */
-        $siteSettings = SiteLinkSetting::firstOrNew(['site' => $suggestion->site]);
+        $siteSettings = SiteLinkSetting::query()->firstOrNew(['site' => $suggestion->site]);
 
         $phrase = trim($suggestion->phrase);
 
@@ -83,7 +83,7 @@ readonly class LinkRepository implements LinkRepositoryContract
 
     protected function getEntryLink(Entry $entry): ?EntryLink
     {
-        $entryLink = EntryLink::where('entry_id', $entry->id())->first();
+        $entryLink = EntryLink::query()->where('entry_id', $entry->id())->first();
 
         if (! $entryLink) {
             $entryLink = $this->scanEntry($entry);
@@ -164,7 +164,7 @@ readonly class LinkRepository implements LinkRepositoryContract
         }
 
         /** @var EntryLink $entryLinks */
-        $entryLinks = EntryLink::firstOrNew(['entry_id' => $entry->id()]);
+        $entryLinks = EntryLink::query()->firstOrNew(['entry_id' => $entry->id()]);
         $linkContent = $this->contentRetriever->getContent($entry, false);
         $contentMapping = $this->contentRetriever->getContentMapping($entry);
         $linkResults = LinkCrawler::getLinkResults($linkContent);
@@ -249,14 +249,14 @@ readonly class LinkRepository implements LinkRepositoryContract
     public function isLinkingEnabledForEntry(Entry $entry): bool
     {
         /** @var CollectionLinkSettings $collectionSetting */
-        $collectionSetting = CollectionLinkSettings::where('collection', $entry->collection()->handle())->first();
+        $collectionSetting = CollectionLinkSettings::query()->where('collection', $entry->collection()->handle())->first();
 
         if ($collectionSetting && ! $collectionSetting->linking_enabled) {
             return false;
         }
 
         /** @var EntryLink $entryLink */
-        $entryLink = EntryLink::where('entry_id', $entry->id())->first();
+        $entryLink = EntryLink::query()->where('entry_id', $entry->id())->first();
 
         if ($entryLink && ! $entryLink->can_be_suggested) {
             return false;
@@ -267,16 +267,16 @@ readonly class LinkRepository implements LinkRepositoryContract
 
     public function deleteLinksForEntry(string $entryId): void
     {
-        EntryLink::where('entry_id', $entryId)->delete();
+        EntryLink::query()->where('entry_id', $entryId)->delete();
     }
 
     public function deleteLinksForSite(string $handle): void
     {
-        EntryLink::where('site', $handle)->delete();
+        EntryLink::query()->where('site', $handle)->delete();
     }
 
     public function deleteLinksForCollection(string $handle): void
     {
-        EntryLink::where('collection', $handle)->delete();
+        EntryLink::query()->where('collection', $handle)->delete();
     }
 }
