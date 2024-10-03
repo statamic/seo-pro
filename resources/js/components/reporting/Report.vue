@@ -37,7 +37,7 @@
                     </div>
                 </div>
 
-                <h3 class="little-heading pl-0 mt-4">{{ __('Summary') }}</h3>
+                <h3 class="little-heading rtl:pr-0 ltr:pl-0 mt-4 mb-2">{{ __('Summary') }}</h3>
                 <div class="card p-0 mt-2">
                     <table class="data-table">
                         <tbody>
@@ -59,7 +59,7 @@
             </div>
 
             <div v-else>
-                <h3 class="little-heading pl-0 mt-4 mb-2">{{ __('seo-pro::messages.page_details') }}</h3>
+                <h3 class="little-heading rtl:pr-0 ltr:pl-0 mt-4 mb-2">{{ __('seo-pro::messages.page_details') }}</h3>
                 <div v-if="loading" class="card loading">
                     <loading-graphic />
                 </div>
