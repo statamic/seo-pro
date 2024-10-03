@@ -57,10 +57,10 @@
                 </div>
                 <data-list v-else ref="dataList" :columns="report.columns" :rows="report.pages">
                     <div class="card overflow-hidden p-0" slot-scope="{ filteredRows: rows }">
-                        <data-list-table :rows="report.pages">
+                        <data-list-table :rows="sortablePages">
                             <template slot="cell-status" slot-scope="{ row: page }">
-                                <status-icon :status="page.status" class="inline-block w-5" />
-                                {{ __('seo-pro::messages.rules.'+page.status) }}
+                                <status-icon :status="page.status_raw" class="inline-block w-5" />
+                                {{ __('seo-pro::messages.rules.'+page.status_raw) }}
                             </template>
                             <template slot="cell-page" slot-scope="{ row: page }">
                                 <a :href="page.edit_url" target="_blank" v-text="page.url" />
@@ -128,7 +128,19 @@ export default {
             return this.report.date
                 && this.report.pages_crawled
                 && this.report.score;
-        }
+        },
+
+        sortablePages() {
+            return this.report.pages.map(page => {
+                page.status_raw = page.status;
+
+                if (page.status === 'fail') page.status = '1fail';
+                if (page.status === 'warning') page.status = '2warning';
+                if (page.status === 'pass') page.status = '3pass';
+
+                return page;
+            });
+        },
 
     },
 
