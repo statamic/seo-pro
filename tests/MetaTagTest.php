@@ -78,8 +78,8 @@ EOT;
 
         $content = $this->get('/')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -109,8 +109,8 @@ EOT;
 EOT;
 
         $content = $this->get('/the-view')->content();
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -294,10 +294,10 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />', false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==/stetson.jpg?p=seo_pro_og&s=10304f0bafd3c45d82b477b775321d14" />', false);
         $response->assertSee('<meta property="og:image:width" content="1146" />', false);
         $response->assertSee('<meta property="og:image:height" content="600" />', false);
-        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==/stetson.jpg?p=seo_pro_twitter&s=96d8252d9346b1d7f299aea99b9b03a9" />', false);
     }
 
     /**
@@ -319,7 +319,7 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />', false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==/stetson.jpg?p=seo_pro_og&s=10304f0bafd3c45d82b477b775321d14" />', false);
         $response->assertSee('<meta property="og:image:width" content="800" />', false);
         $response->assertSee('<meta property="og:image:height" content="600" />', false);
     }
@@ -343,7 +343,7 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_og&s=6e3bd8a29425c3b1fcc63d3c0ed02ff8" />', false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==/stetson.jpg?p=seo_pro_og&s=10304f0bafd3c45d82b477b775321d14" />', false);
         $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />', false);
         $response->assertSee('<meta property="og:image:width" content="800" />', false);
         $response->assertSee('<meta property="og:image:height" content="600" />', false);
@@ -369,7 +369,7 @@ EOT;
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
         $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />', false);
-        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==?p=seo_pro_twitter&s=3bc5d83bf276b3825695610a6ef88d5b" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw==/stetson.jpg?p=seo_pro_twitter&s=96d8252d9346b1d7f299aea99b9b03a9" />', false);
     }
 
     /**
@@ -704,9 +704,9 @@ EOT;
 EOT;
 
         $content = $this->get('/non-existent-page')->content();
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString('<h2>404!</h2>', $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -751,8 +751,8 @@ EOT;
 
         $content = $this->get('/')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($this->normalizeMultilineString($expected), $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
     /**
@@ -770,7 +770,7 @@ EOT;
 
         $content = $this->get('/custom-get-route')->content();
 
-        $this->assertStringContainsString('<title>Custom Route Entry Title | Site Name</title>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
     }
 
     protected function setCustomGlidePresetDimensions($app)

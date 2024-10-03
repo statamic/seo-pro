@@ -20,6 +20,7 @@ class MetaTagTest extends TestCase
 
         $app['config']->set('view.paths', [$this->viewsPath()]);
         $app['config']->set('statamic.editions.pro', true);
+        $app['config']->set('statamic.system.multisite', true);
     }
 
     public function tearDown(): void
@@ -42,19 +43,21 @@ class MetaTagTest extends TestCase
 <meta property="og:locale" content="en_US" />
 <meta property="og:locale:alternate" content="fr_FR" />
 <meta property="og:locale:alternate" content="it_IT" />
+<meta property="og:locale:alternate" content="en_GB" />
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link rel="alternate" href="http://cool-runnings.com" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 EOT;
 
         $content = $this->get('/')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -80,9 +83,9 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -106,7 +109,7 @@ EOT;
      *
      * @dataProvider viewScenarioProvider
      */
-    public function it_generate_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
+    public function it_generates_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
     {
         $this->prepareViews($viewType);
 
@@ -130,9 +133,65 @@ EOT;
 
         $content = $this->get('/it/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_handles_duplicate_alternate_hreflangs($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link href="http://cool-runnings.com/it" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
+EOT;
+
+        // Though hitting a route will automatically set the current site,
+        // we want to test that the alternate locales are generated off
+        // the entry's model, not from the current site in the cp.
+        Site::setCurrent('default');
+
+        $content = $this->get('/it')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_handles_duplicate_current_hreflang($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link href="http://cool-runnings.com/en-gb" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+EOT;
+
+        // Though hitting a route will automatically set the current site,
+        // we want to test that the alternate locales are generated off
+        // the entry's model, not from the current site in the cp.
+        Site::setCurrent('default');
+
+        $content = $this->get('/en-gb')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -170,17 +229,17 @@ EOT;
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link rel="alternate" href="http://cool-runnings.com" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
-        $content = $this->get('/')->content();
+        $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
-        $this->assertStringNotContainsString('content="fr_FR"', $content);
-        $this->assertStringNotContainsString('hreflang="fr"', $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+        $this->assertStringNotContainsStringIgnoringLineEndings('content="fr_FR"', $content);
+        $this->assertStringNotContainsStringIgnoringLineEndings('hreflang="fr"', $content);
     }
 
     /**
@@ -206,9 +265,9 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -240,9 +299,9 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
     /**
@@ -274,8 +333,8 @@ EOT;
 
         $content = $this->get('/about')->content();
 
-        $this->assertStringContainsString("<h1>{$viewType}</h1>", $content);
-        $this->assertStringContainsString($expectedOgLocaleMeta, $content);
-        $this->assertStringContainsString($expectedAlternateHreflangMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 }

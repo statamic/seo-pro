@@ -6,6 +6,7 @@ use Statamic\Facades\Data;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 use Statamic\Support\Arr;
+use Statamic\Support\Str;
 
 class Page
 {
@@ -153,7 +154,7 @@ class Page
 
     public function editUrl()
     {
-        if (starts_with($this->id, 'route:')) {
+        if (Str::startsWith($this->id, 'route:')) {
             return route('settings.edit', ['settings' => 'routes']);
         }
 

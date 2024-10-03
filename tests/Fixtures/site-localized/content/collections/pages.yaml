@@ -3,6 +3,7 @@ sites:
   - default
   - french
   - italian
+  - british
 revisions: false
 route: '{parent_uri}/{slug}'
 structure:

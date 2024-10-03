@@ -81,6 +81,7 @@ class CascadeTest extends TestCase
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
             'site' => Site::get('default'),
             'alternate_locales' => [],
+            'current_hreflang' => 'en',
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
         ];
@@ -105,6 +106,24 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('Cool Writings >>> Jamaica', $data['compiled_title']);
+    }
+
+    /** @test */
+    public function it_parses_antlers()
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $entry->data(['favourite_colour' => 'Red'])->save();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => '{{ favourite_colour | upper }}',
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('RED', $data['description']);
     }
 
     /** @test */

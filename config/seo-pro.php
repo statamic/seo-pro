@@ -22,6 +22,11 @@ return [
         'enabled' => true,
         'url' => 'sitemap.xml',
         'expire' => 60,
+        'pagination' => [
+            'enabled' => false,
+            'url' => 'sitemap_{page}.xml',
+            'limit' => 100,
+        ],
     ],
 
     'humans' => [

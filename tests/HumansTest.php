@@ -71,8 +71,8 @@ EOT;
             ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
             ->getContent();
 
-        $this->assertStringContainsString('Creator: Cool Runnings', $content);
-        $this->assertStringContainsString('Description: Bob sled team!', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('Creator: Cool Runnings', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('Description: Bob sled team!', $content);
     }
 
     /**
@@ -96,7 +96,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
             ->getContent();
 
-        $this->assertStringContainsString('Creator: Cool Runnings', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('Creator: Cool Runnings', $content);
     }
 
     /** @test */
