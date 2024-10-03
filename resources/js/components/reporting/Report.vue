@@ -24,11 +24,11 @@
                             </div>
                             <div class="text-right">
                                 <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
-                                <div class="text-lg">{{ report.score }}%</div>
+                                <div class="text-lg" :class="{ 'text-red-500': report.score < 70, 'text-orange': report.score < 90, 'text-green-600': report.score >= 90 }">{{ report.score }}%</div>
                             </div>
                         </div>
                         <div class="bg-gray-300 h-4 w-full rounded mr-2 mt-4">
-                            <div class="h-4 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-500': report.score >= 90 }" />
+                            <div class="h-4 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-600': report.score >= 90 }" />
                         </div>
                     </div>
                     <table class="data-table">
