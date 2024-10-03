@@ -9,7 +9,7 @@
             :class="{
                 'bg-green-600': status === 'pass',
                 'bg-red-500': status === 'fail',
-                'bg-yellow-dark': status === 'warning'
+                'bg-orange': status === 'warning'
             }"
         />
 

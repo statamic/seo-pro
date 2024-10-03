@@ -29,7 +29,7 @@
                             <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
                             <div class="text-lg flex items-center">
                                 <div class="bg-gray-200 h-3 w-full rounded flex mr-2 ">
-                                    <div class="h-3 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-yellow-dark': report.score < 90, 'bg-green-500': report.score >= 90 }" />
+                                    <div class="h-3 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-500': report.score >= 90 }" />
                                 </div>
                                 <span>{{ report.score }}%</span>
                             </div>
