@@ -84,8 +84,8 @@
                                     >{{ pill }}</span>
                                 </a>
                             </template>
-                            <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs pr-0 whitespace-no-wrap">
-                                <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="__('Visit')" />
+                            <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs p-0 whitespace-no-wrap">
+                                <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800" v-text="__('Visit')" />
                             </td>
                         </data-list-table>
                     </div>
