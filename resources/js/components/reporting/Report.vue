@@ -10,43 +10,35 @@
         <div v-if="report">
 
             <div v-if="isCachedHeaderReady">
-
-                <div class="flex flex-wrap -mx-4">
-                    <div class="w-1/3 px-4">
-                        <div class="card py-2">
-                            <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.generated') }}</h2>
-                            <div class="text-lg"><relative-date :date="report.date" /></div>
-                        </div>
-                    </div>
-                    <div class="w-1/3 px-4">
-                        <div class="card py-2">
-                            <h2 class="text-sm text-gray-700">{{ __('Pages Crawled') }}</h2>
-                            <div class="text-lg">{{ report.pages_crawled }}</div>
-                        </div>
-                    </div>
-                    <div class="w-1/3 px-4">
-                        <div class="card py-2">
-                            <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
-                            <div class="text-lg flex items-center">
-                                <div class="bg-gray-200 h-3 w-full rounded flex mr-2 ">
-                                    <div class="h-3 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-500': report.score >= 90 }" />
-                                </div>
-                                <span>{{ report.score }}%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <h3 class="little-heading rtl:pr-0 ltr:pl-0 mt-4 mb-2">{{ __('Summary') }}</h3>
                 <div class="card p-0 mt-2">
+                    <div class="p-4 border-b dark:border-dark-900">
+                        <div class="w-full flex">
+                            <div>
+                                <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.generated') }}</h2>
+                                <div class="text-lg"><relative-date :date="report.date" /></div>
+                            </div>
+                            <div class="grow text-right mr-8">
+                                <h2 class="text-sm text-gray-700">{{ __('Pages Crawled') }}</h2>
+                                <div class="text-lg">{{ report.pages_crawled }}</div>
+                            </div>
+                            <div class="text-right">
+                                <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
+                                <div class="text-lg">{{ report.score }}%</div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-300 h-4 w-full rounded mr-2 mt-4">
+                            <div class="h-4 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-500': report.score >= 90 }" />
+                        </div>
+                    </div>
                     <table class="data-table">
                         <tbody>
                             <tr v-for="item in report.results">
                                 <td class="w-8 text-center">
                                     <status-icon :status="item.status"></status-icon>
                                 </td>
-                                <td class="pl-0">{{ item.description }}</td>
-                                <td class="text-grey text-right">{{ item.comment }}</td>
+                                <td class="p-0">{{ item.description }}</td>
+                                <td class="text-right">{{ item.comment }}</td>
                             </tr>
                         </tbody>
                     </table>
