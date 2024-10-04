@@ -59,7 +59,7 @@
                 <div v-if="loading" class="card loading">
                     <loading-graphic />
                 </div>
-                <data-list v-else ref="dataList" :columns="report.columns" :rows="report.pages">
+                <data-list v-else ref="dataList" :columns="report.columns" :rows="sortablePages">
                     <div class="card overflow-hidden p-0" slot-scope="{ filteredRows: rows }">
                         <data-list-table :rows="sortablePages">
                             <template slot="cell-status" slot-scope="{ row: page }">
