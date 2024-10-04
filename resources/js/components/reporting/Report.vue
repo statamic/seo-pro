@@ -79,7 +79,7 @@
                                     <a @click.prevent="selectedId = page.id" class="hover:text-black" v-text="page.url" />
                                 </template>
                                 <template slot="cell-actionable" slot-scope="{ row: page }">
-                                    <page-details v-if="selectedId === page.id" :item="page" @closed="selected = null" />
+                                    <page-details v-if="selectedId === page.id" :item="page" @closed="selectedId = null" />
                                     <a @click.prevent="selectedId = page.id" class="flex" style="gap: 0.25rem;">
                                         <span
                                             v-for="pill in actionablePageResults(page)"
