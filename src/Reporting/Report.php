@@ -265,16 +265,6 @@ class Report implements Arrayable, Jsonable
             ->map(fn ($page) => $this->pageToArray($page));
     }
 
-    // protected function paginationMeta($pages)
-    // {
-    //     return new LengthAwarePaginator(
-    //         $pages,
-    //         $pages->count(),
-    //         25,
-    //         1,
-    //     );
-    // }
-
     protected function pageToArray($page)
     {
         return [
