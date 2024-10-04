@@ -112,7 +112,7 @@ export default {
 
     data() {
         return {
-            loading: false,
+            loading: true,
             report: this.initialReport,
             selected: null
         }
@@ -156,8 +156,6 @@ export default {
     methods: {
 
         load() {
-            this.loading = true;
-
             Statamic.$request.get(cp_url(`seo-pro/reports/${this.id}`)).then(response => {
                 if (response.data.status === 'pending' || response.data.status === 'generating') {
                     setTimeout(() => this.load(), 1000);
