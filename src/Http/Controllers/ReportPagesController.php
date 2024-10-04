@@ -17,6 +17,13 @@ class ReportPagesController extends CpController
 
         $data = Report::find($id)->data();
 
+        // If report is still generating,
+        // we'll get a report instance with a status for the front end to poll against.
+        // When it's finished generating, `data()` will return a collection.
+        if ($data instanceof Report) {
+            return $data;
+        }
+
         $data['columns'] = [
             Column::make('status')->label(__('Status')),
             Column::make('url')->label(__('URL')),
