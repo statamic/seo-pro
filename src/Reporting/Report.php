@@ -27,6 +27,7 @@ class Report implements Arrayable, Jsonable
     protected $raw;
     protected $pages;
     protected $pagesCrawled;
+    protected $pagesActionable;
     protected $results;
     protected $date;
     protected $score;
@@ -192,6 +193,17 @@ class Report implements Arrayable, Jsonable
         return $this->pagesCrawled = $this->pages()?->count();
     }
 
+    public function pagesActionable()
+    {
+        if ($this->pagesActionable) {
+            return $this->pagesActionable;
+        }
+
+        return $this->pagesActionable = $this->pages()
+            ?->filter(fn ($page) => in_array($page->status(), ['warning', 'fail']))
+            ?->count();
+    }
+
     public function results()
     {
         return $this->results;
@@ -209,6 +221,7 @@ class Report implements Arrayable, Jsonable
             'status' => $this->status(),
             'score' => $this->score(),
             'pages_crawled' => $this->pagesCrawled(),
+            'pages_actionable' => $this->pagesActionable(),
             'results' => $this->resultsToArray(),
         ];
 
@@ -365,6 +378,7 @@ class Report implements Arrayable, Jsonable
             'status' => $this->status(),
             'score' => $this->score(),
             'pages_crawled' => $this->pagesCrawled(),
+            'pages_actionable' => $this->pagesActionable(),
             'results' => $this->results,
         ]));
 
@@ -406,6 +420,7 @@ class Report implements Arrayable, Jsonable
         $this->results = $this->raw['results'];
         $this->score = $this->raw['score'] ?? null;
         $this->pagesCrawled = $this->raw['pages_crawled'] ?? null;
+        $this->pagesActionable = $this->raw['pages_actionable'] ?? null;
 
         return $this;
     }
