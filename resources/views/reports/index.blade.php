@@ -33,7 +33,7 @@
                             <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->date()->diffForHumans() }}</a>
                         </td>
                         <td class="text-right">
-                            <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">9</a>
+                            <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->pagesActionable() ?? 'N/A' }}</a>
                         </td>
                         <td class="text-right w-8">
                             <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->pagesCrawled() }}</a>

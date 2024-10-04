@@ -20,7 +20,7 @@
                             </div>
                             <div class="grow text-right mr-8">
                                 <h2 class="text-sm text-gray-700">{{ __('Actionable Pages') }}</h2>
-                                <div class="text-lg">10</div>
+                                <div class="text-lg">{{ report.pages_actionable || 'N/A' }}</div>
                             </div>
                             <div class="text-right mr-8">
                                 <h2 class="text-sm text-gray-700">{{ __('Total Pages Crawled') }}</h2>
