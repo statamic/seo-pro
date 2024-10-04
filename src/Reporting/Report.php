@@ -225,7 +225,7 @@ class Report implements Arrayable, Jsonable
             'results' => $this->resultsToArray(),
         ];
 
-        if ($this->isGenerated() && $this->pages()) {
+        if ($this->isGenerated() && $this->pages() && $this->pages()->isNotEmpty()) {
             $array['pages'] = $this->pagesToArray();
             $array['columns'] = [
                 Column::make('status')->label(__('Status')),
