@@ -21,8 +21,10 @@
                 </div>
             </div>
 
-            <footer class="px-5 py-3 bg-gray-200 rounded-b-lg border-t flex items-center font-mono text-xs">
-                <a :href="item.url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800 mr-4" v-text="item.url" />
+            <footer class="px-4 py-3 bg-gray-200 rounded-b-lg border-t flex items-center text-sm flex">
+                <a v-if="item.url" :href="item.url" target="_blank" class="font-normal font-mono text-xs text-gray-700 hover:text-blue grow truncate" v-text="item.url" />
+                <a v-if="item.url" :href="item.url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-8" v-text="__('Visit')" />
+                <a v-if="item.edit_url" :href="item.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-4" v-text="__('Edit')" />
             </footer>
         </div>
     </modal>

@@ -63,7 +63,7 @@
                                 {{ __('seo-pro::messages.rules.'+page.status_raw) }}
                             </template>
                             <template slot="cell-page" slot-scope="{ row: page }">
-                                <a :href="page.edit_url" target="_blank" v-text="page.url" />
+                                <a @click.prevent="selected = page.id" class="hover:text-black" v-text="page.url" />
                             </template>
                             <template slot="cell-actionable" slot-scope="{ row: page }">
                                 <page-details v-if="selected === page.id" :item="page" @closed="selected = null" />
@@ -77,7 +77,8 @@
                                 </a>
                             </template>
                             <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs p-0 whitespace-no-wrap">
-                                <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-gray-800" v-text="__('Visit')" />
+                                <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-blue" v-text="__('Visit')" />
+                                <a v-if="page.edit_url" :href="page.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-4" v-text="__('Edit')" />
                             </td>
                         </data-list-table>
                     </div>
