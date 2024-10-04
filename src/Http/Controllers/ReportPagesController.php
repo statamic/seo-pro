@@ -26,15 +26,15 @@ class ReportPagesController extends CpController
         $data['sortColumn'] = $request->input('sortColumn', 'status');
         $data['sortDirection'] = $request->input('sortDirection', 'asc');
 
-        $pages = $data['pages']->sortBy(
-            callback: fn ($value) => $this->sortablePageValue($value, $data['sortColumn']),
-            descending: $data['sortDirection'] === 'desc',
-        )->values();
-
-        ray($pages);
+        $pages = $data['pages']
+            ->sortBy(
+                callback: fn ($value) => $this->sortablePageValue($value, $data['sortColumn']),
+                descending: $data['sortDirection'] === 'desc',
+            )
+            ->values();
 
         $currentPage = $request->input('page', 1);
-        $perPage = $request->input('perPage', config('statamic.cp.pagination_size')); // TODO: default to config
+        $perPage = $request->input('perPage', config('statamic.cp.pagination_size'));
 
         $data['pages'] = new LengthAwarePaginator(
             $pages->forPage($currentPage, $perPage)->values(),
