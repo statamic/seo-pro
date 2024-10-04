@@ -13,7 +13,8 @@
             <thead>
                 <th>Site Score</th>
                 <th>Generated</th>
-                <th class="text-right">Pages Crawled</th>
+                <th class="text-right">Actionable Pages</th>
+                <th class="text-right">Total Pages Crawled</th>
                 <th></th>
             </thead>
             <tbody>
@@ -32,6 +33,9 @@
                             <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->date()->diffForHumans() }}</a>
                         </td>
                         <td class="text-right">
+                            <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">9</a>
+                        </td>
+                        <td class="text-right w-8">
                             <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->pagesCrawled() }}</a>
                         </td>
                         @can('delete seo reports')
