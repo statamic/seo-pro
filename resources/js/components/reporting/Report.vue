@@ -59,34 +59,55 @@
                 <div v-if="loading" class="card loading">
                     <loading-graphic />
                 </div>
-                <data-list v-else ref="dataList" :columns="report.columns" :rows="sortablePages">
-                    <div class="card overflow-hidden p-0" slot-scope="{ filteredRows: rows }">
-                        <data-list-table :rows="sortablePages">
-                            <template slot="cell-status" slot-scope="{ row: page }">
-                                <status-icon :status="page.status_raw" class="inline-block w-5" />
-                                {{ __('seo-pro::messages.rules.'+page.status_raw) }}
-                            </template>
-                            <template slot="cell-page" slot-scope="{ row: page }">
-                                <a @click.prevent="selected = page.id" class="hover:text-black" v-text="page.url" />
-                            </template>
-                            <template slot="cell-actionable" slot-scope="{ row: page }">
-                                <page-details v-if="selected === page.id" :item="page" @closed="selected = null" />
-                                <a @click.prevent="selected = page.id" class="flex" style="gap: 0.25rem;">
-                                    <span
-                                        v-for="pill in actionablePageResults(page)"
-                                        :key="page.id+'_actionable_pill_'+pill"
-                                        class="inline-block text-xs bg-gray-300 hover:bg-gray-800 text-gray-800 shrink rounded-full px-2 py-0.5 text-center justify-center"
-                                        style="padding-top: 2px; padding-bottom: 2px;"
-                                    >{{ pill }}</span>
-                                </a>
-                            </template>
-                            <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs p-0 whitespace-no-wrap">
-                                <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-blue" v-text="__('Visit')" />
-                                <a v-if="page.edit_url" :href="page.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-4" v-text="__('Edit')" />
-                            </td>
-                        </data-list-table>
+                <data-list
+                    v-else
+                    ref="dataList"
+                    :columns="report.columns"
+                    :rows="sortablePages"
+                    :sort="false"
+                    :sort-column="sortColumn"
+                    :sort-direction="sortDirection"
+                >
+                    <div slot-scope="{ filteredRows: rows }">
+                        <div class="card overflow-hidden p-0" >
+                            <data-list-table :rows="sortablePages" @sorted="sorted">
+                                <template slot="cell-status" slot-scope="{ row: page }">
+                                    <status-icon :status="page.status" class="inline-block w-5" />
+                                    {{ __('seo-pro::messages.rules.'+page.status) }}
+                                </template>
+                                <template slot="cell-page" slot-scope="{ row: page }">
+                                    <a @click.prevent="selectedId = page.id" class="hover:text-black" v-text="page.url" />
+                                </template>
+                                <template slot="cell-actionable" slot-scope="{ row: page }">
+                                    <page-details v-if="selectedId === page.id" :item="page" @closed="selected = null" />
+                                    <a @click.prevent="selectedId = page.id" class="flex" style="gap: 0.25rem;">
+                                        <span
+                                            v-for="pill in actionablePageResults(page)"
+                                            :key="page.id+'_actionable_pill_'+pill"
+                                            class="inline-block text-xs bg-gray-300 hover:bg-gray-800 text-gray-800 shrink rounded-full px-2 py-0.5 text-center justify-center"
+                                            style="padding-top: 2px; padding-bottom: 2px;"
+                                        >{{ pill }}</span>
+                                    </a>
+                                </template>
+                                <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs p-0 whitespace-no-wrap">
+                                    <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-blue" v-text="__('Visit')" />
+                                    <a v-if="page.edit_url" :href="page.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-4" v-text="__('Edit')" />
+                                </td>
+                            </data-list-table>
+                        </div>
+
+                        <data-list-pagination
+                            class="mt-6"
+                            :resource-meta="paginationMeta"
+                            :per-page="perPage"
+                            :scroll-to-top="false"
+                            :show-totals="true"
+                            @per-page-changed="selectPaginationPerPage"
+                            @page-selected="selectPaginationPage"
+                        />
                     </div>
                 </data-list>
+
             </div>
 
         </div>
@@ -108,13 +129,22 @@ export default {
         StatusIcon,
     },
 
-    props: ['initialReport'],
+    props: [
+        'initialReport',
+        'initialPage',
+        'initialPerPage',
+    ],
 
     data() {
         return {
             loading: true,
             report: this.initialReport,
-            selected: null
+            selectedId: null,
+            sortColumn: 'status',
+            sortDirection: 'asc',
+            page: this.initialPage,
+            perPage: this.initialPerPage,
+            paginationMeta: {},
         }
     },
 
@@ -136,17 +166,43 @@ export default {
         },
 
         sortablePages() {
-            return this.report.pages.map(page => {
-                page.status_raw = page.status;
+            if (this.loading) {
+                return [];
+            }
 
-                if (page.status === 'fail') page.status = '1fail';
-                if (page.status === 'warning') page.status = '2warning';
-                if (page.status === 'pass') page.status = '3pass';
-
-                return page;
-            });
+            return this.report.pages.data;
         },
 
+        parameters() {
+            return {
+                sortColumn: this.sortColumn,
+                sortDirection: this.sortDirection,
+                page: this.page,
+                perPage: this.perPage,
+            };
+        },
+
+    },
+
+    watch: {
+        parameters: {
+            deep: true,
+            handler(after, before) {
+                if (JSON.stringify(before) === JSON.stringify(after)) return;
+
+                this.load();
+                this.pushState();
+            },
+        },
+    },
+
+    mounted() {
+        window.history.replaceState({ parameters: this.parameters }, '');
+        window.addEventListener('popstate', this.popState);
+    },
+
+    beforeDestroy() {
+        window.removeEventListener('popstate', this.popState);
     },
 
     created() {
@@ -156,13 +212,20 @@ export default {
     methods: {
 
         load() {
-            Statamic.$request.get(cp_url(`seo-pro/reports/${this.id}`)).then(response => {
+            this.$axios.get(cp_url(`seo-pro/reports/${this.id}`), { params: this.parameters }).then(response => {
                 if (response.data.status === 'pending' || response.data.status === 'generating') {
                     setTimeout(() => this.load(), 1000);
                     return;
                 }
 
                 this.report = response.data;
+
+                this.sortColumn = response.data.sortColumn;
+                this.sortDirection = response.data.sortDirection;
+                this.page = response.data.pages.current_page;
+                this.perPage = response.data.pages.per_page;
+                this.paginationMeta = response.data.pages;
+
                 this.loading = false;
             });
         },
@@ -173,6 +236,40 @@ export default {
                 .map(result => result.actionable_pill)
                 .unique()
                 .value();
+        },
+
+        selectPaginationPage(page) {
+            this.page = parseInt(page);
+        },
+
+        selectPaginationPerPage(perPage) {
+            this.perPage = parseInt(perPage);
+        },
+
+        sorted(column, direction) {
+            this.sortColumn = column;
+            this.sortDirection = direction;
+        },
+
+        popState(event) {
+            if (! event.state) {
+                return;
+            }
+            this.popping = true;
+            this.page = event.state.parameters.page;
+            this.perPage = event.state.parameters.perPage;
+            this.$nextTick(() => {
+                this.popping = false;
+            });
+        },
+
+        pushState() {
+            if (this.popping) {
+                return;
+            }
+            const parameters = this.parameters;
+            const searchParams = new URLSearchParams(parameters);
+            window.history.pushState({ parameters }, '', '?' + searchParams.toString());
         },
 
     }

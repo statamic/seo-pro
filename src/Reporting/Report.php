@@ -7,7 +7,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
-use Statamic\CP\Column;
 use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Folder;
@@ -227,11 +226,6 @@ class Report implements Arrayable, Jsonable
 
         if ($this->isGenerated() && $this->pages() && $this->pages()->isNotEmpty()) {
             $array['pages'] = $this->pagesToArray();
-            $array['columns'] = [
-                Column::make('status')->label(__('Status')),
-                Column::make('page')->label(__('URL')),
-                Column::make('actionable')->label(__('Actionable'))->sortable(false),
-            ];
 
             Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);
         }
@@ -270,6 +264,16 @@ class Report implements Arrayable, Jsonable
             ->pages()
             ->map(fn ($page) => $this->pageToArray($page));
     }
+
+    // protected function paginationMeta($pages)
+    // {
+    //     return new LengthAwarePaginator(
+    //         $pages,
+    //         $pages->count(),
+    //         25,
+    //         1,
+    //     );
+    // }
 
     protected function pageToArray($page)
     {
