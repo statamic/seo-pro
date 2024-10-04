@@ -2,7 +2,7 @@
 
     <div>
         <div v-if="score">
-            <seo-pro-status-icon :status="status" class="inline-block ml-1 mr-3" />
+            <seo-pro-status-icon :status="statusByScore" class="inline-block ml-1 mr-3" />
             {{ score }}%
         </div>
         <loading-graphic v-else :text="null" :inline="true" />
@@ -25,6 +25,23 @@ export default {
             status: this.initialStatus,
             score: this.initialScore,
         }
+    },
+
+    computed: {
+        statusByScore() {
+            if (! this.score) {
+                return this.status;
+            }
+
+            // Ensure we color status icon on index view to match site score color on report show view
+            if (this.score < 70) {
+                return 'fail';
+            } else if (this.score < 90) {
+                return 'warning';
+            } else if (this.score >= 90) {
+                return 'pass';
+            }
+        },
     },
 
     created() {
