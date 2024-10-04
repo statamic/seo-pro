@@ -212,7 +212,7 @@ export default {
     methods: {
 
         load() {
-            this.$axios.get(cp_url(`seo-pro/reports/${this.id}`), { params: this.parameters }).then(response => {
+            this.$axios.get(cp_url(`seo-pro/reports/${this.id}/pages`), { params: this.parameters }).then(response => {
                 if (response.data.status === 'pending' || response.data.status === 'generating') {
                     setTimeout(() => this.load(), 1000);
                     return;
