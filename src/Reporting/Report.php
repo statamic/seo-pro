@@ -330,7 +330,7 @@ class Report implements Arrayable, Jsonable
             return $this->updateLegacyReport();
         }
 
-        return $this->withPages(true);
+        return $this->withPages(true)->toArray();
     }
 
     public static function all()
