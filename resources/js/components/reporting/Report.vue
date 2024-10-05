@@ -75,7 +75,7 @@
                                     <status-icon :status="page.status" class="inline-block w-5" />
                                     {{ __('seo-pro::messages.rules.'+page.status) }}
                                 </template>
-                                <template slot="cell-page" slot-scope="{ row: page }">
+                                <template slot="cell-url" slot-scope="{ row: page }">
                                     <a @click.prevent="selectedId = page.id" class="hover:text-black" v-text="page.url" />
                                 </template>
                                 <template slot="cell-actionable" slot-scope="{ row: page }">
