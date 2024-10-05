@@ -6,6 +6,7 @@ Route::view('seo-pro', 'seo-pro::index')->name('seo-pro.index');
 Route::get('seo-pro/reports', [Controllers\ReportController::class, 'index'])->name('seo-pro.reports.index');
 Route::get('seo-pro/reports/create', [Controllers\ReportController::class, 'create'])->name('seo-pro.reports.create');
 Route::get('seo-pro/reports/{seo_pro_report}', [Controllers\ReportController::class, 'show'])->name('seo-pro.reports.show');
+Route::get('seo-pro/reports/{seo_pro_report}/pages', [Controllers\ReportPagesController::class, 'index'])->name('seo-pro.reports.pages.index');
 Route::delete('seo-pro/reports/{seo_pro_report}', [Controllers\ReportController::class, 'destroy'])->name('seo-pro.reports.destroy');
 
 Route::get('seo-pro/site-defaults/edit', [Controllers\SiteDefaultsController::class, 'edit'])->name('seo-pro.site-defaults.edit');

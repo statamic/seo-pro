@@ -42,6 +42,7 @@ date: $now->timestamp
 status: pending
 score: null
 pages_crawled: null
+pages_actionable: null
 results: null
 
 EXPECTED;
@@ -82,10 +83,55 @@ date: $now->timestamp
 status: fail
 score: 75.0
 pages_crawled: 10
+pages_actionable: 10
 results:
   SiteName: true
   UniqueTitleTag: 0
   UniqueMetaDescription: 10
+  NoUnderscoresInUrl: 0
+  ThreeSegmentUrls: 0
+
+EXPECTED;
+
+        $this->assertCount(1, $this->files->files($this->reportsPath('1')));
+        $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+
+        $this->assertFileExists($this->reportsPath('1/pages'));
+        $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
+    }
+
+    /** @test */
+    public function it_properly_calculates_actionable_count()
+    {
+        $this
+            ->generateEntries(5)
+            ->generateTerms(5);
+
+        Entry::all()
+            ->each(fn ($entry, $id) => $entry->set('seo', ['description' => 'Custom Entry Description'.$id])->save())
+            ->take(2)
+            ->each(fn ($entry) => $entry->set('seo', array_merge($entry->get('seo'), ['description' => 'Fail Description']))->save());
+
+        Term::all()
+            ->each(fn ($term, $id) => $term->set('seo', ['description' => 'Custom Term Description'.$id])->save())
+            ->take(4)
+            ->each(fn ($term) => $term->set('seo', array_merge($term->get('seo'), ['title' => 'Fail Title']))->save());
+
+        $this->assertFileDoesNotExist($this->reportsPath());
+
+        Carbon::setTestNow($now = now());
+        Report::create()->save()->generate();
+
+        $expected = <<<"EXPECTED"
+date: $now->timestamp
+status: fail
+score: 75.0
+pages_crawled: 10
+pages_actionable: 6
+results:
+  SiteName: true
+  UniqueTitleTag: 4
+  UniqueMetaDescription: 2
   NoUnderscoresInUrl: 0
   ThreeSegmentUrls: 0
 
@@ -123,6 +169,7 @@ date: $now->timestamp
 status: fail
 score: 75.0
 pages_crawled: 10
+pages_actionable: 10
 results:
   SiteName: true
   UniqueTitleTag: 0
@@ -160,6 +207,7 @@ date: $now->timestamp
 status: fail
 score: 76.0
 pages_crawled: 9
+pages_actionable: 9
 results:
   SiteName: true
   UniqueTitleTag: 0

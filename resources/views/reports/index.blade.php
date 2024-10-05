@@ -10,6 +10,13 @@
 
     <div class="card p-0 overflow-hidden">
         <table class="data-table">
+            <thead>
+                <th>Site Score</th>
+                <th>Generated</th>
+                <th class="text-right">Actionable Pages</th>
+                <th class="text-right">Total Pages Crawled</th>
+                <th></th>
+            </thead>
             <tbody>
                 @foreach($reports as $report)
                     <tr>
@@ -25,8 +32,14 @@
                         <td>
                             <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->date()->diffForHumans() }}</a>
                         </td>
+                        <td class="text-right">
+                            <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->pagesActionable() ?? 'N/A' }}</a>
+                        </td>
+                        <td class="text-right w-8">
+                            <a href="{{ cp_route('seo-pro.reports.show', $report->id()) }}">{{ $report->pagesCrawled() }}</a>
+                        </td>
                         @can('delete seo reports')
-                            <td class="float-right">
+                            <td class="w-8">
                                 <dropdown-list>
                                     <dropdown-item :text="__('seo-pro::messages.delete_report')" class="warning" @click="$refs.deleter_{{ $report->id() }}.confirm()">
                                         <resource-deleter
