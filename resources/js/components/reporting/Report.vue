@@ -31,7 +31,7 @@
                                 <div class="text-lg" :class="{ 'text-red-500': report.score < 70, 'text-orange': report.score < 90, 'text-green-600': report.score >= 90 }">{{ report.score }}%</div>
                             </div>
                         </div>
-                        <div class="bg-gray-300 h-4 w-full rounded mr-2 mt-4">
+                        <div class="bg-gray-300 dark:bg-dark-650 h-4 w-full rounded mr-2 mt-4">
                             <div class="h-4 rounded-l" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-600': report.score >= 90 }" />
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                                     {{ __('seo-pro::messages.rules.'+page.status) }}
                                 </template>
                                 <template slot="cell-url" slot-scope="{ row: page }">
-                                    <a @click.prevent="selectedId = page.id" class="hover:text-black" v-text="page.url" />
+                                    <a @click.prevent="selectedId = page.id" class="hover:text-black dark:hover:text-dark-100" v-text="page.url" />
                                 </template>
                                 <template slot="cell-actionable" slot-scope="{ row: page }">
                                     <page-details v-if="selectedId === page.id" :item="page" @closed="selectedId = null" />
@@ -84,7 +84,7 @@
                                         <span
                                             v-for="pill in actionablePageResults(page)"
                                             :key="page.id+'_actionable_pill_'+pill"
-                                            class="inline-block text-xs bg-gray-300 hover:bg-gray-800 text-gray-800 shrink rounded-full px-2 py-0.5 text-center justify-center"
+                                            class="inline-block text-xs bg-gray-300 dark:bg-dark-200 hover:bg-gray-800 text-gray-800 dark:text-dark-100 shrink rounded-full px-2 py-0.5 text-center justify-center"
                                             style="padding-top: 2px; padding-bottom: 2px;"
                                         >{{ pill }}</span>
                                     </a>
