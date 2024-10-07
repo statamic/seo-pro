@@ -101,6 +101,75 @@ EXPECTED;
     }
 
     /** @test */
+    public function it_doesnt_delete_old_reports_when_generating_by_default()
+    {
+        $this->generateEntries(1);
+
+        $this->assertFileDoesNotExist($this->reportsPath());
+
+        Carbon::setTestNow($now = now());
+
+        foreach (range(1, 17) as $i) {
+            Report::create()->save()->generate();
+        }
+
+        $this->assertCount(17, $this->files->directories($this->reportsPath()));
+    }
+
+    /** @test */
+    public function it_doesnt_delete_old_reports_when_explicit_all_is_configured()
+    {
+        Config::set('statamic.seo-pro.reports.keep_recent', 'all');
+
+        $this->generateEntries(1);
+
+        $this->assertFileDoesNotExist($this->reportsPath());
+
+        Carbon::setTestNow($now = now());
+
+        foreach (range(1, 17) as $i) {
+            Report::create()->save()->generate();
+        }
+
+        $this->assertCount(17, $this->files->directories($this->reportsPath()));
+    }
+
+    /** @test */
+    public function it_can_delete_old_reports_when_generating()
+    {
+        Config::set('statamic.seo-pro.reports.keep_recent', 13);
+
+        $this->generateEntries(1);
+
+        $this->assertFileDoesNotExist($this->reportsPath());
+
+        Carbon::setTestNow($now = now());
+
+        foreach (range(1, 17) as $i) {
+            Report::create()->save()->generate();
+        }
+
+        $this->assertCount(13, $this->files->directories($this->reportsPath()));
+        $this->assertFileDoesNotExist($this->reportsPath('1'));
+        $this->assertFileDoesNotExist($this->reportsPath('2'));
+        $this->assertFileDoesNotExist($this->reportsPath('3'));
+        $this->assertFileDoesNotExist($this->reportsPath('4'));
+        $this->assertFileExists($this->reportsPath('5'));
+        $this->assertFileExists($this->reportsPath('6'));
+        $this->assertFileExists($this->reportsPath('7'));
+        $this->assertFileExists($this->reportsPath('8'));
+        $this->assertFileExists($this->reportsPath('9'));
+        $this->assertFileExists($this->reportsPath('10'));
+        $this->assertFileExists($this->reportsPath('11'));
+        $this->assertFileExists($this->reportsPath('12'));
+        $this->assertFileExists($this->reportsPath('13'));
+        $this->assertFileExists($this->reportsPath('14'));
+        $this->assertFileExists($this->reportsPath('15'));
+        $this->assertFileExists($this->reportsPath('16'));
+        $this->assertFileExists($this->reportsPath('17'));
+    }
+
+    /** @test */
     public function it_properly_calculates_actionable_count()
     {
         $this

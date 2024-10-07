@@ -376,6 +376,8 @@ class Report implements Arrayable, Jsonable
             'results' => $this->results,
         ]));
 
+        static::deleteOldReports();
+
         return $this;
     }
 
@@ -555,5 +557,27 @@ class Report implements Arrayable, Jsonable
             ->save()
             ->fresh()
             ->withPages();
+    }
+
+    public static function deleteOldReports()
+    {
+        $keep = config('statamic.seo-pro.reports.keep_recent');
+
+        if (! is_int($keep)) {
+            return false;
+        }
+
+        $reports = collect(app('files')->directories(storage_path('statamic/seopro/reports')));
+
+        $keepReports = $reports
+            ->keyBy(fn ($path) => pathinfo($path)['basename'])
+            ->sortKeysDesc()
+            ->take($keep);
+
+        $reports
+            ->reject(fn ($path) => $keepReports->contains($path))
+            ->each(fn ($path) => app('files')->deleteDirectory($path));
+
+        return true;
     }
 }
