@@ -17,13 +17,9 @@ use Statamic\View\Cascade as ViewCascade;
 class Cascade
 {
     protected $data;
-
     protected $current;
-
     protected $explicitUrl;
-
     protected $model;
-
     protected $forSitemap = false;
 
     public function __construct()
