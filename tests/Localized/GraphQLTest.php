@@ -44,7 +44,7 @@ GQL;
             '<meta name="twitter:card" content="summary_large_image" />',
             '<meta name="twitter:title" content="Les Nectar of the Gods" />',
             '<meta name="twitter:description" content="The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko&#039;s Modern Life. That would have to wait until 5:30pm for that, and I am impatient.In truth, the day wou..." />',
-            '<link href="http://cool-runnings.com/" rel="home" />',
+            '<link href="http://cool-runnings.com" rel="home" />',
             '<link href="http://cool-runnings.com/fr/nectar" rel="canonical" />',
             '<link rel="alternate" href="http://cool-runnings.com/fr/nectar" hreflang="fr" />',
             '<link rel="alternate" href="http://cool-runnings.com/nectar" hreflang="en" />',
