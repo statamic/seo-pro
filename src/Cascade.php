@@ -17,9 +17,13 @@ use Statamic\View\Cascade as ViewCascade;
 class Cascade
 {
     protected $data;
+
     protected $current;
+
     protected $explicitUrl;
+
     protected $model;
+
     protected $forSitemap = false;
 
     public function __construct()
@@ -88,7 +92,7 @@ class Cascade
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
             'next_url' => $this->nextUrl(),
-            'home_url' => URL::makeAbsolute('/'),
+            'home_url' => Str::removeRight(URL::makeAbsolute('/'), '/'),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
             'alternate_locales' => $alternateLocales = $this->alternateLocales(),
