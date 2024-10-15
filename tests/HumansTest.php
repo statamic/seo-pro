@@ -30,7 +30,7 @@ class HumansTest extends TestCase
 /* TEAM */
 
 Creator: Site Name
-URL: http://cool-runnings.com/
+URL: http://cool-runnings.com
 Description: I see a bad-ass mother.
 
 /* THANKS */
