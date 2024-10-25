@@ -7,7 +7,7 @@
     "dependencies": {
         "cross-env": "^7.0.2",
         "underscore": "~1.12.1",
-        "vue": "^2.6.11"
+        "vue": "^3.0.0"
     },
     "devDependencies": {
         "@vitejs/plugin-vue2": "^2.2.0",
