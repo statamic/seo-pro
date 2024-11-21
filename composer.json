@@ -22,7 +22,8 @@
         }
     },
     "require": {
-        "statamic/cms": "^5.0.0"
+        "statamic/cms": "^5.0.0",
+        "illuminate/contracts": "^10.0|^11.3"
     },
     "require-dev": {
         "orchestra/testbench": "^8.0 || ^9.0",
