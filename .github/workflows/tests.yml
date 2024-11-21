@@ -52,7 +52,6 @@ jobs:
 
       - name: Temp
         run: |
-          composer why spatie/laravel-ray
           composer why spatie/ray
 
       - name: Execute tests
