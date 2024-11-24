@@ -50,6 +50,44 @@ readonly class ContentRetriever implements ContentRetrieverContract
         return Str::squish(strip_tags($content));
     }
 
+    protected function getContentFromStatamicComments(string $content): string
+    {
+        preg_match_all('/<!--statamic:content-->(.*?)<!--\/statamic:content-->/si', $content, $matches);
+
+        if (! isset($matches[1]) || ! is_array($matches[1])) {
+            return '';
+        }
+
+        return implode('', $matches[1]);
+    }
+
+    protected function getContentFromArticleTags(string $content): string
+    {
+        $document = new DOMDocument($content);
+        @$document->loadHTML($content);
+
+        $result = '';
+
+        foreach ($document->getElementsByTagName('article') as $tag) {
+            $result .= $document->saveHTML($tag);
+        }
+
+        return $result;
+    }
+
+    public function getContentFromString(string $content): string
+    {
+        if (! $content) {
+            return '';
+        }
+
+        if (Str::containsAll($content, ['<!--statamic:content-->', '<!--/statamic:content-->'])) {
+            return $this->getContentFromStatamicComments($content);
+        }
+
+        return $this->getContentFromArticleTags($content);
+    }
+
     public function getContent(Entry $entry, bool $stripTags = true): string
     {
         if ($entry instanceof Page) {
@@ -70,18 +108,8 @@ readonly class ContentRetriever implements ContentRetrieverContract
             app()->instance('request', $originalRequest);
         }
 
-        if (! Str::contains($content, '<!--statamic:content-->')) {
-            return '';
-        }
-
-        preg_match_all('/<!--statamic:content-->(.*?)<!--\/statamic:content-->/si', $content, $matches);
-
-        if (! isset($matches[1]) || ! is_array($matches[1])) {
-            return '';
-        }
-
         return $this->adjustContent(
-            $this->transformContent(implode('', $matches[1])),
+            $this->transformContent($this->getContentFromString($content)),
             $stripTags
         );
     }
@@ -104,10 +132,10 @@ readonly class ContentRetriever implements ContentRetrieverContract
 
         $sections = [];
 
-        $dom = new DOMDocument;
+        $document = new DOMDocument;
 
-        @$dom->loadHTML($entryLink->analyzed_content);
-        $xpath = new DOMXPath($dom);
+        @$document->loadHTML($entryLink->analyzed_content);
+        $xpath = new DOMXPath($document);
 
         $headings = $xpath->query('//h1 | //h2 | //h3 | //h4 | //h5 | //h6');
 
