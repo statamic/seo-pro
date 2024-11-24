@@ -245,16 +245,28 @@ class LinksController extends CpController
         ];
     }
 
+    protected function getSiteHandle($entry, $request): string
+    {
+        if ($site = $entry?->site()) {
+            return $site->handle();
+        }
+
+        if ($request->site) {
+            return $request->site->handle();
+        }
+
+        return Site::selected()->handle();
+    }
+
     public function insertLink(InsertLinkRequest $request)
     {
         $entry = Entry::findOrFail(request('entry'));
 
         if ($request->get('auto_link', false) === true && request('auto_link_entry')) {
-            $site = $entry->site()?->handle() ?? $request->site ? Site::get($request->site) : Site::selected();
             $autoLinkEntry = Entry::find(request('auto_link_entry'));
 
             $link = new AutomaticLink;
-            $link->site = $site->handle();
+            $link->site = $this->getSiteHandle($entry, $request);
             $link->is_active = true;
             $link->link_text = request('phrase');
             $link->link_target = $autoLinkEntry->uri();
