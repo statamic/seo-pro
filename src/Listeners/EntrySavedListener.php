@@ -9,6 +9,10 @@ class EntrySavedListener
 {
     public function handle(EntrySaved $event)
     {
+        if (! $event->entry->url()) {
+            return;
+        }
+
         ScanEntryLinks::dispatchSeoProJob($event->entry->id());
     }
 }
