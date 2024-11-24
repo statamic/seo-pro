@@ -33,11 +33,7 @@ class ReportController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        $report = Report::find($id);
-
-        if ($request->ajax()) {
-            return $report->data();
-        }
+        abort_unless($report = Report::find($id), 404);
 
         return view('seo-pro::reports.show', ['report' => $report]);
     }

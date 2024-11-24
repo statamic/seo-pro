@@ -71,7 +71,7 @@ class MetaTagTest extends TestCase
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
-<link href="http://cool-runnings.com/" rel="home" />
+<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com" rel="canonical" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
@@ -103,7 +103,7 @@ EOT;
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com/" rel="home" />
+<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
@@ -383,7 +383,7 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<link href="http://cool-runnings.com/" rel="home" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com" rel="home" />', false);
     }
 
     /**
@@ -744,7 +744,7 @@ EOT
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
-<link href="http://cool-runnings.com/" rel="home" />
+<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com" rel="canonical" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;

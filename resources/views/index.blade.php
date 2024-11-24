@@ -10,8 +10,8 @@
     <div class="card p-4 content">
         <div class="flex flex-wrap">
             @can('view seo reports')
-                <a href="{{ cp_route('seo-pro.reports.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
-                    <div class="h-8 w-8 mr-4 text-gray-800">
+                <a href="{{ cp_route('seo-pro.reports.index') }}" class="w-full lg:w-1/2 p-4 flex items-start hover:bg-gray-200 dark:hover:bg-dark-550 rounded-md group">
+                    <div class="h-8 w-8 rtl:ml-4 ltr:mr-4 text-gray-800 dark:text-dark-175">
                         @cp_svg('icons/light/charts')
                     </div>
                     <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
@@ -21,8 +21,8 @@
                 </a>
             @endcan
             @can('edit seo site defaults')
-                <a href="{{ cp_route('seo-pro.site-defaults.edit') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
-                    <div class="h-8 w-8 mr-4 text-gray-800">
+                <a href="{{ cp_route('seo-pro.site-defaults.edit') }}" class="w-full lg:w-1/2 p-4 flex items-start hover:bg-gray-200 dark:hover:bg-dark-550 rounded-md group">
+                    <div class="h-8 w-8 rtl:ml-4 ltr:mr-4 text-gray-800 dark:text-dark-175">
                         @cp_svg('icons/light/hammer-wrench')
                     </div>
                     <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
@@ -32,8 +32,8 @@
                 </a>
             @endcan
             @can('edit seo section defaults')
-                <a href="{{ cp_route('seo-pro.section-defaults.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
-                    <div class="h-8 w-8 mr-4 text-gray-800">
+                <a href="{{ cp_route('seo-pro.section-defaults.index') }}" class="w-full lg:w-1/2 p-4 flex items-start hover:bg-gray-200 dark:hover:bg-dark-550 rounded-md group">
+                    <div class="h-8 w-8 rtl:ml-4 ltr:mr-4 text-gray-800 dark:text-dark-175">
                         @cp_svg('icons/light/hammer-wrench')
                     </div>
                     <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">

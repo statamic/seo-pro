@@ -49,6 +49,7 @@ return [
     ],
 
     'reports' => [
+        'keep_recent' => 'all',
         'queue_chunk_size' => 1000,
     ],
 

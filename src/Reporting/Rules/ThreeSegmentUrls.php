@@ -10,6 +10,11 @@ class ThreeSegmentUrls extends Rule
 
     protected $slashes;
 
+    public function actionablePill()
+    {
+        return __('seo-pro::messages.rules.three_segment_urls_actionable_pill');
+    }
+
     public function siteDescription()
     {
         return __('seo-pro::messages.rules.three_segment_urls_site');
