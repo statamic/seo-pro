@@ -24,6 +24,7 @@ class OpenAiEmbeddings implements Extractor
     protected function makeClient(): OpenAI\Client
     {
         return OpenAI::factory()
+            ->withBaseUri(config('statamic.seo-pro.linking.openai.base_uri'))
             ->withApiKey(config('statamic.seo-pro.linking.openai.api_key'))
             ->make();
     }

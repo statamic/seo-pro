@@ -63,9 +63,10 @@ return [
         'enabled' => false,
 
         'openai' => [
+            'base_uri' => env('SEO_PRO_OPENAI_BASE_URI', 'api.openai.com/v1'),
             'api_key' => env('SEO_PRO_OPENAI_API_KEY'),
-            'model' => 'text-embedding-3-small',
-            'token_limit' => 8000,
+            'model' => env('SEO_PRO_OPENAI_MODEL', 'text-embedding-3-small'),
+            'token_limit' => env('SEO_PRO_EMBEDDING_TOKEN_LIMIT', 8000),
         ],
 
         'keyword_threshold' => 65,
