@@ -42,9 +42,9 @@
                     </div>
                 </a>
             @endcan
-            @if (config('statamic.seo-pro.text_analysis.enabled', false))
+            @if (config('statamic.seo-pro.linking.enabled', false))
                 @can('view seo links')
-                    <a href="{{ cp_route('seo-pro.internal-links.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 rounded-md group">
+                    <a href="{{ cp_route('seo-pro.internal-links.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 dark:hover:bg-dark-550 rounded-md group">
                         <div class="h-8 w-8 mr-4 text-gray-800">
                             @cp_svg('icons/light/link')
                         </div>
