@@ -9,6 +9,8 @@
             ref="data-list"
             :columns="columns"
             :rows="inboundLinks"
+            :sort="true"
+            sort-column="uri"
         >
             <div>
                 <div class="card internalLinks p-0 relative">

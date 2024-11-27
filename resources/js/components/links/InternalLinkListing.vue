@@ -9,6 +9,8 @@
             ref="data-list"
             :columns="columns"
             :rows="internalLinks"
+            :sort="true"
+            sort-column="title"
         >
             <div>
                 <div class="card internalLinks p-0 relative">

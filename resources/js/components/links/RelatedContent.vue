@@ -9,6 +9,9 @@
             ref="data-list"
             :columns="columns"
             :rows="relatedItems"
+            :sort="true"
+            sort-column="score"
+            sort-direction="desc"
         >
             <div>
                 <div class="card overflow-hidden p-0 relative">
