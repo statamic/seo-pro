@@ -9,7 +9,10 @@
                     <a :href="report.entry.uri" class="font-mono text-gray-700" target="_blank">{{ report.entry.uri }}</a>
                 </div>
 
-                <dropdown-list class="rtl:ml-2 ltr:mr-2">
+                <dropdown-list
+                    class="rtl:ml-2 ltr:mr-2"
+                    v-if="canEditEntry"
+                >
                     <dropdown-item v-text="'Edit Entry Linking Settings'" @click="editingEntryConfig = report.entry.id" />
                     <div class="divider"></div>
                     <dropdown-item
@@ -26,7 +29,11 @@
                     </dropdown-item>
                 </dropdown-list>
 
-                <a :href="report.entry.edit_url" class="btn-primary cursor-pointer rtl:mr-1 ltr:ml-1">Edit Entry</a>
+                <a
+                    v-if="canEditEntry"
+                    :href="report.entry.edit_url"
+                    class="btn-primary cursor-pointer rtl:mr-1 ltr:ml-1"
+                >Edit Entry</a>
             </div>
         </header>
 
@@ -43,6 +50,7 @@
                 :entry="report.entry.id"
                 :edit-url="report.entry.edit_url"
                 :site="report.entry.site"
+                :can-edit-entry="canEditEntry"
             ></component>
         </div>
 
@@ -80,12 +88,14 @@ export default  {
     mixins: [FakesResources],
 
     props: [
+        'canEditEntry',
         'initialReport',
         'initialTab',
         'blueprint',
         'fields',
         'meta',
         'values',
+        'canEditEntry'
     ],
 
     components: {
@@ -123,7 +133,6 @@ export default  {
         getUrl(suffix) {
             return cp_url('seo-pro/links/' + this.report.entry.id + '/' + suffix)
         },
-
     },
 
 };

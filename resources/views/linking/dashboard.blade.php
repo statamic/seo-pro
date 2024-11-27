@@ -10,5 +10,6 @@
 	:fields='@json($fields)'
 	:meta='@json($meta)'
 	:values='@json($values)'
+	:can-edit-entry="@json($can_edit)"
 ></seo-pro-link-dashboard>
 @stop

@@ -9,9 +9,9 @@ use Statamic\Facades\Entry as EntryApi;
 use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository as LinkRepositoryContract;
 use Statamic\SeoPro\Events\InternalLinksUpdated;
-use Statamic\SeoPro\TextProcessing\Models\CollectionLinkSettings;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
-use Statamic\SeoPro\TextProcessing\Models\SiteLinkSetting;
+use Statamic\SeoPro\Models\CollectionLinkSettings;
+use Statamic\SeoPro\Models\EntryLink;
+use Statamic\SeoPro\Models\SiteLinkSetting;
 
 readonly class LinkRepository implements LinkRepositoryContract
 {
@@ -163,7 +163,7 @@ readonly class LinkRepository implements LinkRepositoryContract
             $options = new LinkScanOptions;
         }
 
-        /** @var EntryLink $entryLinks */
+        /** @var \Statamic\SeoPro\Models\EntryLink $entryLinks */
         $entryLinks = EntryLink::query()->firstOrNew(['entry_id' => $entry->id()]);
         $linkContent = $this->contentRetriever->getContent($entry, false);
         $contentMapping = $this->contentRetriever->getContentMapping($entry);
@@ -255,7 +255,7 @@ readonly class LinkRepository implements LinkRepositoryContract
             return false;
         }
 
-        /** @var EntryLink $entryLink */
+        /** @var \Statamic\SeoPro\Models\EntryLink $entryLink */
         $entryLink = EntryLink::query()->where('entry_id', $entry->id())->first();
 
         if ($entryLink && ! $entryLink->can_be_suggested) {

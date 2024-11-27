@@ -15,7 +15,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'keyword_threshold',
                             'field' => [
-                                'display' => 'Keyword Threshold',
+                                'display' => __('seo-pro::settings.keyword_threshold'),
                                 'type' => 'range',
                                 'default' => config('statamic.seo-pro.linking.keyword_threshold', 65),
                                 'width' => 50,
@@ -24,7 +24,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'prevent_circular_links',
                             'field' => [
-                                'display' => 'Prevent Circular Link Suggestions',
+                                'display' => __('seo-pro::settings.prevent_circular_links'),
                                 'type' => 'toggle',
                                 'width' => 50,
                             ],
@@ -36,7 +36,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'min_internal_links',
                             'field' => [
-                                'display' => 'Min. Internal Links',
+                                'display' => __('seo-pro::settings.min_internal_links'),
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.internal_links.min_desired', 3),
                                 'width' => 50,
@@ -45,7 +45,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'max_internal_links',
                             'field' => [
-                                'display' => 'Max. Internal Links',
+                                'display' => __('seo-pro::settings.max_internal_links'),
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.internal_links.max_desired', 6),
                                 'width' => 50,
@@ -54,7 +54,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'min_external_links',
                             'field' => [
-                                'display' => 'Min. External Links',
+                                'display' => __('seo-pro::settings.min_external_links'),
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.external_links.min_desired', 0),
                                 'width' => 50,
@@ -63,7 +63,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'max_external_links',
                             'field' => [
-                                'display' => 'Max. External Links',
+                                'display' => __('seo-pro::settings.max_external_links'),
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.external_links.max_desired', 0),
                                 'width' => 50,
@@ -76,7 +76,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'ignored_phrases',
                             'field' => [
-                                'display' => 'Ignored Phrases',
+                                'display' => __('seo-pro::settings.ignored_phrases'),
                                 'type' => 'list',
                             ],
                         ],

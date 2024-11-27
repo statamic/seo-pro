@@ -79,7 +79,9 @@
                             </a>
                         </template>
                         <template slot="actions" slot-scope="{ row: entry }">
-                            <dropdown-list>
+                            <dropdown-list
+                                v-if="canEditEntry"
+                            >
                                 <dropdown-item v-text="'Edit Entry Linking Settings'" @click="editingEntryConfig = entry.entry_id" />
                                 <div class="divider"></div>
                                 <dropdown-item
@@ -144,6 +146,7 @@ export default  {
         'fields',
         'meta',
         'values',
+        'canEditEntry',
     ],
 
     components: {

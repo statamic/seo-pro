@@ -8,10 +8,10 @@ use Statamic\SeoPro\Content\ContentRemoval;
 use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository as KeywordsRepositoryContract;
+use Statamic\SeoPro\Models\EntryKeyword;
+use Statamic\SeoPro\Models\EntryLink;
+use Statamic\SeoPro\Models\SiteLinkSetting;
 use Statamic\SeoPro\TextProcessing\Concerns\ChecksForContentChanges;
-use Statamic\SeoPro\TextProcessing\Models\EntryKeyword;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
-use Statamic\SeoPro\TextProcessing\Models\SiteLinkSetting;
 use Statamic\SeoPro\TextProcessing\Queries\EntryQuery;
 
 class KeywordsRepository implements KeywordsRepositoryContract
@@ -32,7 +32,7 @@ class KeywordsRepository implements KeywordsRepositoryContract
             $entryIds = $entries->pluck('id')->all();
             $this->fillKeywordInstanceCache($entryIds);
 
-            /** @var array<string, EntryLink> $entryLinks */
+            /** @var array<string, \Statamic\SeoPro\Models\EntryLink> $entryLinks */
             $entryLinks = EntryLink::query()
                 ->whereIn('entry_id', $entryIds)
                 ->get()
@@ -183,10 +183,10 @@ class KeywordsRepository implements KeywordsRepositoryContract
         $site = $entry->site()?->handle() ?? 'default';
         $ignoredKeywords = [];
 
-        /** @var EntryLink $entryLink */
+        /** @var \Statamic\SeoPro\Models\EntryLink $entryLink */
         $entryLink = EntryLink::query()->where('entry_id', $entry->id())->first();
 
-        /** @var SiteLinkSetting $siteSettings */
+        /** @var \Statamic\SeoPro\Models\SiteLinkSetting $siteSettings */
         $siteSettings = SiteLinkSetting::query()->where('site', $site)->first();
 
         if ($entryLink) {

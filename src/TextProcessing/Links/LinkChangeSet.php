@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\TextProcessing\Links;
 
 use Illuminate\Support\Collection;
 use Statamic\Facades\Entry as EntryApi;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
+use Statamic\SeoPro\Models\EntryLink;
 
 class LinkChangeSet
 {

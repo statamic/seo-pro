@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\TextProcessing\Links;
 
 use Illuminate\Support\Collection;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\GlobalAutomaticLinksRepository as GlobalAutomaticLinksContract;
-use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
+use Statamic\SeoPro\Models\AutomaticLink;
 
 class GlobalAutomaticLinksRepository implements GlobalAutomaticLinksContract
 {

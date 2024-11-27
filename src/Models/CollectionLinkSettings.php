@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\SeoPro\TextProcessing\Models;
+namespace Statamic\SeoPro\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;

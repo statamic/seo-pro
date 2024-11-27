@@ -11,7 +11,7 @@ use Statamic\SeoPro\Blueprints\GlobalAutomaticLinksBlueprint;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Requests\AutomaticLinkRequest;
 use Statamic\SeoPro\Http\Resources\Links\AutomaticLinks;
-use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
+use Statamic\SeoPro\Models\AutomaticLink;
 
 class GlobalAutomaticLinksController extends CpController
 {
@@ -38,7 +38,7 @@ class GlobalAutomaticLinksController extends CpController
 
     public function update(AutomaticLinkRequest $request, $automaticLink)
     {
-        /** @var AutomaticLink $link */
+        /** @var \Statamic\SeoPro\Models\AutomaticLink $link */
         $link = AutomaticLink::findOrFail($automaticLink);
 
         $link->link_target = request('link_target');

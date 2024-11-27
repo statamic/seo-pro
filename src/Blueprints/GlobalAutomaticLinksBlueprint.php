@@ -15,21 +15,21 @@ class GlobalAutomaticLinksBlueprint
                         [
                             'handle' => 'link_text',
                             'field' => [
-                                'display' => 'Link Text',
+                                'display' => __('seo-pro::messages.link_text'),
                                 'type' => 'text',
                             ],
                         ],
                         [
                             'handle' => 'link_target',
                             'field' => [
-                                'display' => 'Link Target',
+                                'display' => __('seo-pro::messages.link_target'),
                                 'type' => 'text',
                             ],
                         ],
                         [
                             'handle' => 'is_active',
                             'field' => [
-                                'display' => 'Active Link',
+                                'display' => __('seo-pro::messages.is_active_link'),
                                 'type' => 'toggle',
                             ],
                         ],

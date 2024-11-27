@@ -7,11 +7,11 @@ use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Entry as EntryApi;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
+use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Reporting\Linking\Concerns\ResolvesSimilarItems;
 use Statamic\SeoPro\TextProcessing\Config\ConfigurationRepository;
 use Statamic\SeoPro\TextProcessing\Config\SiteConfig;
 use Statamic\SeoPro\TextProcessing\Keywords\KeywordsRepository;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
 use Statamic\SeoPro\TextProcessing\Suggestions\SuggestionEngine;
 

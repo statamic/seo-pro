@@ -74,5 +74,14 @@ return [
     ],
 
     'link_manager' => 'Link Manager',
-    'links_description' => 'View internal entry link suggestions and related link statistics.',
+    'link_manager_description' => 'View internal entry link suggestions and related link statistics.',
+
+    'internal_link_count' => 'Internal Link Count',
+    'external_link_count' => 'External Link Count',
+    'inbound_internal_link_count' => 'Inbound Internal Link Count',
+
+    'link_text' => 'Link Text',
+    'link_target' => 'Link Target',
+    'is_active_link' => 'Active Link',
+
 ];

@@ -15,21 +15,21 @@ class LinkBlueprint
                         [
                             'handle' => 'cached_title',
                             'field' => [
-                                'display' => 'Title',
+                                'display' => __('Title'),
                                 'type' => 'text',
                             ],
                         ],
                         [
                             'handle' => 'cached_uri',
                             'field' => [
-                                'display' => 'URI',
+                                'display' => __('URL'),
                                 'type' => 'text',
                             ],
                         ],
                         [
                             'handle' => 'site',
                             'field' => [
-                                'display' => 'Site',
+                                'display' => __('Site'),
                                 'type' => 'sites',
                                 'config' => [
                                     'max_items' => 1,
@@ -39,7 +39,7 @@ class LinkBlueprint
                         [
                             'handle' => 'collection',
                             'field' => [
-                                'display' => 'Collection',
+                                'display' => __('Collection'),
                                 'type' => 'collections',
                                 'config' => [
                                     'max_items' => 1,
@@ -49,21 +49,21 @@ class LinkBlueprint
                         [
                             'handle' => 'internal_link_count',
                             'field' => [
-                                'display' => 'Internal Link Count',
+                                'display' => __('seo-pro::messages.internal_link_count'),
                                 'type' => 'integer',
                             ],
                         ],
                         [
                             'handle' => 'external_link_count',
                             'field' => [
-                                'display' => 'External Link Count',
+                                'display' => __('seo-pro::messages.external_link_count'),
                                 'type' => 'integer',
                             ],
                         ],
                         [
                             'handle' => 'inbound_internal_link_count',
                             'field' => [
-                                'display' => 'Inbound Internal Link Count',
+                                'display' => __('seo-pro::messages.inbound_internal_link_count'),
                                 'type' => 'integer',
                             ],
                         ],

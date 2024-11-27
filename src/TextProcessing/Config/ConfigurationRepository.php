@@ -6,8 +6,8 @@ use Illuminate\Support\Collection;
 use Statamic\Facades\Collection as CollectionApi;
 use Statamic\Facades\Site as SiteApi;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository as ConfigurationRepositoryContract;
-use Statamic\SeoPro\TextProcessing\Models\CollectionLinkSettings;
-use Statamic\SeoPro\TextProcessing\Models\SiteLinkSetting;
+use Statamic\SeoPro\Models\CollectionLinkSettings;
+use Statamic\SeoPro\Models\SiteLinkSetting;
 
 class ConfigurationRepository implements ConfigurationRepositoryContract
 {
@@ -207,7 +207,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function resetCollectionConfiguration(string $handle): void
     {
-        /** @var CollectionLinkSettings $settings */
+        /** @var \Statamic\SeoPro\Models\CollectionLinkSettings $settings */
         $settings = CollectionLinkSettings::query()->where('collection', $handle)->first();
 
         if (! $settings) {

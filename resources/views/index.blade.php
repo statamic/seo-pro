@@ -50,7 +50,7 @@
                         </div>
                         <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
                             <h3>{{ __('seo-pro::messages.link_manager') }}</h3>
-                            <p class="text-xs">{{ __('seo-pro::messages.links_description') }}</p>
+                            <p class="text-xs">{{ __('seo-pro::messages.link_manager_description') }}</p>
                         </div>
                     </a>
                 @endcan

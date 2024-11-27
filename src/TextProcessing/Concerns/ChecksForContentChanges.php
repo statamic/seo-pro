@@ -2,8 +2,8 @@
 
 namespace Statamic\SeoPro\TextProcessing\Concerns;
 
-use Statamic\SeoPro\TextProcessing\Models\EntryEmbedding;
-use Statamic\SeoPro\TextProcessing\Models\EntryKeyword;
+use Statamic\SeoPro\Models\EntryEmbedding;
+use Statamic\SeoPro\Models\EntryKeyword;
 
 trait ChecksForContentChanges
 {

@@ -4,9 +4,13 @@ namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection as IlluminateCollection;
+use Statamic\Facades\Blink;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
@@ -22,11 +26,11 @@ use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Requests\InsertLinkRequest;
 use Statamic\SeoPro\Http\Requests\UpdateEntryLinkRequest;
 use Statamic\SeoPro\Http\Resources\Links\EntryLinks;
+use Statamic\SeoPro\Models\AutomaticLink;
+use Statamic\SeoPro\Models\EntryLink;
+use Statamic\SeoPro\Models\EntryLink as EntryLinksModel;
 use Statamic\SeoPro\Reporting\Linking\ReportBuilder;
 use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
-use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink as EntryLinksModel;
 
 class LinksController extends CpController
 {
@@ -62,10 +66,15 @@ class LinksController extends CpController
 
     protected function makeDashboardResponse(string $entryId, string $tab, string $title)
     {
+        $entry = Entry::find($entryId);
+        abort_unless($entry, 404);
+        abort_unless(User::current()->can('view', $entry), 403);
+
         return view('seo-pro::linking.dashboard', $this->mergeEntryConfigBlueprint([
             'report' => $this->reportBuilder->getBaseReport(Entry::findOrFail($entryId)),
             'tab' => $tab,
             'title' => $title,
+            'can_edit' => User::current()->can('edit', $entry)
         ]));
     }
 
@@ -97,7 +106,7 @@ class LinksController extends CpController
 
     public function resetEntrySuggestions(string $link)
     {
-        /** @var EntryLink $entryLink */
+        /** @var \Statamic\SeoPro\Models\EntryLink $entryLink */
         $entryLink = EntryLink::where('entry_id', $link)->firstOrFail();
 
         $entryLink->ignored_entries = [];
@@ -304,18 +313,38 @@ class LinksController extends CpController
     {
         $disabledCollections = $this->configurationRepository->getDisabledCollections();
 
-        return EntryLinksModel::query()->whereNotIn('collection', $disabledCollections);
+        return EntryLinksModel::query()
+            ->whereIn('collection', $this->getCollectionsForCurrentUser()->all())
+            ->whereNotIn('collection', $disabledCollections);
+    }
+
+    protected function getCollectionsForCurrentUser(): IlluminateCollection
+    {
+        return Blink::once('seo_pro_user_visible_collections', function () {
+            return Collection::all()
+                ->filter(function ($collection) {
+                    return User::current()->can('view', $collection);
+                })
+                ->pluck('handle');
+        });
     }
 
     protected function makeFiltersContext(): array
     {
+        $visibleCollections = $this->getCollectionsForCurrentUser();
+
         $collections = $this->configurationRepository
             ->getCollections()
-            ->where(fn (CollectionConfig $config) => $config->linkingEnabled)
+            ->filter(function (CollectionConfig $config) use ($visibleCollections) {
+                return $config->linkingEnabled && $visibleCollections->contains($config->handle);
+            })
             ->map(fn (CollectionConfig $config) => $config->handle)
             ->all();
 
         $sites = Site::all()
+            ->filter(function ($site) {
+                return User::current()->can('view', $site);
+            })
             ->map(fn ($site) => $site->handle())
             ->values()
             ->all();

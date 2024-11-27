@@ -7,9 +7,9 @@ use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\Content\ContentMapper;
+use Statamic\SeoPro\Models\AutomaticLink;
+use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Links\LinkCrawler;
-use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Similarity\Result;
 
 class SuggestionEngine

@@ -15,6 +15,7 @@ class EntryConfigBlueprint
                         [
                             'handle' => 'can_be_suggested',
                             'field' => [
+                                'display' => __('seo-pro::settings.can_be_suggested'),
                                 'type' => 'toggle',
                                 'default' => true,
                             ],
@@ -22,6 +23,7 @@ class EntryConfigBlueprint
                         [
                             'handle' => 'include_in_reporting',
                             'field' => [
+                                'display' => __('seo-pro::settings.include_in_reporting'),
                                 'type' => 'toggle',
                                 'default' => true,
                             ],

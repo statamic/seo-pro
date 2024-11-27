@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Content;
 
 use Illuminate\Database\Eloquent\Builder;
 use Statamic\Facades\Entry;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
+use Statamic\SeoPro\Models\EntryLink;
 
 class FieldIndex
 {

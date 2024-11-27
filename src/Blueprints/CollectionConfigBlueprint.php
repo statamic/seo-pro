@@ -15,14 +15,14 @@ class CollectionConfigBlueprint
                         [
                             'handle' => 'linking_enabled',
                             'field' => [
-                                'display' => 'Linking Enabled',
+                                'display' => __('seo-pro::settings.linking_enabled'),
                                 'type' => 'toggle',
                             ],
                         ],
                         [
                             'handle' => 'allow_cross_site_linking',
                             'field' => [
-                                'display' => 'Allow Cross-Site Suggestions',
+                                'display' => __('seo-pro::settings.allow_cross_site_suggestions'),
                                 'type' => 'toggle',
                                 'default' => false,
                             ],
@@ -30,14 +30,14 @@ class CollectionConfigBlueprint
                         [
                             'handle' => 'allow_cross_collection_suggestions',
                             'field' => [
-                                'display' => 'Allow Suggestions from all Collections',
+                                'display' => __('seo-pro::settings.allow_suggestions_from_all_collections'),
                                 'type' => 'toggle',
                             ],
                         ],
                         [
                             'handle' => 'allowed_collections',
                             'field' => [
-                                'display' => 'Receive Suggestions From',
+                                'display' => __('seo-pro::settings.allowed_collections'),
                                 'type' => 'collections',
                                 'mode' => 'select',
                                 'if' => [

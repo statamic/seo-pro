@@ -42,7 +42,9 @@
                             <a :href="makeSuggestionsUrl(suggestion.entry)">{{ suggestion.uri }}</a>
                         </template>
                         <template slot="actions" slot-scope="{ row: suggestion }">
-                            <dropdown-list>
+                            <dropdown-list
+                                v-if="canEditEntry"
+                            >
                                 <dropdown-item text="Edit Entry" :redirect="editUrl"></dropdown-item>
                                 <dropdown-item text="Accept Suggestion" @click="activeSuggestion = suggestion" v-if="suggestion.context.can_replace" />
                                 <div class="divider"></div>
@@ -90,6 +92,7 @@ export default {
         'entry',
         'editUrl',
         'site',
+        'canEditEntry',
     ],
 
     mixins: [ProvidesControlPanelLinks],

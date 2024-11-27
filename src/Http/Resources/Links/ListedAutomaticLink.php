@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\Http\Resources\Links;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
+use Statamic\SeoPro\Models\AutomaticLink;
 
 class ListedAutomaticLink extends JsonResource
 {

@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Cascade;
 use Statamic\SeoPro\Contracts\Content\ContentRetriever as ContentRetrieverContract;
+use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\SeoPro;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 use Statamic\Structures\Page;
 
 readonly class ContentRetriever implements ContentRetrieverContract

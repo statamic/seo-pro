@@ -14,9 +14,9 @@ use Statamic\SeoPro\Contracts\Content\Tokenizer;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\Extractor;
+use Statamic\SeoPro\Models\EntryEmbedding;
+use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Concerns\ChecksForContentChanges;
-use Statamic\SeoPro\TextProcessing\Models\EntryEmbedding;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Queries\EntryQuery;
 use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
 use Statamic\SeoPro\TextProcessing\Vectors\Vector;
@@ -87,7 +87,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
 
     public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator
     {
-        /** @var EntryEmbedding $embedding */
+        /** @var \Statamic\SeoPro\Models\EntryEmbedding $embedding */
         foreach ($this->relatedEmbeddingsQuery($entry, $options)->lazy($chunkSize) as $embedding) {
             yield $this->makeVector(
                 $embedding->entry_id,

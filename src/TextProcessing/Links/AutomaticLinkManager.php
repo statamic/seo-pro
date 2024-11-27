@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\GlobalAutomaticLinksRepository;
-use Statamic\SeoPro\TextProcessing\Models\AutomaticLink;
+use Statamic\SeoPro\Models\AutomaticLink;
 use Statamic\SeoPro\TextProcessing\Similarity\TextSimilarity;
 
 class AutomaticLinkManager

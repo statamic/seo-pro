@@ -3,9 +3,9 @@
 namespace Statamic\SeoPro\Contracts\TextProcessing\Links;
 
 use Statamic\Contracts\Entries\Entry;
+use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\TextProcessing\Links\IgnoredSuggestion;
 use Statamic\SeoPro\TextProcessing\Links\LinkScanOptions;
-use Statamic\SeoPro\TextProcessing\Models\EntryLink;
 
 interface LinksRepository
 {
