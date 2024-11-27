@@ -4,9 +4,6 @@ namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection as IlluminateCollection;
-use Statamic\Facades\Blink;
-use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
@@ -14,6 +11,7 @@ use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
+use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Blueprints\EntryConfigBlueprint;
 use Statamic\SeoPro\Blueprints\LinkBlueprint;
 use Statamic\SeoPro\Content\ContentMapper;
@@ -318,24 +316,13 @@ class LinksController extends CpController
         $disabledCollections = $this->configurationRepository->getDisabledCollections();
 
         return EntryLinksModel::query()
-            ->whereIn('collection', $this->getCollectionsForCurrentUser()->all())
+            ->whereIn('collection', UserAccess::getCollectionsForCurrentUser()->all())
             ->whereNotIn('collection', $disabledCollections);
-    }
-
-    protected function getCollectionsForCurrentUser(): IlluminateCollection
-    {
-        return Blink::once('seo_pro_user_visible_collections', function () {
-            return Collection::all()
-                ->filter(function ($collection) {
-                    return User::current()->can('view', $collection);
-                })
-                ->pluck('handle');
-        });
     }
 
     protected function makeFiltersContext(): array
     {
-        $visibleCollections = $this->getCollectionsForCurrentUser();
+        $visibleCollections = UserAccess::getCollectionsForCurrentUser();
 
         $collections = $this->configurationRepository
             ->getCollections()
