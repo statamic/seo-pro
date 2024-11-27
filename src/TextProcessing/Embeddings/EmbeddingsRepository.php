@@ -85,7 +85,7 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
         ]));
     }
 
-    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator
+    public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator
     {
         /** @var \Statamic\SeoPro\Models\EntryEmbedding $embedding */
         foreach ($this->relatedEmbeddingsQuery($entry, $options)->lazy($chunkSize) as $embedding) {
@@ -95,13 +95,6 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
                 $embedding
             );
         }
-    }
-
-    public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options): Collection
-    {
-        return $this->makeVectorCollection(
-            $this->relatedEmbeddingsQuery($entry, $options)->get()
-        );
     }
 
     public function generateEmbeddingsForAllEntries(int $chunkSize = 100): void

@@ -10,9 +10,7 @@ use Statamic\SeoPro\TextProcessing\Vectors\Vector;
 
 interface EntryEmbeddingsRepository
 {
-    public function getRelatedEmbeddingsForEntryLazy(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator;
-
-    public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options): Collection;
+    public function getRelatedEmbeddingsForEntry(Entry $entry, ResolverOptions $options, int $chunkSize = 100): Generator;
 
     public function generateEmbeddingsForEntry(Entry $entry): void;
 

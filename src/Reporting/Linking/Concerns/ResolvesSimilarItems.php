@@ -57,7 +57,7 @@ trait ResolvesSimilarItems
         $tmpMapping = [];
 
         /** @var Vector $vector */
-        foreach ($this->embeddingsRepository->getRelatedEmbeddingsForEntryLazy($entry, $options) as $vector) {
+        foreach ($this->embeddingsRepository->getRelatedEmbeddingsForEntry($entry, $options) as $vector) {
             if ($vector->id() === $entryId) {
                 continue;
             }
