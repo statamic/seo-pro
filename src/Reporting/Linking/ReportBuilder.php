@@ -22,6 +22,7 @@ class ReportBuilder
     private ?EntryLink $lastLinks = null;
 
     private ?SiteConfig $siteConfig = null;
+    protected $user;
 
     public function __construct(
         protected readonly ConfigurationRepository $configurationRepository,
@@ -29,6 +30,13 @@ class ReportBuilder
         protected readonly EntryEmbeddingsRepository $embeddingsRepository,
         protected readonly KeywordsRepository $keywordsRepository,
     ) {}
+
+    public function forUser($user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
 
     protected function fillBaseReportData(Entry $entry, BaseLinkReport $report): void
     {
@@ -106,7 +114,8 @@ class ReportBuilder
 
         $this->fillBaseReportData($entry, $report);
 
-        return $report;
+        return $report
+            ->forUser($this->user);
     }
 
     public function getExternalLinks(Entry $entry): ExternalLinksReport

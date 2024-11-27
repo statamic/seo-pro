@@ -187,11 +187,11 @@ class LinksController extends CpController
     {
         if (request()->ajax()) {
             return $this->reportBuilder
+                ->forUser(User::current())
                 ->getRelatedContentReport(
                     Entry::findOrFail($entryId),
                     config('statamic.seo-pro.linking.suggestions.related_entry_limit', 20),
                 )
-                ->forUser(User::current())
                 ->getRelated();
         }
 
