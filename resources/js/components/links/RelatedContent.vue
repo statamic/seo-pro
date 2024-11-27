@@ -34,8 +34,8 @@
                         </template>
                         <template slot="actions" slot-scope="{ row: item }">
                             <dropdown-list>
-                                <dropdown-item text="Edit Entry" :redirect="item.entry.edit_url"></dropdown-item>
-                                <div class="divider"></div>
+                                <dropdown-item v-if="item.can_edit_entry" text="Edit Entry" :redirect="item.entry.edit_url"></dropdown-item>
+                                <div v-if="item.can_edit_entry" class="divider"></div>
                                 <dropdown-item text="Not Related" class="warning" @click="ignoringSuggestion = makeSuggestion(item)" />
                             </dropdown-list>
                         </template>
