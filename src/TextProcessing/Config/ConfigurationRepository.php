@@ -107,7 +107,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             $handle,
             $name,
             $config->ignored_phrases,
-            $config->keyword_threshold * 100,
+            intval($config->keyword_threshold * 100),
             $config->min_internal_links,
             $config->max_internal_links,
             $config->min_external_links,
@@ -122,11 +122,11 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             $handle,
             $name,
             [],
-            config('statamic.seo-pro.linking.keyword_threshold', 65),
-            config('statamic.seo-pro.linking.internal_links.min_desired', 3),
-            config('statamic.seo-pro.linking.internal_links.max_desired', 6),
-            config('statamic.seo-pro.linking.external_links.min_desired', 0),
-            config('statamic.seo-pro.linking.external_links.max_desired', 0),
+            intval(config('statamic.seo-pro.linking.keyword_threshold', 65)),
+            intval(config('statamic.seo-pro.linking.internal_links.min_desired', 3)),
+            intval(config('statamic.seo-pro.linking.internal_links.max_desired', 6)),
+            intval(config('statamic.seo-pro.linking.external_links.min_desired', 0)),
+            intval(config('statamic.seo-pro.linking.external_links.max_desired', 0)),
             config('statamic.seo-pro.linking.prevent_circular_links', false)
         );
     }
