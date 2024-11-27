@@ -13,6 +13,40 @@ class LinkBlueprint
                 'filters' => [
                     'fields' => [
                         [
+                            'handle' => 'cached_title',
+                            'field' => [
+                                'display' => 'Title',
+                                'type' => 'text',
+                            ],
+                        ],
+                        [
+                            'handle' => 'cached_uri',
+                            'field' => [
+                                'display' => 'URI',
+                                'type' => 'text',
+                            ],
+                        ],
+                        [
+                            'handle' => 'site',
+                            'field' => [
+                                'display' => 'Site',
+                                'type' => 'sites',
+                                'config' => [
+                                    'max_items' => 1,
+                                ],
+                            ],
+                        ],
+                        [
+                            'handle' => 'collection',
+                            'field' => [
+                                'display' => 'Collection',
+                                'type' => 'collections',
+                                'config' => [
+                                    'max_items' => 1,
+                                ],
+                            ],
+                        ],
+                        [
                             'handle' => 'internal_link_count',
                             'field' => [
                                 'display' => 'Internal Link Count',

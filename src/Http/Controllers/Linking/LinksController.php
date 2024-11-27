@@ -11,6 +11,7 @@ use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\Blueprints\EntryConfigBlueprint;
+use Statamic\SeoPro\Blueprints\LinkBlueprint;
 use Statamic\SeoPro\Content\ContentMapper;
 use Statamic\SeoPro\Content\LinkReplacement;
 use Statamic\SeoPro\Content\LinkReplacer;
@@ -129,6 +130,7 @@ class LinksController extends CpController
         $links = (new EntryLinksIndexQuery($query))->paginate(request('perPage'));
 
         return (new EntryLinks($links))
+            ->blueprint(LinkBlueprint::make())
             ->additional(['meta' => [
                 'activeFilterBadges' => $activeFilterBadges,
             ]]);

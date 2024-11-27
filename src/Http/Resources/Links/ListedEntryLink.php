@@ -3,12 +3,21 @@
 namespace Statamic\SeoPro\Http\Resources\Links;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Statamic\Fields\Blueprint;
 
 class ListedEntryLink extends JsonResource
 {
+    protected $blueprint;
     protected $columns;
 
-    public function columns($columns)
+    public function blueprint(Blueprint $blueprint): static
+    {
+        $this->blueprint = $blueprint;
+
+        return $this;
+    }
+
+    public function columns($columns): static
     {
         $this->columns = $columns;
 
@@ -19,16 +28,28 @@ class ListedEntryLink extends JsonResource
     {
         $link = $this->resource;
 
+        $values = $this->columns->mapWithKeys(function ($column) {
+            $key = $column->field;
+            $field = $this->blueprint->field($key);
+            $value = $this->resource->{$key};
+
+            if (! $field) {
+                return [$key => $value];
+            }
+
+            $value = $field
+                ->setValue($value)
+                ->setParent($this->resource)
+                ->preProcessIndex()
+                ->value();
+
+            return [$key => $value];
+        });
+
         return [
             'id' => $link->id,
             'entry_id' => $link->entry_id,
-            'title' => $link->cached_title,
-            'uri' => $link->cached_uri,
-            'site' => $link->site,
-            'collection' => $link->collection,
-            'internal_link_count' => $link->internal_link_count,
-            'external_link_count' => $link->external_link_count,
-            'inbound_internal_link_count' => $link->inbound_internal_link_count,
+            $this->merge($values),
         ];
     }
 }

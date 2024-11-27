@@ -68,14 +68,14 @@
                         :sortable="true"
                         @sorted="sorted"
                     >
-                        <template slot="cell-title" slot-scope="{ row: entry }">
+                        <template slot="cell-cached_title" slot-scope="{ row: entry }">
                             <a class="title-index-field inline-flex items-center" :href="makeSuggestionsUrl(entry.entry_id)" @click.stop>
-                                <span v-text="entry.title" />
+                                <span v-text="entry.cached_title" />
                             </a>
                         </template>
-                        <template slot="cell-uri" slot-scope="{ row: entry }">
+                        <template slot="cell-cached_uri" slot-scope="{ row: entry }">
                             <a class="title-index-field inline-flex items-center" :href="makeSuggestionsUrl(entry.entry_id)" @click.stop>
-                                <span v-text="entry.uri" />
+                                <span v-text="entry.cached_uri" />
                             </a>
                         </template>
                         <template slot="actions" slot-scope="{ row: entry }">
