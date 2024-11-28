@@ -142,6 +142,7 @@ class ReportBuilder
     public function getInboundInternalLinks(Entry $entry): InternalLinksReport
     {
         $report = new InternalLinksReport;
+        $report->forUser($this->user);
         $this->fillBaseReportData($entry, $report);
 
         if (! $this->lastLinks) {

@@ -24,9 +24,10 @@
                         :sortable="true"
                     >
                         <template slot="cell-entry.title" slot-scope="{ row: item }">
-                            <a class="title-index-field inline-flex items-center" :href="item.entry.edit_url" @click.stop>
+                            <a v-if="item.can_edit_entry" class="title-index-field inline-flex items-center" :href="item.entry.edit_url" @click.stop>
                                 <span>{{ item.entry.title ?? item.entry.uri }}</span>
                             </a>
+                            <span v-else>{{ item.entry.title ?? item.entry.uri }}</span>
                         </template>
                     </data-list-table>
                 </div>

@@ -240,7 +240,11 @@ class LinksController extends CpController
         $this->assertCanAccessEntry($entry);
 
         if (request()->ajax()) {
-            return $this->reportBuilder->getInboundInternalLinks($entry)->getLinks();
+            return $this
+                ->reportBuilder
+                ->forUser(User::current())
+                ->getInboundInternalLinks($entry)
+                ->getLinks();
         }
 
         return $this->makeDashboardResponse($entryId, 'inbound', 'Inbound Internal Links');
