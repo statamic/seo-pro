@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Entry as EntryApi;
+use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Reporting\Linking\Concerns\ResolvesSimilarItems;
@@ -86,6 +87,8 @@ class ReportBuilder
         $resolverOptions = new ResolverOptions(
             keywordThreshold: $siteConfig->keywordThreshold / 100,
             preventCircularLinks: $siteConfig->preventCircularLinks,
+            limitCollections: UserAccess::getCollectionsForCurrentUser()->all(),
+            limitSites: UserAccess::getSitesForCurrentUser()->all(),
         );
 
         $suggestions = $this->suggestionEngine
@@ -108,7 +111,11 @@ class ReportBuilder
                 $entry,
                 $relatedEntryLimit,
                 $relatedEntryLimit,
-                new ResolverOptions(keywordThreshold: -1)
+                new ResolverOptions(
+                    keywordThreshold: -1,
+                    limitCollections: UserAccess::getCollectionsForCurrentUser()->all(),
+                    limitSites: UserAccess::getSitesForCurrentUser()->all(),
+                )
             )->all()
         );
 

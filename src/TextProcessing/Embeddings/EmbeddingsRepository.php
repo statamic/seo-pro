@@ -64,12 +64,39 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
             ->whereNotIn('entry_id', $ignoredEntries)
             ->whereNotIn('collection', $disabledCollections);
 
-        if (! $collectionConfig->allowLinkingAcrossSites) {
-            $query->where('site', $site);
+        $limitCollections = null;
+        $limitSites = null;
+
+        if ($options->limitCollections) {
+            $limitCollections = array_diff($options->limitCollections, $disabledCollections);
+        }
+
+        if ($options->limitSites) {
+            $limitSites = $options->limitSites;
         }
 
         if (! $collectionConfig->allowLinkingToAllCollections) {
-            $query->whereIn('collection', $collectionConfig->linkableCollections);
+            if ($limitCollections) {
+                $limitCollections = array_intersect($limitCollections, $collectionConfig->linkableCollections);
+            } else {
+                $limitCollections = $collectionConfig->linkableCollections;
+            }
+        }
+
+        if (! $collectionConfig->allowLinkingAcrossSites) {
+            if ($limitSites === null) {
+                $limitSites[] = $site;
+            } else {
+                $limitSites = array_intersect($limitSites, [$site]);
+            }
+        }
+
+        if ($limitCollections !== null) {
+            $query->whereIn('collection', $limitCollections);
+        }
+
+        if ($limitSites != null) {
+            $query->whereIn('site', $limitSites);
         }
 
         return $query;

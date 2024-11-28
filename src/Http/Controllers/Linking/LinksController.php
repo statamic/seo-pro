@@ -332,17 +332,9 @@ class LinksController extends CpController
             ->map(fn (CollectionConfig $config) => $config->handle)
             ->all();
 
-        $sites = Site::all()
-            ->filter(function ($site) {
-                return User::current()->can('view', $site);
-            })
-            ->map(fn ($site) => $site->handle())
-            ->values()
-            ->all();
-
         return [
             'collections' => $collections,
-            'sites' => $sites,
+            'sites' => UserAccess::getSitesForCurrentUser()->all(),
         ];
     }
 }
