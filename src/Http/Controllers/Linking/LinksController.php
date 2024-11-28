@@ -50,6 +50,12 @@ class LinksController extends CpController
         parent::__construct($request);
     }
 
+    protected function assertCanAccessEntry($entry): void
+    {
+        abort_if($entry == null, 404);
+        abort_unless(User::current()->can('view', $entry), 403);
+    }
+
     protected function mergeEntryConfigBlueprint(array $target = []): array
     {
         return $this->mergeBlueprintIntoContext(
@@ -65,8 +71,7 @@ class LinksController extends CpController
     protected function makeDashboardResponse(string $entryId, string $tab, string $title)
     {
         $entry = Entry::find($entryId);
-        abort_unless($entry, 404);
-        abort_unless(User::current()->can('view', $entry), 403);
+        $this->assertCanAccessEntry($entry);
 
         return view('seo-pro::linking.dashboard', $this->mergeEntryConfigBlueprint([
             'report' => $this->reportBuilder->getBaseReport(Entry::findOrFail($entryId)),
@@ -104,7 +109,7 @@ class LinksController extends CpController
 
     public function resetEntrySuggestions(string $link)
     {
-        /** @var \Statamic\SeoPro\Models\EntryLink $entryLink */
+        /** @var EntryLinksModel $entryLink */
         $entryLink = EntryLink::where('entry_id', $link)->firstOrFail();
 
         $entryLink->ignored_entries = [];
@@ -162,10 +167,13 @@ class LinksController extends CpController
 
     public function getSuggestions($entryId)
     {
+        $entry = Entry::find($entryId);
+        $this->assertCanAccessEntry($entry);
+
         if (request()->ajax()) {
             return $this->reportBuilder
                 ->getSuggestionsReport(
-                    Entry::findOrFail($entryId),
+                    $entry,
                     config('statamic.seo-pro.linking.suggestions.result_limit', 10),
                     config('statamic.seo-pro.linking.suggestions.related_entry_limit', 20),
                 )->suggestions();
@@ -176,7 +184,8 @@ class LinksController extends CpController
 
     public function getLinkFieldDetails($entryId, $fieldPath)
     {
-        $entry = Entry::findOrFail($entryId);
+        $entry = Entry::find($entryId);
+        $this->assertCanAccessEntry($entry);
 
         return [
             'field_names' => $this->contentMapper->getFieldNames($fieldPath),
@@ -185,11 +194,14 @@ class LinksController extends CpController
 
     public function getRelatedContent($entryId)
     {
+        $entry = Entry::find($entryId);
+        $this->assertCanAccessEntry($entry);
+
         if (request()->ajax()) {
             return $this->reportBuilder
                 ->forUser(User::current())
                 ->getRelatedContentReport(
-                    Entry::findOrFail($entryId),
+                    $entry,
                     config('statamic.seo-pro.linking.suggestions.related_entry_limit', 20),
                 )
                 ->getRelated();
@@ -200,8 +212,11 @@ class LinksController extends CpController
 
     public function getInternalLinks($entryId)
     {
+        $entry = Entry::find($entryId);
+        $this->assertCanAccessEntry($entry);
+
         if (request()->ajax()) {
-            return $this->reportBuilder->getInternalLinks(Entry::findOrFail($entryId))->getLinks();
+            return $this->reportBuilder->getInternalLinks($entry)->getLinks();
         }
 
         return $this->makeDashboardResponse($entryId, 'internal', 'Internal Links');
@@ -209,8 +224,11 @@ class LinksController extends CpController
 
     public function getExternalLinks($entryId)
     {
+        $entry = Entry::find($entryId);
+        $this->assertCanAccessEntry($entry);
+
         if (request()->ajax()) {
-            return $this->reportBuilder->getExternalLinks(Entry::findOrFail($entryId))->getLinks();
+            return $this->reportBuilder->getExternalLinks($entry)->getLinks();
         }
 
         return $this->makeDashboardResponse($entryId, 'external', 'External Links');
@@ -218,8 +236,11 @@ class LinksController extends CpController
 
     public function getInboundInternalLinks($entryId)
     {
+        $entry = Entry::find($entryId);
+        $this->assertCanAccessEntry($entry);
+
         if (request()->ajax()) {
-            return $this->reportBuilder->getInboundInternalLinks(Entry::findOrFail($entryId))->getLinks();
+            return $this->reportBuilder->getInboundInternalLinks($entry)->getLinks();
         }
 
         return $this->makeDashboardResponse($entryId, 'inbound', 'Inbound Internal Links');
@@ -228,10 +249,7 @@ class LinksController extends CpController
     public function getSections($entryId)
     {
         $entry = Entry::find($entryId);
-
-        if (! $entry) {
-            return [];
-        }
+        $this->assertCanAccessEntry($entry);
 
         return $this->contentRetriever->getSections($entry);
     }
@@ -249,6 +267,10 @@ class LinksController extends CpController
     public function checkLinkReplacement(InsertLinkRequest $request)
     {
         $entry = Entry::findOrFail(request('entry'));
+
+        if (! User::current()->can('edit', $entry)) {
+            abort(403);
+        }
 
         return [
             'can_replace' => $this->linkReplacer->canReplace(
@@ -274,6 +296,10 @@ class LinksController extends CpController
     public function insertLink(InsertLinkRequest $request)
     {
         $entry = Entry::findOrFail(request('entry'));
+
+        if (! User::current()->can('edit', $entry)) {
+            abort(403);
+        }
 
         if ($request->get('auto_link', false) === true && request('auto_link_entry')) {
             $autoLinkEntry = Entry::find(request('auto_link_entry'));
