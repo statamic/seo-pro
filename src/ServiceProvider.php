@@ -263,7 +263,10 @@ class ServiceProvider extends AddonServiceProvider
             })->label(__('seo-pro::messages.view_reports'));
             Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
             Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
-            Permission::register('view seo links')->label('Manage Links');
+
+            if ($this->isLinkingEnabled()) {
+                Permission::register('view seo links')->label('Manage Links');
+            }
         });
 
         return $this;
