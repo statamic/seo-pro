@@ -2,54 +2,15 @@
 
 namespace Statamic\SeoPro\Http\Resources\Links;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Statamic\Fields\Blueprint;
+use Statamic\SeoPro\Http\Resources\ListedResource;
 
-class ListedEntryLink extends JsonResource
+class ListedEntryLink extends ListedResource
 {
-    protected $blueprint;
-    protected $columns;
-
-    public function blueprint(Blueprint $blueprint): static
+    public function values($request): array
     {
-        $this->blueprint = $blueprint;
-
-        return $this;
-    }
-
-    public function columns($columns): static
-    {
-        $this->columns = $columns;
-
-        return $this;
-    }
-
-    public function toArray($request)
-    {
-        $link = $this->resource;
-
-        $values = $this->columns->mapWithKeys(function ($column) {
-            $key = $column->field;
-            $field = $this->blueprint->field($key);
-            $value = $this->resource->{$key};
-
-            if (! $field) {
-                return [$key => $value];
-            }
-
-            $value = $field
-                ->setValue($value)
-                ->setParent($this->resource)
-                ->preProcessIndex()
-                ->value();
-
-            return [$key => $value];
-        });
-
         return [
-            'id' => $link->id,
-            'entry_id' => $link->entry_id,
-            $this->merge($values),
+            'id' => $this->resource->id,
+            'entry_id' => $this->resource->entry_id,
         ];
     }
 }
