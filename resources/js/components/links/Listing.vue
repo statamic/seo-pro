@@ -78,26 +78,6 @@
                                 <span v-text="entry.cached_uri" />
                             </a>
                         </template>
-                        <template slot="actions" slot-scope="{ row: entry }">
-                            <dropdown-list
-                                v-if="canEditEntry"
-                            >
-                                <dropdown-item v-text="'Edit Entry Linking Settings'" @click="editingEntryConfig = entry.entry_id" />
-                                <div class="divider"></div>
-                                <dropdown-item
-                                    :text="'Reset Entry Suggestions'"
-                                    class="warning"
-                                    @click="$refs[`link_settings_resetter${entry.entry_id}`].confirm()"
-                                >
-                                    <config-resetter
-                                        :ref="`link_settings_resetter${entry.entry_id}`"
-                                        :resource="makeEntrySettingsResource(entry)"
-                                        :reload="true"
-                                        mode="suggestions"
-                                    ></config-resetter>
-                                </dropdown-item>
-                            </dropdown-list>
-                        </template>
                     </data-list-table>
                 </div>
                 <data-list-pagination
@@ -110,31 +90,12 @@
                 />
             </div>
         </data-list>
-
-        <stack
-            v-if="editingEntryConfig != null"
-            name="seopro__entry-config-editor"
-            @closed="editingEntryConfig = null"
-            narrow
-        >
-            <entry-config
-                @closed="editingEntryConfig = null"
-                @saved="handleEntryConfigSaved"
-                :blueprint="blueprint"
-                :fields="fields"
-                :meta="meta"
-                :values="values"
-                :entry="editingEntryConfig"
-            ></entry-config>
-        </stack>
     </div>
 </template>
 
 <script>
 import Listing from '../../../../vendor/statamic/cms/resources/js/components/Listing.vue';
-import EntryConfigEditor from './config/EntryConfigEditor.vue';
 import FakesResources from './FakesResources.vue';
-import ConfigResetter from './config/ConfigResetter.vue';
 import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
 
 export default  {
@@ -146,13 +107,7 @@ export default  {
         'fields',
         'meta',
         'values',
-        'canEditEntry',
     ],
-
-    components: {
-        'entry-config': EntryConfigEditor,
-        'config-resetter': ConfigResetter,
-    },
 
     data() {
         return {
