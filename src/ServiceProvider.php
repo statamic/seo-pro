@@ -67,7 +67,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
             ->bootAddonGraphQL()
-            ->bootTextAnalysis()
+            ->bootLinkingManager()
             ->bootEvents();
     }
 
@@ -101,7 +101,7 @@ class ServiceProvider extends AddonServiceProvider
         return parent::bootEvents();
     }
 
-    protected function bootTextAnalysis()
+    protected function bootLinkingManager()
     {
         if (! $this->isLinkingEnabled()) {
             return $this;
