@@ -117,16 +117,8 @@ export default  {
             currentSite: this.site,
             initialSite: this.site,
             pushQuery: true,
-            editingEntryConfig: null,
         }
     },
 
-    methods: {
-
-        handleEntryConfigSaved() {
-            this.editingEntryConfig = null;
-        },
-
-    },
 }
 </script>
