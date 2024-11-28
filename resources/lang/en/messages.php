@@ -76,6 +76,10 @@ return [
     'link_manager' => 'Link Manager',
     'link_manager_description' => 'View internal entry link suggestions and related link statistics.',
 
+    'manage_links' => 'Manage Links',
+    'edit_link_collections' => 'Edit Link Collections',
+    'edit_link_sites' => 'Edit Link Sites',
+
     'internal_link_count' => 'Internal Link Count',
     'external_link_count' => 'External Link Count',
     'inbound_internal_link_count' => 'Inbound Internal Link Count',

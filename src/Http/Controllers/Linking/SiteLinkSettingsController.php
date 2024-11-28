@@ -3,7 +3,9 @@
 namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Http\Request;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
+use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Blueprints\SiteConfigBlueprint;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
@@ -23,6 +25,8 @@ class SiteLinkSettingsController extends CpController
 
     public function index()
     {
+        abort_unless(User::current()->can('edit link site'), 403);
+
         if (request()->ajax()) {
             return $this->configurationRepository->getSites()->map(fn (SiteConfig $config) => $config->toArray());
         }
@@ -33,9 +37,16 @@ class SiteLinkSettingsController extends CpController
         ));
     }
 
+    protected function assertHasAccessToSite($siteHandle)
+    {
+        abort_unless(User::current()->can('edit link sites'), 403);
+        abort_unless($siteHandle != null, 404);
+        abort_unless(UserAccess::getSitesForCurrentUser()->contains($siteHandle), 403);
+    }
+
     public function update(UpdateSiteConfigRequest $request, $site)
     {
-        abort_unless($site, 404);
+        $this->assertHasAccessToSite($site?->handle());
 
         $this->configurationRepository->updateSiteConfiguration(
             $site->handle(),
@@ -55,7 +66,7 @@ class SiteLinkSettingsController extends CpController
 
     public function resetConfig($site)
     {
-        abort_unless($site, 404);
+        $this->assertHasAccessToSite($site);
 
         $this->configurationRepository->resetSiteConfiguration($site);
     }

@@ -88,6 +88,8 @@ class LinksController extends CpController
         return view('seo-pro::linking.index', $this->mergeEntryConfigBlueprint([
             'site' => $site->handle(),
             'filters' => Scope::filters('seo_pro.links', $this->makeFiltersContext()),
+            'can_edit_link_sites' => User::current()->can('edit link sites'),
+            'can_edit_link_collections' => User::current()->can('edit link collections'),
         ]));
     }
 

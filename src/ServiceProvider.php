@@ -265,7 +265,12 @@ class ServiceProvider extends AddonServiceProvider
             Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
 
             if ($this->isLinkingEnabled()) {
-                Permission::register('view seo links')->label('Manage Links');
+                Permission::register('view seo links', function ($permission) {
+                    $permission->children([
+                        Permission::make('edit link collections')->label(__('seo-pro::messages.edit_link_collections')),
+                        Permission::make('edit link sites')->label(__('seo-pro::messages.edit_link_sites')),
+                    ]);
+                })->label(__('seo-pro::messages.manage_links'));
             }
         });
 
@@ -274,7 +279,6 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonNav()
     {
-
         Nav::extend(function ($nav) {
             if ($this->userHasSeoPermissions()) {
                 $nav->tools('SEO Pro')

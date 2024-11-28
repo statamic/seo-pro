@@ -10,5 +10,7 @@
 	:fields='@json($fields)'
 	:meta='@json($meta)'
 	:values='@json($values)'
+	:can-edit-link-collections="@json($can_edit_link_collections)"
+	:can-edit-link-sites="@json($can_edit_link_sites)"
 ></seo-pro-link-listing>
 @stop

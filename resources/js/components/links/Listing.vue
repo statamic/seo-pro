@@ -5,9 +5,9 @@
                 <h1 class="flex-1">{{ __('seo-pro::messages.link_manager') }}</h1>
 
                 <dropdown-list>
-                    <dropdown-item v-text="'Collection Linking Behavior'" :redirect="cp_url('seo-pro/links/config/collections')" />
+                    <dropdown-item v-if="canEditLinkCollections" v-text="'Collection Linking Behavior'" :redirect="cp_url('seo-pro/links/config/collections')" />
                     <dropdown-item v-text="'Global Automatic Links'" :redirect="cp_url('seo-pro/links/automatic')" />
-                    <dropdown-item v-text="'Site Link Settings'" :redirect="cp_url('seo-pro/links/config/sites')" />
+                    <dropdown-item v-if="canEditLinkSites" v-text="'Site Link Settings'" :redirect="cp_url('seo-pro/links/config/sites')" />
                 </dropdown-list>
             </div>
         </header>
@@ -107,6 +107,8 @@ export default  {
         'fields',
         'meta',
         'values',
+        'canEditLinkCollections',
+        'canEditLinkSites'
     ],
 
     data() {
