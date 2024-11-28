@@ -13,7 +13,7 @@ use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\SeoPro;
 use Statamic\Structures\Page;
 
-readonly class ContentRetriever implements ContentRetrieverContract
+class ContentRetriever implements ContentRetrieverContract
 {
     public function __construct(
         protected ContentMapper $mapper,
