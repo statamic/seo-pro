@@ -160,7 +160,7 @@ export default  {
             this.activeLink = null;
             this.dataMode = 'new';
             this.managingLink = true;
-        }
+        },
 
     },
 
