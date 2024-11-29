@@ -50,18 +50,18 @@ export default {
 
         modalTitle() {
             if (this.mode === 'suggestions') {
-                return __('Reset :resource Suggestions', {resource: __(this.title)});
+                return __('seo-pro::messages.reset_resource_suggestions', {resource: __(this.title)});
             }
 
-            return __('Reset :resource Configuration', {resource: __(this.title)});
+            return __('seo-pro::messages.reset_resource_configuration', {resource: __(this.title)});
         },
 
         modalBody() {
             if (this.mode === 'suggestions') {
-                return __('Are you sure you want to reset the suggestions?');
+                return __('seo-pro::messages.reset_resource_suggestions_confirm');
             }
 
-            return __('Are you sure you want to reset the configuration?');
+            return __('seo-pro::messages.reset_resource_configuration_confirm');
         },
 
         resetUrl() {
@@ -102,7 +102,7 @@ export default {
                 return;
             }
 
-            this.$toast.success(__('Configuration Reset'));
+            this.$toast.success(__('seo-pro::messages.configuration_reset'));
             this.$emit('reset');
         },
 

@@ -1,9 +1,7 @@
 <template>
     <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-scroll">
         <header class="flex items-center sticky top-0 inset-x-0 bg-white dark:bg-dark-550 shadow dark:shadow-dark px-8 py-2 z-1 h-13">
-            <h1 class="flex-1 flex items-center text-xl">
-                Entry Settings
-            </h1>
+            <h1 class="flex-1 flex items-center text-xl">{{ __('seo-pro::messages.entry_settings') }}</h1>
 
             <button
                 type="button"

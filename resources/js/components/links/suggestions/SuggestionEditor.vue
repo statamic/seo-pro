@@ -1,9 +1,7 @@
 <template>
 <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-scroll">
     <header class="flex items-center sticky top-0 inset-x-0 bg-white dark:bg-dark-550 shadow dark:shadow-dark px-8 py-2 z-1 h-13">
-        <h1 class="flex-1 flex items-center text-xl">
-            Link Suggestion
-        </h1>
+        <h1 class="flex-1 flex items-center text-xl">{{ __('seo-pro::messages.link_suggestion') }}</h1>
 
         <button
             type="button"
@@ -19,7 +17,7 @@
                 <div class="form-group publish-field blueprint-section-field-w-1/2" v-if="fieldConfig">
                     <div class="field-inner">
                         <label class="publish-field-label">
-                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">Field to Update</span>
+                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">{{ __('seo-pro::messages.field_to_update') }}</span>
                         </label>
                     </div>
 
@@ -29,7 +27,7 @@
                 <div class="form-group publish-field link-fieldtype w-full">
                     <div class="field-inner">
                         <label class="publish-field-label">
-                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">Link Target</span>
+                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">{{ __('seo-pro::messages.link_target') }}</span>
                             <i class="required rtl:ml-1 ltr:mr-1">*</i>
                         </label>
                     </div>
@@ -45,7 +43,7 @@
                 <div class="form-group publish-field" v-if="sections.length > 0">
                     <div class="field-inner">
                         <label class="publish-field-label">
-                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">Page Section</span>
+                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">{{ __('seo-pro::messages.page_section') }}</span>
                         </label>
                     </div>
 
@@ -53,14 +51,14 @@
                         :options="this.sections"
                         :value="section"
                         @input="updateSection"
-                        placeholder="Select a section"
+                        :placeholder="__('seo-pro::messages.select_a_section')"
                     ></select-input>
                 </div>
 
                 <div class="form-group publish-field w-full">
                     <div class="field-inner">
                         <label class="publish-field-label">
-                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">Link Text</span>
+                            <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">{{ __('seo-pro::messages.link_text') }}</span>
                             <i class="required rtl:ml-1 ltr:mr-1">*</i>
                         </label>
                     </div>
@@ -82,13 +80,13 @@
                     <div class="field-inner">
                         <label class="publish-field-label">
                             <input type="checkbox" v-model="doAutoLink" />
-                            <span class="rtl:mr-1 ltr:ml-1 v-popper--has-tooltip"> Save as Automatic Link</span>
+                            <span class="rtl:mr-1 ltr:ml-1 v-popper--has-tooltip"> {{ __('seo-pro::messages.save_as_automatic_link') }}</span>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-group publish-field w-full" v-if="hasLinkData && !checkingLink && canInsertLink === false">
-                    <p class="p-3">SEO Pro is unable to automatically insert this link. Would you like to <a :href="editUrl" class="text-blue cursor-pointer font-bold">edit the entry instead</a>?</p>
+                    <p class="p-3">{{ __('seo-pro::messages.suggestion_unable_to_save') }} <a :href="editUrl" class="text-blue cursor-pointer font-bold">{{ __('seo-pro::messages.suggestion_edit_entry_instead') }}</a></p>
                 </div>
             </div>
         </div>

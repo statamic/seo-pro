@@ -44,10 +44,13 @@
                         >
                             <template slot="actions" slot-scope="{ row: site }">
                                 <dropdown-list>
-                                    <dropdown-item v-text="'Edit Linking Behavior'" @click="editingSite = site" />
+                                    <dropdown-item
+                                        v-text="__('seo-pro::messages.edit_site_linking_behavior')"
+                                        @click="editingSite = site"
+                                    />
                                     <div class="divider"></div>
                                     <dropdown-item
-                                        :text="'Reset Site Settings'"
+                                        :text="__('seo-pro::messages.reset_site_settings')"
                                         class="warning"
                                         @click="$refs[`site_settings_resetter${site.handle}`].confirm()"
                                     >

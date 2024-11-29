@@ -88,13 +88,49 @@ return [
     'external_link_count' => 'External Link Count',
     'inbound_internal_link_count' => 'Inbound Internal Link Count',
 
+    'page_section' => 'Page Section',
     'link_text' => 'Link Text',
     'link_target' => 'Link Target',
     'is_active_link' => 'Active Link',
+    'field_to_update' => 'Field to Update',
+    'select_a_section' => 'Select a section',
+    'save_as_automatic_link' => 'Save as Global Automatic Link',
 
+    'reset_site_settings' => 'Reset Site Settings',
+    'reset_resource_suggestions' => 'Reset :resource Suggestions',
+    'reset_resource_configuration' => 'Reset :resource Configuration',
+    'reset_resource_suggestions_confirm' => 'Are you sure you want to reset the suggestions?',
+    'reset_resource_configuration_confirm' => 'Are you sure you want to reset the configuration?',
+    'configuration_reset' => 'Configuration Reset',
+
+    'suggestion_unable_to_save' => 'SEO Pro is unable to automatically insert this link.',
+    'suggestion_edit_entry_instead' => 'Edit the entry instead?',
+
+    'entry_settings' => 'Entry Settings',
     'link_suggestions' => 'Link Suggestions',
+    'link_suggestion' => 'Link Suggestion',
     'related_content' => 'Related Content',
     'internal_links' => 'Internal Links',
     'external_links' => 'External Links',
     'inbound_internal_links' => 'Inbound Internal Links',
+
+    'ignore_scope' => 'Scope',
+    'do_not_suggest_entry' => 'Do not suggest this entry as related:',
+
+    'scope_this_entry' => 'This entry',
+    'scope_all_entries' => 'All entries in this site',
+    'ignore_action' => 'Action',
+    'action_ignore_entry' => 'Do not suggest this entry',
+    'action_ignore_phrase' => 'Do not suggest this phrase',
+
+    'ignore_suggestion' => 'Ignore Suggestion',
+    'ignore_related_content' => 'Ignore Related Content',
+    'ignore_entry' => 'Ignore Entry',
+
+    'suggestion_saved' => 'Suggestion Saved',
+
+    'reset_collection_settings' => 'Reset Collection Settings',
+    'edit_collection_linking_behavior' => 'Edit Linking Behavior',
+    'edit_site_linking_behavior' => 'Edit Linking Behavior',
+
 ];

@@ -11,7 +11,7 @@
                         <div class="form-group publish-field w-full" v-if="mode === 'suggestion'">
                             <div class="field-inner">
                                 <label class="publish-field-label">
-                                    <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">Action</span>
+                                    <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">{{ __('seo-pro::messages.ignore_action') }}</span>
                                 </label>
                             </div>
 
@@ -24,13 +24,13 @@
                         </div>
 
                         <div class="form-group publish-field w-full" v-if="mode === 'related'">
-                            <p>Do not suggest this entry as related:</p>
+                            <p>{{ __('seo-pro::messages.do_not_suggest_entry') }}</p>
                         </div>
 
                         <div class="form-group publish-field w-full">
                             <div class="field-inner">
                                 <label class="publish-field-label">
-                                    <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">Scope</span>
+                                    <span class="rtl:ml-1 ltr:mr-1 v-popper--has-tooltip">{{ __('seo-pro::messages.ignore_scope') }}</span>
                                 </label>
                             </div>
 
@@ -75,21 +75,21 @@ export default {
             scopes: [
                 {
                     value: 'entry',
-                    label: 'This entry',
+                    label: __('seo-pro::messages.scope_this_entry'),
                 },
                 {
                     value: 'all_entries',
-                    label: 'All entries in this site',
+                    label: __('seo-pro::messages.scope_all_entries'),
                 },
             ],
             actions: [
                 {
                     value: 'ignore_entry',
-                    label: 'Do not suggest this entry',
+                    label: __('seo-pro::messages.action_ignore_entry'),
                 },
                 {
                     value: 'ignore_phrase',
-                    label: 'Do not suggest this phrase',
+                    label: __('seo-pro::messages.action_ignore_phrase'),
                 }
             ],
             action: 'ignore_entry',
@@ -101,11 +101,11 @@ export default {
     computed: {
 
         title() {
-            return this.mode === 'suggestion' ? 'Ignore Suggestion' : 'Ignore Related Content';
+            return this.mode === 'suggestion' ? __('seo-pro::messages.ignore_suggestion') : __('seo-pro::messages.ignore_related_content');
         },
 
         confirm() {
-            return this.mode === 'suggestion' ? 'Ignore Suggestion' : 'Ignore Entry';
+            return this.mode === 'suggestion' ? __('seo-pro::messages.ignore_suggestion') : __('seo-pro::messages.ignore_entry');
         },
 
     },
@@ -136,7 +136,7 @@ export default {
             };
 
             this.$axios.post(cp_url('seo-pro/links/ignored-suggestions'), payload).then(response => {
-                this.$toast.success('The suggestion has been banished forever');
+                this.$toast.success(__('seo-pro::messages.suggestion_saved'));
                 this.$emit('saved');
             }).catch(err => this.handleAxiosError(err));
         },

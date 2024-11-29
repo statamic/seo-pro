@@ -48,10 +48,13 @@
                             </template>
                             <template slot="actions" slot-scope="{ row: collection }">
                                 <dropdown-list>
-                                    <dropdown-item v-text="'Edit Linking Behavior'" @click="editingCollection = collection" />
+                                    <dropdown-item
+                                        v-text="__('seo-pro::messages.edit_collection_linking_behavior')"
+                                        @click="editingCollection = collection"
+                                    />
                                     <div class="divider"></div>
                                     <dropdown-item
-                                        :text="'Reset Collection Settings'"
+                                        :text="__('seo-pro::messages.reset_collection_settings')"
                                         class="warning"
                                         @click="$refs[`collection_settings_resetter${collection.handle}`].confirm()"
                                     >
