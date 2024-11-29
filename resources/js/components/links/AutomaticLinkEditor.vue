@@ -64,10 +64,10 @@ export default {
 
         title() {
             if (this.mode === 'new') {
-                return 'Create Link';
+                return __('seo-pro::messages.create_automatic_link');
             }
 
-            return 'Edit Link';
+            return __('seo-pro::messages.edit_automatic_link');
         },
 
         site() {

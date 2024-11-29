@@ -114,16 +114,19 @@ return [
     'external_links' => 'External Links',
     'inbound_internal_links' => 'Inbound Internal Links',
     'section_none' => '-- None --',
+    'related_keywords' => 'Related Keywords',
 
     'ignore_scope' => 'Scope',
     'do_not_suggest_entry' => 'Do not suggest this entry as related:',
 
+    'not_related' => 'Not Related',
     'scope_this_entry' => 'This entry',
     'scope_all_entries' => 'All entries in this site',
     'ignore_action' => 'Action',
     'action_ignore_entry' => 'Do not suggest this entry',
     'action_ignore_phrase' => 'Do not suggest this phrase',
 
+    'accept_suggestion' => 'Accept Suggestion',
     'ignore_suggestion' => 'Ignore Suggestion',
     'ignore_related_content' => 'Ignore Related Content',
     'ignore_entry' => 'Ignore Entry',
@@ -131,8 +134,17 @@ return [
     'suggestion_saved' => 'Suggestion saved',
     'entry_updated' => 'Entry updated',
 
+    'can_auto_apply' => 'Can Auto Apply',
+    'relevancy_score' => 'Relevancy Score',
+    'reset_entry_suggestions' => 'Reset Entry Suggestions',
     'reset_collection_settings' => 'Reset Collection Settings',
     'edit_collection_linking_behavior' => 'Edit Linking Behavior',
     'edit_site_linking_behavior' => 'Edit Linking Behavior',
+    'edit_entry_linking_settings' => 'Edit Entry Link Settings',
+
+    'create_automatic_link' => 'Create Link',
+    'edit_automatic_link' => 'Edit Link',
+
+    'external_link' => 'External Link',
 
 ];

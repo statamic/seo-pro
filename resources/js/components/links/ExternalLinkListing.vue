@@ -44,7 +44,10 @@ export default  {
     data() {
         return {
             columns: [
-                { label: 'External Link', field: 'link' },
+                {
+                    label: __('seo-pro::messages.external_link'),
+                    field: 'link'
+                },
             ],
             loading: false,
             externalLinks: [],

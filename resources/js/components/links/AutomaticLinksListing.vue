@@ -16,7 +16,7 @@
 
                 <a @click="createLink"
                     class="btn-primary cursor-pointer rtl:mr-1 ltr:ml-1"
-                >Create Link</a>
+                >{{ __('seo-pro::messages.create_automatic_link') }}</a>
             </div>
         </header>
 

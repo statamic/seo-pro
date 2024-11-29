@@ -50,8 +50,14 @@ export default  {
     data() {
         return {
             columns: [
-                { label: 'Entry', field: 'entry.title' },
-                { label: 'Link Target', field: 'uri' },
+                {
+                    label: __('Entry'),
+                    field: 'entry.title'
+                },
+                {
+                    label: __('seo-pro::messages.link_target'),
+                    field: 'uri'
+                },
             ],
             loading: false,
             inboundLinks: [],
@@ -76,6 +82,7 @@ export default  {
 
     mounted() {
         this.loadData();
-    }
+    },
+
 }
 </script>

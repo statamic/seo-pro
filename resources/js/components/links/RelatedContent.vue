@@ -34,9 +34,17 @@
                         </template>
                         <template slot="actions" slot-scope="{ row: item }">
                             <dropdown-list>
-                                <dropdown-item v-if="item.can_edit_entry" text="Edit Entry" :redirect="item.entry.edit_url"></dropdown-item>
+                                <dropdown-item
+                                    v-if="item.can_edit_entry"
+                                    :text="__('Edit Entry')"
+                                    :redirect="item.entry.edit_url"
+                                ></dropdown-item>
                                 <div v-if="item.can_edit_entry" class="divider"></div>
-                                <dropdown-item text="Not Related" class="warning" @click="ignoringSuggestion = makeSuggestion(item)" />
+                                <dropdown-item
+                                    :text="__('seo-pro::messages.not_related')"
+                                    class="warning"
+                                    @click="ignoringSuggestion = makeSuggestion(item)"
+                                />
                             </dropdown-list>
                         </template>
                     </data-list-table>
@@ -76,9 +84,18 @@ export default  {
         return {
             ignoringSuggestion: null,
             columns: [
-                { label: 'Entry', field: 'entry.title' },
-                { label: 'Score', field: 'score' },
-                { label: 'Related Keywords', field: 'related_keywords' },
+                {
+                    label: __('Entry'),
+                    field: 'entry.title'
+                },
+                {
+                    label: __('seo-pro::messages.relevancy_score'),
+                    field: 'score'
+                },
+                {
+                    label: __('seo-pro::messages.related_keywords'),
+                    field: 'related_keywords'
+                },
             ],
             loading: false,
             relatedItems: [],

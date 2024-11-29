@@ -16,10 +16,13 @@
                     class="rtl:ml-2 ltr:mr-2"
                     v-if="canEditEntry"
                 >
-                    <dropdown-item v-text="'Edit Entry Linking Settings'" @click="editingEntryConfig = report.entry.id" />
+                    <dropdown-item
+                        v-text="__('seo-pro::messages.edit_entry_linking_settings')"
+                        @click="editingEntryConfig = report.entry.id"
+                    />
                     <div class="divider"></div>
                     <dropdown-item
-                        :text="'Reset Entry Suggestions'"
+                        :text="__('seo-pro::messages.reset_entry_suggestions')"
                         class="warning"
                         @click="$refs[`link_settings_resetter${initialReport.entry.id}`].confirm()"
                     >
@@ -44,7 +47,12 @@
 
         <div class="tabs-container">
             <div class="publish-tabs tabs">
-                <a v-for="item in navItems" class="tab-button" :href="getUrl(item.url)" :class="{'active': tab === item.url}">{{ item.text }}</a>
+                <a
+                    v-for="item in navItems"
+                    class="tab-button"
+                    :href="getUrl(item.url)"
+                    :class="{'active': tab === item.url}"
+                >{{ item.text }}</a>
             </div>
         </div>
         <div class="card p-0 mt-6" v-if="report">
@@ -117,11 +125,26 @@ export default  {
             report: _.clone(this.initialReport),
             tab: this.initialTab,
             navItems: [
-                { url: 'suggestions', text: 'Suggestions' },
-                { url: 'related', text: 'Related Content' },
-                { url: 'internal', text: 'Internal Links' },
-                { url: 'external', text: 'External Links' },
-                { url: 'inbound', text: 'Inbound Internal Links' },
+                {
+                    url: 'suggestions',
+                    text: __('seo-pro::messages.link_suggestions')
+                },
+                {
+                    url: 'related',
+                    text: __('seo-pro::messages.related_content')
+                },
+                {
+                    url: 'internal',
+                    text: __('seo-pro::messages.internal_links')
+                },
+                {
+                    url: 'external',
+                    text: __('seo-pro::messages.external_links')
+                },
+                {
+                    url: 'inbound',
+                    text: __('seo-pro::messages.inbound_internal_links')
+                },
             ],
             editingEntryConfig: null,
         };

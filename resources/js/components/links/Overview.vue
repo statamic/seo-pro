@@ -5,7 +5,7 @@
                 <div class="card py-2">
                     <h2 class="text-sm text-gray-800 flex">
                         <status-icon :status="getInternalLinkStatus()"></status-icon>
-                        <span class="ml-2">Internal Links</span>
+                        <span class="ml-2">{{ __('seo-pro::messages.internal_links') }}</span>
                     </h2>
                     <div class="text-lg flex align-middle">{{ report.overview.internal_link_count }}</div>
                 </div>
@@ -14,14 +14,14 @@
                 <div class="card py-2">
                     <h2 class="text-sm text-gray-800 flex">
                         <status-icon :status="getExternalLinkStatus()"></status-icon>
-                        <span class="ml-2">External Links</span>
+                        <span class="ml-2">{{ __('seo-pro::messages.external_links') }}</span>
                     </h2>
                     <div class="text-lg">{{ report.overview.external_link_count }}</div>
                 </div>
             </div>
             <div class="w-1/3 px-4">
                 <div class="card py-2">
-                    <h2 class="text-sm text-gray-800">Inbound Internal Links</h2>
+                    <h2 class="text-sm text-gray-800">{{ __('seo-pro::messages.inbound_internal_links') }}</h2>
                     <div class="text-lg">{{ report.overview.inbound_internal_link_count }}</div>
                 </div>
             </div>

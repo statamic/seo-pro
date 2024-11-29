@@ -48,10 +48,20 @@
                             <dropdown-list
                                 v-if="canEditEntry"
                             >
-                                <dropdown-item text="Edit Entry" :redirect="editUrl"></dropdown-item>
-                                <dropdown-item text="Accept Suggestion" @click="activeSuggestion = suggestion" v-if="suggestion.context.can_replace" />
+                                <dropdown-item
+                                    :text="__('Edit Entry')"
+                                    :redirect="editUrl"
+                                ></dropdown-item>
+                                <dropdown-item
+                                    :text="__('seo-pro::messages.accept_suggestion')"
+                                    @click="activeSuggestion = suggestion"
+                                    v-if="suggestion.context.can_replace"
+                                />
                                 <div class="divider"></div>
-                                <dropdown-item text="Ignore Suggestion" @click="ignoringSuggestion = suggestion" class="warning" />
+                                <dropdown-item
+                                    :text="__('seo-pro::messages.ignore_suggestion')"
+                                    @click="ignoringSuggestion = suggestion" class="warning"
+                                />
                             </dropdown-list>
                         </template>
                     </data-list-table>
@@ -114,10 +124,22 @@ export default {
             ignoringSuggestion: null,
             activeSuggestion: null,
             columns: [
-                { label: 'Phrase', field: 'phrase' },
-                { label: 'Can Auto Apply', field: 'context.can_replace' },
-                { label: 'Rank', field: 'score' },
-                { label: 'Target URI', field: 'uri' }
+                {
+                    label: __('seo-pro::messages.link_text'),
+                    field: 'phrase'
+                },
+                {
+                    label: __('seo-pro::messages.can_auto_apply'),
+                    field: 'context.can_replace'
+                },
+                {
+                    label: __('seo-pro::messages.relevancy_score'),
+                    field: 'score'
+                },
+                {
+                    label: __('seo-pro::messages.link_target'),
+                    field: 'uri'
+                }
             ],
             suggestions: [],
         };
