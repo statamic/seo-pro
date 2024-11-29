@@ -427,7 +427,7 @@ export default {
                 this.$axios.get(cp_url(`seo-pro/links/${entryId}/sections`)).then(response => {
                     const newSections = [{
                         value: '--none--',
-                        label: '-- None --'
+                        label: __('seo-pro::messages.section_none')
                     }];
 
                     response.data.forEach(section => {
@@ -487,7 +487,7 @@ export default {
             this.isSaving = true;
 
             this.$axios.post(cp_url(`seo-pro/links`), this.getReplacement()).then(response => {
-                this.$toast.success('Entry updated');
+                this.$toast.success(__('seo-pro::messages.entry_updated'));
                 this.isSaving = false;
 
                 this.$emit('saved');

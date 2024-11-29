@@ -113,6 +113,7 @@ return [
     'internal_links' => 'Internal Links',
     'external_links' => 'External Links',
     'inbound_internal_links' => 'Inbound Internal Links',
+    'section_none' => '-- None --',
 
     'ignore_scope' => 'Scope',
     'do_not_suggest_entry' => 'Do not suggest this entry as related:',
@@ -127,7 +128,8 @@ return [
     'ignore_related_content' => 'Ignore Related Content',
     'ignore_entry' => 'Ignore Entry',
 
-    'suggestion_saved' => 'Suggestion Saved',
+    'suggestion_saved' => 'Suggestion saved',
+    'entry_updated' => 'Entry updated',
 
     'reset_collection_settings' => 'Reset Collection Settings',
     'edit_collection_linking_behavior' => 'Edit Linking Behavior',
