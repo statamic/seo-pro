@@ -74,7 +74,7 @@ class SiteLinkSettingsController extends CpController
 
         SiteConfigBlueprint::make()
             ->fields()
-            ->addValues(request()->all())
+            ->addValues($request->all())
             ->validate();
 
         $this->configurationRepository->updateSiteConfiguration(
