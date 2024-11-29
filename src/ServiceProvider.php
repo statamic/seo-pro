@@ -269,6 +269,7 @@ class ServiceProvider extends AddonServiceProvider
                     $permission->children([
                         Permission::make('edit link collections')->label(__('seo-pro::messages.edit_link_collections')),
                         Permission::make('edit link sites')->label(__('seo-pro::messages.edit_link_sites')),
+                        Permission::make('edit global links')->label(__('seo-pro::messages.edit_global_links')),
                     ]);
                 })->label(__('seo-pro::messages.manage_links'));
             }

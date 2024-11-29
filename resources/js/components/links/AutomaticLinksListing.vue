@@ -12,6 +12,7 @@
                 <link-dashboard-actions
                     :can-edit-link-collections="canEditLinkCollections"
                     :can-edit-link-sites="canEditLinkSites"
+                    :can-edit-global-links="canEditGlobalLinks"
                 />
 
                 <a @click="createLink"
@@ -115,7 +116,8 @@ export default  {
         'meta',
         'initialValues',
         'canEditLinkCollections',
-        'canEditLinkSites'
+        'canEditLinkSites',
+        'canEditGlobalLinks',
     ],
 
     components: {

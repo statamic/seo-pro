@@ -10,5 +10,6 @@
 	:initial-values='@json($values)'
 	:can-edit-link-collections="@json($can_edit_link_collections)"
 	:can-edit-link-sites="@json($can_edit_link_sites)"
+	:can-edit-global-links="@json($can_edit_global_links)"
 ></seo-pro-automatic-links-listing>
 @stop

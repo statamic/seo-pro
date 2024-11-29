@@ -12,6 +12,7 @@
                 <link-dashboard-actions
                     :can-edit-link-collections="canEditLinkCollections"
                     :can-edit-link-sites="canEditLinkSites"
+                    :can-edit-global-links="canEditGlobalLinks"
                 />
             </div>
         </header>
@@ -102,6 +103,7 @@ export default {
         'meta',
         'canEditLinkCollections',
         'canEditLinkSites',
+        'canEditGlobalLinks',
     ],
 
     components: {

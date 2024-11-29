@@ -11,7 +11,7 @@
                 v-text="__('seo-pro::messages.site_linking_behavior')"
                 :redirect="cp_url('seo-pro/links/config/sites')"
             />
-            <div v-if="canEditLinkCollections || canEditLinkSites" class="divider"></div>
+            <div v-if="canEditGlobalLinks && (canEditLinkCollections || canEditLinkSites)" class="divider"></div>
             <dropdown-item
                 v-text="__('seo-pro::messages.global_automatic_links')"
                 :redirect="cp_url('seo-pro/links/automatic')"
@@ -26,6 +26,7 @@ export default {
     props: [
         'canEditLinkCollections',
         'canEditLinkSites',
+        'canEditGlobalLinks',
     ],
 
 }

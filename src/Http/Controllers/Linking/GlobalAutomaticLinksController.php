@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Http\Request;
 use Statamic\Facades\Site;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
@@ -21,6 +22,8 @@ class GlobalAutomaticLinksController extends CpController
 
     public function index(Request $request)
     {
+        abort_unless(User::current()->can('edit global links'), 403);
+
         $site = $request->site ? Site::get($request->site) : Site::selected();
 
         return view('seo-pro::linking.automatic', $this->mergeBlueprintIntoContext(
@@ -34,6 +37,8 @@ class GlobalAutomaticLinksController extends CpController
 
     public function getValues($automaticLink)
     {
+        abort_unless(User::current()->can('edit global links'), 403);
+
         return new ValuesResponse(
             GlobalAutomaticLinksBlueprint::make(),
             AutomaticLink::findOrFail($automaticLink)->toArray(),
@@ -42,6 +47,8 @@ class GlobalAutomaticLinksController extends CpController
 
     public function create(Request $request)
     {
+        abort_unless(User::current()->can('edit global links'), 403);
+
         GlobalAutomaticLinksBlueprint::make()
             ->fields()
             ->addValues($request->all())
@@ -60,6 +67,8 @@ class GlobalAutomaticLinksController extends CpController
 
     public function update(Request $request, $automaticLink)
     {
+        abort_unless(User::current()->can('edit global links'), 403);
+
         GlobalAutomaticLinksBlueprint::make()
             ->fields()
             ->addValues($request->all())
@@ -78,6 +87,8 @@ class GlobalAutomaticLinksController extends CpController
 
     public function filter(FilteredRequest $request)
     {
+        abort_unless(User::current()->can('edit global links'), 403);
+
         $sortField = $this->getSortField();
         $sortDirection = request('order', 'asc');
 
@@ -100,6 +111,8 @@ class GlobalAutomaticLinksController extends CpController
 
     public function delete($automaticLink)
     {
+        abort_unless(User::current()->can('edit global links'), 403);
+
         AutomaticLink::find($automaticLink)?->delete();
     }
 
