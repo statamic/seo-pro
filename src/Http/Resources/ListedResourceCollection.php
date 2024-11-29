@@ -23,24 +23,6 @@ abstract class ListedResourceCollection extends ResourceCollection
         return $this;
     }
 
-    protected function makeColumn(string $field, string $label, bool $visible = true): Column
-    {
-        return Column::make($field)
-            ->listable(true)
-            ->label($label)
-            ->visible($visible)
-            ->defaultVisibility(true)
-            ->defaultOrder($this->columns->count() + 1)
-            ->sortable(true);
-    }
-
-    protected function addColumn(string $field, string $label, bool $visible = true): static
-    {
-        $this->columns->put($field, $this->makeColumn($field, $label, $visible));
-
-        return $this;
-    }
-
     public function blueprint(Blueprint $blueprint): static
     {
         $this->blueprint = $blueprint;
