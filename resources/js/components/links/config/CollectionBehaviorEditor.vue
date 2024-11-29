@@ -13,9 +13,7 @@
 
         <div class="flex-1 overflow-auto">
             <div class="p-6">
-                <h2 class="flex-1">
-                    {{ collection.title }}
-                </h2>
+                <h2 class="flex-1">{{ collection.title }}</h2>
 
                 <publish-container
                     class="mb-6"
