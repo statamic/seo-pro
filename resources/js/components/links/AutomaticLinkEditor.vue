@@ -12,13 +12,18 @@
         </header>
 
         <div class="flex-1 overflow-auto">
-            <div class="p-6">
+            <div
+                v-if="values"
+                class="p-6"
+            >
                 <publish-container
                     class="mb-6"
                     name="sit-settings"
                     :blueprint="blueprint"
-                    :meta="meta"
-                    :values="linkData"
+                    :errors="errors"
+                    :meta="editMeta"
+                    :values="values"
+                    :site="site"
                     @updated="updateValues"
                 >
                     <div slot-scope="{ setFieldValue, setFieldMeta }">
@@ -41,48 +46,65 @@
 </template>
 
 <script>
+import HandlesRequestErrors from './HandlesRequestErrors.vue';
 
 export default {
+    mixins: [HandlesRequestErrors],
 
     props: [
-        'site',
         'blueprint',
         'fields',
         'meta',
-        'values',
         'link',
+        'initialValues',
         'mode',
     ],
 
     computed: {
+
         title() {
             if (this.mode === 'new') {
                 return 'Create Link';
             }
 
             return 'Edit Link';
-        }
+        },
+
+        site() {
+            return this.$config.get('selectedSite');
+        },
+
     },
 
     data() {
         return {
-            initialValues: _.clone(this.values),
-            linkData: _.clone(this.values),
+            errors: {},
+            editMeta: null,
+            values: null,
+            updatedValues: [],
         };
     },
 
     methods: {
+
+        linkUrl() {
+            return cp_url(`seo-pro/links/automatic/${this.link.id}`);
+        },
 
         closeEditor() {
             this.$emit('closed');
         },
 
         updateValues(values) {
-            this.linkData = _.clone(values);
+            this.updatedValues = _.clone(values);
+        },
+
+        isCreatingLink() {
+            return this.mode === 'new';
         },
 
         updateLink() {
-            if (this.mode === 'new') {
+            if (this.isCreatingLink()) {
                 this.doAddLink();
 
                 return;
@@ -91,17 +113,23 @@ export default {
             this.doUpdateLink();
         },
 
+        getValues() {
+            this.$axios.get(this.linkUrl()).then(response => {
+                this.meta = response.data.meta;
+                this.values = response.data.values;
+                this.updatedValues = _.clone(this.values);
+            }).catch(err => this.handleAxiosError(err));
+        },
+
         doAddLink() {
             const newLink = {
                 site: this.site,
-                ...this.linkData
+                ...this.updatedValues
             };
 
             this.$axios.post(cp_url('seo-pro/links/automatic'), newLink).then(response => {
                 this.closeEditor();
-            }).catch(err => {
-
-            });
+            }).catch(err => this.handleAxiosError(err));
         },
 
         doUpdateLink() {
@@ -109,23 +137,22 @@ export default {
                 return;
             }
 
-            this.$axios.post(cp_url(`seo-pro/links/automatic/${this.link.id}`), this.linkData).then(response => {
+            this.$axios.post(this.linkUrl(), this.updatedValues).then(response => {
                 this.closeEditor();
-            }).catch(err => {
-            });
+            }).catch(err => this.handleAxiosError(err));
         },
 
     },
 
     mounted() {
-        if (! this.link) {
-            this.linkData = _.clone(this.initialValues);
+        this.editMeta = _.clone(this.meta);
+        this.values = _.clone(this.initialValues);
+        this.updatedValues = _.clone(this.values);
 
-            return;
+        if (! this.isCreatingLink()) {
+            this.getValues();
         }
-
-        this.linkData = _.clone(this.link);
     },
 
-};
+}
 </script>
