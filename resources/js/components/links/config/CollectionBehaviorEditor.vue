@@ -99,6 +99,7 @@ export default {
         saveCollectionBehavior() {
             this.$axios.put(this.collectionUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
+                this.$toast.success(__('seo-pro::messages.collection_settings_updated'));
             }).catch(err => this.handleAxiosError(err));
         },
 

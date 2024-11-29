@@ -101,6 +101,7 @@ export default {
         saveSiteSettings() {
             this.$axios.put(this.siteUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
+                this.$toast.success(__('seo-pro::messages.site_settings_updated'));
             }).catch(err => this.handleAxiosError(err));
         },
 

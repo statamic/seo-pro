@@ -132,6 +132,11 @@ return [
     'ignore_entry' => 'Ignore Entry',
 
     'suggestion_saved' => 'Suggestion saved',
+    'collection_settings_updated' => 'Collection linking behavior updated',
+    'site_settings_updated' => 'Site linking behavior updated',
+    'entry_settings_updated' => 'Entry link settings updated',
+    'global_link_saved' => 'Link saved',
+    'global_link_updated' => 'Link updated',
     'entry_updated' => 'Entry updated',
 
     'can_auto_apply' => 'Can Auto Apply',

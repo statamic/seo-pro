@@ -129,6 +129,7 @@ export default {
 
             this.$axios.post(cp_url('seo-pro/links/automatic'), newLink).then(response => {
                 this.closeEditor();
+                this.$toast.success(__('seo-pro::messages.global_link_saved'));
             }).catch(err => this.handleAxiosError(err));
         },
 
@@ -139,6 +140,7 @@ export default {
 
             this.$axios.post(this.linkUrl(), this.updatedValues).then(response => {
                 this.closeEditor();
+                this.$toast.success(__('seo-pro::messages.global_link_updated'));
             }).catch(err => this.handleAxiosError(err));
         },
 

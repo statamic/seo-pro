@@ -86,6 +86,7 @@ export default {
         saveEntrySettings() {
             this.$axios.put(this.getLinkUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
+                this.$toast.success(__('seo-pro::messages.entry_settings_updated'));
             }).catch(err => this.handleAxiosError(err));
         },
 
