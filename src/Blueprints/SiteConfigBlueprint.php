@@ -15,7 +15,7 @@ class SiteConfigBlueprint
                         [
                             'handle' => 'site_handle',
                             'field' => [
-                                'display' => 'Site',
+                                'display' => __('Site'),
                                 'type' => 'sites',
                                 'visibility' => 'hidden',
                                 'config' => [

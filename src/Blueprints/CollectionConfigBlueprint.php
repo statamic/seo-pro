@@ -15,7 +15,7 @@ class CollectionConfigBlueprint
                         [
                             'handle' => 'collection_handle',
                             'field' => [
-                                'display' => 'Collection',
+                                'display' => __('Collection'),
                                 'type' => 'collections',
                                 'visibility' => 'hidden',
                                 'config' => [
