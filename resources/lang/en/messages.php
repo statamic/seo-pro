@@ -75,19 +75,15 @@ return [
 
     'link_manager' => 'Link Manager',
     'link_manager_description' => 'View internal entry link suggestions and related link statistics.',
-
     'manage_links' => 'Manage Links',
     'edit_link_collections' => 'Edit Link Collections',
     'edit_link_sites' => 'Edit Link Sites',
-
     'global_automatic_links' => 'Global Automatic Links',
     'collection_linking_behavior' => 'Collection Linking Behavior',
     'site_linking_behavior' => 'Site Linking Behavior',
-
     'internal_link_count' => 'Internal Link Count',
     'external_link_count' => 'External Link Count',
     'inbound_internal_link_count' => 'Inbound Internal Link Count',
-
     'page_section' => 'Page Section',
     'link_text' => 'Link Text',
     'link_target' => 'Link Target',
@@ -95,17 +91,14 @@ return [
     'field_to_update' => 'Field to Update',
     'select_a_section' => 'Select a section',
     'save_as_automatic_link' => 'Save as Global Automatic Link',
-
     'reset_site_settings' => 'Reset Site Settings',
     'reset_resource_suggestions' => 'Reset :resource Suggestions',
     'reset_resource_configuration' => 'Reset :resource Configuration',
     'reset_resource_suggestions_confirm' => 'Are you sure you want to reset the suggestions?',
     'reset_resource_configuration_confirm' => 'Are you sure you want to reset the configuration?',
     'configuration_reset' => 'Configuration Reset',
-
     'suggestion_unable_to_save' => 'SEO Pro is unable to automatically insert this link.',
     'suggestion_edit_entry_instead' => 'Edit the entry instead?',
-
     'entry_settings' => 'Entry Settings',
     'link_suggestions' => 'Link Suggestions',
     'link_suggestion' => 'Link Suggestion',
@@ -115,22 +108,18 @@ return [
     'inbound_internal_links' => 'Inbound Internal Links',
     'section_none' => '-- None --',
     'related_keywords' => 'Related Keywords',
-
     'ignore_scope' => 'Scope',
     'do_not_suggest_entry' => 'Do not suggest this entry as related:',
-
     'not_related' => 'Not Related',
     'scope_this_entry' => 'This entry',
     'scope_all_entries' => 'All entries in this site',
     'ignore_action' => 'Action',
     'action_ignore_entry' => 'Do not suggest this entry',
     'action_ignore_phrase' => 'Do not suggest this phrase',
-
     'accept_suggestion' => 'Accept Suggestion',
     'ignore_suggestion' => 'Ignore Suggestion',
     'ignore_related_content' => 'Ignore Related Content',
     'ignore_entry' => 'Ignore Entry',
-
     'suggestion_saved' => 'Suggestion saved',
     'collection_settings_updated' => 'Collection linking behavior updated',
     'site_settings_updated' => 'Site linking behavior updated',
@@ -138,7 +127,6 @@ return [
     'global_link_saved' => 'Link saved',
     'global_link_updated' => 'Link updated',
     'entry_updated' => 'Entry updated',
-
     'can_auto_apply' => 'Can Auto Apply',
     'relevancy_score' => 'Relevancy Score',
     'reset_entry_suggestions' => 'Reset Entry Suggestions',
@@ -146,10 +134,8 @@ return [
     'edit_collection_linking_behavior' => 'Edit Linking Behavior',
     'edit_site_linking_behavior' => 'Edit Linking Behavior',
     'edit_entry_linking_settings' => 'Edit Entry Link Settings',
-
     'create_automatic_link' => 'Create Link',
     'edit_automatic_link' => 'Edit Link',
-
     'external_link' => 'External Link',
 
 ];
