@@ -509,6 +509,7 @@ export default {
         this.getFieldDetails();
 
         this.checkLink();
-    }
+    },
+
 }
 </script>
