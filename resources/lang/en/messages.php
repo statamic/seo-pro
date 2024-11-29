@@ -92,4 +92,9 @@ return [
     'link_target' => 'Link Target',
     'is_active_link' => 'Active Link',
 
+    'link_suggestions' => 'Link Suggestions',
+    'related_content' => 'Related Content',
+    'internal_links' => 'Internal Links',
+    'external_links' => 'External Links',
+    'inbound_internal_links' => 'Inbound Internal Links',
 ];

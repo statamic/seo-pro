@@ -168,7 +168,11 @@ class LinksController extends CpController
                 )->suggestions();
         }
 
-        return $this->makeDashboardResponse($entryId, 'suggestions', 'Link Suggestions');
+        return $this->makeDashboardResponse(
+            $entryId,
+            'suggestions',
+            __('seo-pro::messages.link_suggestions')
+        );
     }
 
     public function getLinkFieldDetails($entryId, $fieldPath)
@@ -196,7 +200,11 @@ class LinksController extends CpController
                 ->getRelated();
         }
 
-        return $this->makeDashboardResponse($entryId, 'related', 'Related Content');
+        return $this->makeDashboardResponse(
+            $entryId,
+            'related',
+            __('seo-pro::messages.related_content')
+        );
     }
 
     public function getInternalLinks($entryId)
@@ -210,7 +218,11 @@ class LinksController extends CpController
                 ->getInternalLinks($entry)->getLinks();
         }
 
-        return $this->makeDashboardResponse($entryId, 'internal', 'Internal Links');
+        return $this->makeDashboardResponse(
+            $entryId,
+            'internal',
+            __('seo-pro::messages.internal_links')
+        );
     }
 
     public function getExternalLinks($entryId)
@@ -224,7 +236,11 @@ class LinksController extends CpController
                 ->getExternalLinks($entry)->getLinks();
         }
 
-        return $this->makeDashboardResponse($entryId, 'external', 'External Links');
+        return $this->makeDashboardResponse(
+            $entryId,
+            'external',
+            __('seo-pro::messages.external_links')
+        );
     }
 
     public function getInboundInternalLinks($entryId)
@@ -240,7 +256,11 @@ class LinksController extends CpController
                 ->getLinks();
         }
 
-        return $this->makeDashboardResponse($entryId, 'inbound', 'Inbound Internal Links');
+        return $this->makeDashboardResponse(
+            $entryId,
+            'inbound',
+            __('seo-pro::messages.inbound_internal_links')
+        );
     }
 
     public function getSections($entryId)
