@@ -8,7 +8,7 @@ use Statamic\CP\Column;
 use Statamic\Fields\Blueprint;
 use Statamic\Http\Resources\CP\Concerns\HasRequestedColumns;
 
-abstract class BaseResourceCollection extends ResourceCollection
+abstract class ListedResourceCollection extends ResourceCollection
 {
     use HasRequestedColumns;
 

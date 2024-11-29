@@ -1,9 +1,7 @@
 <template>
     <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-scroll">
         <header class="flex items-center sticky top-0 inset-x-0 bg-white dark:bg-dark-550 shadow dark:shadow-dark px-8 py-2 z-1 h-13">
-            <h1 class="flex-1 flex items-center text-xl">
-                Site Settings
-            </h1>
+            <h1 class="flex-1 flex items-center text-xl">{{ __('seo-pro::messages.site_linking_behavior') }}</h1>
 
             <button
                 type="button"
@@ -22,9 +20,11 @@
                 <publish-container
                     class="mb-6"
                     name="site-settings"
+                    :errors="errors"
                     :blueprint="blueprint"
-                    :meta="meta"
-                    :values="siteData"
+                    :meta="editMeta"
+                    :values="values"
+                    :site="site"
                     @updated="updateValues"
                 >
                     <div slot-scope="{ setFieldValue, setFieldMeta }">
@@ -47,60 +47,69 @@
 </template>
 
 <script>
+import HandlesRequestErrors from './../HandlesRequestErrors.vue';
 
 export default {
+    mixins: [HandlesRequestErrors],
 
     props: [
         'blueprint',
         'fields',
         'meta',
-        'values',
-        'site',
+        'configSite',
     ],
 
     data() {
         return {
-            initialValues: _.clone(this.values),
-            siteData: _.clone(this.values),
+            errors: {},
+            editMeta: null,
+            values: [],
+            updatedValues: [],
         };
     },
 
+    computed: {
+
+        site() {
+            return this.$config.get('selectedSite');
+        },
+
+    },
+
     methods: {
+
+        siteUrl() {
+            return cp_url(`seo-pro/links/config/sites/${this.configSite.handle}`);
+        },
+
+        getValues() {
+            this.$axios.get(this.siteUrl()).then(response => {
+                this.meta = response.data.meta;
+                this.values = response.data.values;
+                this.updatedValues = _.clone(this.values);
+            }).catch(err => this.handleAxiosError(err));
+        },
 
         closeEditor() {
             this.$emit('closed');
         },
 
         updateValues(values) {
-            this.siteData = _.clone(values);
+            this.updatedValues = _.clone(values);
         },
 
         saveSiteSettings() {
-            this.$axios.put(cp_url(`seo-pro/links/config/sites/${this.site.handle}`), this.siteData).then(response => {
+            this.$axios.put(this.siteUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
-            }).catch(err => {
-            });
+            }).catch(err => this.handleAxiosError(err));
         },
 
     },
 
     mounted() {
-        if (! this.site) {
-            this.siteData = _.clone(this.initialValues);
-
-            return;
-        }
-
-        this.siteData = {
-            ignored_phrases: this.site.ignored_phrases,
-            keyword_threshold: this.site.keyword_threshold,
-            min_internal_links: this.site.min_internal_links,
-            max_internal_links: this.site.max_internal_links,
-            min_external_links: this.site.min_external_links,
-            max_external_links: this.site.max_external_links,
-            prevent_circular_links: this.site.prevent_circular_links,
-        };
+        this.editMeta = _.clone(this.meta);
+        this.getValues();
     },
 
-};
+}
 </script>

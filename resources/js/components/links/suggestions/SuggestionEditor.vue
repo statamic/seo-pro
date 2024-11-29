@@ -112,7 +112,11 @@
 </style>
 
 <script>
+import HandlesRequestErrors from './../HandlesRequestErrors.vue';
+
 export default {
+    mixins: [HandlesRequestErrors],
+
     props: [
         'suggestion',
         'entryId',
@@ -147,7 +151,7 @@ export default {
             }
 
             return this.getRangeText().trim().length !== 0;
-        }
+        },
 
     },
 
@@ -194,7 +198,7 @@ export default {
         getFieldDetails() {
             this.$axios.get(cp_url(`seo-pro/links/field-details/${this.entryId}/${this.suggestion.context.field_handle}`)).then(response => {
                 this.fieldConfig = response.data;
-            });
+            }).catch(err => this.handleAxiosError(err));
         },
 
         cancelSuggestion() {
@@ -477,6 +481,7 @@ export default {
             }).catch(err => {
                 this.checkingLink = false;
                 this.canInsertLink = false;
+                this.handleAxiosError(err);
             });
         },
 
@@ -490,6 +495,7 @@ export default {
                 this.$emit('saved');
             }).catch(err => {
                 this.isSaving = false;
+                this.handleAxiosError(err);
             });
         },
 

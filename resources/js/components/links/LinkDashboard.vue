@@ -1,7 +1,10 @@
 <template>
     <div>
         <header class="mb-6">
-            <breadcrumb :url="cp_url('seo-pro/links')" :title="__('seo-pro::messages.link_manager')" />
+            <breadcrumb
+                :url="cp_url('seo-pro/links')"
+                :title="__('seo-pro::messages.link_manager')"
+            />
 
             <div class="flex items-center">
                 <div class="flex-1">
@@ -133,7 +136,8 @@ export default  {
         getUrl(suffix) {
             return cp_url('seo-pro/links/' + this.report.entry.id + '/' + suffix)
         },
+
     },
 
-};
+}
 </script>

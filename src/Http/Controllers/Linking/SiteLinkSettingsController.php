@@ -9,12 +9,14 @@ use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Blueprints\SiteConfigBlueprint;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
-use Statamic\SeoPro\Http\Requests\UpdateSiteConfigRequest;
+use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
+use Statamic\SeoPro\Http\Resources\Links\SiteConfigCollection;
+use Statamic\SeoPro\Http\ValuesResponse;
 use Statamic\SeoPro\TextProcessing\Config\SiteConfig;
 
 class SiteLinkSettingsController extends CpController
 {
-    use MergesBlueprintFields;
+    use MergesBlueprintFields, ResolvesPermissions;
 
     public function __construct(
         Request $request,
@@ -28,11 +30,19 @@ class SiteLinkSettingsController extends CpController
         abort_unless(User::current()->can('edit link site'), 403);
 
         if (request()->ajax()) {
-            return $this->configurationRepository->getSites()->map(fn (SiteConfig $config) => $config->toArray());
+            $visibleSites = UserAccess::getSitesForCurrentUser();
+
+            $sites = $this->configurationRepository
+                ->getSites()
+                ->filter(fn (SiteConfig $config) => $visibleSites->contains($config->handle));
+
+            return (new SiteConfigCollection($sites))
+                ->blueprint(SiteConfigBlueprint::make());
         }
 
         return view('seo-pro::config.sites', $this->mergeBlueprintIntoContext(
-            SiteConfigBlueprint::blueprint(),
+            SiteConfigBlueprint::make(),
+            $this->getLinkPermissions(),
             callback: fn (&$values) => $values['ignored_phrases'] = [],
         ));
     }
@@ -44,9 +54,28 @@ class SiteLinkSettingsController extends CpController
         abort_unless(UserAccess::getSitesForCurrentUser()->contains($siteHandle), 403);
     }
 
-    public function update(UpdateSiteConfigRequest $request, $site)
+    public function getValues(Request $request, $site)
     {
         $this->assertHasAccessToSite($site?->handle());
+
+        /** @var ConfigurationRepository $siteConfig */
+        $siteConfig = app(ConfigurationRepository::class);
+        $config = $siteConfig->getSiteConfiguration($site->handle());
+
+        return new ValuesResponse(
+            SiteConfigBlueprint::make(),
+            $config->toArray(),
+        );
+    }
+
+    public function update(Request $request, $site)
+    {
+        $this->assertHasAccessToSite($site?->handle());
+
+        SiteConfigBlueprint::make()
+            ->fields()
+            ->addValues(request()->all())
+            ->validate();
 
         $this->configurationRepository->updateSiteConfiguration(
             $site->handle(),

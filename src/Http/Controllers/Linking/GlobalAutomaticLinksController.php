@@ -8,37 +8,64 @@ use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\Blueprints\GlobalAutomaticLinksBlueprint;
+use Statamic\SeoPro\Hooks\CP\AutomaticLinksIndexQuery;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
-use Statamic\SeoPro\Http\Requests\AutomaticLinkRequest;
-use Statamic\SeoPro\Http\Resources\Links\AutomaticLinks;
+use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
+use Statamic\SeoPro\Http\Resources\Links\GlobalAutomaticLinksCollection;
+use Statamic\SeoPro\Http\ValuesResponse;
 use Statamic\SeoPro\Models\AutomaticLink;
 
 class GlobalAutomaticLinksController extends CpController
 {
-    use MergesBlueprintFields, QueriesFilters;
+    use MergesBlueprintFields, QueriesFilters, ResolvesPermissions;
 
     public function index(Request $request)
     {
         $site = $request->site ? Site::get($request->site) : Site::selected();
 
         return view('seo-pro::linking.automatic', $this->mergeBlueprintIntoContext(
-            GlobalAutomaticLinksBlueprint::blueprint(),
+            GlobalAutomaticLinksBlueprint::make(),
             [
                 'site' => $site->handle(),
+                ...$this->getLinkPermissions(),
             ],
         ));
     }
 
-    public function create(AutomaticLinkRequest $request)
+    public function getValues($automaticLink)
     {
-        $link = new AutomaticLink($request->all());
+        return new ValuesResponse(
+            GlobalAutomaticLinksBlueprint::make(),
+            AutomaticLink::findOrFail($automaticLink)->toArray(),
+        );
+    }
+
+    public function create(Request $request)
+    {
+        GlobalAutomaticLinksBlueprint::make()
+            ->fields()
+            ->addValues($request->all())
+            ->validate();
+
+        $data = $request->all();
+
+        if (! isset($data['is_active'])) {
+            $data['is_active'] = false;
+        }
+
+        $link = new AutomaticLink($data);
 
         $link->save();
     }
 
-    public function update(AutomaticLinkRequest $request, $automaticLink)
+    public function update(Request $request, $automaticLink)
     {
-        /** @var \Statamic\SeoPro\Models\AutomaticLink $link */
+        GlobalAutomaticLinksBlueprint::make()
+            ->fields()
+            ->addValues($request->all())
+            ->validate();
+
+        /** @var AutomaticLink $link */
         $link = AutomaticLink::findOrFail($automaticLink);
 
         $link->link_target = request('link_target');
@@ -62,9 +89,10 @@ class GlobalAutomaticLinksController extends CpController
             $query->orderBy($sortField, $sortDirection);
         }
 
-        $links = $query->paginate(request('perPage'));
+        $links = (new AutomaticLinksIndexQuery($query))->paginate(request('perPage'));
 
-        return (new AutomaticLinks($links))
+        return (new GlobalAutomaticLinksCollection($links))
+            ->blueprint(GlobalAutomaticLinksBlueprint::make())
             ->additional(['meta' => [
                 'activeFilterBadges' => $activeFilterBadges,
             ]]);

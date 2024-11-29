@@ -6,17 +6,34 @@ use Statamic\Facades\Blueprint;
 
 class CollectionConfigBlueprint
 {
-    public static function blueprint()
+    public static function make()
     {
         return Blueprint::make()->setContents([
             'sections' => [
                 'settings' => [
                     'fields' => [
                         [
+                            'handle' => 'collection_handle',
+                            'field' => [
+                                'display' => 'Collection',
+                                'type' => 'collections',
+                                'visibility' => 'hidden',
+                                'config' => [
+                                    'max_items' => 1,
+                                ],
+                                'validate' => [
+                                    'required',
+                                ],
+                            ],
+                        ],
+                        [
                             'handle' => 'linking_enabled',
                             'field' => [
                                 'display' => __('seo-pro::settings.linking_enabled'),
                                 'type' => 'toggle',
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -25,6 +42,9 @@ class CollectionConfigBlueprint
                                 'display' => __('seo-pro::settings.allow_cross_site_suggestions'),
                                 'type' => 'toggle',
                                 'default' => false,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -32,6 +52,9 @@ class CollectionConfigBlueprint
                             'field' => [
                                 'display' => __('seo-pro::settings.allow_suggestions_from_all_collections'),
                                 'type' => 'toggle',
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [

@@ -1,18 +1,22 @@
 <template>
     <div>
         <header class="mb-6">
-            <breadcrumb :url="cp_url('seo-pro/links')" title="Links" />
+            <breadcrumb
+                :url="cp_url('seo-pro/links')"
+                :title="__('seo-pro::messages.link_manager')"
+            />
 
             <div class="flex items-center">
-                <h1 class="flex-1">Automatic Links</h1>
+                <h1 class="flex-1">{{ __('seo-pro::messages.global_automatic_links') }}</h1>
 
-                <dropdown-list>
-                    <dropdown-item v-text="'Collection Linking Behavior'" :redirect="cp_url('seo-pro/links/config/collections')" />
-                    <dropdown-item v-text="'Global Automatic Links'" :redirect="cp_url('seo-pro/links/automatic')" />
-                    <dropdown-item v-text="'Site Link Settings'" :redirect="cp_url('seo-pro/links/config/sites')" />
-                </dropdown-list>
+                <link-dashboard-actions
+                    :can-edit-link-collections="canEditLinkCollections"
+                    :can-edit-link-sites="canEditLinkSites"
+                />
 
-                <a @click="createLink" class="btn-primary cursor-pointer rtl:mr-1 ltr:ml-1">Create Link</a>
+                <a @click="createLink"
+                    class="btn-primary cursor-pointer rtl:mr-1 ltr:ml-1"
+                >Create Link</a>
             </div>
         </header>
 
@@ -86,11 +90,10 @@
             <automatic-link-editor
                 @closed="closeLinkEditor"
                 :mode="dataMode"
-                :site="site"
+                :initial-values="initialValues"
                 :blueprint="blueprint"
                 :fields="fields"
                 :meta="meta"
-                :values="values"
                 :link="activeLink"
             ></automatic-link-editor>
         </stack>
@@ -101,6 +104,7 @@
 import Listing from '../../../../vendor/statamic/cms/resources/js/components/Listing.vue';
 import AutomaticLinkEditor from './AutomaticLinkEditor.vue';
 import FakesResources from './FakesResources.vue';
+import LinkDashboardActions from './LinkDashboardActions.vue';
 
 export default  {
     mixins: [Listing, FakesResources],
@@ -109,12 +113,14 @@ export default  {
         'blueprint',
         'fields',
         'meta',
-        'values',
-        'site',
+        'initialValues',
+        'canEditLinkCollections',
+        'canEditLinkSites'
     ],
 
     components: {
         'automatic-link-editor': AutomaticLinkEditor,
+        'link-dashboard-actions': LinkDashboardActions,
     },
 
     data() {
@@ -158,12 +164,5 @@ export default  {
 
     },
 
-    created() {
-    },
-
-    mounted() {
-
-    },
-
-};
+}
 </script>

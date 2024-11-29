@@ -26,14 +26,14 @@
                     >
                         <template slot="cell-phrase" slot-scope="{ row: suggestion }">
                             <div v-if="suggestion.context.can_replace" class="cursor-pointer" @click="activeSuggestion = suggestion">
-                                <p><span v-if="suggestion.auto_linked" title="Automatic Link Suggestion">🪄</span><span v-html="getItemPreviewText(suggestion)"></span></p>
+                                <p><span v-html="getItemPreviewText(suggestion)"></span></p>
                             </div>
                             <div v-if="!suggestion.context.can_replace">
                                 <span>{{ suggestion.phrase }}</span>
                             </div>
                         </template>
                         <template slot="cell-context.can_replace" slot-scope="{ row: suggestion }">
-                            <span>{{ suggestion.context.can_replace ? '✅' : '❌' }}</span>
+                            <toggle-index :value="suggestion.context.can_replace"></toggle-index>
                         </template>
                         <template slot="cell-context.field_handle" slot-scope="{ row: suggestion }">
                             <span>{{ suggestion.context.field_handle ?? '' }}</span>
@@ -89,8 +89,12 @@
 import SuggestionEditor from './suggestions/SuggestionEditor.vue';
 import IgnoreConfirmation from './suggestions/IgnoreConfirmation.vue';
 import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
+import HandlesRequestErrors from './HandlesRequestErrors.vue';
+import ToggleIndexFieldType from '../../../../vendor/statamic/cms/resources/js/components/fieldtypes/ToggleIndexFieldtype.vue';
 
 export default {
+    mixins: [ProvidesControlPanelLinks, HandlesRequestErrors],
+
     props: [
         'entry',
         'editUrl',
@@ -98,11 +102,10 @@ export default {
         'canEditEntry',
     ],
 
-    mixins: [ProvidesControlPanelLinks],
-
     components: {
         SuggestionEditor,
         IgnoreConfirmation,
+        'toggle-index': ToggleIndexFieldType,
     },
 
     data() {
@@ -128,6 +131,9 @@ export default {
             this.$axios.get(this.makeSuggestionsUrl(this.entry)).then(response => {
                 this.suggestions = response.data;
                 this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+                this.handleAxiosError(err);
             });
         },
 

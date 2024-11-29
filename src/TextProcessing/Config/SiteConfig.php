@@ -19,8 +19,7 @@ readonly class SiteConfig
     public function toArray(): array
     {
         return [
-            'handle' => $this->handle,
-            'name' => $this->name,
+            'site_handle' => $this->handle,
             'ignored_phrases' => $this->ignoredPhrases,
             'keyword_threshold' => $this->keywordThreshold,
             'min_internal_links' => $this->minInternalLinks,
@@ -29,5 +28,10 @@ readonly class SiteConfig
             'max_external_links' => $this->maxExternalLinks,
             'prevent_circular_links' => $this->preventCircularLinks,
         ];
+    }
+
+    public function __get(string $name)
+    {
+        return $this->toArray()[$name] ?? null;
     }
 }

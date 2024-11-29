@@ -136,8 +136,6 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         $config = SiteLinkSetting::query()->where('site', $handle)->first();
 
         if ($config) {
-            // TODO: Hydrate name.
-
             return $this->makeSiteConfig($handle, '', $config);
         }
 

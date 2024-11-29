@@ -29,7 +29,6 @@ if (config('statamic.seo-pro.linking.enabled', false)) {
             Route::delete('/{link}', [Controllers\Linking\LinksController::class, 'resetEntrySuggestions'])->name('seo-pro.entry-links.reset-suggesions');
         });
 
-        Route::get('/overview', [Controllers\Linking\LinksController::class, 'getOverview'])->name('seo-pro.entry-links.overview');
         Route::get('/{entryId}/suggestions', [Controllers\Linking\LinksController::class, 'getSuggestions'])->name('seo-pro.internal-links.get-suggestions');
         Route::get('/{entryId}/related', [Controllers\Linking\LinksController::class, 'getRelatedContent'])->name('seo-pro.internal-links.related');
         Route::get('/{entryId}/internal', [Controllers\Linking\LinksController::class, 'getInternalLinks'])->name('seo-pro.internal-links.internal');
@@ -47,12 +46,14 @@ if (config('statamic.seo-pro.linking.enabled', false)) {
         Route::prefix('/config')->group(function () {
             Route::prefix('/collections')->group(function () {
                 Route::get('/', [Controllers\Linking\CollectionLinkSettingsController::class, 'index'])->name('seo-pro.internal-link-settings.collections');
+                Route::get('/{collection}', [Controllers\Linking\CollectionLinkSettingsController::class, 'getValues'])->name('seo-pro.internal-link-settings.collections.get');
                 Route::put('/{collection}', [Controllers\Linking\CollectionLinkSettingsController::class, 'update'])->name('seo-pro.internal-link-settings.collections.update');
                 Route::delete('/{collection}', [Controllers\Linking\CollectionLinkSettingsController::class, 'resetConfig'])->name('seo-pro.internal-link-settings.collections.delete');
             });
 
             Route::prefix('/sites')->group(function () {
                 Route::get('/', [Controllers\Linking\SiteLinkSettingsController::class, 'index'])->name('seo-pro.internal-link-settings.sites');
+                Route::get('/{site}', [Controllers\Linking\SiteLinkSettingsController::class, 'getValues'])->name('seo-pro.internal-link-settings.sites.get');
                 Route::put('/{site}', [Controllers\Linking\SiteLinkSettingsController::class, 'update'])->name('seo-pro.internal-link-settings.sites.update');
                 Route::delete('/{site}', [Controllers\Linking\SiteLinkSettingsController::class, 'resetConfig'])->name('seo-pro.internal-link-settings.sites.reset');
             });
@@ -61,6 +62,7 @@ if (config('statamic.seo-pro.linking.enabled', false)) {
         Route::prefix('/automatic')->group(function () {
             Route::get('/', [Controllers\Linking\GlobalAutomaticLinksController::class, 'index'])->name('seo-pro.automatic-links.index');
             Route::get('/filter', [Controllers\Linking\GlobalAutomaticLinksController::class, 'filter'])->name('seo-pro.automatic-links.filter');
+            Route::get('/{automaticLink}', [Controllers\Linking\GlobalAutomaticLinksController::class, 'getValues'])->name('seo-pro.automatic-links.get');
 
             Route::post('/', [Controllers\Linking\GlobalAutomaticLinksController::class, 'create'])->name('seo-pro.automatic-links.create');
             Route::delete('/{automaticLink}', [Controllers\Linking\GlobalAutomaticLinksController::class, 'delete'])->name('seo-pro.automatic-links.delete');

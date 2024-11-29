@@ -6,7 +6,7 @@ use Statamic\Facades\Blueprint;
 
 class GlobalAutomaticLinksBlueprint
 {
-    public static function blueprint()
+    public static function make()
     {
         return Blueprint::make()->setContents([
             'sections' => [
@@ -17,6 +17,9 @@ class GlobalAutomaticLinksBlueprint
                             'field' => [
                                 'display' => __('seo-pro::messages.link_text'),
                                 'type' => 'text',
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -24,6 +27,9 @@ class GlobalAutomaticLinksBlueprint
                             'field' => [
                                 'display' => __('seo-pro::messages.link_target'),
                                 'type' => 'text',
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -31,6 +37,7 @@ class GlobalAutomaticLinksBlueprint
                             'field' => [
                                 'display' => __('seo-pro::messages.is_active_link'),
                                 'type' => 'toggle',
+                                'default' => false,
                             ],
                         ],
                     ],

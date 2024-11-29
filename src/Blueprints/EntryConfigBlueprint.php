@@ -6,7 +6,7 @@ use Statamic\Facades\Blueprint;
 
 class EntryConfigBlueprint
 {
-    public static function blueprint()
+    public static function make()
     {
         return Blueprint::make()->setContents([
             'sections' => [

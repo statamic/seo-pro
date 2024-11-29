@@ -4,9 +4,7 @@
         v-if="suggestion != null"
     >
         <div class="confirmation-modal flex flex-col h-full">
-            <div class="text-lg font-medium p-4 pb-0">
-                {{ title }}
-            </div>
+            <div class="text-lg font-medium p-4 pb-0">{{ title }}</div>
             <div class="flex-1 px-4 py-6 text-gray dark:text-dark-150">
                 <div class="px-2">
                     <div class="publish-fields @container">
@@ -60,8 +58,11 @@
 </template>
 
 <script>
+import HandlesRequestErrors from './../HandlesRequestErrors.vue';
 
 export default {
+    mixins: [HandlesRequestErrors],
+
     props: [
         'entryId',
         'site',
@@ -137,7 +138,7 @@ export default {
             this.$axios.post(cp_url('seo-pro/links/ignored-suggestions'), payload).then(response => {
                 this.$toast.success('The suggestion has been banished forever');
                 this.$emit('saved');
-            });
+            }).catch(err => this.handleAxiosError(err));
         },
 
     },

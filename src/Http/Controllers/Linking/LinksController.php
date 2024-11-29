@@ -21,9 +21,11 @@ use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Hooks\CP\EntryLinksIndexQuery;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
+use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
 use Statamic\SeoPro\Http\Requests\InsertLinkRequest;
 use Statamic\SeoPro\Http\Requests\UpdateEntryLinkRequest;
-use Statamic\SeoPro\Http\Resources\Links\EntryLinks;
+use Statamic\SeoPro\Http\Resources\Links\EntryLinksCollection;
+use Statamic\SeoPro\Http\ValuesResponse;
 use Statamic\SeoPro\Models\AutomaticLink;
 use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Models\EntryLink as EntryLinksModel;
@@ -32,12 +34,7 @@ use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
 
 class LinksController extends CpController
 {
-    use MergesBlueprintFields, QueriesFilters;
-
-    protected array $sortFieldMappings = [
-        'title' => 'cached_title',
-        'slug' => 'cached_slug',
-    ];
+    use MergesBlueprintFields, QueriesFilters, ResolvesPermissions;
 
     public function __construct(
         Request $request,
@@ -59,7 +56,7 @@ class LinksController extends CpController
     protected function mergeEntryConfigBlueprint(array $target = []): array
     {
         return $this->mergeBlueprintIntoContext(
-            EntryConfigBlueprint::blueprint(),
+            EntryConfigBlueprint::make(),
             $target,
             callback: function (&$values) {
                 $values['can_be_suggested'] = true;
@@ -73,8 +70,12 @@ class LinksController extends CpController
         $entry = Entry::find($entryId);
         $this->assertCanAccessEntry($entry);
 
+        $baseReport = $this->reportBuilder
+            ->forUser(User::current())
+            ->getBaseReport(Entry::findOrFail($entryId));
+
         return view('seo-pro::linking.dashboard', $this->mergeEntryConfigBlueprint([
-            'report' => $this->reportBuilder->getBaseReport(Entry::findOrFail($entryId)),
+            'report' => $baseReport,
             'tab' => $tab,
             'title' => $title,
             'can_edit' => User::current()->can('edit', $entry),
@@ -88,14 +89,16 @@ class LinksController extends CpController
         return view('seo-pro::linking.index', $this->mergeEntryConfigBlueprint([
             'site' => $site->handle(),
             'filters' => Scope::filters('seo_pro.links', $this->makeFiltersContext()),
-            'can_edit_link_sites' => User::current()->can('edit link sites'),
-            'can_edit_link_collections' => User::current()->can('edit link collections'),
+            ...$this->getLinkPermissions(),
         ]));
     }
 
     public function getLink(string $link)
     {
-        return EntryLink::where('entry_id', $link)->firstOrFail();
+        return new ValuesResponse(
+            EntryConfigBlueprint::make(),
+            EntryLink::where('entry_id', $link)->firstOrFail()->toArray(),
+        );
     }
 
     public function updateLink(UpdateEntryLinkRequest $request, string $link)
@@ -143,28 +146,11 @@ class LinksController extends CpController
 
         $links = (new EntryLinksIndexQuery($query))->paginate(request('perPage'));
 
-        return (new EntryLinks($links))
+        return (new EntryLinksCollection($links))
             ->blueprint(LinkBlueprint::make())
             ->additional(['meta' => [
                 'activeFilterBadges' => $activeFilterBadges,
             ]]);
-    }
-
-    public function getOverview()
-    {
-        // TODO: Revisit this.
-        $entriesAnalyzed = EntryLinksModel::query()->count();
-        $orphanedEntries = EntryLinksModel::query()->where('inbound_internal_link_count', 0)->count();
-
-        $entriesNeedingMoreLinks = EntryLinksModel::query()
-            ->where('include_in_reporting', true)
-            ->where('internal_link_count', '=', 0)->count();
-
-        return [
-            'total' => $entriesAnalyzed,
-            'orphaned' => $orphanedEntries,
-            'needs_links' => $entriesNeedingMoreLinks,
-        ];
     }
 
     public function getSuggestions($entryId)
@@ -174,6 +160,7 @@ class LinksController extends CpController
 
         if (request()->ajax()) {
             return $this->reportBuilder
+                ->forUser(User::current())
                 ->getSuggestionsReport(
                     $entry,
                     config('statamic.seo-pro.linking.suggestions.result_limit', 10),
@@ -218,7 +205,9 @@ class LinksController extends CpController
         $this->assertCanAccessEntry($entry);
 
         if (request()->ajax()) {
-            return $this->reportBuilder->getInternalLinks($entry)->getLinks();
+            return $this->reportBuilder
+                ->forUser(User::current())
+                ->getInternalLinks($entry)->getLinks();
         }
 
         return $this->makeDashboardResponse($entryId, 'internal', 'Internal Links');
@@ -230,7 +219,9 @@ class LinksController extends CpController
         $this->assertCanAccessEntry($entry);
 
         if (request()->ajax()) {
-            return $this->reportBuilder->getExternalLinks($entry)->getLinks();
+            return $this->reportBuilder
+                ->forUser(User::current())
+                ->getExternalLinks($entry)->getLinks();
         }
 
         return $this->makeDashboardResponse($entryId, 'external', 'External Links');
@@ -328,19 +319,7 @@ class LinksController extends CpController
 
     private function getSortField(): string
     {
-        $sortField = request('sort', 'title');
-
-        if (! $sortField) {
-            return $sortField;
-        }
-
-        $checkField = strtolower($sortField);
-
-        if (array_key_exists($checkField, $this->sortFieldMappings)) {
-            $sortField = $this->sortFieldMappings[$checkField];
-        }
-
-        return $sortField;
+        return request('sort', 'cached_title');
     }
 
     protected function indexQuery(): Builder

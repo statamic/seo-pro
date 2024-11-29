@@ -42,13 +42,14 @@
 
 <script>
 import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
+import HandlesRequestErrors from './HandlesRequestErrors.vue';
 
 export default  {
+    mixins: [HandlesRequestErrors, ProvidesControlPanelLinks],
+
     props: [
         'entry',
     ],
-
-    mixins: [ProvidesControlPanelLinks],
 
     data() {
         return {
@@ -69,13 +70,17 @@ export default  {
             this.$axios.get(this.makeInternalLinksUrl(this.entry)).then(response => {
                 this.internalLinks = response.data;
                 this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+                this.handleAxiosError(err);
             });
-        }
+        },
 
     },
 
     mounted() {
         this.loadData();
-    }
+    },
+
 }
 </script>

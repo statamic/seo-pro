@@ -9,12 +9,14 @@ use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Blueprints\CollectionConfigBlueprint;
 use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
-use Statamic\SeoPro\Http\Requests\UpdateCollectionBehaviorRequest;
+use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
+use Statamic\SeoPro\Http\Resources\Links\CollectionConfigCollection;
+use Statamic\SeoPro\Http\ValuesResponse;
 use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
 
 class CollectionLinkSettingsController extends CpController
 {
-    use MergesBlueprintFields;
+    use MergesBlueprintFields, ResolvesPermissions;
 
     public function __construct(
         Request $request,
@@ -30,14 +32,17 @@ class CollectionLinkSettingsController extends CpController
         if (request()->ajax()) {
             $visibleCollections = UserAccess::getCollectionsForCurrentUser();
 
-            return $this->configurationRepository
+            $collections = $this->configurationRepository
                 ->getCollections()
-                ->filter(fn (CollectionConfig $config) => $visibleCollections->contains($config->handle))
-                ->map(fn (CollectionConfig $config) => $config->toArray());
+                ->filter(fn (CollectionConfig $config) => $visibleCollections->contains($config->handle));
+
+            return (new CollectionConfigCollection($collections))
+                ->blueprint(CollectionConfigBlueprint::make());
         }
 
         return view('seo-pro::config.link_collections', $this->mergeBlueprintIntoContext(
-            CollectionConfigBlueprint::blueprint(),
+            CollectionConfigBlueprint::make(),
+            $this->getLinkPermissions(),
             callback: fn (&$values) => $values['allowed_collections'] = [],
         ));
     }
@@ -49,15 +54,34 @@ class CollectionLinkSettingsController extends CpController
         abort_unless(UserAccess::getCollectionsForCurrentUser()->contains($collectionHandle), 403);
     }
 
-    public function update(UpdateCollectionBehaviorRequest $request, $collection)
+    public function getValues($collection)
     {
         $this->assertHasAccessToCollection($collection?->handle());
+
+        /** @var ConfigurationRepository $collectionConfig */
+        $collectionConfig = app(ConfigurationRepository::class);
+        $config = $collectionConfig->getCollectionConfiguration($collection->handle());
+
+        return new ValuesResponse(
+            CollectionConfigBlueprint::make(),
+            $config->toArray(),
+        );
+    }
+
+    public function update(Request $request, $collection)
+    {
+        $this->assertHasAccessToCollection($collection?->handle());
+
+        CollectionConfigBlueprint::make()
+            ->fields()
+            ->addValues(request()->all())
+            ->validate();
 
         $this->configurationRepository->updateCollectionConfiguration(
             $collection->handle(),
             new CollectionConfig(
                 $collection->handle(),
-                $collection->title(),
+                '',
                 request('linking_enabled'),
                 request('allow_cross_site_linking'),
                 request('allow_cross_collection_suggestions'),

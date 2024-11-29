@@ -4,11 +4,10 @@
             <div class="flex items-center">
                 <h1 class="flex-1">{{ __('seo-pro::messages.link_manager') }}</h1>
 
-                <dropdown-list>
-                    <dropdown-item v-if="canEditLinkCollections" v-text="'Collection Linking Behavior'" :redirect="cp_url('seo-pro/links/config/collections')" />
-                    <dropdown-item v-text="'Global Automatic Links'" :redirect="cp_url('seo-pro/links/automatic')" />
-                    <dropdown-item v-if="canEditLinkSites" v-text="'Site Link Settings'" :redirect="cp_url('seo-pro/links/config/sites')" />
-                </dropdown-list>
+                <link-dashboard-actions
+                    :can-edit-link-collections="canEditLinkCollections"
+                    :can-edit-link-sites="canEditLinkSites"
+                />
             </div>
         </header>
 
@@ -94,6 +93,7 @@
 </template>
 
 <script>
+import LinkDashboardActions from './LinkDashboardActions.vue';
 import Listing from '../../../../vendor/statamic/cms/resources/js/components/Listing.vue';
 import FakesResources from './FakesResources.vue';
 import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
@@ -108,8 +108,12 @@ export default  {
         'meta',
         'values',
         'canEditLinkCollections',
-        'canEditLinkSites'
+        'canEditLinkSites',
     ],
+
+    components: {
+        'link-dashboard-actions': LinkDashboardActions,
+    },
 
     data() {
         return {

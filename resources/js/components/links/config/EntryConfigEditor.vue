@@ -21,10 +21,11 @@
             <div class="p-6">
                 <publish-container
                     class="mb-6"
-                    name="sit-settings"
+                    :errors="errors"
+                    name="entry-settings"
                     :blueprint="blueprint"
-                    :meta="meta"
-                    :values="entryData"
+                    :meta="editMeta"
+                    :values="values"
                     @updated="updateValues"
                 >
                     <div slot-scope="{ setFieldValue, setFieldMeta }">
@@ -47,8 +48,10 @@
 </template>
 
 <script>
+import HandlesRequestErrors from './../HandlesRequestErrors.vue';
 
 export default {
+    mixins: [HandlesRequestErrors],
 
     props: [
         'entry',
@@ -60,7 +63,10 @@ export default {
 
     data() {
         return {
-            entryData: _.clone(this.values),
+            errors: {},
+            editMeta: null,
+            values: [],
+            updatedValues: [],
             loading: false,
         };
     },
@@ -76,32 +82,35 @@ export default {
         },
 
         updateValues(values) {
-            this.entryData = _.clone(values);
+            this.updatedValues = _.clone(values);
         },
 
         saveEntrySettings() {
-            this.$axios.put(this.getLinkUrl(), this.entryData).then(response => {
+            this.$axios.put(this.getLinkUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
-            });
+            }).catch(err => this.handleAxiosError(err));
         },
 
         getEntrySettings() {
             this.loading = true;
             this.$axios.get(this.getLinkUrl()).then(response => {
-                this.entryData = {
-                    can_be_suggested: response.data.can_be_suggested,
-                    include_in_reporting: response.data.include_in_reporting
-                };
+                this.meta = response.data.meta;
+                this.values = response.data.values;
+                this.updatedValues = _.clone(this.values);
 
                 this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+                this.handleAxiosError(err);
             });
         },
 
     },
 
     mounted() {
+        this.editMeta = _.clone(this.meta);
         this.getEntrySettings();
     },
 
-};
+}
 </script>

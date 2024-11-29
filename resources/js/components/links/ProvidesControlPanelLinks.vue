@@ -13,9 +13,9 @@ export default {
 
         makeInternalLinksUrl(entryId) {
             return cp_url(`seo-pro/links/${entryId}/internal`);
-        }
+        },
 
     },
 
-};
+}
 </script>

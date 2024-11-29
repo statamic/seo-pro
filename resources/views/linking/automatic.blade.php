@@ -1,5 +1,5 @@
 @extends('statamic::layout')
-@section('title', 'Automatic Global Links')
+@section('title', __('seo-pro::messages.global_automatic_links'))
 @section('wrapper_class', 'max-w-full')
 
 @section('content')
@@ -7,7 +7,8 @@
 	:blueprint='@json($blueprint)'
 	:fields='@json($fields)'
 	:meta='@json($meta)'
-	:values='@json($values)'
-	site="{{ $site }}"
+	:initial-values='@json($values)'
+	:can-edit-link-collections="@json($can_edit_link_collections)"
+	:can-edit-link-sites="@json($can_edit_link_sites)"
 ></seo-pro-automatic-links-listing>
 @stop

@@ -1,5 +1,5 @@
 @extends('statamic::layout')
-@section('title', 'A better title will surely appear')
+@section('title', __('seo-pro::messages.collection_linking_behavior'))
 @section('wrapper_class', 'max-w-full')
 
 @section('content')
@@ -7,6 +7,7 @@
 	:blueprint='@json($blueprint)'
 	:fields='@json($fields)'
 	:meta='@json($meta)'
-	:values='@json($values)'
+	:can-edit-link-collections="@json($can_edit_link_collections)"
+	:can-edit-link-sites="@json($can_edit_link_sites)"
 ></seo-pro-collection-behavior-listing>
 @stop

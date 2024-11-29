@@ -38,7 +38,11 @@
 </template>
 
 <script>
+import HandlesRequestErrors from './HandlesRequestErrors.vue';
+
 export default  {
+    mixins: [HandlesRequestErrors],
+
     props: [
         'entry',
     ],
@@ -62,8 +66,11 @@ export default  {
             this.$axios.get(cp_url(`seo-pro/links/${this.entry}/inbound`)).then(response => {
                 this.inboundLinks = response.data;
                 this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+                this.handleAxiosError(err);
             });
-        }
+        },
 
     },
 

@@ -80,6 +80,10 @@ return [
     'edit_link_collections' => 'Edit Link Collections',
     'edit_link_sites' => 'Edit Link Sites',
 
+    'global_automatic_links' => 'Global Automatic Links',
+    'collection_linking_behavior' => 'Collection Linking Behavior',
+    'site_linking_behavior' => 'Site Linking Behavior',
+
     'internal_link_count' => 'Internal Link Count',
     'external_link_count' => 'External Link Count',
     'inbound_internal_link_count' => 'Inbound Internal Link Count',

@@ -2,32 +2,17 @@
 
 namespace Statamic\SeoPro\Http\Resources\Links;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Statamic\SeoPro\Models\AutomaticLink;
+use Statamic\SeoPro\Http\Resources\ListedResource;
 
-class ListedAutomaticLink extends JsonResource
+class ListedAutomaticLink extends ListedResource
 {
-    protected $columns;
-
-    public function columns($columns)
+    public function values($request): array
     {
-        $this->columns = $columns;
-
-        return $this;
-    }
-
-    public function toArray($request)
-    {
-        /** @var AutomaticLink $link */
-        $link = $this->resource;
-
         return [
-            'id' => $link->id,
-            'site' => $link->site,
-            'is_active' => $link->is_active,
-            'link_text' => $link->link_text,
-            'link_target' => $link->link_target,
-            'entry_id' => $link->entry_id,
+            'id' => $this->resource->id,
+            'site' => $this->resource->site,
+            'is_active' => $this->resource->is_active,
+            'entry_id' => $this->resource->entry_id,
         ];
     }
 }

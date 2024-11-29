@@ -1,11 +1,18 @@
 <template>
     <div>
-
         <header class="mb-6">
-            <breadcrumb :url="cp_url('seo-pro/links')" :title="__('seo-pro::messages.link_manager')" />
+            <breadcrumb
+                :url="cp_url('seo-pro/links')"
+                :title="__('seo-pro::messages.link_manager')"
+            />
 
             <div class="flex items-center">
-                <h1 class="flex-1">Site Linking Configuration</h1>
+                <h1 class="flex-1">{{ __('seo-pro::messages.site_linking_behavior') }}</h1>
+
+                <link-dashboard-actions
+                    :can-edit-link-collections="canEditLinkCollections"
+                    :can-edit-link-sites="canEditLinkSites"
+                />
             </div>
         </header>
 
@@ -16,29 +23,29 @@
 
             <data-list
                 v-if="!initialing"
-                ref="data-list"
+                ref="datalist"
+                :rows="items"
                 :columns="columns"
-                :rows="sites"
+                :sort="false"
+                :sort-column="sortColumn"
+                :sort-direction="sortDirection"
             >
                 <div>
                     <div class="card overflow-hidden p-0 relative">
 
-                        <div v-show="sites.length == 0" class="p-6 text-center text-gray-500" v-text="__('No results')" />
+                        <div v-show="items.length == 0" class="p-6 text-center text-gray-500" v-text="__('No results')" />
 
                         <data-list-table
-                            v-show="sites.length"
+                            v-show="items.length"
                             :allow-bulk-actions="false"
                             :loading="initialing"
                             :reorderable="false"
                             :sortable="false"
                         >
-                            <template slot="cell-name" slot-scope="{ row: site }">
-                                <a class="title-index-field inline-flex items-center cursor-pointer" @click="editingSite = site">
-                                    <span>{{ site.name }}</span>
-                                </a>
-                            </template>
                             <template slot="actions" slot-scope="{ row: site }">
                                 <dropdown-list>
+                                    <dropdown-item v-text="'Edit Linking Behavior'" @click="editingSite = site" />
+                                    <div class="divider"></div>
                                     <dropdown-item
                                         :text="'Reset Site Settings'"
                                         class="warning"
@@ -66,7 +73,7 @@
             <site-config-editor
                 @closed="editingSite = null"
                 @saved="handleSaved"
-                :site="editingSite"
+                :config-site="editingSite"
                 :blueprint="blueprint"
                 :fields="fields"
                 :meta="meta"
@@ -78,32 +85,33 @@
 
 <script>
 import SiteConfigEditor from './SiteConfigEditor.vue';
+import Listing from '../../../../../vendor/statamic/cms/resources/js/components/Listing.vue';
 import ConfigResetter from './ConfigResetter.vue';
-import FakesResources from '../FakesResources.vue';
+import FakesResources from './../FakesResources.vue';
+import LinkDashboardActions from './../LinkDashboardActions.vue';
 
 export default {
-    mixins: [FakesResources],
+    mixins: [FakesResources, Listing],
 
     props: [
         'blueprint',
         'fields',
         'meta',
-        'values',
+        'canEditLinkCollections',
+        'canEditLinkSites',
     ],
 
     components: {
         'config-resetter': ConfigResetter,
         'site-config-editor': SiteConfigEditor,
+        'link-dashboard-actions': LinkDashboardActions,
     },
 
     data() {
         return {
             initialing: false,
-            columns: [
-                { label: 'Site', field: 'name' },
-            ],
-            sites: [],
             editingSite: null,
+            requestUrl: cp_url('seo-pro/links/config/sites'),
         };
     },
 
@@ -111,23 +119,9 @@ export default {
 
         handleSaved() {
             this.editingSite = null;
-            this.loadSites();
         },
-
-        loadSites() {
-            this.initialing = true;
-            this.$axios.get(cp_url('seo-pro/links/config/sites')).then(response => {
-                this.sites = response.data;
-                this.initialing = false;
-            }).catch(err => {
-                this.initialing = false;
-            });
-        }
 
     },
 
-    created() {
-        this.loadSites();
-    }
-};
+}
 </script>

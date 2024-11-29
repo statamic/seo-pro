@@ -20,8 +20,13 @@ class CollectionConfig
             'allow_cross_site_linking' => $this->allowLinkingAcrossSites,
             'allowed_collections' => $this->linkableCollections,
             'linking_enabled' => $this->linkingEnabled,
-            'handle' => $this->handle,
+            'collection_handle' => $this->handle,
             'title' => $this->title,
         ];
+    }
+
+    public function __get(string $name)
+    {
+        return $this->toArray()[$name] ?? null;
     }
 }

@@ -6,10 +6,28 @@ use Statamic\Facades\Blueprint;
 
 class SiteConfigBlueprint
 {
-    public static function blueprint()
+    public static function make()
     {
         return Blueprint::make()->setContents([
             'sections' => [
+                'general' => [
+                    'fields' => [
+                        [
+                            'handle' => 'site_handle',
+                            'field' => [
+                                'display' => 'Site',
+                                'type' => 'sites',
+                                'visibility' => 'hidden',
+                                'config' => [
+                                    'max_items' => 1,
+                                ],
+                                'validate' => [
+                                    'required',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'thresholds' => [
                     'fields' => [
                         [
@@ -19,6 +37,9 @@ class SiteConfigBlueprint
                                 'type' => 'range',
                                 'default' => config('statamic.seo-pro.linking.keyword_threshold', 65),
                                 'width' => 50,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -27,6 +48,9 @@ class SiteConfigBlueprint
                                 'display' => __('seo-pro::settings.prevent_circular_links'),
                                 'type' => 'toggle',
                                 'width' => 50,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                     ],
@@ -40,6 +64,9 @@ class SiteConfigBlueprint
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.internal_links.min_desired', 3),
                                 'width' => 50,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -49,6 +76,9 @@ class SiteConfigBlueprint
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.internal_links.max_desired', 6),
                                 'width' => 50,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -58,6 +88,9 @@ class SiteConfigBlueprint
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.external_links.min_desired', 0),
                                 'width' => 50,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                         [
@@ -67,6 +100,9 @@ class SiteConfigBlueprint
                                 'type' => 'integer',
                                 'default' => config('statamic.seo-pro.linking.external_links.max_desired', 0),
                                 'width' => 50,
+                                'validate' => [
+                                    'required',
+                                ],
                             ],
                         ],
                     ],

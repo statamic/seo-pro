@@ -58,14 +58,15 @@
 <script>
 import IgnoreConfirmation from './suggestions/IgnoreConfirmation.vue';
 import ProvidesControlPanelLinks from './ProvidesControlPanelLinks.vue';
+import HandlesRequestErrors from './HandlesRequestErrors.vue';
 
 export default  {
+    mixins: [ProvidesControlPanelLinks, HandlesRequestErrors],
+
     props: [
         'entry',
         'site',
     ],
-
-    mixins: [ProvidesControlPanelLinks],
 
     components: {
         IgnoreConfirmation,
@@ -104,6 +105,9 @@ export default  {
             this.$axios.get(this.makeRelatedUrl(this.entry)).then(response => {
                 this.relatedItems = response.data;
                 this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+                this.handleAxiosError(err);
             });
         }
 
