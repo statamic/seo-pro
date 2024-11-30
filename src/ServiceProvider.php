@@ -226,7 +226,7 @@ class ServiceProvider extends AddonServiceProvider
             __DIR__.'/../database/migrations/2024_09_02_135012_create_seopro_site_link_settings_table.php' => database_path('migrations/2024_09_02_135012_create_seopro_site_link_settings_table.php'),
             __DIR__.'/../database/migrations/2024_09_02_135056_create_seopro_global_automatic_links_table.php' => database_path('migrations/2024_09_02_135056_create_seopro_global_automatic_links_table.php'),
             __DIR__.'/../database/migrations/2024_09_03_102233_create_seopro_collection_link_settings_table.php' => database_path('migrations/2024_09_03_102233_create_seopro_collection_link_settings_table.php'),
-        ], 'seo-pro-linking');
+        ], ['seo-pro-linking', 'seo-pro-migrations']);
 
         return $this;
     }
@@ -242,7 +242,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->publishes([
             __DIR__.'/../resources/views/links' => resource_path('views/vendor/seo-pro/links'),
-        ], 'seo-pro-linking');
+        ], ['seo-pro-linking']);
 
         return $this;
     }
