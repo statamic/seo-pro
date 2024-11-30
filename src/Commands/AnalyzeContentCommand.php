@@ -4,9 +4,9 @@ namespace Statamic\SeoPro\Commands;
 
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
-use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
+use Statamic\SeoPro\Contracts\Linking\Embeddings\EntryEmbeddingsRepository;
+use Statamic\SeoPro\Contracts\Linking\Keywords\KeywordsRepository;
+use Statamic\SeoPro\Contracts\Linking\Links\LinkCrawler;
 
 class AnalyzeContentCommand extends Command
 {

@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Content\LinkReplacers\Bard;
 
 use Statamic\Fieldtypes\Bard;
 use Statamic\SeoPro\Content\ReplacementContext;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\FieldtypeLinkReplacer;
+use Statamic\SeoPro\Contracts\Linking\Links\FieldtypeLinkReplacer;
 
 class BardReplacer implements FieldtypeLinkReplacer
 {

@@ -7,12 +7,12 @@ use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Blueprints\CollectionConfigBlueprint;
-use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
 use Statamic\SeoPro\Http\Resources\Links\CollectionConfigCollection;
 use Statamic\SeoPro\Http\ValuesResponse;
-use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
+use Statamic\SeoPro\Linking\Config\CollectionConfig;
 
 class CollectionLinkSettingsController extends CpController
 {

@@ -7,12 +7,12 @@ use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Auth\UserAccess;
 use Statamic\SeoPro\Blueprints\SiteConfigBlueprint;
-use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
 use Statamic\SeoPro\Http\Resources\Links\SiteConfigCollection;
 use Statamic\SeoPro\Http\ValuesResponse;
-use Statamic\SeoPro\TextProcessing\Config\SiteConfig;
+use Statamic\SeoPro\Linking\Config\SiteConfig;
 
 class SiteLinkSettingsController extends CpController
 {

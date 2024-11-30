@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\Events;
 
 use Statamic\Events\Event;
-use Statamic\SeoPro\TextProcessing\Links\LinkChangeSet;
+use Statamic\SeoPro\Linking\Links\LinkChangeSet;
 
 class InternalLinksUpdated extends Event
 {

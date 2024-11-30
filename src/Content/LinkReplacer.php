@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Content;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\SeoPro\Content\Paths\ContentPathParser;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\FieldtypeLinkReplacer;
+use Statamic\SeoPro\Contracts\Linking\Links\FieldtypeLinkReplacer;
 
 class LinkReplacer
 {

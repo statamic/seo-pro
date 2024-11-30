@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Commands;
 
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
+use Statamic\SeoPro\Contracts\Linking\Links\LinkCrawler;
 
 class ScanLinksCommand extends Command
 {

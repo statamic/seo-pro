@@ -18,7 +18,7 @@ use Statamic\SeoPro\Content\ContentMapper;
 use Statamic\SeoPro\Content\LinkReplacement;
 use Statamic\SeoPro\Content\LinkReplacer;
 use Statamic\SeoPro\Contracts\Content\ContentRetriever;
-use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Hooks\CP\EntryLinksIndexQuery;
 use Statamic\SeoPro\Http\Concerns\MergesBlueprintFields;
 use Statamic\SeoPro\Http\Concerns\ResolvesPermissions;
@@ -26,11 +26,11 @@ use Statamic\SeoPro\Http\Requests\InsertLinkRequest;
 use Statamic\SeoPro\Http\Requests\UpdateEntryLinkRequest;
 use Statamic\SeoPro\Http\Resources\Links\EntryLinksCollection;
 use Statamic\SeoPro\Http\ValuesResponse;
+use Statamic\SeoPro\Linking\Config\CollectionConfig;
 use Statamic\SeoPro\Models\AutomaticLink;
 use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Models\EntryLink as EntryLinksModel;
 use Statamic\SeoPro\Reporting\Linking\ReportBuilder;
-use Statamic\SeoPro\TextProcessing\Config\CollectionConfig;
 
 class LinksController extends CpController
 {

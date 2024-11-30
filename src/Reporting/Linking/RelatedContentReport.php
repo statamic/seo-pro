@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro\Reporting\Linking;
 
-use Statamic\SeoPro\TextProcessing\Similarity\Result;
+use Statamic\SeoPro\Linking\Similarity\Result;
 
 class RelatedContentReport extends BaseLinkReport
 {

@@ -5,12 +5,12 @@ namespace Statamic\SeoPro\Reporting\Linking\Concerns;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Entry as EntryApi;
+use Statamic\SeoPro\Linking\Keywords\KeywordComparator;
+use Statamic\SeoPro\Linking\Similarity\CosineSimilarity;
+use Statamic\SeoPro\Linking\Similarity\ResolverOptions;
+use Statamic\SeoPro\Linking\Similarity\Result;
+use Statamic\SeoPro\Linking\Vectors\Vector;
 use Statamic\SeoPro\Models\EntryKeyword;
-use Statamic\SeoPro\TextProcessing\Keywords\KeywordComparator;
-use Statamic\SeoPro\TextProcessing\Similarity\CosineSimilarity;
-use Statamic\SeoPro\TextProcessing\Similarity\ResolverOptions;
-use Statamic\SeoPro\TextProcessing\Similarity\Result;
-use Statamic\SeoPro\TextProcessing\Vectors\Vector;
 
 trait ResolvesSimilarItems
 {

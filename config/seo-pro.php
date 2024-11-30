@@ -94,11 +94,11 @@ return [
         ],
 
         'drivers' => [
-            'embeddings' => \Statamic\SeoPro\TextProcessing\Embeddings\OpenAiEmbeddings::class,
-            'keywords' => \Statamic\SeoPro\TextProcessing\Keywords\Rake::class,
+            'embeddings' => \Statamic\SeoPro\Linking\Embeddings\OpenAiEmbeddings::class,
+            'keywords' => \Statamic\SeoPro\Linking\Keywords\Rake::class,
             'tokenizer' => \Statamic\SeoPro\Content\Tokenizer::class,
             'content' => \Statamic\SeoPro\Content\ContentRetriever::class,
-            'link_scanner' => \Statamic\SeoPro\TextProcessing\Links\LinkCrawler::class,
+            'link_scanner' => \Statamic\SeoPro\Linking\Links\LinkCrawler::class,
         ],
 
         'disabled_collections' => [

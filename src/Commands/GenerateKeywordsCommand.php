@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Commands;
 
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
-use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
+use Statamic\SeoPro\Contracts\Linking\Keywords\KeywordsRepository;
 
 class GenerateKeywordsCommand extends Command
 {

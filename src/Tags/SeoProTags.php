@@ -5,10 +5,10 @@ namespace Statamic\SeoPro\Tags;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
+use Statamic\SeoPro\Linking\Links\AutomaticLinkManager;
 use Statamic\SeoPro\RendersMetaHtml;
 use Statamic\SeoPro\SeoPro;
 use Statamic\SeoPro\SiteDefaults;
-use Statamic\SeoPro\TextProcessing\Links\AutomaticLinkManager;
 use Statamic\Tags\Tags;
 
 class SeoProTags extends Tags

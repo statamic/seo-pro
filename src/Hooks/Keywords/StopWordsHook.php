@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro\Hooks\Keywords;
 
-use Statamic\SeoPro\TextProcessing\Keywords\StopWordsBag;
+use Statamic\SeoPro\Linking\Keywords\StopWordsBag;
 use Statamic\Support\Traits\Hookable;
 
 class StopWordsHook

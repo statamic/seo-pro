@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Commands;
 
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
-use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
+use Statamic\SeoPro\Contracts\Linking\Embeddings\EntryEmbeddingsRepository;
 
 class GenerateEmbeddingsCommand extends Command
 {

@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Content\LinkReplacers;
 use Illuminate\Support\Str;
 use Statamic\Fieldtypes\Text;
 use Statamic\SeoPro\Content\ReplacementContext;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\FieldtypeLinkReplacer;
+use Statamic\SeoPro\Contracts\Linking\Links\FieldtypeLinkReplacer;
 
 class TextReplacer implements FieldtypeLinkReplacer
 {

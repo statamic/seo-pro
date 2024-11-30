@@ -4,10 +4,10 @@ namespace Statamic\SeoPro\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Statamic\SeoPro\Contracts\TextProcessing\ConfigurationRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
+use Statamic\SeoPro\Contracts\Linking\Embeddings\EntryEmbeddingsRepository;
+use Statamic\SeoPro\Contracts\Linking\Keywords\KeywordsRepository;
+use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository;
 use Statamic\SeoPro\Jobs\Concerns\DispatchesSeoProJobs;
 
 class CleanupCollectionLinks implements ShouldBeUnique, ShouldQueue

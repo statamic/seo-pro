@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\Listeners;
 
 use Statamic\Contracts\Entries\Entry;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
+use Statamic\SeoPro\Contracts\Linking\Links\LinkCrawler;
 use Statamic\SeoPro\Events\InternalLinksUpdated;
 
 class InternalLinksUpdatedListener

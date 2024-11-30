@@ -4,9 +4,9 @@ namespace Statamic\SeoPro\Http\Controllers\Linking;
 
 use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
+use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository;
 use Statamic\SeoPro\Http\Requests\IgnoreSuggestionRequest;
-use Statamic\SeoPro\TextProcessing\Links\IgnoredSuggestion;
+use Statamic\SeoPro\Linking\Links\IgnoredSuggestion;
 
 class IgnoredSuggestionsController extends CpController
 {

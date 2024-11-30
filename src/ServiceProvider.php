@@ -120,43 +120,43 @@ class ServiceProvider extends AddonServiceProvider
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Embeddings\Extractor::class,
+            Contracts\Linking\Embeddings\Extractor::class,
             config('statamic.seo-pro.linking.drivers.embeddings'),
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Keywords\KeywordRetriever::class,
+            Contracts\Linking\Keywords\KeywordRetriever::class,
             config('statamic.seo-pro.linking.drivers.keywords'),
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\ConfigurationRepository::class,
-            TextProcessing\Config\ConfigurationRepository::class,
+            Contracts\Linking\ConfigurationRepository::class,
+            Linking\Config\ConfigurationRepository::class,
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Keywords\KeywordsRepository::class,
-            TextProcessing\Keywords\KeywordsRepository::class,
+            Contracts\Linking\Keywords\KeywordsRepository::class,
+            Linking\Keywords\KeywordsRepository::class,
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Links\LinkCrawler::class,
+            Contracts\Linking\Links\LinkCrawler::class,
             config('statamic.seo-pro.linking.drivers.link_scanner'),
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository::class,
-            TextProcessing\Embeddings\EmbeddingsRepository::class,
+            Contracts\Linking\Embeddings\EntryEmbeddingsRepository::class,
+            Linking\Embeddings\EmbeddingsRepository::class,
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Links\GlobalAutomaticLinksRepository::class,
-            TextProcessing\Links\GlobalAutomaticLinksRepository::class,
+            Contracts\Linking\Links\GlobalAutomaticLinksRepository::class,
+            Linking\Links\GlobalAutomaticLinksRepository::class,
         );
 
         $this->app->bind(
-            Contracts\TextProcessing\Links\LinksRepository::class,
-            TextProcessing\Links\LinkRepository::class,
+            Contracts\Linking\Links\LinksRepository::class,
+            Linking\Links\LinkRepository::class,
         );
 
         $this->app->singleton(Content\ContentMapper::class, function () {

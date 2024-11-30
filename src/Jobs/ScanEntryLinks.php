@@ -4,12 +4,12 @@ namespace Statamic\SeoPro\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Statamic\Facades\Entry;
-use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
-use Statamic\SeoPro\Contracts\TextProcessing\Links\LinksRepository;
+use Statamic\SeoPro\Contracts\Linking\Embeddings\EntryEmbeddingsRepository;
+use Statamic\SeoPro\Contracts\Linking\Keywords\KeywordsRepository;
+use Statamic\SeoPro\Contracts\Linking\Links\LinkCrawler;
+use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository;
 use Statamic\SeoPro\Jobs\Concerns\DispatchesSeoProJobs;
-use Statamic\SeoPro\TextProcessing\Links\LinkScanOptions;
+use Statamic\SeoPro\Linking\Links\LinkScanOptions;
 
 class ScanEntryLinks implements ShouldQueue
 {
