@@ -60,7 +60,7 @@ return [
 
     'linking' => [
 
-        'enabled' => false,
+        'enabled' => env('SEO_PRO_LINKING_ENABLED', false),
 
         'openai' => [
             'base_uri' => env('SEO_PRO_OPENAI_BASE_URI', 'api.openai.com/v1'),
