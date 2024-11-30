@@ -8,25 +8,25 @@ use Statamic\SeoPro\Contracts\TextProcessing\Embeddings\EntryEmbeddingsRepositor
 use Statamic\SeoPro\Contracts\TextProcessing\Keywords\KeywordsRepository;
 use Statamic\SeoPro\Contracts\TextProcessing\Links\LinkCrawler;
 
-class StartTheEnginesCommand extends Command
+class AnalyzeContentCommand extends Command
 {
     use RunsInPlease;
 
-    protected $signature = 'statamic:seo-pro:vroom';
+    protected $signature = 'statamic:seo-pro:analyze-content';
 
-    protected $description = 'Starts the engines';
+    protected $description = 'Crawls all content to gather links and generate keywords and embeddings.';
 
     public function handle(
         LinkCrawler $crawler,
         KeywordsRepository $keywordsRepository,
         EntryEmbeddingsRepository $entryEmbeddingsRepository,
     ) {
-        $this->line('Getting things ready...');
+        $this->line('Analyzing content...');
 
         $crawler->scanAllEntries();
         $keywordsRepository->generateKeywordsForAllEntries();
         $entryEmbeddingsRepository->generateEmbeddingsForAllEntries();
 
-        $this->info('Vroom vroom.');
+        $this->info('Content analyzed.');
     }
 }

@@ -338,7 +338,7 @@ class ServiceProvider extends AddonServiceProvider
             SeoPro\Commands\GenerateEmbeddingsCommand::class,
             SeoPro\Commands\GenerateKeywordsCommand::class,
             SeoPro\Commands\ScanLinksCommand::class,
-            SeoPro\Commands\StartTheEnginesCommand::class,
+            SeoPro\Commands\AnalyzeContentCommand::class,
         ]);
 
         return $this;
