@@ -114,20 +114,21 @@ class Sitemap
 
     private function publishedEntriesQuery()
     {
-        $collections = Collection::all()
-            ->map(function ($collection) {
-                return $collection->cascade('seo') !== false
-                    ? $collection->handle()
-                    : false;
-            })
+        $ids = Collection::all()
+            ->filter(fn ($collection) => $collection->cascade('seo') !== false)
             ->filter()
             ->values()
+            ->map(function ($collection) {
+                return $collection->queryEntries()
+                    ->whereStatus('published')
+                    ->whereNotNull('uri')
+                    ->pluck('id');
+            })
+            ->flatten()
             ->all();
 
         return Entry::query()
-            ->whereIn('collection', $collections)
-            ->whereNotNull('uri')
-            ->whereStatus('published')
+            ->whereIn('id', $ids)
             ->orderBy('uri');
     }
 
