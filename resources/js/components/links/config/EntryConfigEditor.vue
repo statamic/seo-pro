@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-scroll">
+    <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full auto">
         <header class="flex items-center sticky top-0 inset-x-0 bg-white dark:bg-dark-550 shadow dark:shadow-dark px-8 py-2 z-1 h-13">
             <h1 class="flex-1 flex items-center text-xl">{{ __('seo-pro::messages.entry_settings') }}</h1>
 
@@ -11,7 +11,7 @@
             />
         </header>
 
-        <div v-if="loading" class="loading">
+        <div v-if="loading" class="flex h-full text-center items-center justify-center">
             <loading-graphic />
         </div>
 
@@ -37,6 +37,7 @@
 
                 <button
                     class="btn-primary w-full"
+                    :disabled="saving"
                     @click="saveEntrySettings"
                     :class="{ 'opacity-50': false }"
                     v-text="__('Save')" />
@@ -65,8 +66,17 @@ export default {
             editMeta: null,
             values: [],
             updatedValues: [],
-            loading: false,
+            loading: true,
+            saving: false,
         };
+    },
+
+    watch: {
+
+        saving(saving) {
+            this.$progress.loading(saving);
+        },
+
     },
 
     methods: {
@@ -84,10 +94,15 @@ export default {
         },
 
         saveEntrySettings() {
+            this.saving = true;
             this.$axios.put(this.getLinkUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
                 this.$toast.success(__('seo-pro::messages.entry_settings_updated'));
-            }).catch(err => this.handleAxiosError(err));
+                this.saving = false;
+            }).catch(err => {
+                this.handleAxiosError(err);
+                this.saving = false;
+            });
         },
 
         getEntrySettings() {

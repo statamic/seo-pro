@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-scroll">
+    <div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-auto">
         <header class="flex items-center sticky top-0 inset-x-0 bg-white dark:bg-dark-550 shadow dark:shadow-dark px-8 py-2 z-1 h-13">
             <h1 class="flex-1 flex items-center text-xl">{{ __('seo-pro::messages.collection_linking_behavior') }}</h1>
 
@@ -11,7 +11,11 @@
             />
         </header>
 
-        <div class="flex-1 overflow-auto">
+        <div v-if="loading" class="flex h-full text-center items-center justify-center">
+            <loading-graphic />
+        </div>
+
+        <div class="flex-1 overflow-auto" v-if="!loading">
             <div class="p-6">
                 <h2 class="flex-1">{{ collection.title }}</h2>
 
@@ -36,6 +40,7 @@
 
                 <button
                     class="btn-primary w-full"
+                    :disabled="saving"
                     @click="saveCollectionBehavior"
                     :class="{ 'opacity-50': false }"
                     v-text="__('Save')" />
@@ -59,11 +64,21 @@ export default {
 
     data() {
         return {
+            loading: true,
             errors: {},
             editMeta: null,
             values: [],
             updatedValues: [],
+            saving: false,
         };
+    },
+
+    watch: {
+
+        saving(saving) {
+            this.$progress.loading(saving);
+        },
+
     },
 
     computed: {
@@ -81,11 +96,17 @@ export default {
         },
 
         getValues() {
+            this.loading = true;
             this.$axios.get(this.collectionUrl()).then(response => {
                 this.meta = response.data.meta;
                 this.values = response.data.values;
                 this.updatedValues = _.clone(this.values);
-            }).catch(err => this.handleAxiosError(err));
+
+                this.loading = false;
+            }).catch(err => {
+                this.handleAxiosError(err);
+                this.loading = false;
+            });
         },
 
         closeEditor() {
@@ -97,10 +118,15 @@ export default {
         },
 
         saveCollectionBehavior() {
+            this.saving = true;
             this.$axios.put(this.collectionUrl(), this.updatedValues).then(response => {
                 this.$emit('saved');
                 this.$toast.success(__('seo-pro::messages.collection_settings_updated'));
-            }).catch(err => this.handleAxiosError(err));
+                this.saving = false;
+            }).catch(err => {
+                this.handleAxiosError(err);
+                this.saving = false;
+            });
         },
 
     },

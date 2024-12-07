@@ -21,6 +21,7 @@ class CollectionConfig
             'allowed_collections' => $this->linkableCollections,
             'linking_enabled' => $this->linkingEnabled,
             'collection_handle' => $this->handle,
+            'handle' => $this->handle,
             'title' => $this->title,
         ];
     }

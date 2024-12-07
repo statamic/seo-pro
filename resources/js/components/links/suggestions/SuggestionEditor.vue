@@ -1,5 +1,5 @@
 <template>
-<div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-scroll">
+<div class="flex flex-col relative bg-gray-100 dar:bg-dark-800 h-full overflow-auto">
     <header class="flex items-center sticky top-0 inset-x-0 bg-white dark:bg-dark-550 shadow dark:shadow-dark px-8 py-2 z-1 h-13">
         <h1 class="flex-1 flex items-center text-xl">{{ __('seo-pro::messages.link_suggestion') }}</h1>
 
@@ -11,7 +11,11 @@
         />
     </header>
 
-    <div class="flex-1 overflow-auto">
+    <div class="flex h-full text-center items-center justify-center" v-if="checkingLink">
+        <loading-graphic></loading-graphic>
+    </div>
+
+    <div class="flex-1 overflow-auto" v-if="!checkingLink">
         <div class="px-2">
             <div class="publish-fields @container">
                 <div class="form-group publish-field blueprint-section-field-w-1/2" v-if="fieldConfig">
@@ -121,6 +125,14 @@ export default {
         'editUrl',
     ],
 
+    watch: {
+
+        saving(saving) {
+            this.$progress.loading(saving);
+        },
+
+    },
+
     computed: {
 
         fieldDisplayName() {
@@ -136,6 +148,10 @@ export default {
         },
 
         canSubmitLink() {
+            if (this.saving) {
+                return false;
+            }
+
             if (this.checkingLink || this.canInsertLink === false) {
                 return false;
             }
@@ -179,14 +195,15 @@ export default {
             sections: [],
             section: null,
             collections: [],
-            isSaving: false,
+            loading: true,
+            saving: false,
             linkTarget: '',
             suggestionWords: [],
             previewWord: null,
             suggestAutoLink: false,
             doAutoLink: false,
             autoLinkEntry: null,
-            checkingLink: false,
+            checkingLink: true,
             canInsertLink: false,
         };
     },
@@ -484,15 +501,15 @@ export default {
         },
 
         saveLink() {
-            this.isSaving = true;
+            this.saving = true;
 
             this.$axios.post(cp_url(`seo-pro/links`), this.getReplacement()).then(response => {
                 this.$toast.success(__('seo-pro::messages.entry_updated'));
-                this.isSaving = false;
+                this.saving = false;
 
                 this.$emit('saved');
             }).catch(err => {
-                this.isSaving = false;
+                this.saving = false;
                 this.handleAxiosError(err);
             });
         },
