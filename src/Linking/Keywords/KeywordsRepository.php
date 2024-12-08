@@ -6,13 +6,14 @@ use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\SeoPro\Content\ContentRemoval;
 use Statamic\SeoPro\Contracts\Content\ContentRetriever;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\Linking\Keywords\KeywordRetriever;
 use Statamic\SeoPro\Contracts\Linking\Keywords\KeywordsRepository as KeywordsRepositoryContract;
+use Statamic\SeoPro\Linking\Concerns\ChecksForContentChanges;
+use Statamic\SeoPro\Linking\Queries\EntryQuery;
 use Statamic\SeoPro\Models\EntryKeyword;
 use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Models\SiteLinkSetting;
-use Statamic\SeoPro\Linking\Concerns\ChecksForContentChanges;
-use Statamic\SeoPro\Linking\Queries\EntryQuery;
 
 class KeywordsRepository implements KeywordsRepositoryContract
 {
@@ -24,11 +25,14 @@ class KeywordsRepository implements KeywordsRepositoryContract
     public function __construct(
         protected readonly KeywordRetriever $keywordRetriever,
         protected readonly ContentRetriever $contentRetriever,
+        protected readonly ConfigurationRepository $configurationRepository,
     ) {}
 
     public function generateKeywordsForAllEntries(int $chunkSize = 100): void
     {
-        EntryQuery::query()->chunk($chunkSize, function ($entries) {
+        $disabledCollections = $this->configurationRepository->getDisabledCollections();
+
+        EntryQuery::query()->whereNotIn('collection', $disabledCollections)->chunk($chunkSize, function ($entries) {
             $entryIds = $entries->pluck('id')->all();
             $this->fillKeywordInstanceCache($entryIds);
 
@@ -61,7 +65,10 @@ class KeywordsRepository implements KeywordsRepositoryContract
 
     protected function fillKeywordInstanceCache(array $entryIds): void
     {
+        $disabledCollections = $this->configurationRepository->getDisabledCollections();
+
         $this->keywordInstanceCache = EntryKeyword::query()
+            ->whereNotIn('collection', $disabledCollections)
             ->whereIn('entry_id', $entryIds)
             ->get()
             ->keyBy('entry_id')

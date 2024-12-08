@@ -4,27 +4,31 @@ namespace Statamic\SeoPro\Linking\Links;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\URL;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\Linking\Links\LinkCrawler as LinkCrawlerContract;
 use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository;
-use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Linking\Queries\EntryQuery;
 use Statamic\SeoPro\Linking\Suggestions\LinkResults;
 use Statamic\SeoPro\Linking\Suggestions\SuggestionEngine;
+use Statamic\SeoPro\Models\EntryLink;
 
 readonly class LinkCrawler implements LinkCrawlerContract
 {
     public function __construct(
         protected SuggestionEngine $suggestionEngine,
         protected LinksRepository $linksRepository,
+        protected ConfigurationRepository $configurationRepository,
     ) {}
 
     public function scanAllEntries(): void
     {
-        foreach (EntryQuery::query()->lazy() as $entry) {
+        $disabledCollections = $this->configurationRepository->getDisabledCollections();
+
+        foreach (EntryQuery::query()->whereNotIn('collection', $disabledCollections)->lazy() as $entry) {
             $this->scanEntry($entry);
         }
 
-        foreach (EntryQuery::query()->lazy() as $entry) {
+        foreach (EntryQuery::query()->whereNotIn('collection', $disabledCollections)->lazy() as $entry) {
             $this->updateInboundInternalLinkCount($entry);
         }
     }

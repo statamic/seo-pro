@@ -14,12 +14,12 @@ use Statamic\SeoPro\Contracts\Content\Tokenizer;
 use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\Linking\Embeddings\EntryEmbeddingsRepository;
 use Statamic\SeoPro\Contracts\Linking\Embeddings\Extractor;
-use Statamic\SeoPro\Models\EntryEmbedding;
-use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Linking\Concerns\ChecksForContentChanges;
 use Statamic\SeoPro\Linking\Queries\EntryQuery;
 use Statamic\SeoPro\Linking\Similarity\ResolverOptions;
 use Statamic\SeoPro\Linking\Vectors\Vector;
+use Statamic\SeoPro\Models\EntryEmbedding;
+use Statamic\SeoPro\Models\EntryLink;
 
 class EmbeddingsRepository implements EntryEmbeddingsRepository
 {
@@ -126,7 +126,9 @@ class EmbeddingsRepository implements EntryEmbeddingsRepository
 
     public function generateEmbeddingsForAllEntries(int $chunkSize = 100): void
     {
-        EntryQuery::query()->chunk($chunkSize, function ($entries) {
+        $disabledCollections = $this->configurationRepository->getDisabledCollections();
+
+        EntryQuery::query()->whereNotIn('collection', $disabledCollections)->chunk($chunkSize, function ($entries) {
             $entryIds = $entries->pluck('id')->all();
             $this->fillEmbeddingInstanceCache($entryIds);
 
