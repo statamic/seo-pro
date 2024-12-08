@@ -343,6 +343,7 @@ class ServiceProvider extends AddonServiceProvider
             SeoPro\Commands\ScanLinksCommand::class,
             SeoPro\Commands\AnalyzeContentCommand::class,
             SeoPro\Commands\SetupLinksCommand::class,
+            SeoPro\Commands\SyncEntryDetailsCommand::class,
         ]);
 
         return $this;
