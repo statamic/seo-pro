@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Facades\Entry as EntryApi;
 use Statamic\SeoPro\Contracts\Content\ContentRetriever;
+use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository as LinkRepositoryContract;
 use Statamic\SeoPro\Events\InternalLinksUpdated;
 use Statamic\SeoPro\Models\CollectionLinkSettings;
@@ -17,6 +18,7 @@ readonly class LinkRepository implements LinkRepositoryContract
 {
     public function __construct(
         protected ContentRetriever $contentRetriever,
+        protected ConfigurationRepository $configurationRepository,
     ) {}
 
     public function ignoreSuggestion(IgnoredSuggestion $suggestion): void
@@ -248,8 +250,14 @@ readonly class LinkRepository implements LinkRepositoryContract
 
     public function isLinkingEnabledForEntry(Entry $entry): bool
     {
+        $collectionHandle = $entry->collection()->handle();
+
+        if (in_array($collectionHandle, $this->configurationRepository->getDisabledCollections())) {
+            return false;
+        }
+
         /** @var CollectionLinkSettings $collectionSetting */
-        $collectionSetting = CollectionLinkSettings::query()->where('collection', $entry->collection()->handle())->first();
+        $collectionSetting = CollectionLinkSettings::query()->where('collection', $collectionHandle)->first();
 
         if ($collectionSetting && ! $collectionSetting->linking_enabled) {
             return false;
