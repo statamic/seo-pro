@@ -60,8 +60,6 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         $config = CollectionLinkSettings::query()->where('collection', $handle)->first();
 
         if ($config) {
-            // TODO: Hydrate title.
-
             return $this->makeCollectionConfig($handle, '', $config);
         }
 
