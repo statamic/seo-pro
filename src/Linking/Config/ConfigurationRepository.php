@@ -165,7 +165,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             ->all();
 
         return array_merge(
-            config('statamic.seo-pro.text_analysis.disabled_collections', []),
+            config('statamic.seo-pro.linking.disabled_collections', []),
             $disabled
         );
     }
