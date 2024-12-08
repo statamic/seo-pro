@@ -342,7 +342,7 @@ class ServiceProvider extends AddonServiceProvider
             SeoPro\Commands\GenerateKeywordsCommand::class,
             SeoPro\Commands\ScanLinksCommand::class,
             SeoPro\Commands\AnalyzeContentCommand::class,
-            SeoPro\Commands\InstallLinksCommand::class,
+            SeoPro\Commands\SetupLinksCommand::class,
         ]);
 
         return $this;

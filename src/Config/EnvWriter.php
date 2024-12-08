@@ -8,6 +8,7 @@ class EnvWriter
 {
     protected string $contents = '';
     protected ?string $path = null;
+    protected bool $madeChanges = false;
 
     public function open(string $path): void
     {
@@ -17,6 +18,8 @@ class EnvWriter
 
     public function setValue(string $key, string $value, string $configKey): static
     {
+        $this->madeChanges = true;
+
         $pattern = $this->getReplacementPattern($key, $value, $configKey);
 
         if ($this->keyExists($key)) {
@@ -56,6 +59,10 @@ class EnvWriter
 
     public function save(): void
     {
+        if (! $this->madeChanges) {
+            return;
+        }
+
         if (! $this->path) {
             throw new Exception('No environment file has been opened.');
         }
