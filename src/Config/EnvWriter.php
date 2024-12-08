@@ -38,10 +38,10 @@ class EnvWriter
 
     protected function replaceValue(string $pattern, string $newValue): void
     {
-        preg_replace(
-            $this->contents,
+        $this->contents = preg_replace(
             $pattern,
-            $newValue
+            $newValue,
+            $this->contents,
         );
     }
 
