@@ -11,11 +11,11 @@
         />
     </header>
 
-    <div class="flex h-full text-center items-center justify-center" v-if="checkingLink">
+    <div class="flex h-full text-center items-center justify-center" v-if="loadCount === 0">
         <loading-graphic></loading-graphic>
     </div>
 
-    <div class="flex-1 overflow-auto" v-if="!checkingLink">
+    <div class="flex-1 overflow-auto" v-if="loadCount > 0">
         <div class="px-2">
             <div class="publish-fields @container">
                 <div class="form-group publish-field blueprint-section-field-w-1/2" v-if="fieldConfig">
@@ -191,6 +191,7 @@ export default {
                 initialSelectedEntries: [],
                 initialUrl: '',
             },
+            loadCount: 0,
             fieldConfig: null,
             sections: [],
             section: null,
@@ -493,10 +494,12 @@ export default {
             this.$axios.post(cp_url(`seo-pro/links/check`), this.getReplacement()).then(response => {
                 this.checkingLink = false;
                 this.canInsertLink = response.data.can_replace;
+                this.loadCount += 1;
             }).catch(err => {
                 this.checkingLink = false;
                 this.canInsertLink = false;
                 this.handleAxiosError(err);
+                this.loadCount += 1;
             });
         },
 
