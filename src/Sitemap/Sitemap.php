@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Sitemap;
 
+use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
@@ -42,7 +43,7 @@ class Sitemap
         $entryCount = $this->publishedEntriesCount() - 1;
 
         if ($offset < $entryCount) {
-            $entries = $this->publishedEntriesQuery()->offset($offset)->limit($perPage)->get();
+            $entries = $this->publishedEntriesForPage($page, $perPage);
 
             if ($entries->count() < $remaining) {
                 $remaining -= $entries->count();
@@ -132,6 +133,17 @@ class Sitemap
     protected function publishedEntries(): LazyCollection
     {
         return $this->publishedEntriesQuery()->lazy();
+    }
+
+    protected function publishedEntriesForPage(int $page, int $perPage): IlluminateCollection
+    {
+        $offset = ($page - 1) * $perPage;
+
+        return $this
+            ->publishedEntriesQuery()
+            ->offset($offset)
+            ->limit($perPage)
+            ->get();
     }
 
     protected function publishedEntriesCount(): int
