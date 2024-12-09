@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Sitemap;
 
+use Illuminate\Support\LazyCollection;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
@@ -128,12 +129,12 @@ class Sitemap
             ->orderBy('uri');
     }
 
-    protected function publishedEntries()
+    protected function publishedEntries(): LazyCollection
     {
         return $this->publishedEntriesQuery()->lazy();
     }
 
-    protected function publishedEntriesCount()
+    protected function publishedEntriesCount(): int
     {
         return $this->publishedEntriesQuery()->count();
     }
