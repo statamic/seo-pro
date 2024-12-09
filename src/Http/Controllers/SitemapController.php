@@ -19,14 +19,14 @@ class SitemapController extends Controller
             $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
                 return view('seo-pro::sitemap_index', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'sitemaps' => Sitemap::paginatedSitemaps(),
+                    'sitemaps' => app(Sitemap::class)->paginatedSitemaps(),
                 ])->render();
             });
         } else {
             $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
                 return view('seo-pro::sitemap', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'pages' => Sitemap::pages(),
+                    'pages' => app(Sitemap::class)->pages(),
                 ])->render();
             });
         }
@@ -45,7 +45,7 @@ class SitemapController extends Controller
         $cacheKey = Sitemap::CACHE_KEY.'_'.$page;
 
         $content = Cache::remember($cacheKey, $cacheUntil, function () use ($page) {
-            abort_if(empty($pages = Sitemap::paginatedPages($page)), 404);
+            abort_if(empty($pages = app(Sitemap::class)->paginatedPages($page)), 404);
 
             return view('seo-pro::sitemap', [
                 'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',

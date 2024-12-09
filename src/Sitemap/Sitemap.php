@@ -16,36 +16,32 @@ class Sitemap
 
     const CACHE_KEY = 'seo-pro.sitemap';
 
-    public static function pages()
+    public function pages(): array
     {
-        $sitemap = new static;
-
         return collect()
-            ->merge($sitemap->getPages($sitemap->publishedEntries()))
-            ->merge($sitemap->getPages($sitemap->publishedTerms()))
-            ->merge($sitemap->getPages($sitemap->publishedCollectionTerms()))
-            ->sortBy(function ($page) {
-                return substr_count(rtrim($page->path(), '/'), '/');
-            })
+            ->merge($this->publishedEntries())
+            ->merge($this->publishedTerms())
+            ->merge($this->publishedCollectionTerms())
+            ->pipe(fn ($pages) => $this->getPages($pages))
+            ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
             ->values()
             ->map
-            ->toArray();
+            ->toArray()
+            ->all();
     }
 
-    public static function paginatedPages(int $page)
+    public function paginatedPages(int $page): array
     {
-        $sitemap = new static;
-
         $perPage = config('statamic.seo-pro.sitemap.pagination.limit', 100);
         $offset = ($page - 1) * $perPage;
         $remaining = $perPage;
 
-        $pages = collect([]);
+        $pages = collect();
 
-        $entryCount = $sitemap->publishedEntriesCount() - 1;
+        $entryCount = $this->publishedEntriesCount() - 1;
 
         if ($offset < $entryCount) {
-            $entries = $sitemap->publishedEntriesQuery()->offset($offset)->limit($perPage)->get();
+            $entries = $this->publishedEntriesQuery()->offset($offset)->limit($perPage)->get();
 
             if ($entries->count() < $remaining) {
                 $remaining -= $entries->count();
@@ -58,8 +54,9 @@ class Sitemap
             $offset = max($offset - $entryCount, 0);
 
             $pages = $pages->merge(
-                collect($sitemap->publishedTerms())
-                    ->merge($sitemap->publishedCollectionTerms())
+                collect()
+                    ->merge($this->publishedTerms())
+                    ->merge($this->publishedCollectionTerms())
                     ->skip($offset)
                     ->take($remaining)
             );
@@ -69,18 +66,18 @@ class Sitemap
             return [];
         }
 
-        return $sitemap->getPages($pages)
+        return $this
+            ->getPages($pages)
             ->values()
             ->map
-            ->toArray();
+            ->toArray()
+            ->all();
     }
 
-    public static function paginatedSitemaps()
+    public function paginatedSitemaps(): array
     {
-        $sitemap = new static;
-
         // would be nice to make terms a count query rather than getting the count from the terms collection
-        $count = $sitemap->publishedEntriesCount() + $sitemap->publishedTerms()->count() + $sitemap->publishedCollectionTerms()->count();
+        $count = $this->publishedEntriesCount() + $this->publishedTerms()->count() + $this->publishedCollectionTerms()->count();
 
         $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
 
@@ -112,7 +109,7 @@ class Sitemap
             ->filter();
     }
 
-    private function publishedEntriesQuery()
+    protected function publishedEntriesQuery()
     {
         $collections = Collection::all()
             ->map(function ($collection) {
