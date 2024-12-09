@@ -10,6 +10,7 @@ use Statamic\SeoPro\Contracts\Content\ContentRetriever;
 use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository as LinkRepositoryContract;
 use Statamic\SeoPro\Events\InternalLinksUpdated;
+use Statamic\SeoPro\Linking\Config\ConfigurationRepository as ConfigImpl;
 use Statamic\SeoPro\Models\CollectionLinkSettings;
 use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Models\SiteLinkSetting;
@@ -54,6 +55,10 @@ readonly class LinkRepository implements LinkRepositoryContract
     {
         /** @var SiteLinkSetting $siteSettings */
         $siteSettings = SiteLinkSetting::query()->firstOrNew(['site' => $suggestion->site]);
+
+        if (! $siteSettings->exists) {
+            $siteSettings = ConfigImpl::addDefaultSiteLinkSettings($siteSettings);
+        }
 
         $phrase = trim($suggestion->phrase);
 

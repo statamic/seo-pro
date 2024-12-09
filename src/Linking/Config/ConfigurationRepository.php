@@ -180,6 +180,18 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         CollectionLinkSettings::query()->where('collection', $handle)->delete();
     }
 
+    public static function addDefaultSiteLinkSettings(SiteLinkSetting $settings): SiteLinkSetting
+    {
+        $settings->keyword_threshold = config('statamic.seo-pro.linking.keyword_threshold', 65) / 100;
+        $settings->min_internal_links = config('statamic.seo-pro.linking.internal_links.min_desired', 3);
+        $settings->max_internal_links = config('statamic.seo-pro.linking.internal_links.max_desired', 6);
+        $settings->min_external_links = config('statamic.seo-pro.linking.external_links.min_desired', 0);
+        $settings->max_external_links = config('statamic.seo-pro.linking.external_links.max_desired', 0);
+        $settings->prevent_circular_links = config('statamic.seo-pro.linking.prevent_circular_links', false);
+
+        return $settings;
+    }
+
     public function resetSiteConfiguration(string $handle): void
     {
         /** @var SiteLinkSetting $settings */
@@ -189,12 +201,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
             return;
         }
 
-        $settings->keyword_threshold = config('statamic.seo-pro.linking.keyword_threshold', 65) / 100;
-        $settings->min_internal_links = config('statamic.seo-pro.linking.internal_links.min_desired', 3);
-        $settings->max_internal_links = config('statamic.seo-pro.linking.internal_links.max_desired', 6);
-        $settings->min_external_links = config('statamic.seo-pro.linking.external_links.min_desired', 0);
-        $settings->max_external_links = config('statamic.seo-pro.linking.external_links.max_desired', 0);
-        $settings->prevent_circular_links = config('statamic.seo-pro.linking.prevent_circular_links', false);
+        $settings = self::addDefaultSiteLinkSettings($settings);
 
         $settings->ignored_phrases = [];
 
