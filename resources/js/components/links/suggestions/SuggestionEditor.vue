@@ -489,9 +489,15 @@ export default {
                 return;
             }
 
+            let replacement = this.getReplacement();
+
+            if (! replacement.target) {
+                return;
+            }
+
             this.checkingLink = true;
 
-            this.$axios.post(cp_url(`seo-pro/links/check`), this.getReplacement()).then(response => {
+            this.$axios.post(cp_url(`seo-pro/links/check`), replacement).then(response => {
                 this.checkingLink = false;
                 this.canInsertLink = response.data.can_replace;
                 this.loadCount += 1;
