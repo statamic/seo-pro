@@ -3,11 +3,13 @@
 namespace Tests;
 
 use Illuminate\Support\Collection as IlluminateCollection;
+use Statamic\Console\Composer\Lock;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Sitemap\Sitemap;
+use Statamic\Statamic;
 
 class SitemapTest extends TestCase
 {
@@ -372,6 +374,13 @@ EOT;
     /** @test */
     public function it_can_use_custom_sitemap_queries()
     {
+        // Hacky/temporary version compare, because `reorder()` method we're using
+        // in CustomSitemap class below requires 5.29.0+, and we don't want to
+        // increase minimum required Statamic version just for test setup
+        if (version_compare(ltrim(Lock::file(__DIR__.'/../composer.lock')->getInstalledVersion('statamic/cms'), 'v'), '5.29.0', '<')) {
+            $this->markTestSkipped();
+        }
+
         app()->bind(Sitemap::class, CustomSitemap::class);
 
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
