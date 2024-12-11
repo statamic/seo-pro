@@ -773,6 +773,54 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
     }
 
+    /** @test */
+    public function it_can_loop_over_meta_data()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+        $this->files->put(resource_path('views-seo-pro/layout.antlers.html'), <<<'EOT'
+{{ seo_pro:meta_data }}
+    <h1>{{ title }}</h1>
+    <h2>{{ description }}</h2>
+    <h3>{{ canonical_url }}</h3>
+{{ /seo_pro:meta_data }}
+EOT);
+
+        $content = $this->get('/the-view')->content();
+        $this->assertStringContainsStringIgnoringLineEndings('<h1>The View</h1>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>A wonderful view!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h3>http://cool-runnings.com/the-view</h3>', $content);
+    }
+
+    /** @test */
+    public function it_can_loop_over_aliased_meta_data()
+    {
+        $this->withoutExceptionHandling();
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnCollection(Collection::find('pages'), [
+                'title' => '@seo:subtitle',
+            ]);
+
+        $this->files->put(resource_path('views-seo-pro/layout.antlers.html'), <<<'EOT'
+<h1 class="title_outside">{{ title }}</h1>
+{{ seo_pro:meta_data as="foo" }}
+    <h1 class="title_inside">{{ title }}</h1>
+    <h1>{{ foo:title }}</h1>
+    <h3>{{ foo:canonical_url }}</h3>
+    <h3 class="canonical_url_without_scoping">{{ canonical_url }}</h3>
+{{ /seo_pro:meta_data }}
+EOT);
+
+        $content = $this->get('/about')->content();
+        $this->assertStringContainsStringIgnoringLineEndings('<h1 class="title_outside">About</h1>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h1 class="title_inside">About</h1>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h1>The Best About Page</h1>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h3>http://cool-runnings.com/about</h3>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<h3 class="canonical_url_without_scoping"></h3>', $content);
+    }
+
     protected function setCustomGlidePresetDimensions($app)
     {
         $app->config->set('statamic.seo-pro.assets', [
