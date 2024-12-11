@@ -16,7 +16,10 @@ class SeoProDirective extends SeoProTags
             );
         }
 
-        return $this->setContext($context)->$tag();
+        return $this
+            ->setContext($context)
+            ->setParameters([])
+            ->$tag();
     }
 
     protected function isMissingContext($context)
