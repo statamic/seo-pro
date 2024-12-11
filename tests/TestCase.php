@@ -12,6 +12,7 @@ use Statamic\SeoPro\SiteDefaults;
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected $siteFixturePath = __DIR__.'/Fixtures/site';
+    protected $files;
 
     protected function getPackageProviders($app)
     {
