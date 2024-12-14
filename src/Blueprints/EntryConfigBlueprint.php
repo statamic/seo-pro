@@ -24,6 +24,7 @@ class EntryConfigBlueprint
                             'handle' => 'include_in_reporting',
                             'field' => [
                                 'display' => __('seo-pro::settings.include_in_reporting'),
+                                'visibility' => 'hidden',
                                 'type' => 'toggle',
                                 'default' => true,
                             ],
