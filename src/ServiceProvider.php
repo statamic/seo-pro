@@ -242,7 +242,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->publishes([
             __DIR__.'/../resources/views/links' => resource_path('views/vendor/seo-pro/links'),
-        ], ['seo-pro-linking']);
+        ], ['seo-pro-linking', 'seo-pro-linking-views']);
 
         return $this;
     }
