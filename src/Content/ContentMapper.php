@@ -237,7 +237,7 @@ class ContentMapper
             $type = $field->type();
             $config = $field->config();
 
-            if (Arr::get($config, 'seo_pro_map_content') === true) {
+            if (Arr::get($config, 'seo_pro_map_content') === false) {
                 continue;
             }
 
