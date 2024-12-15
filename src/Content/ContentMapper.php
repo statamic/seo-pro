@@ -235,6 +235,11 @@ class ContentMapper
         /** @var Field $field */
         foreach ($entry->blueprint()->fields()->all() as $field) {
             $type = $field->type();
+            $config = $field->config();
+
+            if (Arr::get($config, 'seo_pro_map_content') === true) {
+                continue;
+            }
 
             if (! $this->hasMapper($type)) {
                 continue;
