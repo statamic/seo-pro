@@ -60,6 +60,6 @@ class EntryLink extends Model
 
     public function collectionSettings(): HasOne
     {
-        return $this->hasOne(CollectionLinkSettings::class, 'collection', 'collection');
+        return $this->hasOne(CollectionLinkSetting::class, 'collection', 'collection');
     }
 }

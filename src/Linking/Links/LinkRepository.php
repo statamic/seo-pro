@@ -11,7 +11,7 @@ use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository;
 use Statamic\SeoPro\Contracts\Linking\Links\LinksRepository as LinkRepositoryContract;
 use Statamic\SeoPro\Events\InternalLinksUpdated;
 use Statamic\SeoPro\Linking\Config\ConfigurationRepository as ConfigImpl;
-use Statamic\SeoPro\Models\CollectionLinkSettings;
+use Statamic\SeoPro\Models\CollectionLinkSetting;
 use Statamic\SeoPro\Models\EntryLink;
 use Statamic\SeoPro\Models\SiteLinkSetting;
 
@@ -261,8 +261,8 @@ readonly class LinkRepository implements LinkRepositoryContract
             return false;
         }
 
-        /** @var CollectionLinkSettings $collectionSetting */
-        $collectionSetting = CollectionLinkSettings::query()->where('collection', $collectionHandle)->first();
+        /** @var CollectionLinkSetting $collectionSetting */
+        $collectionSetting = CollectionLinkSetting::query()->where('collection', $collectionHandle)->first();
 
         if ($collectionSetting && ! $collectionSetting->linking_enabled) {
             return false;

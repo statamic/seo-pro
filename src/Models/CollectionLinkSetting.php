@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $allow_linking_to_all_collections
  * @property array $linkable_collections
  */
-class CollectionLinkSettings extends Model
+class CollectionLinkSetting extends Model
 {
     use HasTimestamps;
 

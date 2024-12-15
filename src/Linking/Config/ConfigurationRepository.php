@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Statamic\Facades\Collection as CollectionApi;
 use Statamic\Facades\Site as SiteApi;
 use Statamic\SeoPro\Contracts\Linking\ConfigurationRepository as ConfigurationRepositoryContract;
-use Statamic\SeoPro\Models\CollectionLinkSettings;
+use Statamic\SeoPro\Models\CollectionLinkSetting;
 use Statamic\SeoPro\Models\SiteLinkSetting;
 
 class ConfigurationRepository implements ConfigurationRepositoryContract
@@ -15,7 +15,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
     {
         $collections = [];
         $allCollections = CollectionApi::all();
-        $settings = CollectionLinkSettings::all()->keyBy('collection')->all();
+        $settings = CollectionLinkSetting::all()->keyBy('collection')->all();
 
         foreach ($allCollections as $collection) {
             $handle = $collection->handle();
@@ -43,7 +43,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
         );
     }
 
-    protected function makeCollectionConfig(string $handle, string $title, CollectionLinkSettings $settings): CollectionConfig
+    protected function makeCollectionConfig(string $handle, string $title, CollectionLinkSetting $settings): CollectionConfig
     {
         return new CollectionConfig(
             $handle,
@@ -57,7 +57,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function getCollectionConfiguration(string $handle): ?CollectionConfig
     {
-        $config = CollectionLinkSettings::query()->where('collection', $handle)->first();
+        $config = CollectionLinkSetting::query()->where('collection', $handle)->first();
 
         if ($config) {
             return $this->makeCollectionConfig($handle, '', $config);
@@ -68,8 +68,8 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function updateCollectionConfiguration(string $handle, CollectionConfig $config): void
     {
-        /** @var CollectionLinkSettings $collectionSettings */
-        $collectionSettings = CollectionLinkSettings::query()->firstOrNew(['collection' => $handle]);
+        /** @var CollectionLinkSetting $collectionSettings */
+        $collectionSettings = CollectionLinkSetting::query()->firstOrNew(['collection' => $handle]);
 
         $collectionSettings->linkable_collections = $config->linkableCollections;
         $collectionSettings->allow_linking_to_all_collections = $config->allowLinkingToAllCollections;
@@ -158,7 +158,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function getDisabledCollections(): array
     {
-        $disabled = CollectionLinkSettings::query()->where('linking_enabled', false)
+        $disabled = CollectionLinkSetting::query()->where('linking_enabled', false)
             ->select('collection')
             ->get()
             ->pluck('collection')
@@ -177,7 +177,7 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function deleteCollectionConfiguration(string $handle): void
     {
-        CollectionLinkSettings::query()->where('collection', $handle)->delete();
+        CollectionLinkSetting::query()->where('collection', $handle)->delete();
     }
 
     public static function addDefaultSiteLinkSettings(SiteLinkSetting $settings): SiteLinkSetting
@@ -210,8 +210,8 @@ class ConfigurationRepository implements ConfigurationRepositoryContract
 
     public function resetCollectionConfiguration(string $handle): void
     {
-        /** @var \Statamic\SeoPro\Models\CollectionLinkSettings $settings */
-        $settings = CollectionLinkSettings::query()->where('collection', $handle)->first();
+        /** @var \Statamic\SeoPro\Models\CollectionLinkSetting $settings */
+        $settings = CollectionLinkSetting::query()->where('collection', $handle)->first();
 
         if (! $settings) {
             return;
