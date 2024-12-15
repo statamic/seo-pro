@@ -2,13 +2,18 @@
 
 namespace Tests;
 
+use Illuminate\Support\Collection as IlluminateCollection;
+use Statamic\Console\Composer\Lock;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\SeoPro\Sitemap\Sitemap;
+use Statamic\Statamic;
 
 class SitemapTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -364,5 +369,138 @@ EOT;
         $this
             ->get('/sitemap_a.xml')
             ->assertNotFound();
+    }
+
+    /** @test */
+    public function it_can_use_custom_sitemap_queries()
+    {
+        // Hacky/temporary version compare, because `reorder()` method we're using
+        // in CustomSitemap class below requires 5.29.0+, and we don't want to
+        // increase minimum required Statamic version just for test setup
+        if (version_compare(ltrim(Lock::file(__DIR__.'/../composer.lock')->getInstalledVersion('statamic/cms'), 'v'), '5.29.0', '<')) {
+            $this->markTestSkipped();
+        }
+
+        app()->bind(Sitemap::class, CustomSitemap::class);
+
+        config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
+        config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
+
+        $this->assertNull(Blink::get('ran-custom-entries-query'));
+        $this->assertNull(Blink::get('ran-custom-entries-for-page-query'));
+
+        $content = $this
+            ->get('/sitemap_1.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertEquals(2, Blink::get('ran-custom-entries-query'));
+        $this->assertEquals(1, Blink::get('ran-custom-entries-for-page-query'));
+        $this->assertCount(5, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<"EOT"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/dance</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/magic</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/nectar</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/topics</loc>
+        <lastmod>2020-01-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+
+        $content = $this
+            ->get('/sitemap_2.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertEquals(4, Blink::get('ran-custom-entries-query'));
+        $this->assertEquals(2, Blink::get('ran-custom-entries-for-page-query'));
+        $this->assertCount(2, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<'EOT'
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://cool-runnings.com</loc>
+        <lastmod>2020-11-24</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+    }
+}
+
+class CustomSitemap extends Sitemap
+{
+    protected function publishedEntriesQuery()
+    {
+        // count how many times this is called
+        Blink::increment('ran-custom-entries-query');
+
+        // reversing from default order, just so we can assert query has effect on output
+        return parent::publishedEntriesQuery()->reorder('uri', 'desc');
+    }
+
+    protected function publishedEntriesForPage(int $page, int $perPage): IlluminateCollection
+    {
+        // count how many times this is called
+        Blink::increment('ran-custom-entries-for-page-query');
+
+        // also reverse items on individual pages, again so we can assert query has effect on output
+        return parent::publishedEntriesForPage($page, $perPage)->reverse();
     }
 }

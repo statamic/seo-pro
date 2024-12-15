@@ -22,14 +22,14 @@
         }
     },
     "require": {
-        "statamic/cms": "^5.0.0",
+        "statamic/cms": "^5.41",
         "donatello-za/rake-php-plus": "^1.0",
         "openai-php/client": "^0.10.1",
         "ext-dom": "*"
     },
     "require-dev": {
-        "orchestra/testbench": "^8.0 || ^9.0",
-        "phpunit/phpunit": "^10.0",
+        "orchestra/testbench": "^8.28 || ^9.6.1",
+        "phpunit/phpunit": "^10.5.35",
         "laravel/pint": "^1.17"
     },
     "config": {
