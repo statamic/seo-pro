@@ -98,8 +98,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'statamic/seo-pro' => [
                 'id' => 'statamic/seo-pro',
                 'namespace' => 'Statamic\\SeoPro',
-//                'autoload' => 'src',
-//                'provider' => \Statamic\SeoPro\ServiceProvider::class,
+                'autoload' => 'src',
+                'provider' => \Statamic\SeoPro\ServiceProvider::class,
             ],
         ];
     }
