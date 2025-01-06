@@ -12,7 +12,7 @@
     },
     "extra": {
         "statamic": {
-            "name": "Seo Pro",
+            "name": "SEO Pro",
             "description": "An all-in-one site reporting, metadata mastering, OG managing, Twitter card making, sitemap generating addon."
         },
         "laravel": {
