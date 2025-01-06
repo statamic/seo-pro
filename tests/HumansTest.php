@@ -40,7 +40,7 @@ Statamic: https://statamic.com
 /* SITE */
 
 Standards: HTML5, CSS3
-Components: Statamic 3, Laravel, PHP, JavaScript
+Components: Statamic, Laravel, PHP, JavaScript
 
 EOT;
 
