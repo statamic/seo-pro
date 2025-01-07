@@ -22,4 +22,18 @@ return [
     'sitemap_cache_length' => 'Cache Length',
     'sitemap_cache_length_instruct' => 'How long the sitemap should get cached, in minutes.',
 
+    'can_be_suggested' => 'Can Be Suggested',
+    'include_in_reporting' => 'Include In Reporting',
+    'keyword_threshold' => 'Keyword Threshold',
+    'prevent_circular_links' => 'Prevent Circular Link Suggestions',
+    'min_internal_links' => 'Min. Internal Links',
+    'max_internal_links' => 'Max. Internal Links',
+    'min_external_links' => 'Min. External Links',
+    'max_external_links' => 'Max. External Links',
+    'ignored_phrases' => 'Ignored Phrases',
+
+    'linking_enabled' => 'Linking Enabled',
+    'allow_cross_site_suggestions' => 'Allow Cross-Site Suggestions',
+    'allow_suggestions_from_all_collections' => 'Allow Suggestions from all Collections',
+    'allowed_collections' => 'Limit Suggestions From',
 ];

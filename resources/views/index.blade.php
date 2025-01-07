@@ -42,6 +42,19 @@
                     </div>
                 </a>
             @endcan
+            @if (config('statamic.seo-pro.linking.enabled', false))
+                @can('view seo links')
+                    <a href="{{ cp_route('seo-pro.internal-links.index') }}" class="w-full lg:w-1/2 p-4 md:flex items-start hover:bg-gray-200 dark:hover:bg-dark-550 rounded-md group">
+                        <div class="h-8 w-8 mr-4 text-gray-800">
+                            @cp_svg('icons/light/link')
+                        </div>
+                        <div class="text-blue flex-1 mb-4 md:mb-0 md:mr-6">
+                            <h3>{{ __('seo-pro::messages.link_manager') }}</h3>
+                            <p class="text-xs">{{ __('seo-pro::messages.link_manager_description') }}</p>
+                        </div>
+                    </a>
+                @endcan
+            @endif
         </div>
     </div>
 

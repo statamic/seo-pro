@@ -2,9 +2,12 @@
 
 namespace Statamic\SeoPro\Tags;
 
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
+use Statamic\SeoPro\Linking\Links\AutomaticLinkManager;
 use Statamic\SeoPro\RendersMetaHtml;
+use Statamic\SeoPro\SeoPro;
 use Statamic\SeoPro\SiteDefaults;
 use Statamic\Tags\Tags;
 
@@ -60,6 +63,30 @@ class SeoProTags extends Tags
     public function dumpMetaData()
     {
         return dd($this->metaData());
+    }
+
+    protected function getAutoLinkedContent(string $content)
+    {
+        return app(AutomaticLinkManager::class)
+            ->inject(
+                $content,
+                Site::current()?->handle() ?? 'default',
+            );
+    }
+
+    public function content()
+    {
+        if (! SeoPro::isSeoProProcess()) {
+            $content = $this->parse();
+
+            if ($this->params->get('auto_link', false)) {
+                return $this->getAutoLinkedContent($content);
+            }
+
+            return $content;
+        }
+
+        return '<!--statamic:content-->'.$this->parse().'<!--/statamic:content-->';
     }
 
     /**
