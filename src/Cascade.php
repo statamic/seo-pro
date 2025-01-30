@@ -383,7 +383,7 @@ class Cascade
     {
         $viewCascade = app(ViewCascade::class)->toArray();
 
-        return (string) Parse::template($item, array_merge($viewCascade, $this->current));
+        return (string) Parse::template($item, array_merge($viewCascade, $this->current ?? []));
     }
 
     protected function humans()
