@@ -145,6 +145,8 @@ If you wish to completely disable the sitemap, change it's URL, or customize it'
 
 If you wish to customize the contents of the `sitemap.xml` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
 
+You can also [extend the Sitemap class](https://github.com/statamic/seo-pro/pull/361) if you need more advanced control over query logic, etc.
+
 ### Humans.txt
 
 A `humans.txt` route is automatically generated for you.
