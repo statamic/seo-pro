@@ -381,6 +381,10 @@ class Cascade
 
     protected function parseAntlers($item)
     {
+        if (Str::contains($item, ['{{?', '{{$'])) {
+            return $item;
+        }
+
         $viewCascade = app(ViewCascade::class)->toArray();
 
         return (string) Parse::template($item, array_merge($viewCascade, $this->current));
