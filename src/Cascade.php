@@ -2,14 +2,17 @@
 
 namespace Statamic\SeoPro;
 
+use Exception;
 use Illuminate\Support\Collection;
+use Statamic\Facades\Antlers;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
-use Statamic\Facades\Parse;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
+use Statamic\Fields\Field;
 use Statamic\Fields\Value;
+use Statamic\Fieldtypes\Text;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\View\Cascade as ViewCascade;
@@ -381,13 +384,29 @@ class Cascade
 
     protected function parseAntlers($item)
     {
-        if (Str::contains($item, ['{{?', '{{$'])) {
+        // Simplistically prevent php in antlers.
+        if (Str::contains($item, ['{{?', '{{$', '@{'])) {
             return $item;
         }
 
-        $viewCascade = app(ViewCascade::class)->toArray();
+        // Also, the parser has extra runtime protections around `Value` objects
+        // when `antlers: true` is set on a blueprint field. While this may be
+        // improved in future, we'll give custom seo fields same treatment.
+        try {
+            $textFieldType = new Text;
+            $textFieldType->setField(new Field('___tmpValue', ['antlers' => true]));
+            $value = new Value($item, '___tmpValue', $textFieldType);
 
-        return (string) Parse::template($item, array_merge($viewCascade, $this->current));
+            $viewCascade = array_merge(
+                app(ViewCascade::class)->toArray(),
+                $this->current,
+                ['___tmpValue' => $value],
+            );
+
+            return (string) Antlers::parse('{{ ___tmpValue }}', $viewCascade);
+        } catch (Exception $exception) {
+            return $item;
+        }
     }
 
     protected function humans()
