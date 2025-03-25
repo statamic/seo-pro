@@ -385,9 +385,9 @@ class Cascade
     protected function parseAntlers($item)
     {
         // Simplistically prevent php in antlers.
-        // if (Str::contains($item, ['{{?', '{{$', '@{'])) {
-        //     return $item;
-        // }
+        if (Str::contains($item, ['{{?', '{{$', '@{'])) {
+            return $item;
+        }
 
         // Also, the parser has extra runtime protections around `Value` objects
         // when `antlers: true` is set on a blueprint field. While this may be
