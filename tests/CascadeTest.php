@@ -10,7 +10,7 @@ use Statamic\SeoPro\SiteDefaults;
 
 class CascadeTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if ($this->files->exists($path = base_path('custom_seo.yaml'))) {
             $this->files->delete($path);
@@ -124,6 +124,49 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('RED', $data['description']);
+    }
+
+    public static function phpInAntlersProvider()
+    {
+        return [
+            [
+                '{{? echo "php used" ?}}',
+                '{{? echo "php used" ?}}',
+            ],
+            [
+                '{{$ "php used" $}}',
+                '{{$ "php used" $}}',
+            ],
+            [
+                "{{ _php_used = '@{@{' + '? echo \"php used\" ?' + '@}}'; _php_used | antlers /}}",
+                '{{? echo "php used" ?}}',
+            ],
+            [
+                "{{ _php_used = (['' => ''] | json); _open = (_php_used | at(0)); _close = (_php_used | at(6)); _antlers_modified = _open + _open + '? echo \"php used\" ?' + _close + _close; _antlers_modified | antlers /}}",
+                '{{? echo "php used" ?}}',
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider phpInAntlersProvider
+     */
+    public function it_doesnt_parse_php_in_antlers($antlers, $output)
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => $antlers,
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertNotEquals('hello', $data['description']);
+        $this->assertEquals($output, $data['description']);
     }
 
     /** @test */
