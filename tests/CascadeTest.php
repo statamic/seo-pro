@@ -165,7 +165,7 @@ class CascadeTest extends TestCase
             ->withCurrent($entry)
             ->get();
 
-        $this->assertNotEquals('hello', $data['description']);
+        $this->assertNotEquals('php used', $data['description']);
         $this->assertEquals($output, $data['description']);
     }
 
