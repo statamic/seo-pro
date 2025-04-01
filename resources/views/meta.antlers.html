@@ -7,7 +7,7 @@
 {{ /if }}
 
 {{ if robots }}
-    <meta name="robots" content="{{ robots | raw | list | striptags | entities }}" />
+    <meta name="robots" content="{{ robots | raw | list | striptags | entities | trim }}" />
 {{ /if }}
 
 <meta property="og:type" content="website" />
@@ -20,7 +20,7 @@
     <meta property="og:description" content="{{ description | striptags | entities | trim }}" />
 {{ /if }}
 
-<meta property="og:url" content="{{ canonical_url }}" />
+<meta property="og:url" content="{{ canonical_url | striptags | entities | trim }}" />
 
 {{ if site_name }}
     <meta property="og:site_name" content="{{ site_name | striptags | entities | trim }}" />
@@ -62,7 +62,7 @@
             <meta property="og:image:width" content="{{ width }}" />
             <meta property="og:image:height" content="{{ height }}" />
         {{ /if }}
-        <meta property="og:image:alt" content="{{ alt | striptags | entities }}" />
+        <meta property="og:image:alt" content="{{ alt | striptags | entities | trim }}" />
 
         {{ if is_twitter_glide_enabled }}
             {{ glide:generate :src="image" preset="seo_pro_twitter" absolute="true" }}
@@ -71,26 +71,26 @@
         {{ else }}
             <meta name="twitter:image" content="{{ permalink }}" />
         {{ /if }}
-        <meta name="twitter:image:alt" content="{{ alt | striptags | entities }}" />
+        <meta name="twitter:image:alt" content="{{ alt | striptags | entities | trim }}" />
 
     {{ /image }}
 {{ /if }}
 
-<link href="{{ home_url }}" rel="home" />
-<link href="{{ canonical_url }}" rel="canonical" />
+<link href="{{ home_url | striptags | entities | trim }}" rel="home" />
+<link href="{{ canonical_url | striptags | entities | trim }}" rel="canonical" />
 
 {{ if prev_url }}
-    <link href="{{ prev_url }}" rel="prev" />
+    <link href="{{ prev_url | striptags | entities | trim }}" rel="prev" />
 {{ /if }}
 
 {{ if next_url }}
-    <link href="{{ next_url }}" rel="next" />
+    <link href="{{ next_url | striptags | entities | trim }}" rel="next" />
 {{ /if }}
 
 {{ if alternate_locales }}
-    <link rel="alternate" href="{{ canonical_url }}" hreflang="{{ current_hreflang }}" />
+    <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="{{ current_hreflang }}" />
     {{ alternate_locales }}
-        <link rel="alternate" href="{{ url }}" hreflang="{{ hreflang }}" />
+        <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="{{ hreflang }}" />
     {{ /alternate_locales }}
 {{ /if }}
 
@@ -99,9 +99,9 @@
 {{ /if }}
 
 {{ if google_verification }}
-    <meta name="google-site-verification" content="{{ google_verification | striptags | entities }}" />
+    <meta name="google-site-verification" content="{{ google_verification | striptags | entities | trim }}" />
 {{ /if }}
 
 {{ if bing_verification }}
-    <meta name="msvalidate.01" content="{{ bing_verification | striptags | entities }}" />
+    <meta name="msvalidate.01" content="{{ bing_verification | striptags | entities | trim }}" />
 {{ /if }}
