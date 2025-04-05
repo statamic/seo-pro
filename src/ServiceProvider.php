@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Statamic\Facades\Collection;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
@@ -55,6 +56,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
+            ->bootAddonComputedSeoFields()
             ->bootAddonGraphQL();
     }
 
@@ -160,6 +162,17 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
+    protected function bootAddonComputedSeoFields()
+    {
+        Collection::all()->each(function ($collection) {
+            Collection::computed($collection->handle(), 'seo', function ($entry) {
+                return $this->getItemSeoCascade($entry);
+            });
+        });
+
+        return $this;
+    }
+
     protected function bootAddonGraphQL()
     {
         GraphQL::addType(\Statamic\SeoPro\GraphQL\SeoProType::class);
@@ -169,12 +182,7 @@ class ServiceProvider extends AddonServiceProvider
             return [
                 'type' => GraphQL::type('SeoPro'),
                 'resolve' => function ($item) {
-                    return (new Cascade)
-                        ->with(SiteDefaults::load()->augmented())
-                        ->with($this->getAugmentedSectionDefaults($item))
-                        ->with($item->seo)
-                        ->withCurrent($item)
-                        ->get();
+                    return $this->getItemSeoCascade($item);
                 },
             ];
         };
@@ -192,5 +200,15 @@ class ServiceProvider extends AddonServiceProvider
         return $user->can('view seo reports')
             || $user->can('edit seo site defaults')
             || $user->can('edit seo section defaults');
+    }
+
+    private function getItemSeoCascade($item)
+    {
+        return (new Cascade)
+            ->with(SiteDefaults::load()->augmented())
+            ->with($this->getAugmentedSectionDefaults($item))
+            ->with($item->seo)
+            ->withCurrent($item)
+            ->get();
     }
 }
