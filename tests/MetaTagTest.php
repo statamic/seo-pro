@@ -39,7 +39,7 @@ class MetaTagTest extends TestCase
         });
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->cleanUpViews();
 
@@ -89,6 +89,39 @@ EOT;
      */
     public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_view_data($viewType)
     {
+        $this->prepareViews($viewType);
+
+        $expected = <<<'EOT'
+<title>The View | Site Name</title>
+<meta name="description" content="A wonderful view!" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="The View" />
+<meta property="og:description" content="A wonderful view!" />
+<meta property="og:url" content="http://cool-runnings.com/the-view" />
+<meta property="og:site_name" content="Site Name" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The View" />
+<meta name="twitter:description" content="A wonderful view!" />
+<link href="http://cool-runnings.com" rel="home" />
+<link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
+EOT;
+
+        $content = $this->get('/the-view')->content();
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_data_when_no_fallback_entry_exists($viewType)
+    {
+        Entry::findByUri('/')->deleteQuietly();
+
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
