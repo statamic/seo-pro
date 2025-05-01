@@ -399,7 +399,7 @@ class Cascade
 
             $viewCascade = array_merge(
                 app(ViewCascade::class)->toArray(),
-                $this->current,
+                $this->current ?? [],
                 ['___tmpValue' => $value],
             );
 
