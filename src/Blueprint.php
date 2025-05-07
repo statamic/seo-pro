@@ -61,7 +61,12 @@ class Blueprint
 
         static::$addingField = true;
 
-        $this->blueprint->ensureFieldInTab('seo', ['type' => 'seo_pro', 'listable' => false, 'display' => 'SEO'], 'SEO');
+        $this->blueprint->ensureFieldInTab('seo', [
+            'type' => 'seo_pro',
+            'listable' => false,
+            'display' => 'SEO',
+            'localizable' => true,
+        ], 'SEO');
 
         static::$addingField = false;
     }
