@@ -126,24 +126,24 @@ export default {
     methods: {
 
         sourceDropdownChanged(value) {
-            this.value.source = value;
+            let newValue = this.value;
+
+            newValue.source = value;
 
             if (value !== 'field') {
-                this.value.value = this.meta.defaultValue;
-                this.meta.fieldMeta = this.meta.defaultFieldMeta;
+                newValue.value = this.meta.defaultValue;
+                this.$emit('meta-updated', {...this.meta, fieldMeta: this.meta.defaultFieldMeta});
             }
+
+            this.update(newValue);
         },
 
         sourceFieldChanged(field) {
-            this.value.value = field;
+            this.update({...this.value, value: field});
         },
 
         customValueChanged(value) {
-            let newValue = this.value;
-
-            newValue.value = value;
-
-            this.update(newValue);
+            this.update({...this.value, value});
         },
 
     },

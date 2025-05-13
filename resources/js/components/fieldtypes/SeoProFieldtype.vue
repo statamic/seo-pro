@@ -58,6 +58,16 @@ export default {
             this.update(seoValue);
         },
 
+        metaUpdated(handle, value) {
+            this.$emit('meta-updated', {
+                ...this.meta,
+                meta: {
+                    ...this.meta.meta,
+                    [handle]: value,
+                },
+            });
+        },
+
         errors(handle) {
             const state = this.$store.state.publish[this.storeName];
             if (!state) return [];
