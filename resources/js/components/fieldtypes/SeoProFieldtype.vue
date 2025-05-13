@@ -7,6 +7,7 @@
             :value="value[field.handle]"
             :meta="meta.meta[field.handle]"
             :read-only="! field.localizable"
+            :errors="errors(field.handle)"
             class="form-group"
             @meta-updated="metaUpdated(field.handle, $event)"
             @focus="$emit('focus')"
@@ -32,6 +33,8 @@ export default {
 
     mixins: [Fieldtype],
 
+    inject: ['storeName'],
+
     computed: {
         fields() {
             return _.chain(this.meta.fields)
@@ -53,7 +56,23 @@ export default {
             Vue.set(seoValue, handle, value);
 
             this.update(seoValue);
-        }
+        },
+
+        metaUpdated(handle, value) {
+            this.$emit('meta-updated', {
+                ...this.meta,
+                meta: {
+                    ...this.meta.meta,
+                    [handle]: value,
+                },
+            });
+        },
+
+        errors(handle) {
+            const state = this.$store.state.publish[this.storeName];
+            if (!state) return [];
+            return state.errors['seo.'+handle] || [];
+        },
     },
 
 }

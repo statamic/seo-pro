@@ -62,6 +62,19 @@ class SeoProFieldtype extends Fieldtype
         return SeoProFields::new($parent ?? null)->getConfig();
     }
 
+    public function extraRules(): array
+    {
+        $rules = $this
+            ->fields()
+            ->addValues((array) $this->field->value())
+            ->validator()
+            ->rules();
+
+        return collect($rules)->mapWithKeys(function ($rules, $handle) {
+            return [$this->field->handle().'.'.$handle => $rules];
+        })->all();
+    }
+
     public function augment($data)
     {
         if (empty($data) || ! is_iterable($data)) {

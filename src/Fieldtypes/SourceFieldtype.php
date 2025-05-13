@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Fieldtypes;
 
 use Statamic\Fields\Field;
 use Statamic\Fields\Fieldtype;
+use Statamic\SeoPro\Fieldtypes\Rules\SourceFieldRule;
 use Statamic\Support\Str;
 
 class SourceFieldtype extends Fieldtype
@@ -114,5 +115,10 @@ class SourceFieldtype extends Fieldtype
     protected function fieldtype()
     {
         return $this->sourceField()->fieldtype();
+    }
+
+    public function rules(): array
+    {
+        return [new SourceFieldRule];
     }
 }
