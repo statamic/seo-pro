@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Support\Facades\Log;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
@@ -141,11 +142,31 @@ class CascadeTest extends TestCase
                 "{{ _php_used = '@{@{' + '? echo \"php used\" ?' + '@}}'; _php_used | antlers /}}",
                 "{{ _php_used = '@{@{' + '? echo \"php used\" ?' + '@}}'; _php_used | antlers /}}",
             ],
+        ];
+    }
+
+    public static function obfuscatedPhpInAntlersProvider()
+    {
+        return [
             [
                 "{{ _php_used = (['' => ''] | json); _open = (_php_used | at(0)); _close = (_php_used | at(6)); _antlers_modified = _open + _open + '? echo \"php used\" ?' + _close + _close; _antlers_modified | antlers /}}",
-                '{{? echo "php used" ?}}',
+                'PHP Node evaluated in user content: {{? echo "php used" ?}}',
+                ' echo "php used" ',
             ],
         ];
+    }
+
+    private function getAntlersPhpData($antlers)
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        return (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => $antlers,
+            ])
+            ->withCurrent($entry)
+            ->get();
     }
 
     /**
@@ -155,18 +176,28 @@ class CascadeTest extends TestCase
      */
     public function it_doesnt_parse_php_in_antlers($antlers, $output)
     {
-        $entry = Entry::findByUri('/about')->entry();
-
-        $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->with([
-                'description' => $antlers,
-            ])
-            ->withCurrent($entry)
-            ->get();
+        $data = $this->getAntlersPhpData($antlers);
 
         $this->assertNotEquals('php used', $data['description']);
         $this->assertEquals($output, $data['description']);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider obfuscatedPhpInAntlersProvider
+     */
+    public function it_doesnt_parse_obfuscated_php_in_antlers($antlers, $logMessage, $phpContent)
+    {
+        Log::shouldReceive('warning')->once()->with($logMessage, [
+            'file' => null,
+            'trace' => [],
+            'content' => $phpContent,
+        ]);
+
+        $data = $this->getAntlersPhpData($antlers);
+
+        $this->assertSame('', $data['description']);
     }
 
     /** @test */
