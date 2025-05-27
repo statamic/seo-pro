@@ -73,6 +73,9 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $app['config']->set("statamic.$config", require (__DIR__."/../vendor/statamic/cms/config/{$config}.php"));
         }
 
+        $app['config']->set('app.debug', true);
+        $app['config']->set('statamic.antlers.errorOnAccessViolation', true);
+
         $files = new Filesystem;
 
         $files->copyDirectory(__DIR__.'/../vendor/statamic/cms/config', config_path('statamic'));
