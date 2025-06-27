@@ -91,7 +91,7 @@ class Cascade
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
             'next_url' => $this->nextUrl(),
-            'home_url' => Str::removeRight(URL::makeAbsolute('/'), '/'),
+            'home_url' => URL::makeAbsolute('/'),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
             'alternate_locales' => $alternateLocales = $this->alternateLocales(),
