@@ -22,6 +22,7 @@ return [
         'enabled' => true,
         'url' => 'sitemap.xml',
         'expire' => 60,
+        'enforce_trailing_slashes' => false,
         'pagination' => [
             'enabled' => false,
             'url' => 'sitemap_{page}.xml',
