@@ -6,6 +6,10 @@ return [
         'path' => base_path('content/seo.yaml'),
     ],
 
+    'urls' => [
+        'enforce_trailing_slashes' => false,
+    ],
+
     'assets' => [
         'container' => null,
         'twitter_preset' => [
@@ -22,7 +26,6 @@ return [
         'enabled' => true,
         'url' => 'sitemap.xml',
         'expire' => 60,
-        'enforce_trailing_slashes' => false,
         'pagination' => [
             'enabled' => false,
             'url' => 'sitemap_{page}.xml',

@@ -14,7 +14,7 @@ class SitemapController extends Controller
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
-        if (config('statamic.seo-pro.sitemap.enforce_trailing_slashes')) {
+        if (config('statamic.seo-pro.urls.enforce_trailing_slashes')) {
             URL::enforceTrailingSlashes();
         }
 
@@ -45,7 +45,7 @@ class SitemapController extends Controller
         abort_unless(config('statamic.seo-pro.sitemap.pagination.enabled'), 404);
         abort_unless(filter_var($page, FILTER_VALIDATE_INT), 404);
 
-        if (config('statamic.seo-pro.sitemap.enforce_trailing_slashes')) {
+        if (config('statamic.seo-pro.urls.enforce_trailing_slashes')) {
             URL::enforceTrailingSlashes();
         }
 
