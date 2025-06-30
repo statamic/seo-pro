@@ -8,8 +8,8 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\URL;
 use Statamic\SeoPro\Sitemap\Sitemap;
-use Statamic\Statamic;
 
 class SitemapTest extends TestCase
 {
@@ -24,9 +24,37 @@ class SitemapTest extends TestCase
         $this->files->makeDirectory($folder, 0755, true);
     }
 
-    /** @test */
-    public function it_outputs_sitemap_xml()
+    protected function tearDown(): void
     {
+        URL::enforceTrailingSlashes(false);
+        URL::clearUrlCache();
+
+        parent::tearDown();
+    }
+
+    public static function trailingSlashProvider()
+    {
+        return [
+            'without trailing slashes (default)' => [
+                fn () => Config::set('statamic.seo-pro.urls.enforce_trailing_slashes', false),
+                fn ($expected) => $expected,
+            ],
+            'with trailing slashes' => [
+                fn () => Config::set('statamic.seo-pro.urls.enforce_trailing_slashes', true),
+                fn ($expected) => str_replace('</loc>', '/</loc>', $expected),
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider trailingSlashProvider
+     */
+    public function it_outputs_sitemap_xml($setupTrailingSlashes, $processExpected)
+    {
+        $setupTrailingSlashes();
+
         $content = $this
             ->get('/sitemap.xml')
             ->assertOk()
@@ -37,7 +65,7 @@ class SitemapTest extends TestCase
 
         $today = now()->format('Y-m-d');
 
-        $expected = <<<"EOT"
+        $expected = $processExpected(<<<"EOT"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
@@ -92,7 +120,7 @@ class SitemapTest extends TestCase
 
 </urlset>
 
-EOT;
+EOT);
 
         $this->assertEquals($expected, $content);
     }
@@ -111,9 +139,13 @@ EOT;
      * @test
      *
      * @environment-setup setCustomSitemapXmlUrl
+     *
+     * @dataProvider trailingSlashProvider
      */
-    public function it_outputs_sitemap_xml_with_custom_url()
+    public function it_outputs_sitemap_xml_with_custom_url($setupTrailingSlashes, $processExpected)
     {
+        $setupTrailingSlashes();
+
         $this
             ->get('/sitemap.xml')
             ->assertStatus(404);
@@ -124,7 +156,9 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->getContent();
 
-        $this->assertStringContainsStringIgnoringLineEndings('<loc>http://cool-runnings.com</loc>', $content);
+        $expected = $processExpected('<loc>http://cool-runnings.com</loc>');
+
+        $this->assertStringContainsStringIgnoringLineEndings($expected, $content);
     }
 
     /** @test */
@@ -228,6 +262,8 @@ EOT;
     /** @test */
     public function it_outputs_paginated_sitemap_index_xml()
     {
+        // TODO: Test that enforcing trailing slashes doesn't affect the xml URLs on this page.
+
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
@@ -256,9 +292,15 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
-    public function it_outputs_paginated_sitemap_page_xml()
+    /**
+     * @test
+     *
+     * @dataProvider trailingSlashProvider
+     */
+    public function it_outputs_paginated_sitemap_page_xml($setupTrailingSlashes, $processExpected)
     {
+        $setupTrailingSlashes();
+
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
@@ -272,7 +314,7 @@ EOT;
 
         $today = now()->format('Y-m-d');
 
-        $expected = <<<"EOT"
+        $expected = $processExpected(<<<"EOT"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
@@ -313,7 +355,7 @@ EOT;
 
 </urlset>
 
-EOT;
+EOT);
 
         $this->assertEquals($expected, $content);
 
@@ -327,7 +369,7 @@ EOT;
 
         $today = now()->format('Y-m-d');
 
-        $expected = <<<"EOT"
+        $expected = $processExpected(<<<"EOT"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
@@ -347,7 +389,7 @@ EOT;
 
 </urlset>
 
-EOT;
+EOT);
 
         $this->assertEquals($expected, $content);
     }
@@ -371,9 +413,15 @@ EOT;
             ->assertNotFound();
     }
 
-    /** @test */
-    public function it_can_use_custom_sitemap_queries()
+    /**
+     * @test
+     *
+     * @dataProvider trailingSlashProvider
+     */
+    public function it_can_use_custom_sitemap_queries($setupTrailingSlashes, $processExpected)
     {
+        $setupTrailingSlashes();
+
         // Hacky/temporary version compare, because `reorder()` method we're using
         // in CustomSitemap class below requires 5.29.0+, and we don't want to
         // increase minimum required Statamic version just for test setup
@@ -444,7 +492,7 @@ EOT;
 
 EOT;
 
-        $this->assertEquals($expected, $content);
+        $this->assertEquals($processExpected($expected), $content);
 
         $content = $this
             ->get('/sitemap_2.xml')
@@ -480,7 +528,7 @@ EOT;
 
 EOT;
 
-        $this->assertEquals($expected, $content);
+        $this->assertEquals($processExpected($expected), $content);
     }
 }
 
