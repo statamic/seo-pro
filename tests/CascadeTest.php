@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
@@ -274,6 +276,34 @@ EOT
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
+        ];
+
+        $this->assertArraySubset($expected, $data);
+    }
+
+    /** @test */
+    public function it_generates_next_and_prev_urls_off_tag_paginator_from_cms_core()
+    {
+        $entry = Entry::findByUri($uri = '/about')->entry();
+
+        Blink::put('tag-paginator', (new LengthAwarePaginator(
+            items: [],
+            total: 15,
+            perPage: 3,
+            currentPage: 3,
+        ))->setPath($uri));
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->withCurrent($entry)
+            ->get();
+
+        $expected = [
+            'canonical_url' => 'http://cool-runnings.com/about?page=3',
+            'prev_url' => 'http://cool-runnings.com/about?page=2',
+            'next_url' => 'http://cool-runnings.com/about?page=4',
+            'home_url' => 'http://cool-runnings.com',
+            'humans_txt' => 'http://cool-runnings.com/humans.txt',
         ];
 
         $this->assertArraySubset($expected, $data);
