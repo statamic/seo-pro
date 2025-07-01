@@ -352,4 +352,28 @@ EOT
 
         $this->assertArraySubset($expected, $data);
     }
+
+    /** @test */
+    public function it_reverts_back_to_previous_trailing_slashes_configuration_set_by_user_or_app()
+    {
+        // If trailing slashes are disabled in the app
+        $this->assertFalse(URL::isEnforcingTrailingSlashes());
+
+        // But the user enables trailing slash enforcement somewhere else in the app
+        URL::enforceTrailingSlashes();
+
+        // Then when we set trailing slashes config in SEO Pro
+        Config::set('statamic.seo-pro.urls.enforce_trailing_slashes', true);
+
+        // And get the cascade
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->get();
+
+        // Our cascade meta should have trailing slashes
+        $this->assertEquals('http://cool-runnings.com/', $data['home_url']);
+
+        // But SEO Pro should not stomp the user's previous URL trailing slashes config
+        $this->assertTrue(URL::isEnforcingTrailingSlashes());
+    }
 }
