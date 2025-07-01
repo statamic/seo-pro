@@ -6,10 +6,6 @@ return [
         'path' => base_path('content/seo.yaml'),
     ],
 
-    'urls' => [
-        'enforce_trailing_slashes' => false,
-    ],
-
     'assets' => [
         'container' => null,
         'twitter_preset' => [

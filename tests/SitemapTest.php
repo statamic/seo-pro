@@ -36,11 +36,11 @@ class SitemapTest extends TestCase
     {
         return [
             'without trailing slashes (default)' => [
-                fn () => Config::set('statamic.seo-pro.urls.enforce_trailing_slashes', false),
+                fn () => null,
                 fn ($expected) => $expected,
             ],
             'with trailing slashes' => [
-                fn () => Config::set('statamic.seo-pro.urls.enforce_trailing_slashes', true),
+                fn () => URL::enforceTrailingSlashes(true),
                 fn ($expected) => str_replace('</loc>', '/</loc>', $expected),
             ],
         ];

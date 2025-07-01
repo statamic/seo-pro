@@ -5,7 +5,6 @@ namespace Statamic\SeoPro\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
-use Statamic\Facades\URL;
 use Statamic\SeoPro\Sitemap\Sitemap;
 
 class SitemapController extends Controller
@@ -13,10 +12,6 @@ class SitemapController extends Controller
     public function index()
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
-
-        if (config('statamic.seo-pro.urls.enforce_trailing_slashes')) {
-            URL::enforceTrailingSlashes();
-        }
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
 
@@ -44,10 +39,6 @@ class SitemapController extends Controller
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
         abort_unless(config('statamic.seo-pro.sitemap.pagination.enabled'), 404);
         abort_unless(filter_var($page, FILTER_VALIDATE_INT), 404);
-
-        if (config('statamic.seo-pro.urls.enforce_trailing_slashes')) {
-            URL::enforceTrailingSlashes();
-        }
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
 

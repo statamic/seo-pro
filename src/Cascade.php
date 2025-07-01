@@ -23,7 +23,6 @@ class Cascade
     protected $current;
     protected $explicitUrl;
     protected $model;
-    protected $trailingSlashesDefault = false;
     protected $forSitemap = false;
 
     public function __construct()
@@ -31,8 +30,6 @@ class Cascade
         $this->data = collect();
 
         $this->model = new NullModel;
-
-        $this->trailingSlashesDefault = URL::isEnforcingTrailingSlashes();
     }
 
     public function forSitemap()
@@ -71,10 +68,6 @@ class Cascade
 
     public function get()
     {
-        if (config('statamic.seo-pro.urls.enforce_trailing_slashes')) {
-            URL::enforceTrailingSlashes();
-        }
-
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
@@ -92,7 +85,7 @@ class Cascade
             return $this->parse($key, $item);
         });
 
-        $data = $this->data->merge([
+        return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
             'og_title' => $this->ogTitle(),
             'canonical_url' => $this->canonicalUrl(),
@@ -106,10 +99,6 @@ class Cascade
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
         ])->all();
-
-        URL::enforceTrailingSlashes($this->trailingSlashesDefault);
-
-        return $data;
     }
 
     public function getForSitemap()
