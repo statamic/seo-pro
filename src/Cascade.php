@@ -68,6 +68,10 @@ class Cascade
 
     public function get()
     {
+        if (config('statamic.seo-pro.urls.enforce_trailing_slashes')) {
+            URL::enforceTrailingSlashes();
+        }
+
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
