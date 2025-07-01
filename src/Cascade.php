@@ -131,7 +131,7 @@ class Cascade
 
     public function canonicalUrl()
     {
-        $url = Str::trim($this->explicitUrl ?? $this->data->get('canonical_url'));
+        $url = URL::tidy(Str::trim($this->explicitUrl ?? $this->data->get('canonical_url')));
 
         if (! Str::startsWith($url, config('app.url'))) {
             return $url;
