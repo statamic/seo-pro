@@ -336,7 +336,6 @@ EOT
             'next_url' => 'http://cool-runnings.com/about/?page=4',
             'home_url' => 'http://cool-runnings.com/',
             'humans_txt' => 'http://cool-runnings.com/humans.txt',
-            // 'image' => // TODO: Test URL coming out of this asset for og:image, twitter:image, etc. meta?
         ];
 
         $this->assertArraySubset($expected, $data);
