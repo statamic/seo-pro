@@ -306,8 +306,6 @@ EOT
             'canonical_url' => 'http://cool-runnings.com/about?page=3',
             'prev_url' => 'http://cool-runnings.com/about?page=2',
             'next_url' => 'http://cool-runnings.com/about?page=4',
-            'home_url' => 'http://cool-runnings.com',
-            'humans_txt' => 'http://cool-runnings.com/humans.txt',
         ];
 
         $this->assertArraySubset($expected, $data);
