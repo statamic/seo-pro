@@ -5,6 +5,7 @@ namespace Statamic\SeoPro;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
+use Statamic\Facades\File;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
@@ -110,7 +111,7 @@ class ServiceProvider extends AddonServiceProvider
             if ($this->userHasSeoPermissions()) {
                 $nav->tools('SEO Pro')
                     ->route('seo-pro.index')
-                    ->icon('seo-search-graph')
+                    ->icon(File::get(__DIR__.'/../resources/svg/nav-icon.svg'))
                     ->children(function () use ($nav) {
                         return [
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
