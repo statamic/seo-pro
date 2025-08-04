@@ -37,6 +37,27 @@ return [
     'twitter_handle' => 'Twitter Handle',
     'twitter_handle_instruct' => 'Choose a default twitter handle that corresponds to this section.',
 
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Set a custom title for Open Graph (Facebook, LinkedIn, etc). Defaults to Meta Title.',
+
+    'og_description' => 'Open Graph Description',
+    'og_description_instruct' => 'Set a custom description for Open Graph. Defaults to Meta Description.',
+
+    'twitter_title' => 'Twitter Title',
+    'twitter_title_instruct' => 'Set a custom title for Twitter Cards. Defaults to Meta Title.',
+
+    'twitter_description' => 'Twitter Description',
+    'twitter_description_instruct' => 'Set a custom description for Twitter Cards. Defaults to Meta Description.',
+
+    'author' => 'Author',
+    'author_instruct' => 'Set a default author field for this section.',
+
+    'published_date' => 'Published Date',
+    'published_date_instruct' => 'Select the field that contains the published date for entries in this section.',
+
+    'updated_date' => 'Updated Date',
+    'updated_date_instruct' => 'Select the field that contains the updated date for entries in this section.',
+
     'sitemap_section' => 'Site Map',
 
     'sitemap' => 'Sitemap',

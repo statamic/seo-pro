@@ -16,8 +16,8 @@
     <meta property="og:title" content="{{ og_title | striptags | entities | trim }}" />
 {{ /if }}
 
-{{ if description }}
-    <meta property="og:description" content="{{ description | striptags | entities | trim }}" />
+{{ if og_description }}
+    <meta property="og:description" content="{{ og_description | striptags | entities | trim }}" />
 {{ /if }}
 
 <meta property="og:url" content="{{ canonical_url | striptags | entities | trim }}" />
@@ -40,12 +40,12 @@
     <meta name="twitter:site" content="{{ twitter_handle | striptags | entities | trim | ensure_left:@ }}" />
 {{ /if }}
 
-{{ if title }}
-    <meta name="twitter:title" content="{{ title | striptags | entities | trim }}" />
+{{ if twitter_title }}
+    <meta name="twitter:title" content="{{ twitter_title | striptags | entities | trim }}" />
 {{ /if }}
 
-{{ if description }}
-    <meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
+{{ if twitter_description }}
+    <meta name="twitter:description" content="{{ twitter_description | striptags | entities | trim }}" />
 {{ /if }}
 
 {{ if image }}
@@ -96,6 +96,18 @@
 
 {{ if humans_txt }}
     <link type="text/plain" rel="author" href="{{ humans_txt }}" />
+{{ /if }}
+
+{{ if published_date }}
+    <meta property="article:published_time" content="{{ published_date }}" />
+{{ /if }}
+
+{{ if updated_date }}
+    <meta property="article:modified_time" content="{{ updated_date }}" />
+{{ /if }}
+
+{{ if author }}
+    <meta property="article:author" content="{{ author:name ?? author }}" />
 {{ /if }}
 
 {{ if google_verification }}

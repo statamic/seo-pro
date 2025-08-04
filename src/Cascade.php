@@ -88,6 +88,14 @@ class Cascade
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
             'og_title' => $this->ogTitle(),
+            'og_description' => $this->ogDescription(),
+            'og_type' => $this->ogType(),
+            'twitter_title' => $this->twitterTitle(),
+            'twitter_description' => $this->twitterDescription(),
+            'twitter_image' => $this->twitterImage(),
+            'published_date' => $this->publishedDate(),
+            'updated_date' => $this->updatedDate(),
+            'author' => $this->author(),
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
             'next_url' => $this->nextUrl(),
@@ -98,15 +106,7 @@ class Cascade
             'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
-            'published_date' => $this->publishedDate(),
-            'updated_date' => $this->updatedDate(),
-            'author' => $this->author(),
-            'og_type' => $this->ogType(),
             'og_image' => $this->ogImage(),
-            'og_description' => $this->ogDescription(),
-            'twitter_title' => $this->twitterTitle(),
-            'twitter_description' => $this->twitterDescription(),
-            'twitter_image' => $this->twitterImage(),
         ])->all();
     }
 
@@ -278,6 +278,10 @@ class Cascade
 
     protected function ogTitle()
     {
+        if ($ogTitle = $this->data->get('og_title')) {
+            return $ogTitle;
+        }
+
         if ($title = $this->data->get('title')) {
             return $title;
         }
@@ -463,6 +467,19 @@ class Cascade
 
     protected function author()
     {
+        if (method_exists($this->model, 'augmentedValue')) {
+            $augmented = $this->model->augmentedValue('author');
+            if ($augmented && method_exists($augmented, 'value')) {
+                $author = $augmented->value();
+                if (is_object($author) && method_exists($author, 'name')) {
+                    return $author->name();
+                }
+                if (is_string($author)) {
+                    return $author;
+                }
+            }
+        }
+        
         if (method_exists($this->model, 'author') && $author = $this->model->author()) {
             if (is_object($author) && method_exists($author, 'name')) {
                 return $author->name();
@@ -473,7 +490,11 @@ class Cascade
 
         if (isset($this->current['author']) && $this->current['author']) {
             if ($this->current['author'] instanceof Value) {
-                return $this->current['author']->value();
+                $author = $this->current['author']->value();
+                if (is_object($author) && method_exists($author, 'name')) {
+                    return $author->name();
+                }
+                return (string) $author;
             }
 
             return $this->current['author'];
@@ -523,4 +544,5 @@ class Cascade
 
         return $image;
     }
+
 }

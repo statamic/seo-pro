@@ -40,7 +40,23 @@ class PublishedDate extends Rule
 
     public function pageStatus()
     {
+        // Skip taxonomy/term pages and other non-entry pages
+        $id = $this->page->get('id');
+        if (is_string($id) && str_contains($id, '::')) {
+            return 'pass'; // Taxonomy pages don't need published dates
+        }
+        
+        // Check if this is a dated entry (has a date in the data)
         $publishedDate = $this->page->get('published_date');
+        
+        // If there's no published date but there is an updated date, 
+        // it might be a page that doesn't need a published date
+        $updatedDate = $this->page->get('updated_date');
+        if (empty($publishedDate) && !empty($updatedDate)) {
+            // This is likely a regular page, not a dated entry
+            return 'pass';
+        }
+        
         return empty($publishedDate) ? 'fail' : 'pass';
     }
 

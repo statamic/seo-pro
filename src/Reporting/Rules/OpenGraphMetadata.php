@@ -6,7 +6,7 @@ use Statamic\SeoPro\Reporting\Rule;
 
 class OpenGraphMetadata extends Rule
 {
-    use Concerns\FailsWhenPagesDontPass;
+    use Concerns\FailsOrWarnsWhenPagesDontPass;
 
     public function siteDescription()
     {
@@ -28,6 +28,16 @@ class OpenGraphMetadata extends Rule
         return __('seo-pro::messages.rules.open_graph_metadata.fail');
     }
 
+    public function siteWarningComment()
+    {
+        return __('seo-pro::messages.rules.open_graph_metadata.warning', ['count' => $this->warnings]);
+    }
+
+    public function pageWarningComment()
+    {
+        return __('seo-pro::messages.rules.open_graph_metadata.warning');
+    }
+
     public function savePage()
     {
         return $this->pageStatus();
@@ -40,10 +50,21 @@ class OpenGraphMetadata extends Rule
 
     public function pageStatus()
     {
-        $ogImage = $this->page->get('og_image');
-        
-        // og_type defaults to 'website' in the Cascade, so we only check for image
-        return empty($ogImage) ? 'fail' : 'pass';
+        $ogTitle = $this->page->get('og_title');
+        $ogType = $this->page->get('og_type');
+
+        // Description is optional for Open Graph
+        $missingCount = 0;
+        if (empty($ogTitle)) $missingCount++;
+        if (empty($ogType)) $missingCount++;
+
+        if ($missingCount >= 2) {
+            return 'fail';
+        } elseif ($missingCount > 0) {
+            return 'warning';
+        }
+
+        return 'pass';
     }
 
     public function maxPoints()
@@ -53,7 +74,7 @@ class OpenGraphMetadata extends Rule
 
     public function demerits()
     {
-        return $this->failures;
+        return $this->failures + ($this->warnings * 0.5);
     }
 
     public function actionablePill()

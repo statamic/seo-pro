@@ -4,5 +4,12 @@ site_name_separator: '|'
 title: '@seo:title'
 description: '@seo:content'
 canonical_url: '@seo:permalink'
+image: '@seo:image'
+twitter_handle: '@yourtwitterhandle'
+twitter_card: 'summary_large_image'
+og_type: 'website'
+author: '@seo:author'
+published_date: '@seo:date'
+updated_date: '@seo:last_modified'
 priority: 0.5
 change_frequency: monthly

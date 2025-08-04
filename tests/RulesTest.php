@@ -278,6 +278,73 @@ class RulesTest extends TestCase
         return $this;
     }
 
+    /** @test */
+    public function published_date_rule_passes_when_entry_has_published_date()
+    {
+        $page = $this->createPageWithData([], ['date' => '2023-05-15']);
+        
+        $rule = new PublishedDate();
+        $result = $rule->setPage($page)->process();
+        
+        $this->assertEquals('pass', $result->status());
+    }
+
+    /** @test */
+    public function published_date_rule_passes_when_no_entry()
+    {
+        $page = $this->createPageWithData([]);
+        
+        $rule = new PublishedDate();
+        $result = $rule->setPage($page)->process();
+        
+        $this->assertEquals('pass', $result->status());
+    }
+
+    /** @test */
+    public function author_metadata_rule_passes_when_author_present()
+    {
+        $page = $this->createPageWithData(['author' => 'John Doe']);
+        
+        $rule = new AuthorMetadata();
+        $result = $rule->setPage($page)->process();
+        
+        $this->assertEquals('pass', $result->status());
+    }
+
+    /** @test */
+    public function author_metadata_rule_warns_when_author_missing()
+    {
+        $page = $this->createPageWithData([]);
+        
+        $rule = new AuthorMetadata();
+        $result = $rule->setPage($page)->process();
+        
+        $this->assertEquals('warning', $result->status());
+        $this->assertStringContainsString('author information', $result->comment());
+    }
+
+    /** @test */
+    public function open_graph_metadata_rule_passes_without_image_validation()
+    {
+        $page = $this->createPageWithData(['og_title' => 'OG Title']);
+        
+        $rule = new OpenGraphMetadata();
+        $result = $rule->setPage($page)->process();
+        
+        $this->assertEquals('pass', $result->status());
+    }
+
+    /** @test */
+    public function twitter_card_metadata_rule_passes_without_image_validation()
+    {
+        $page = $this->createPageWithData(['twitter_title' => 'Twitter Title']);
+        
+        $rule = new TwitterCardMetadata();
+        $result = $rule->setPage($page)->process();
+        
+        $this->assertEquals('pass', $result->status());
+    }
+
     protected function getReportResult($key)
     {
         Report::create()->save()->generate();

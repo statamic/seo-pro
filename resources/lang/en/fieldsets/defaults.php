@@ -26,6 +26,15 @@ return [
     'robots' => 'Robots',
     'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
 
+    'published_date' => 'Published Date',
+    'published_date_instruct' => 'Pick an existing field to set as your **default** published date. Each Collection and Taxonomy can also have its own default.',
+
+    'updated_date' => 'Updated Date',
+    'updated_date_instruct' => 'Pick an existing field to set as your **default** updated date. Each Collection and Taxonomy can also have its own default.',
+
+    'author' => 'Author',
+    'author_instruct' => 'Pick an existing field to set as your **default** author. Each Collection and Taxonomy can also have its own default.',
+
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
 
@@ -37,6 +46,18 @@ return [
 
     'twitter_handle' => 'Twitter Handle',
     'twitter_handle_instruct' => 'Choose a default twitter handle that corresponds to the site.',
+
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Default Open Graph title. Leave blank to use the Meta Title.',
+
+    'og_description' => 'Open Graph Description (Optional)',
+    'og_description_instruct' => 'Default Open Graph description. Leave blank to use the Meta Description.',
+
+    'twitter_title' => 'Twitter Title',
+    'twitter_title_instruct' => 'Default Twitter Card title. Leave blank to use the Meta Title.',
+
+    'twitter_description' => 'Twitter Description (Optional)',
+    'twitter_description_instruct' => 'Default Twitter Card description. Leave blank to use the Meta Description.',
 
     'sitemap_section' => 'Site Map',
     'sitemap_section_instruct' => "Choose your default sitemap settings. If you're not sure, leave them blank for the standard default values.",

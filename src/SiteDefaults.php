@@ -236,6 +236,24 @@ class SiteDefaults extends Collection
                                 'field' => static::getAssetFieldConfig(),
                             ],
                         ],
+                        [
+                            'handle' => 'og_title',
+                            'field' => [
+                                'display' => __('seo-pro::fieldsets/defaults.og_title'),
+                                'instructions' => __('seo-pro::fieldsets/defaults.og_title_instruct'),
+                                'type' => 'text',
+                                'localizable' => true,
+                            ],
+                        ],
+                        [
+                            'handle' => 'og_description',
+                            'field' => [
+                                'display' => __('seo-pro::fieldsets/defaults.og_description'),
+                                'instructions' => __('seo-pro::fieldsets/defaults.og_description_instruct'),
+                                'type' => 'textarea',
+                                'localizable' => true,
+                            ],
+                        ],
                     ],
                 ],
                 'social' => [
@@ -255,6 +273,24 @@ class SiteDefaults extends Collection
                                 'display' => __('seo-pro::fieldsets/defaults.twitter_handle'),
                                 'instructions' => __('seo-pro::fieldsets/defaults.twitter_handle_instruct'),
                                 'type' => 'text',
+                                'localizable' => true,
+                            ],
+                        ],
+                        [
+                            'handle' => 'twitter_title',
+                            'field' => [
+                                'display' => __('seo-pro::fieldsets/defaults.twitter_title'),
+                                'instructions' => __('seo-pro::fieldsets/defaults.twitter_title_instruct'),
+                                'type' => 'text',
+                                'localizable' => true,
+                            ],
+                        ],
+                        [
+                            'handle' => 'twitter_description',
+                            'field' => [
+                                'display' => __('seo-pro::fieldsets/defaults.twitter_description'),
+                                'instructions' => __('seo-pro::fieldsets/defaults.twitter_description_instruct'),
+                                'type' => 'textarea',
                                 'localizable' => true,
                             ],
                         ],

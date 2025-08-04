@@ -32,6 +32,27 @@ return [
     'twitter_handle' => 'Twitter Handle',
     'twitter_handle_instruct' => 'Optionally override the twitter handle for this page.',
 
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Set a custom title for Open Graph (Facebook, LinkedIn, etc). Defaults to Meta Title.',
+
+    'og_description' => 'Open Graph Description (Optional)',
+    'og_description_instruct' => 'Set a custom description for Open Graph (Facebook, LinkedIn, etc). This field is optional - if left blank, it will use the Meta Description.',
+
+    'twitter_title' => 'Twitter Title',
+    'twitter_title_instruct' => 'Set a custom title for Twitter Cards. Defaults to Meta Title.',
+
+    'twitter_description' => 'Twitter Description (Optional)',
+    'twitter_description_instruct' => 'Set a custom description for Twitter Cards. This field is optional - if left blank, it will use the Meta Description.',
+
+    'author' => 'Author',
+    'author_instruct' => 'Set a custom author name. Defaults to the entry author.',
+
+    'published_date' => 'Published Date',
+    'published_date_instruct' => 'Maps to the entry date field. Used for article:published_time meta tag.',
+
+    'updated_date' => 'Updated Date',
+    'updated_date_instruct' => 'Automatically uses the last modified date. Used for article:modified_time meta tag.',
+
     'sitemap' => 'Sitemap',
     'sitemap_instruct' => 'If disabled, this item will not appear in the sitemap.',
 

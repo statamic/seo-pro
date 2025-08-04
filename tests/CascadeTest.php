@@ -299,6 +299,123 @@ EOT
     }
 
     /** @test */
+    public function it_uses_custom_og_title_when_provided()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'title' => 'Regular Title',
+                'og_title' => 'Custom OG Title'
+            ])
+            ->get();
+
+        $this->assertEquals('Custom OG Title', $data['og_title']);
+        $this->assertEquals('Regular Title', $data['title']);
+    }
+
+    /** @test */
+    public function it_uses_custom_og_description_when_provided()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => 'Regular Description',
+                'og_description' => 'Custom OG Description'
+            ])
+            ->get();
+
+        $this->assertEquals('Custom OG Description', $data['og_description']);
+        $this->assertEquals('Regular Description', $data['description']);
+    }
+
+    /** @test */
+    public function it_uses_custom_twitter_title_when_provided()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'title' => 'Regular Title',
+                'twitter_title' => 'Custom Twitter Title'
+            ])
+            ->get();
+
+        $this->assertEquals('Custom Twitter Title', $data['twitter_title']);
+        $this->assertEquals('Regular Title', $data['title']);
+    }
+
+    /** @test */
+    public function it_uses_custom_twitter_description_when_provided()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'description' => 'Regular Description',
+                'twitter_description' => 'Custom Twitter Description'
+            ])
+            ->get();
+
+        $this->assertEquals('Custom Twitter Description', $data['twitter_description']);
+        $this->assertEquals('Regular Description', $data['description']);
+    }
+
+    /** @test */
+    public function it_extracts_author_name_from_entry()
+    {
+        $entry = Entry::make()
+            ->collection('articles')
+            ->slug('test-article')
+            ->data([
+                'title' => 'Test Article',
+                'author' => ['test-user']
+            ])
+            ->save();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('Test User', $data['author']);
+    }
+
+    /** @test */
+    public function it_generates_og_type_for_articles()
+    {
+        $entry = Entry::make()
+            ->collection('articles')
+            ->slug('test-article')
+            ->data(['title' => 'Test Article'])
+            ->save();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('article', $data['og_type']);
+    }
+
+    /** @test */
+    public function it_generates_twitter_image_from_entry()
+    {
+        $entry = Entry::make()
+            ->collection('pages')
+            ->slug('test-page')
+            ->data([
+                'title' => 'Test Page',
+                'twitter_image' => 'twitter-image.jpg'
+            ])
+            ->save();
+
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('twitter-image.jpg', $data['twitter_image']);
+    }
+
+    /** @test */
     public function it_generates_updated_date_from_last_modified()
     {
         $entry = Entry::findByUri('/about')->entry();

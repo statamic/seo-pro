@@ -186,6 +186,95 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'og_title',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.og_title"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.og_title_instruct"),
+                    'placeholder' => $this->getPlaceholder('og_title'),
+                    'type' => 'seo_pro_source',
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'og_description',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.og_description"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.og_description_instruct"),
+                    'placeholder' => $this->getPlaceholder('og_description'),
+                    'type' => 'seo_pro_source',
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'textarea',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'twitter_title',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.twitter_title"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.twitter_title_instruct"),
+                    'placeholder' => $this->getPlaceholder('twitter_title'),
+                    'type' => 'seo_pro_source',
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'twitter_description',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.twitter_description"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.twitter_description_instruct"),
+                    'placeholder' => $this->getPlaceholder('twitter_description'),
+                    'type' => 'seo_pro_source',
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'textarea',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'author',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.author"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.author_instruct"),
+                    'placeholder' => $this->getPlaceholder('author'),
+                    'type' => 'seo_pro_source',
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'published_date',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.published_date"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.published_date_instruct"),
+                    'placeholder' => $this->getPlaceholder('published_date'),
+                    'type' => 'seo_pro_source',
+                    'from_field' => 'date',
+                    'localizable' => true,
+                    'field' => false,
+                ],
+            ],
+            [
+                'handle' => 'updated_date',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.updated_date"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.updated_date_instruct"),
+                    'placeholder' => $this->getPlaceholder('updated_date'),
+                    'type' => 'seo_pro_source',
+                    'from_field' => false,
+                    'localizable' => true,
+                    'field' => false,
+                ],
+            ],
+            [
                 'handle' => 'sitemap',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$langFile}.sitemap"),

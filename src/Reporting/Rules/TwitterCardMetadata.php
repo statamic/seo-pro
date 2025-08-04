@@ -6,7 +6,7 @@ use Statamic\SeoPro\Reporting\Rule;
 
 class TwitterCardMetadata extends Rule
 {
-    use Concerns\WarnsWhenPagesDontPass;
+    use Concerns\FailsOrWarnsWhenPagesDontPass;
 
     public function siteDescription()
     {
@@ -20,12 +20,22 @@ class TwitterCardMetadata extends Rule
 
     public function siteWarningComment()
     {
-        return __('seo-pro::messages.rules.twitter_card_metadata.warning', ['count' => $this->failures]);
+        return __('seo-pro::messages.rules.twitter_card_metadata.warning', ['count' => $this->warnings]);
     }
 
     public function pageWarningComment()
     {
         return __('seo-pro::messages.rules.twitter_card_metadata.warning');
+    }
+
+    public function siteFailingComment()
+    {
+        return __('seo-pro::messages.rules.twitter_card_metadata.fail', ['count' => $this->failures]);
+    }
+
+    public function pageFailingComment()
+    {
+        return __('seo-pro::messages.rules.twitter_card_metadata.fail');
     }
 
     public function savePage()
@@ -40,11 +50,21 @@ class TwitterCardMetadata extends Rule
 
     public function pageStatus()
     {
-        $twitterImage = $this->page->get('twitter_image');
-        
-        // Only warn if twitter image is missing
-        // Title/description fall back to regular values
-        return empty($twitterImage) ? 'warning' : 'pass';
+        $twitterTitle = $this->page->get('twitter_title');
+        $twitterCard = $this->page->get('twitter_card');
+
+        // Description is optional for Twitter Cards
+        $missingCount = 0;
+        if (empty($twitterTitle)) $missingCount++;
+        if (empty($twitterCard)) $missingCount++;
+
+        if ($missingCount >= 2) {
+            return 'fail';
+        } elseif ($missingCount > 0) {
+            return 'warning';
+        }
+
+        return 'pass';
     }
 
     public function maxPoints()
@@ -54,7 +74,7 @@ class TwitterCardMetadata extends Rule
 
     public function demerits()
     {
-        return $this->failures * 0.5;
+        return $this->failures + ($this->warnings * 0.5);
     }
 
     public function actionablePill()
