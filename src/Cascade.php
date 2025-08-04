@@ -98,6 +98,15 @@ class Cascade
             'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
+            'published_date' => $this->publishedDate(),
+            'updated_date' => $this->updatedDate(),
+            'author' => $this->author(),
+            'og_type' => $this->ogType(),
+            'og_image' => $this->ogImage(),
+            'og_description' => $this->ogDescription(),
+            'twitter_title' => $this->twitterTitle(),
+            'twitter_description' => $this->twitterDescription(),
+            'twitter_image' => $this->twitterImage(),
         ])->all();
     }
 
@@ -428,5 +437,90 @@ class Cascade
         }
 
         return $data->toAugmentedArray();
+    }
+
+    protected function publishedDate()
+    {
+        if (method_exists($this->model, 'date') && $this->model->date()) {
+            return $this->model->date()->format('Y-m-d\TH:i:sP');
+        }
+
+        if (method_exists($this->model, 'publishedDate') && $this->model->publishedDate()) {
+            return $this->model->publishedDate()->format('Y-m-d\TH:i:sP');
+        }
+
+        return null;
+    }
+
+    protected function updatedDate()
+    {
+        if (method_exists($this->model, 'lastModified') && $this->model->lastModified()) {
+            return $this->model->lastModified()->format('Y-m-d\TH:i:sP');
+        }
+
+        return null;
+    }
+
+    protected function author()
+    {
+        if (method_exists($this->model, 'author') && $author = $this->model->author()) {
+            if (is_object($author) && method_exists($author, 'name')) {
+                return $author->name();
+            }
+
+            return (string) $author;
+        }
+
+        if (isset($this->current['author']) && $this->current['author']) {
+            if ($this->current['author'] instanceof Value) {
+                return $this->current['author']->value();
+            }
+
+            return $this->current['author'];
+        }
+
+        return null;
+    }
+
+    protected function ogType()
+    {
+        return $this->data->get('og_type', 'website');
+    }
+
+    protected function ogImage()
+    {
+        $image = $this->data->get('og_image') ?? $this->data->get('image');
+
+        if ($image instanceof Collection) {
+            $image = $image->first();
+        }
+
+        return $image;
+    }
+
+    protected function ogDescription()
+    {
+        return $this->data->get('og_description') ?? $this->data->get('description');
+    }
+
+    protected function twitterTitle()
+    {
+        return $this->data->get('twitter_title') ?? $this->data->get('title');
+    }
+
+    protected function twitterDescription()
+    {
+        return $this->data->get('twitter_description') ?? $this->data->get('description');
+    }
+
+    protected function twitterImage()
+    {
+        $image = $this->data->get('twitter_image') ?? $this->data->get('og_image') ?? $this->data->get('image');
+
+        if ($image instanceof Collection) {
+            $image = $image->first();
+        }
+
+        return $image;
     }
 }
