@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\LazyCollection;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
@@ -20,16 +21,20 @@ class Sitemap
 
     public function pages(): array
     {
-        return collect()
-            ->merge($this->publishedEntries())
-            ->merge($this->publishedTerms())
-            ->merge($this->publishedCollectionTerms())
-            ->pipe(fn ($pages) => $this->getPages($pages))
-            ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
-            ->values()
-            ->map
-            ->toArray()
-            ->all();
+        return Cache::remember(
+            Sitemap::CACHE_KEY.'_'.$this->site->handle(),
+            now()->addMinutes(config('statamic.seo-pro.sitemap.expire')),
+            fn () => collect()
+                ->merge($this->publishedEntries())
+                ->merge($this->publishedTerms())
+                ->merge($this->publishedCollectionTerms())
+                ->pipe(fn ($pages) => $this->getPages($pages))
+                ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
+                ->values()
+                ->map
+                ->toArray()
+                ->all()
+        );
     }
 
     public function paginatedPages(int $page): array

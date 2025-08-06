@@ -23,12 +23,10 @@ class SitemapController extends Controller
                 ])->render();
             });
         } else {
-            $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
-                return view('seo-pro::sitemap', [
-                    'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'pages' => app(Sitemap::class)->pages(),
-                ])->render();
-            });
+            $content = view('seo-pro::sitemap', [
+                'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
+                'pages' => app(Sitemap::class)->pages(),
+            ])->render();
         }
 
         return response($content)->header('Content-Type', 'text/xml');
