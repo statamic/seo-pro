@@ -92,14 +92,19 @@ class Sitemap
 
     public function paginatedSitemaps(): array
     {
-        // would be nice to make terms a count query rather than getting the count from the terms collection
-        $count = $this->publishedEntriesCount() + $this->publishedTerms()->count() + $this->publishedCollectionTerms()->count();
+        return Cache::remember(
+            Sitemap::CACHE_KEY.'_'.$this->site->handle(),
+            now()->addMinutes(config('statamic.seo-pro.sitemap.expire')),
+            function () {
+                // would be nice to make terms a count query rather than getting the count from the terms collection
+                $count = $this->publishedEntriesCount() + $this->publishedTerms()->count() + $this->publishedCollectionTerms()->count();
 
-        $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
+                $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
 
-        return collect(range(1, $sitemapCount))
-            ->map(fn ($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
-            ->all();
+                return collect(range(1, $sitemapCount))
+                    ->map(fn ($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
+                    ->all();
+            });
     }
 
     protected function getPages($items)
