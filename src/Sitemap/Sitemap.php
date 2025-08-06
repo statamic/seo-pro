@@ -8,16 +8,25 @@ use Illuminate\Support\LazyCollection;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Site as SiteFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Sites\Site;
 
 class Sitemap
 {
     use GetsSectionDefaults;
 
     const CACHE_KEY = 'seo-pro.sitemap';
+
+    private Site $site;
+
+    public function __construct()
+    {
+        $this->site = SiteFacade::current();
+    }
 
     public function pages(): array
     {
@@ -130,6 +139,7 @@ class Sitemap
 
         return Entry::query()
             ->whereIn('collection', $collections)
+            ->where('site', $this->site)
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->orderBy('uri');
