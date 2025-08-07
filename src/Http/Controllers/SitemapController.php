@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Site as SiteFacade;
 use Statamic\SeoPro\Sitemap\Sitemap;
@@ -17,7 +18,7 @@ class SitemapController extends Controller
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
 
-        $sites = SiteFacade::all()->filter(fn (Site $site) => str($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
+        $sites = $this->sitesByDomain(request()->schemeAndHttpHost());
 
         $key = request()->getHttpHost();
 
@@ -60,5 +61,13 @@ class SitemapController extends Controller
         });
 
         return response($content)->header('Content-Type', 'text/xml');
+    }
+
+    private function sitesByDomain(string $domain): Collection
+    {
+        return SiteFacade::all()
+            ->filter(
+                fn (Site $site) => str($site->absoluteUrl())->startsWith($domain)
+            );
     }
 }
