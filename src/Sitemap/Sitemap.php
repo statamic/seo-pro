@@ -21,6 +21,11 @@ class Sitemap
 
     private IlluminateCollection $sites;
 
+    public function __construct()
+    {
+        $this->sites = collect();
+    }
+
     public function pages(): array
     {
         return collect()
