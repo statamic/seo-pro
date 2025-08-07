@@ -4,9 +4,10 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
+use Statamic\Entries\Entry;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
-use Statamic\Facades\Entry;
+use Statamic\Facades\Entry as EntryFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
@@ -17,6 +18,8 @@ class Sitemap
     use GetsSectionDefaults;
 
     const CACHE_KEY = 'seo-pro.sitemap';
+
+    private ?string $domain = null;
 
     public function pages(): array
     {
@@ -88,6 +91,13 @@ class Sitemap
             ->all();
     }
 
+    public function forDomain(string $domain): self
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
     protected function getPages($items)
     {
         return $items
@@ -123,7 +133,7 @@ class Sitemap
             ->values()
             ->all();
 
-        return Entry::query()
+        return EntryFacade::query()
             ->whereIn('collection', $collections)
             ->whereNotNull('uri')
             ->whereStatus('published')
@@ -132,7 +142,15 @@ class Sitemap
 
     protected function publishedEntries(): LazyCollection
     {
-        return $this->publishedEntriesQuery()->lazy();
+        return $this
+            ->publishedEntriesQuery()
+            ->lazy()
+            ->unless(
+                is_null($this->domain),
+                fn (LazyCollection $c) => $c->filter(
+                    fn (Entry $entry) => str($entry->permalink)->startsWith($this->domain)
+                )
+            );
     }
 
     protected function publishedEntriesForPage(int $page, int $perPage): IlluminateCollection

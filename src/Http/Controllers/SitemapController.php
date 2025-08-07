@@ -3,17 +3,19 @@
 namespace Statamic\SeoPro\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
 use Statamic\SeoPro\Sitemap\Sitemap;
 
 class SitemapController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
+        $domain = $request->schemeAndHttpHost();
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
             $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
@@ -23,10 +25,10 @@ class SitemapController extends Controller
                 ])->render();
             });
         } else {
-            $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$domain, $cacheUntil, function () use ($domain) {
                 return view('seo-pro::sitemap', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'pages' => app(Sitemap::class)->pages(),
+                    'pages' => app(Sitemap::class)->forDomain($domain)->pages(),
                 ])->render();
             });
         }
