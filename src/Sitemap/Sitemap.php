@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
-use Statamic\Entries\Entry;
+use Statamic\Contracts\Entries\QueryBuilder;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry as EntryFacade;
@@ -134,8 +134,10 @@ class Sitemap
             ->all();
 
         return EntryFacade::query()
-            ->whereIn('site', $this->sites->map->handle()->all())
-            ->whereIn('collection', $collections)
+            ->when(
+                $this->sites->isNotEmpty(),
+                fn (QueryBuilder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
+            )->whereIn('collection', $collections)
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->orderBy('uri');
