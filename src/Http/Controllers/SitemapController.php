@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\Http\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Site as SiteFacade;
@@ -12,21 +11,21 @@ use Statamic\Sites\Site;
 
 class SitemapController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
 
-        $sites = SiteFacade::all()->filter(fn (Site $site) => str($site->absoluteUrl())->startsWith($request->schemeAndHttpHost()));
+        $sites = SiteFacade::all()->filter(fn (Site $site) => str($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
 
-        $key = $request->getHttpHost();
+        $key = request()->getHttpHost();
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key.'_index', $cacheUntil, function () {
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key.'_index', $cacheUntil, function () use ($sites) {
                 return view('seo-pro::sitemap_index', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'sitemaps' => app(Sitemap::class)->forDomain($domain)->paginatedSitemaps(),
+                    'sitemaps' => app(Sitemap::class)->forSites($sites)->paginatedSitemaps(),
                 ])->render();
             });
         } else {
