@@ -2,9 +2,6 @@
 
 namespace Tests\Localized;
 
-use Illuminate\Support\Collection as IlluminateCollection;
-use Statamic\Facades\Blink;
-use Statamic\SeoPro\Sitemap\Sitemap;
 use Tests\TestCase;
 
 class SitemapTest extends TestCase
@@ -73,26 +70,5 @@ class SitemapTest extends TestCase
 EOT;
 
         $this->assertEquals($expected, $content);
-    }
-}
-
-class CustomSitemap extends Sitemap
-{
-    protected function publishedEntriesQuery()
-    {
-        // count how many times this is called
-        Blink::increment('ran-custom-entries-query');
-
-        // reversing from default order, just so we can assert query has effect on output
-        return parent::publishedEntriesQuery()->reorder('uri', 'desc');
-    }
-
-    protected function publishedEntriesForPage(int $page, int $perPage): IlluminateCollection
-    {
-        // count how many times this is called
-        Blink::increment('ran-custom-entries-for-page-query');
-
-        // also reverse items on individual pages, again so we can assert query has effect on output
-        return parent::publishedEntriesForPage($page, $perPage)->reverse();
     }
 }
