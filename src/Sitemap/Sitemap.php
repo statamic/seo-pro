@@ -19,7 +19,7 @@ class Sitemap
 
     const CACHE_KEY = 'seo-pro.sitemap';
 
-    private ?string $domain = null;
+    private IlluminateCollection $sites;
 
     public function pages(): array
     {
@@ -91,9 +91,9 @@ class Sitemap
             ->all();
     }
 
-    public function forDomain(string $domain): self
+    public function forSites(IlluminateCollection $sites): self
     {
-        $this->domain = $domain;
+        $this->sites = $sites;
 
         return $this;
     }
@@ -134,6 +134,7 @@ class Sitemap
             ->all();
 
         return EntryFacade::query()
+            ->whereIn('site', $this->sites->map->handle()->all())
             ->whereIn('collection', $collections)
             ->whereNotNull('uri')
             ->whereStatus('published')
@@ -142,15 +143,7 @@ class Sitemap
 
     protected function publishedEntries(): LazyCollection
     {
-        return $this
-            ->publishedEntriesQuery()
-            ->lazy()
-            ->unless(
-                is_null($this->domain),
-                fn (LazyCollection $c) => $c->filter(
-                    fn (Entry $entry) => str($entry->permalink)->startsWith($this->domain)
-                )
-            );
+        return $this->publishedEntriesQuery()->lazy();
     }
 
     protected function publishedEntriesForPage(int $page, int $perPage): IlluminateCollection
