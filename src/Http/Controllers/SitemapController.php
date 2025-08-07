@@ -16,16 +16,17 @@ class SitemapController extends Controller
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
         $domain = $request->schemeAndHttpHost();
+        $key = $request->getHttpHost();
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-            $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key.'_index', $cacheUntil, function () use ($domain) {
                 return view('seo-pro::sitemap_index', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'sitemaps' => app(Sitemap::class)->paginatedSitemaps(),
+                    'sitemaps' => app(Sitemap::class)->forDomain($domain)->paginatedSitemaps(),
                 ])->render();
             });
         } else {
-            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$domain, $cacheUntil, function () use ($domain) {
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key, $cacheUntil, function () use ($domain) {
                 return view('seo-pro::sitemap', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
                     'pages' => app(Sitemap::class)->forDomain($domain)->pages(),
