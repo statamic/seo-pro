@@ -23,7 +23,7 @@ class MetaTagTest extends TestCase
         $app['config']->set('statamic.system.multisite', true);
     }
 
-    protected function tearDown(): void
+    public function tearDown(): void
     {
         $this->cleanUpViews();
 
@@ -49,7 +49,7 @@ EOT;
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
-<link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 EOT;
 
@@ -78,7 +78,7 @@ EOT;
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -120,10 +120,10 @@ EOT;
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link href="http://cool-runnings.com/fr/about" rel="canonical" />
-<link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
+<link href="http://cool-runnings.com/it/about" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -131,10 +131,10 @@ EOT;
         // the entry's model, not from the current site in the cp.
         Site::setCurrent('default');
 
-        $content = $this->get('/fr/about')->content();
+        $content = $this->get('/it/about')->content();
 
-        // $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
-        // $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
@@ -148,10 +148,10 @@ EOT;
         $this->prepareViews($viewType);
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link href="http://cool-runnings.com/fr" rel="canonical" />
-<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
+<link href="http://cool-runnings.com/it" rel="canonical" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
-<link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 EOT;
 
@@ -160,7 +160,7 @@ EOT;
         // the entry's model, not from the current site in the cp.
         Site::setCurrent('default');
 
-        $content = $this->get('/fr')->content();
+        $content = $this->get('/it')->content();
 
         $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
@@ -180,7 +180,7 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
-<link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it" hreflang="it" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -230,7 +230,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -260,7 +260,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -294,7 +294,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -328,7 +328,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();

@@ -29,7 +29,7 @@ class CascadeTest extends TestCase
             ->withCurrent($entry)
             ->get();
 
-        $this->assertEquals('http://corse-fantastiche.it/about', $data['canonical_url']);
+        $this->assertEquals('http://cool-runnings.com/it/about', $data['canonical_url']);
         $this->assertEquals('it', $data['current_hreflang']);
 
         $this->assertEquals([
@@ -48,7 +48,7 @@ class CascadeTest extends TestCase
             ->withCurrent($entry)
             ->get();
 
-        $this->assertEquals('http://corse-fantastiche.it', $data['canonical_url']);
+        $this->assertEquals('http://cool-runnings.com/it', $data['canonical_url']);
         $this->assertEquals('it', $data['current_hreflang']);
 
         $this->assertEquals([
@@ -74,7 +74,7 @@ class CascadeTest extends TestCase
         $this->assertEquals([
             'en-gb' => 'http://cool-runnings.com/en-gb',
             'fr' => 'http://cool-runnings.com/fr',
-            'it' => 'http://corse-fantastiche.it',
+            'it' => 'http://cool-runnings.com/it',
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
 }
