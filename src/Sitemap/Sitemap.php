@@ -5,8 +5,10 @@ namespace Statamic\SeoPro\Sitemap;
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
 use Statamic\Contracts\Entries\QueryBuilder;
+use Statamic\Entries\Entry;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
+use Statamic\Facades\Config;
 use Statamic\Facades\Entry as EntryFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
@@ -121,7 +123,7 @@ class Sitemap
                     ->withCurrent($content)
                     ->get();
 
-                return (new Page)->with($data);
+                return (new Page)->with(array_merge($data, ['hreflangs' => $this->hrefLangs($content)]));
             })
             ->filter();
     }
@@ -209,5 +211,41 @@ class Sitemap
         return Blink::once('seo-pro.site-defaults', function () {
             return SiteDefaults::load()->all();
         });
+    }
+
+    protected function hrefLangs(Entry $entry): array
+    {
+        if (config('statamic.seo-pro.alternate_locales') === false) {
+            return [];
+        }
+        if (config('statamic.seo-pro.alternate_locales.enabled') === false) {
+            return [];
+        }
+
+        $alternateLocales = collect(Config::getLocales())
+            ->filter(fn ($locale) => $entry->in($locale))
+            ->filter(fn ($locale) => $entry->in($locale)->status() === 'published')
+            ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
+            ->map(function ($locale) use ($entry) {
+                return [
+                    'site' => Config::getSite($locale),
+                    'href' => $entry->in($locale)->absoluteUrl(),
+                ];
+            });
+
+        $duplicates = $alternateLocales
+            ->groupBy(fn ($locale) => $locale['site']->shortLocale())
+            ->filter(fn ($locales) => $locales->count() > 1)
+            ->keys();
+
+        $alternateLocales->transform(function ($locale) use ($duplicates) {
+            return array_merge($locale, [
+                'hreflang' => $duplicates->contains($locale['site']->shortLocale())
+                    ? strtolower(str_replace('_', '-', $locale['site']->locale()))
+                    : $locale['site']->shortLocale(),
+            ]);
+        });
+
+        return $alternateLocales->all();
     }
 }

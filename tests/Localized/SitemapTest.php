@@ -35,6 +35,17 @@ class SitemapTest extends TestCase
     }
 
     /** @test */
+    public function it_outputs_default_sitemap_xml()
+    {
+        $content = $this
+            ->get('http://cool-runnings.com/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+    }
+
+    /** @test */
     public function it_outputs_italian_sitemap_xml()
     {
         $content = $this

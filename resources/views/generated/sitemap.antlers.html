@@ -6,6 +6,11 @@
         <lastmod>{{ lastmod }}</lastmod>
         <changefreq>{{ changefreq }}</changefreq>
         <priority>{{ priority }}</priority>
+        {{ unless hrefLangs | is_empty }}
+            {{ hreflangs }}
+                <xhtml:link rel="alternate" hreflang="{{ hreflang }}" href="{{ href }}"/>
+            {{ /hreflangs }}
+        {{ /unless }}
     </url>
 {{ /pages }}
 </urlset>
