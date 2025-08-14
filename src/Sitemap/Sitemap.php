@@ -8,12 +8,13 @@ use Statamic\Contracts\Entries\QueryBuilder;
 use Statamic\Entries\Entry;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
-use Statamic\Facades\Config;
 use Statamic\Facades\Entry as EntryFacade;
+use Statamic\Facades\Site as SiteFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Sites\Site;
 
 class Sitemap
 {
@@ -222,30 +223,24 @@ class Sitemap
             return [];
         }
 
-        $alternateLocales = collect(Config::getLocales())
-            ->filter(fn ($locale) => $entry->in($locale))
-            ->filter(fn ($locale) => $entry->in($locale)->status() === 'published')
-            ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
-            ->map(function ($locale) use ($entry) {
-                return [
-                    'site' => Config::getSite($locale),
-                    'href' => $entry->in($locale)->absoluteUrl(),
-                ];
-            });
+        return $this->sitesWithSameDomain($entry->site())
+            ->filter(fn (Site $site) => $entry->in($site->handle()))
+            ->filter(fn (Site $site) => $entry->in($site->handle())->published())
+            ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
+            ->map(fn (Site $site) => [
+                'href' => $entry->in($site->handle())->absoluteUrl(),
+                'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
+            ])->all();
+    }
 
-        $duplicates = $alternateLocales
-            ->groupBy(fn ($locale) => $locale['site']->shortLocale())
-            ->filter(fn ($locales) => $locales->count() > 1)
-            ->keys();
+    private function sitesWithSameDomain(Site $site): IlluminateCollection
+    {
+        $pieces = parse_url($site->absoluteUrl());
 
-        $alternateLocales->transform(function ($locale) use ($duplicates) {
-            return array_merge($locale, [
-                'hreflang' => $duplicates->contains($locale['site']->shortLocale())
-                    ? strtolower(str_replace('_', '-', $locale['site']->locale()))
-                    : $locale['site']->shortLocale(),
-            ]);
-        });
+        $domain = $pieces['scheme'].'://'.$pieces['host'];
 
-        return $alternateLocales->all();
+        return SiteFacade::all()
+            ->filter(fn (Site $s) => str($s->absoluteUrl())->startsWith($domain))
+            ->values();
     }
 }
