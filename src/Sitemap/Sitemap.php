@@ -109,7 +109,11 @@ class Sitemap
                     ->withCurrent($content)
                     ->get();
 
-                return (new Page)->with(array_merge($data, ['hreflangs' => $this->hrefLangs($content)]));
+                if (SiteFacade::hasMultiple()) {
+                    $data['hreflangs'] = $this->hrefLangs($content);
+                }
+
+                return (new Page)->with($data);
             })
             ->filter();
     }
