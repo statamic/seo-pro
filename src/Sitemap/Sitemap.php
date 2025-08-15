@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
+use Statamic\Contracts\Entries\QueryBuilder;
 use Statamic\Entries\Entry;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
@@ -20,6 +21,13 @@ class Sitemap
     use GetsSectionDefaults;
 
     const CACHE_KEY = 'seo-pro.sitemap';
+
+    private IlluminateCollection $sites;
+
+    public function __construct()
+    {
+        $this->sites = collect();
+    }
 
     public function pages(): array
     {
@@ -91,6 +99,13 @@ class Sitemap
             ->all();
     }
 
+    public function forSites(IlluminateCollection $sites): self
+    {
+        $this->sites = $sites;
+
+        return $this;
+    }
+
     protected function getPages($items)
     {
         return $items
@@ -131,7 +146,10 @@ class Sitemap
             ->all();
 
         return EntryFacade::query()
-            ->whereIn('collection', $collections)
+            ->when(
+                $this->sites->isNotEmpty(),
+                fn (QueryBuilder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
+            )->whereIn('collection', $collections)
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->orderBy('uri');

@@ -4,8 +4,11 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Statamic\Facades\Site as SiteFacade;
 use Statamic\SeoPro\Sitemap\Sitemap;
+use Statamic\Sites\Site;
 
 class SitemapController extends Controller
 {
@@ -15,18 +18,22 @@ class SitemapController extends Controller
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
 
+        $sites = $this->sitesByDomain(request()->schemeAndHttpHost());
+
+        $key = request()->getHttpHost();
+
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-            $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key.'_index', $cacheUntil, function () use ($sites) {
                 return view('seo-pro::sitemap_index', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'sitemaps' => app(Sitemap::class)->paginatedSitemaps(),
+                    'sitemaps' => app(Sitemap::class)->forSites($sites)->paginatedSitemaps(),
                 ])->render();
             });
         } else {
-            $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
+            $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key, $cacheUntil, function () use ($sites) {
                 return view('seo-pro::sitemap', [
                     'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'pages' => app(Sitemap::class)->pages(),
+                    'pages' => app(Sitemap::class)->forSites($sites)->pages(),
                 ])->render();
             });
         }
@@ -54,5 +61,13 @@ class SitemapController extends Controller
         });
 
         return response($content)->header('Content-Type', 'text/xml');
+    }
+
+    private function sitesByDomain(string $domain): Collection
+    {
+        return SiteFacade::all()
+            ->filter(
+                fn (Site $site) => str($site->absoluteUrl())->startsWith($domain)
+            );
     }
 }

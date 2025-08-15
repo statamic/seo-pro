@@ -1,16 +1,16 @@
 default:
   name: English
   locale: en_US
-  url: /
+  url: '{{ config:app:url }}/'
 french:
   name: French
   locale: fr_FR
-  url: /fr/
+  url: '{{ config:app:url }}/fr/'
 italian:
   name: Italian
   locale: it_IT
-  url: /it/
+  url: http://corse-fantastiche.it
 british:
   name: British
   locale: en_GB
-  url: /en-gb/
+  url: '{{ config:app:url }}/en-gb/'

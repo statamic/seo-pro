@@ -109,4 +109,41 @@ class SitemapTest extends TestCase
 
         ray($content);
     }
+
+    public function it_outputs_italian_sitemap_xml()
+    {
+        $content = $this
+            ->get('http://corse-fantastiche.it/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertCount(2, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<'EOT'
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://corse-fantastiche.it</loc>
+        <lastmod>2021-09-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://corse-fantastiche.it/about</loc>
+        <lastmod>2021-09-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+    }
 }
