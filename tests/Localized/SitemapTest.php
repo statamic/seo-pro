@@ -37,11 +37,12 @@ class SitemapTest extends TestCase
     /** @test */
     public function it_outputs_default_sitemap_xml()
     {
+        $today = now()->format('Y-m-d');
         $content = $this
             ->get('http://cool-runnings.com/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-/*            ->assertSeeInOrder([
+            ->assertSeeInOrder([
                 '<loc>http://cool-runnings.com</loc>',
                 '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com"/>',
                 '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr"/>',
@@ -72,17 +73,17 @@ class SitemapTest extends TestCase
                 '<priority>0.5</priority>',
                 '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/articles"/>',
                 '<loc>http://cool-runnings.com/dance</loc>',
-                '<lastmod>2025-08-14</lastmod>',
+                '<lastmod>'.$today.'</lastmod>',
                 '<changefreq>monthly</changefreq>',
                 '<priority>0.5</priority>',
                 '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/dance"/>',
                 '<loc>http://cool-runnings.com/magic</loc>',
-                '<lastmod>2025-08-14</lastmod>',
+                '<lastmod>'.$today.'</lastmod>',
                 '<changefreq>monthly</changefreq>',
                 '<priority>0.5</priority>',
                 '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/magic"/>',
                 '<loc>http://cool-runnings.com/nectar</loc>',
-                '<lastmod>2025-08-14</lastmod>',
+                '<lastmod>'.$today.'</lastmod>',
                 '<changefreq>monthly</changefreq>',
                 '<priority>0.5</priority>',
                 '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/nectar"/>',
@@ -104,10 +105,7 @@ class SitemapTest extends TestCase
                 '<priority>0.5</priority>',
                 '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/nectar"/>',
                 '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/nectar"/>',
-            ])*/
-            ->getContent();
-
-        ray($content);
+            ])->getContent();
     }
 
     public function it_outputs_italian_sitemap_xml()
