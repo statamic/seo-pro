@@ -88,11 +88,11 @@
 {{ /if }}
 
 {{ if alternate_locales }}
-    <link rel="alternate" hreflang="{{ current_hreflang }}" href="{{ canonical_url | striptags | entities | trim }}" />
+    <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="{{ current_hreflang }}" />
     {{ alternate_locales }}
-        <link rel="alternate" hreflang="{{ hreflang }}" href="{{ url | striptags | entities | trim }}" />
+        <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="{{ hreflang }}" />
     {{ /alternate_locales }}
-    <link rel="alternate" hreflang="x-default" href="{{ canonical_url | striptags | entities | trim }}" />
+    <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="x-default" />
 {{ /if }}
 
 {{ if humans_txt }}
