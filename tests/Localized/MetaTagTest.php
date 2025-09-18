@@ -47,11 +47,11 @@ class MetaTagTest extends TestCase
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
-<link rel="alternate" hreflang="en-us" href="http://cool-runnings.com" />
-<link rel="alternate" hreflang="fr" href="http://cool-runnings.com/fr" />
-<link rel="alternate" hreflang="it" href="http://corse-fantastiche.it" />
-<link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb" />
-<link rel="alternate" hreflang="x-default" href="http://cool-runnings.com" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
+<link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/')->content();
@@ -80,6 +80,7 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -125,6 +126,7 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="x-default" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -154,6 +156,7 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
+<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="x-default" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -182,6 +185,7 @@ EOT;
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="x-default" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -232,6 +236,7 @@ EOT;
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -262,6 +267,7 @@ EOT;
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -296,6 +302,7 @@ EOT;
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -330,6 +337,7 @@ EOT;
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/about')->content();
