@@ -153,8 +153,13 @@ class Fields
                         'create' => true,
                         'multiple' => true,
                         'options' => [
+                            'follow',
+                            'index',
+                            'noarchive',
+                            'noimageindex',
                             'noindex',
                             'nofollow',
+                            'nosnippet',
                         ],
                     ],
                 ],
