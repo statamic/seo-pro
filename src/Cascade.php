@@ -98,6 +98,8 @@ class Cascade
             'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
+            'twitter_title' => $this->twitterTitle(),
+            'twitter_description' => $this->twitterDescription(),
         ])->all();
     }
 
@@ -269,11 +271,35 @@ class Cascade
 
     protected function ogTitle()
     {
+        if ($title = $this->data->get('og_title')) {
+            return $title;
+        }
+
+        // fallback for previous approach
         if ($title = $this->data->get('title')) {
             return $title;
         }
 
         return $this->compiledTitle();
+    }
+
+    protected function twitterTitle()
+    {
+        if ($title = $this->data->get('twitter_title')) {
+            return $title;
+        }
+
+        return $this->data->get('title');
+    }
+
+    protected function twitterDescription()
+    {
+        if ($description = $this->data->get('twitter_description')) {
+            return $description;
+        }
+
+        // fallback for previous approach
+        return $this->data->get('description');
     }
 
     protected function lastModified()

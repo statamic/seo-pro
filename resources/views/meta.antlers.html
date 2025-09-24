@@ -40,12 +40,12 @@
     <meta name="twitter:site" content="{{ twitter_handle | striptags | entities | trim | ensure_left:@ }}" />
 {{ /if }}
 
-{{ if title }}
-    <meta name="twitter:title" content="{{ title | striptags | entities | trim }}" />
+{{ if twitter_title }}
+    <meta name="twitter:title" content="{{ twitter_title | striptags | entities | trim }}" />
 {{ /if }}
 
-{{ if description }}
-    <meta name="twitter:description" content="{{ description | striptags | entities | trim }}" />
+{{ if twitter_description }}
+    <meta name="twitter:description" content="{{ twitter_description | striptags | entities | trim }}" />
 {{ /if }}
 
 {{ if image }}

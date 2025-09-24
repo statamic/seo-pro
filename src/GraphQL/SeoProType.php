@@ -78,7 +78,13 @@ class SeoProType extends Type
             'twitter_card' => [
                 'type' => GraphQL::string(),
             ],
+            'twitter_description' => [
+                'type' => GraphQL::string(),
+            ],
             'twitter_handle' => [
+                'type' => GraphQL::string(),
+            ],
+            'twitter_title' => [
                 'type' => GraphQL::string(),
             ],
             'image' => [
