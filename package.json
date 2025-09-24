@@ -10,8 +10,8 @@
         "vue": "^2.6.11"
     },
     "devDependencies": {
-        "@vitejs/plugin-vue2": "^2.2.0",
-        "laravel-vite-plugin": "^0.7.2",
-        "vite": "^4.5.14"
+        "@vitejs/plugin-vue2": "^2.3.3",
+        "laravel-vite-plugin": "^2.0.1",
+        "vite": "^7.1.7"
     }
 }
