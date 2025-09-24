@@ -42,6 +42,6 @@ class SeoProDirective extends SeoProTags
 
     protected function getContextFromCurrentRouteData()
     {
-        return app('router')->current()->parameter('data') ?? [];
+        return app('router')->current()?->parameter('data') ?? [];
     }
 }
