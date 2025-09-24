@@ -29,8 +29,17 @@ return [
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
 
+    'og_title' => 'Opengraph Title',
+    'og_title_instruct' => 'Pick an existing field or custom value to set as your opengraph title.',
+
     'twitter_handle' => 'Twitter Handle',
     'twitter_handle_instruct' => 'Optionally override the twitter handle for this page.',
+
+    'twitter_title' => 'X Card Title',
+    'twitter_title_instruct' => 'Pick an existing field or custom value to set as your X card title.',
+
+    'twitter_description' => 'X Card Description',
+    'twitter_description_instruct' => 'Pick an existing field or custom value to set as your X card description.',
 
     'sitemap' => 'Sitemap',
     'sitemap_instruct' => 'If disabled, this item will not appear in the sitemap.',

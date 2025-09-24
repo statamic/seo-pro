@@ -114,6 +114,8 @@ GQL;
             humans_txt
             twitter_card
             twitter_handle
+            twitter_title
+            twitter_description
             image {
                 url
                 permalink
@@ -149,6 +151,8 @@ GQL;
                         'humans_txt' => 'http://cool-runnings.com/humans.txt',
                         'twitter_card' => 'summary_large_image',
                         'twitter_handle' => null,
+                        'twitter_title' => 'Nectar of the Gods',
+                        'twitter_description' => "The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko's Modern Life. That would have to wait until 5:30pm for that, and I am impatient.\nIn truth, the day wou...",
                         'image' => [
                             'url' => '/assets/img/stetson.jpg',
                             'permalink' => 'http://cool-runnings.com/assets/img/stetson.jpg',
