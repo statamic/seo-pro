@@ -55,7 +55,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
-            ->bootAddonGraphQL();
+            ->bootAddonGraphQL()
+            ->bootAddonEloquentSupport();
     }
 
     protected function bootAddonConfig()
@@ -181,6 +182,21 @@ class ServiceProvider extends AddonServiceProvider
 
         GraphQL::addField('EntryInterface', 'seo', $seoField);
         GraphQL::addField('TermInterface', 'seo', $seoField);
+
+        return $this;
+    }
+
+    protected function bootAddonEloquentSupport()
+    {
+        if (config('statamic.seo-pro.site_defaults.driver', 'file') !== 'eloquent') {
+            return $this;
+        }
+
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->app->bind(SiteDefaults::class, Eloquent\SiteDefaults::class);
+
+        app(SiteDefaults::class);
 
         return $this;
     }

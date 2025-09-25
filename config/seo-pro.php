@@ -3,6 +3,7 @@
 return [
 
     'site_defaults' => [
+        'driver' => 'eloquent',
         'path' => base_path('content/seo.yaml'),
     ],
 
