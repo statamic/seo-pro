@@ -294,6 +294,40 @@ EXPECTED;
     }
 
     /** @test */
+    public function it_skips_over_entries_with_redirects()
+    {
+        $this->generateEntries(5);
+
+        $this->assertFileDoesNotExist($this->reportsPath());
+
+        Entry::all()->first()->set('redirect', 'https://statamic.com')->save();
+
+        Carbon::setTestNow($now = now());
+        Report::create()->save()->generate();
+
+        $expected = <<<"EXPECTED"
+date: $now->timestamp
+status: fail
+score: 82.0
+pages_crawled: 4
+pages_actionable: 4
+results:
+  SiteName: true
+  UniqueTitleTag: 0
+  UniqueMetaDescription: 4
+  NoUnderscoresInUrl: 0
+  ThreeSegmentUrls: 0
+
+EXPECTED;
+
+        $this->assertCount(1, $this->files->files($this->reportsPath('1')));
+        $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
+
+        $this->assertFileExists($this->reportsPath('1/pages'));
+        $this->assertCount(4, $this->files->allFiles($this->reportsPath('1/pages')));
+    }
+
+    /** @test */
     public function it_properly_reports_on_unique_custom_title_values()
     {
         $this->generateEntries(5);
