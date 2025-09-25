@@ -3,6 +3,7 @@
 return [
 
     'site_defaults' => [
+        'driver' => 'file',
         'path' => base_path('content/seo.yaml'),
     ],
 
