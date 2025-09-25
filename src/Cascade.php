@@ -9,6 +9,7 @@ use Statamic\Facades\Antlers;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Field;
@@ -401,13 +402,33 @@ class Cascade
             $viewCascade = array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
-                ['___tmpValue' => $value],
+                ['___tmpValue' => $value, 'config' => config()->all()],
+                $this->hydrateGlobals()
             );
 
             return (string) Antlers::parse('{{ ___tmpValue }}', $viewCascade);
         } catch (Exception $exception) {
             return $item;
         }
+    }
+
+    private function hydrateGlobals()
+    {
+        $data = [];
+
+        foreach ($globals = GlobalSet::all() as $global) {
+            if ($global = $global->in($this->site()->handle())) {
+                $data[$global->handle()] = $global;
+            }
+        }
+
+        if ($mainGlobal = $globals->get('global')) {
+            foreach ($mainGlobal->toDeferredAugmentedArray() as $key => $value) {
+                $data[$key] = $value;
+            }
+        }
+
+        return $data;
     }
 
     protected function humans()
