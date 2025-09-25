@@ -1,8 +1,6 @@
 <template>
-
-    <div class="flex">
-
-        <div class="source-type-select pr-4">
+    <div class="source-container flex gap-y-2 gap-x-4">
+        <div class="source-type-select">
             <v-select
                 :options="sourceTypeSelectOptions"
                 :reduce="option => option.value"
@@ -14,7 +12,7 @@
         </div>
 
         <div class="flex-1">
-            <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder mt-1">
+            <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
                 <template v-if="placeholder !== false">
                     {{ placeholder }}
                 </template>
@@ -45,9 +43,19 @@
         width: 20rem;
     }
 
-    .inherit-placeholder {
-        padding-top: 5px;
-    }
+	.inherit-placeholder {
+		padding-top: 5px;
+	}
+
+	@container live-preview (max-width: 895px) {
+	    .source-container {
+		    flex-direction: column !important;
+	    }
+
+	    .source-type-select {
+		    width: 100%;
+	    }
+	}
 
     .source-field-select .selectize-dropdown,
     .source-field-select .selectize-input span {
