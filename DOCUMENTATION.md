@@ -167,6 +167,13 @@ By default, `twitter:card` meta will be rendered using `summary_large_image`.
 
 If you wish to change this to `summary`, you can [publish the SEO Pro config](#advanced-configuration) and modify your twitter card within `config/statamic/seo-pro.php`.
 
+### Trailing Slashes in URLs
+
+If you're using [statamic/ssg](https://github.com/statamic/ssg) and require trailing slashes on your URLs (ie. for Netlify's SEO tooling), you should enable trailing slashes in your SSG config.
+
+Otherwise, you can manually enforce trailing slashes across your app by adding `\Statamic\Facades\URL::enforceTrailingSlashes()` to the boot method of your AppServiceProvider.
+
+Both of these methods should enforce trailing slashes on most URLs across your app, including in your SEO meta and your sitemap.xml.
 
 ## GraphQL
 

@@ -11,6 +11,7 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\URL;
 use Statamic\Statamic;
 
 class MetaTagTest extends TestCase
@@ -41,6 +42,9 @@ class MetaTagTest extends TestCase
 
     protected function tearDown(): void
     {
+        URL::enforceTrailingSlashes(false);
+        URL::clearUrlCache();
+
         $this->cleanUpViews();
 
         if ($this->files->exists($path = base_path('custom_seo.yaml'))) {
@@ -852,6 +856,62 @@ EOT);
         $this->assertStringContainsStringIgnoringLineEndings('<h1>The Best About Page</h1>', $content);
         $this->assertStringContainsStringIgnoringLineEndings('<h3>http://cool-runnings.com/about</h3>', $content);
         $this->assertStringContainsStringIgnoringLineEndings('<h3 class="canonical_url_without_scoping"></h3>', $content);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_meta_urls_with_trailing_slashes_when_configured($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        URL::enforceTrailingSlashes();
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/" rel="canonical" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/" rel="home" />', false);
+        $response->assertSee('<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_custom_canonical_url_with_trailing_slashes_when_configured($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'canonical_url' => 'http://cool-runnings.com/pages/aboot',
+            ]);
+
+        URL::enforceTrailingSlashes();
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/pages/aboot/" rel="canonical" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     */
+    public function it_generates_pagination_meta_urls_with_trailing_slashes_when_configured($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        URL::enforceTrailingSlashes();
+
+        $response = $this->simulatePageOutOfFive(3);
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/?page=3" rel="canonical" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/?page=2" rel="prev" />', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about/?page=4" rel="next" />', false);
     }
 
     protected function setCustomGlidePresetDimensions($app)
