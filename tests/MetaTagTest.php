@@ -903,6 +903,19 @@ EOT);
         $this->assertStringContainsStringIgnoringLineEndings('<h3 class="canonical_url_without_scoping"></h3>', $content);
     }
 
+    /** @test */
+    public function it_doesnt_output_canonical_when_robots_noindex()
+    {
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'robots' => ['noindex'],
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertDontSee('" rel="canonical"', false);
+    }
+
     protected function setCustomGlidePresetDimensions($app)
     {
         $app->config->set('statamic.seo-pro.assets', [
