@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Exception;
 use Illuminate\Support\Collection;
+use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
@@ -377,7 +378,7 @@ class Cascade
 
     protected function parseImageField($value)
     {
-        return $value instanceof Collection
+        return $value instanceof Collection || $value instanceof Builder
             ? $value->first()
             : $value;
     }
