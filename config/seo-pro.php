@@ -8,6 +8,7 @@ return [
 
     'assets' => [
         'container' => null,
+        'folder' => null,
         'twitter_preset' => [
             'w' => 1200,
             'h' => 600,

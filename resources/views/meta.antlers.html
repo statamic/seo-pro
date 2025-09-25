@@ -76,16 +76,17 @@
     {{ /image }}
 {{ /if }}
 
-<link href="{{ home_url | striptags | entities | trim }}" rel="home" />
-<link href="{{ canonical_url | striptags | entities | trim }}" rel="canonical" />
+{{ unless (robots | raw | contains('noindex')) }}
+    <link href="{{ home_url | striptags | entities | trim }}" rel="home" />
+    <link href="{{ canonical_url | striptags | entities | trim }}" rel="canonical" />
 
-{{ if prev_url }}
-    <link href="{{ prev_url | striptags | entities | trim }}" rel="prev" />
-{{ /if }}
+    {{ if prev_url }}
+        <link href="{{ prev_url | striptags | entities | trim }}" rel="prev" />
+    {{ /if }}
 
-{{ if next_url }}
-    <link href="{{ next_url | striptags | entities | trim }}" rel="next" />
-{{ /if }}
+    {{ if next_url }}
+        <link href="{{ next_url | striptags | entities | trim }}" rel="next" />
+    {{ /if }}
 
 {{ if alternate_locales }}
     <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="{{ current_hreflang }}" />
