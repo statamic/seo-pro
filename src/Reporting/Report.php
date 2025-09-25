@@ -518,7 +518,7 @@ class Report implements Arrayable, Jsonable
     protected function allContent()
     {
         $content = collect()
-            ->merge(Entry::all())
+            ->merge(Entry::all()->whereNull('redirect'))
             ->merge(Term::all())
             ->keyBy
             ->id();
