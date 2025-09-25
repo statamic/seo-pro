@@ -87,7 +87,7 @@ class SeoProType extends Type
                 'resolve' => function ($meta) {
                     $image = $meta['image'] ?? null;
 
-                    if ($meta['image'] instanceof Value) {
+                    if ($image instanceof Value) {
                         $image = $meta['image']->value();
                     }
 
