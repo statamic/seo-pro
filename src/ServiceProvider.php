@@ -196,8 +196,6 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->app->bind(SiteDefaults::class, Eloquent\SiteDefaults::class);
 
-        app(SiteDefaults::class);
-
         return $this;
     }
 
