@@ -1,12 +1,12 @@
 <template>
 
     <div class="flex">
-
+	    
         <div class="source-type-select pr-4">
             <v-select
                 :options="sourceTypeSelectOptions"
                 :reduce="option => option.value"
-                :disabled="! config.localizable"
+                :disabled="isReadOnly || ! config.localizable"
                 :clearable="false"
                 :value="source"
                 @input="sourceDropdownChanged"
@@ -22,7 +22,7 @@
 
             <div v-else-if="source === 'field'" class="source-field-select">
                 <!-- TODO: Implement field suggestions v-select -->
-                <text-input :value="sourceField" @input="sourceFieldChanged" :disabled="! config.localizable" />
+                <text-input :value="sourceField" @input="sourceFieldChanged" :disabled="isReadOnly || ! config.localizable" />
             </div>
 
             <component
@@ -32,7 +32,7 @@
                 :config="fieldConfig"
                 :value="value.value"
                 :meta="meta.fieldMeta"
-                :read-only="! config.localizable"
+                :read-only="isReadOnly || ! config.localizable"
                 handle="source_value"
                 @input="customValueChanged">
             </component>
