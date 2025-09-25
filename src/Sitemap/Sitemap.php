@@ -4,19 +4,30 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
+use Statamic\Contracts\Entries\QueryBuilder;
+use Statamic\Entries\Entry;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
-use Statamic\Facades\Entry;
+use Statamic\Facades\Entry as EntryFacade;
+use Statamic\Facades\Site as SiteFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Sites\Site;
 
 class Sitemap
 {
     use GetsSectionDefaults;
 
     const CACHE_KEY = 'seo-pro.sitemap';
+
+    private IlluminateCollection $sites;
+
+    public function __construct()
+    {
+        $this->sites = collect();
+    }
 
     public function pages(): array
     {
@@ -88,6 +99,13 @@ class Sitemap
             ->all();
     }
 
+    public function forSites(IlluminateCollection $sites): self
+    {
+        $this->sites = $sites;
+
+        return $this;
+    }
+
     protected function getPages($items)
     {
         return $items
@@ -106,6 +124,10 @@ class Sitemap
                     ->withCurrent($content)
                     ->get();
 
+                if (SiteFacade::hasMultiple()) {
+                    $data['hreflangs'] = $this->hrefLangs($content);
+                }
+
                 return (new Page)->with($data);
             })
             ->filter();
@@ -123,8 +145,11 @@ class Sitemap
             ->values()
             ->all();
 
-        return Entry::query()
-            ->whereIn('collection', $collections)
+        return EntryFacade::query()
+            ->when(
+                $this->sites->isNotEmpty(),
+                fn (QueryBuilder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
+            )->whereIn('collection', $collections)
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->orderBy('uri');
@@ -191,5 +216,35 @@ class Sitemap
         return Blink::once('seo-pro.site-defaults', function () {
             return SiteDefaults::load()->all();
         });
+    }
+
+    protected function hrefLangs(Entry $entry): array
+    {
+        if (config('statamic.seo-pro.alternate_locales') === false) {
+            return [];
+        }
+        if (config('statamic.seo-pro.alternate_locales.enabled') === false) {
+            return [];
+        }
+
+        return $this->sitesWithSameDomain($entry->site())
+            ->filter(fn (Site $site) => $entry->in($site->handle()))
+            ->filter(fn (Site $site) => $entry->in($site->handle())->published())
+            ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
+            ->map(fn (Site $site) => [
+                'href' => $entry->in($site->handle())->absoluteUrl(),
+                'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
+            ])->all();
+    }
+
+    private function sitesWithSameDomain(Site $site): IlluminateCollection
+    {
+        $pieces = parse_url($site->absoluteUrl());
+
+        $domain = $pieces['scheme'].'://'.$pieces['host'];
+
+        return SiteFacade::all()
+            ->filter(fn (Site $s) => str($s->absoluteUrl())->startsWith($domain))
+            ->values();
     }
 }

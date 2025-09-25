@@ -33,6 +33,11 @@ class Page
         return $this->data->get('change_frequency');
     }
 
+    public function hrefLangs(): array
+    {
+        return $this->data->get('hreflangs', []);
+    }
+
     public function priority()
     {
         return $this->data->get('priority');
@@ -46,6 +51,7 @@ class Page
             'lastmod' => $this->lastmod(),
             'changefreq' => $this->changefreq(),
             'priority' => $this->priority(),
+            'hreflangs' => $this->hrefLangs(),
         ];
     }
 }
