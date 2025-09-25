@@ -129,7 +129,7 @@ class Cascade
     {
         $url = Str::trim($this->explicitUrl ?? $this->data->get('canonical_url'));
 
-        if (! Str::startsWith($url, config('app.url'))) {
+        if (! Str::startsWith($url, Site::current()?->absoluteUrl() ?? config('app.url'))) {
             return $url;
         }
 
@@ -159,7 +159,7 @@ class Cascade
 
         $url = Str::trim($this->data->get('canonical_url'));
 
-        if (! Str::startsWith($url, config('app.url'))) {
+        if (! Str::startsWith($url, Site::current()?->absoluteUrl() ?? config('app.url'))) {
             return $url;
         }
 
@@ -186,7 +186,7 @@ class Cascade
 
         $url = Str::trim($this->data->get('canonical_url'));
 
-        if (! Str::startsWith($url, config('app.url'))) {
+        if (! Str::startsWith($url, Site::current()?->absoluteUrl() ?? config('app.url'))) {
             return $url;
         }
 
