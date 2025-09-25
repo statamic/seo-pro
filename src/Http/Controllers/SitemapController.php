@@ -13,22 +13,16 @@ class SitemapController extends Controller
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
-        $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
-
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
-            $content = Cache::remember(Sitemap::CACHE_KEY.'_index', $cacheUntil, function () {
-                return view('seo-pro::sitemap_index', [
-                    'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'sitemaps' => app(Sitemap::class)->paginatedSitemaps(),
-                ])->render();
-            });
+            $content = view('seo-pro::sitemap_index', [
+                'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
+                'sitemaps' => app(Sitemap::class)->paginatedSitemaps(),
+            ])->render();
         } else {
-            $content = Cache::remember(Sitemap::CACHE_KEY, $cacheUntil, function () {
-                return view('seo-pro::sitemap', [
-                    'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
-                    'pages' => app(Sitemap::class)->pages(),
-                ])->render();
-            });
+            $content = view('seo-pro::sitemap', [
+                'xml_header' => '<?xml version="1.0" encoding="UTF-8"?>',
+                'pages' => app(Sitemap::class)->pages(),
+            ])->render();
         }
 
         return response($content)->header('Content-Type', 'text/xml');

@@ -3,14 +3,17 @@
 namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\LazyCollection;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Site as SiteFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Sites\Site;
 
 class Sitemap
 {
@@ -18,18 +21,29 @@ class Sitemap
 
     const CACHE_KEY = 'seo-pro.sitemap';
 
+    private Site $site;
+
+    public function __construct()
+    {
+        $this->site = SiteFacade::current();
+    }
+
     public function pages(): array
     {
-        return collect()
-            ->merge($this->publishedEntries())
-            ->merge($this->publishedTerms())
-            ->merge($this->publishedCollectionTerms())
-            ->pipe(fn ($pages) => $this->getPages($pages))
-            ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
-            ->values()
-            ->map
-            ->toArray()
-            ->all();
+        return Cache::remember(
+            Sitemap::CACHE_KEY.'_'.$this->site->handle(),
+            now()->addMinutes(config('statamic.seo-pro.sitemap.expire')),
+            fn () => collect()
+                ->merge($this->publishedEntries())
+                ->merge($this->publishedTerms())
+                ->merge($this->publishedCollectionTerms())
+                ->pipe(fn ($pages) => $this->getPages($pages))
+                ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
+                ->values()
+                ->map
+                ->toArray()
+                ->all()
+        );
     }
 
     public function paginatedPages(int $page): array
@@ -78,14 +92,19 @@ class Sitemap
 
     public function paginatedSitemaps(): array
     {
-        // would be nice to make terms a count query rather than getting the count from the terms collection
-        $count = $this->publishedEntriesCount() + $this->publishedTerms()->count() + $this->publishedCollectionTerms()->count();
+        return Cache::remember(
+            Sitemap::CACHE_KEY.'_'.$this->site->handle(),
+            now()->addMinutes(config('statamic.seo-pro.sitemap.expire')),
+            function () {
+                // would be nice to make terms a count query rather than getting the count from the terms collection
+                $count = $this->publishedEntriesCount() + $this->publishedTerms()->count() + $this->publishedCollectionTerms()->count();
 
-        $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
+                $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
 
-        return collect(range(1, $sitemapCount))
-            ->map(fn ($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
-            ->all();
+                return collect(range(1, $sitemapCount))
+                    ->map(fn ($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
+                    ->all();
+            });
     }
 
     protected function getPages($items)
@@ -125,6 +144,7 @@ class Sitemap
 
         return Entry::query()
             ->whereIn('collection', $collections)
+            ->where('site', $this->site)
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->orderBy('uri');
