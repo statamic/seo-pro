@@ -349,6 +349,11 @@ class Report implements Arrayable, Jsonable
         return static::all()->first();
     }
 
+    public static function latestGenerated()
+    {
+        return static::all()->filter(fn ($report) => $report->isGenerated())->first();
+    }
+
     public static function find($id)
     {
         $instance = static::create($id);

@@ -10,7 +10,7 @@ class SeoProWidget extends Widget
     public function html()
     {
         return view('seo-pro::widget', [
-            'report' => Report::latest(),
+            'report' => Report::latestGenerated(),
         ]);
     }
 }
