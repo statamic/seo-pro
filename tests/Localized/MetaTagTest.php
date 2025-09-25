@@ -48,10 +48,10 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
-<link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/')->content();
@@ -78,9 +78,9 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
-<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -125,8 +125,8 @@ EOT;
 <link href="http://cool-runnings.com/fr/about" rel="canonical" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
-<link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="x-default" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -154,9 +154,9 @@ EOT;
 <link href="http://cool-runnings.com/fr" rel="canonical" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
-<link rel="alternate" href="http://cool-runnings.com/fr" hreflang="x-default" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -183,9 +183,9 @@ EOT;
 <link href="http://cool-runnings.com/en-gb" rel="canonical" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
+<link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
-<link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="x-default" />
 EOT;
 
         // Though hitting a route will automatically set the current site,
@@ -235,8 +235,8 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
+<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -266,8 +266,8 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
+<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -301,8 +301,8 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
+<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();
@@ -336,8 +336,8 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
+<link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
         $content = $this->get('/about')->content();

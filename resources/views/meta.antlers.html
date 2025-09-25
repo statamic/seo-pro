@@ -89,10 +89,15 @@
 
 {{ if alternate_locales }}
     <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="{{ current_hreflang }}" />
+    {{ if is_default_site }}
+        <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="x-default" />
+    {{ /if }}
     {{ alternate_locales }}
         <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="{{ hreflang }}" />
+        {{ if is_default_site }}
+            <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="x-default" />
+        {{ /if }}
     {{ /alternate_locales }}
-    <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="x-default" />
 {{ /if }}
 
 {{ if humans_txt }}
