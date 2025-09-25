@@ -7,10 +7,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Statamic\Extensions\Pagination\LengthAwarePaginator as StatamicLengthAwarePaginator;
+use Statamic\Facades\Asset;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Blueprint;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Query\ItemQueryBuilder;
+use Statamic\Query\OrderedQueryBuilder;
 use Statamic\Statamic;
 
 class MetaTagTest extends TestCase
@@ -331,6 +335,51 @@ EOT;
         $response->assertSee('<meta property="og:image:width" content="1146" />', false);
         $response->assertSee('<meta property="og:image:height" content="600" />', false);
         $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw/stetson.jpg?p=seo_pro_twitter&s=095c80594c864bedc5c4c2cb2c83ee1c" />', false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider viewScenarioProvider
+     *
+     * @environment-setup setNoGlidePresets
+     */
+    public function it_only_generates_one_social_image_when_the_field_is_an_array($viewType)
+    {
+        Config::set('statamic.seo-pro.assets.container', 'assets');
+
+        $entry = Entry::findByUri('/about');
+
+        $blueprint = Blueprint::make('multiple_images')
+            ->ensureField('images', [
+                'type' => 'assets',
+                'max_items' => 2,
+            ]);
+
+        $blueprint->save();
+
+        $entry->blueprint($blueprint);
+
+        $entry->merge([
+            'images' => new OrderedQueryBuilder((new ItemQueryBuilder)->withItems(collect([
+                Asset::find('assets::img/stetson.jpg'),
+                Asset::find('assets::img/coffee-mug.jpg'),
+            ]))),
+        ]);
+
+        $entry->save();
+
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry($entry, [
+                'image' => '@seo:images',
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />', false);
+        $response->assertDontSee('<meta name="og:image" content="http://cool-runnings.com/assets/img/coffee-mug.jpg" />', false);
+
     }
 
     /**
@@ -889,6 +938,15 @@ EOT);
                 'w' => 800,
                 'h' => 600,
             ],
+            'open_graph_preset' => false,
+        ]);
+    }
+
+    protected function setNoGlidePresets($app)
+    {
+        $app->config->set('statamic.seo-pro.assets', [
+            'container' => 'assets',
+            'twitter_preset' => false,
             'open_graph_preset' => false,
         ]);
     }
