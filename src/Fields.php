@@ -65,6 +65,7 @@ class Fields
                     'localizable' => true,
                     'field' => [
                         'type' => 'text',
+                        'character_limit' => 60,
                     ],
                 ],
             ],
@@ -78,6 +79,7 @@ class Fields
                     'localizable' => true,
                     'field' => [
                         'type' => 'textarea',
+                        'character_limit' => 160,
                     ],
                 ],
             ],
@@ -153,8 +155,13 @@ class Fields
                         'create' => true,
                         'multiple' => true,
                         'options' => [
+                            'follow',
+                            'index',
+                            'noarchive',
+                            'noimageindex',
                             'noindex',
                             'nofollow',
+                            'nosnippet',
                         ],
                     ],
                 ],

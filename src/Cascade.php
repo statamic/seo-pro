@@ -4,10 +4,12 @@ namespace Statamic\SeoPro;
 
 use Exception;
 use Illuminate\Support\Collection;
+use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Field;
@@ -91,7 +93,7 @@ class Cascade
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
             'next_url' => $this->nextUrl(),
-            'home_url' => Str::removeRight(URL::makeAbsolute('/'), '/'),
+            'home_url' => Str::removeRight(Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/'), '/'),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
             'alternate_locales' => $alternateLocales = $this->alternateLocales(),
@@ -129,7 +131,7 @@ class Cascade
     {
         $url = Str::trim($this->explicitUrl ?? $this->data->get('canonical_url'));
 
-        if (! Str::startsWith($url, config('app.url'))) {
+        if (! Str::startsWith($url, Site::current()?->absoluteUrl() ?? config('app.url'))) {
             return $url;
         }
 
@@ -159,7 +161,7 @@ class Cascade
 
         $url = Str::trim($this->data->get('canonical_url'));
 
-        if (! Str::startsWith($url, config('app.url'))) {
+        if (! Str::startsWith($url, Site::current()?->absoluteUrl() ?? config('app.url'))) {
             return $url;
         }
 
@@ -186,7 +188,7 @@ class Cascade
 
         $url = Str::trim($this->data->get('canonical_url'));
 
-        if (! Str::startsWith($url, config('app.url'))) {
+        if (! Str::startsWith($url, Site::current()?->absoluteUrl() ?? config('app.url'))) {
             return $url;
         }
 
@@ -377,7 +379,7 @@ class Cascade
 
     protected function parseImageField($value)
     {
-        return $value instanceof Collection
+        return $value instanceof Collection || $value instanceof Builder
             ? $value->first()
             : $value;
     }
@@ -400,13 +402,33 @@ class Cascade
             $viewCascade = array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
-                ['___tmpValue' => $value],
+                ['___tmpValue' => $value, 'config' => config()->all()],
+                $this->hydrateGlobals()
             );
 
             return (string) Antlers::parse('{{ ___tmpValue }}', $viewCascade);
         } catch (Exception $exception) {
             return $item;
         }
+    }
+
+    private function hydrateGlobals()
+    {
+        $data = [];
+
+        foreach ($globals = GlobalSet::all() as $global) {
+            if ($global = $global->in($this->site()->handle())) {
+                $data[$global->handle()] = $global;
+            }
+        }
+
+        if ($mainGlobal = $globals->get('global')) {
+            foreach ($mainGlobal->toDeferredAugmentedArray() as $key => $value) {
+                $data[$key] = $value;
+            }
+        }
+
+        return $data;
     }
 
     protected function humans()

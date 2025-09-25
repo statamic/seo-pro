@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\GraphQL;
 
 use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
+use Statamic\Fields\Value;
 use Statamic\GraphQL\Fields\DateField;
 use Statamic\GraphQL\Types\SiteType;
 use Statamic\SeoPro\RendersMetaHtml;
@@ -84,7 +85,13 @@ class SeoProType extends Type
             'image' => [
                 'type' => GraphQL::type('AssetInterface'),
                 'resolve' => function ($meta) {
-                    return optional($meta['image'] ?? null)->value();
+                    $image = $meta['image'] ?? null;
+
+                    if ($image instanceof Value) {
+                        $image = $meta['image']->value();
+                    }
+
+                    return $image;
                 },
             ],
             'html' => [
