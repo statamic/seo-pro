@@ -265,7 +265,7 @@ class Cascade
         if (config('statamic.seo-pro.pagination') !== false) {
             if ($paginator = Blink::get('tag-paginator')) {
                 if ($paginator->currentPage() > 1) {
-                    $compiled->push($siteNameSeparator, __('seo-pro::meta.pagination_page', ['page' => $paginator->currentPage()]));
+                    $compiled->push(__('seo-pro::meta.pagination_page', ['page' => $paginator->currentPage()]));
                 }
             }
         }

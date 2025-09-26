@@ -928,7 +928,7 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>About | Page 2 | Site Name</title>', false);
+        $response->assertSee('<title>About Page 2 | Site Name</title>', false);
 
         Blink::put('tag-paginator', new LengthAwarePaginator([1, 2, 3], 10, 10, 1));
 
@@ -938,7 +938,7 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertDontSee('<title>About | Page 2 | Site Name</title>', false);
+        $response->assertDontSee('<title>About Page 2 | Site Name</title>', false);
     }
 
     protected function setCustomGlidePresetDimensions($app)
