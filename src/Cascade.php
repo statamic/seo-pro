@@ -14,7 +14,9 @@ use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
+use Statamic\Fieldtypes\Bard;
 use Statamic\Fieldtypes\Text;
+use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\View\Cascade as ViewCascade;
@@ -232,7 +234,11 @@ class Cascade
             $item = Arr::get($this->current, $field);
 
             if ($item instanceof Value) {
-                $item = $item->value();
+                if ($item->fieldtype() instanceof Bard) {
+                    $item = (string) Statamic::modify($item)->bardText();
+                } else {
+                    $item = $item->value();
+                }
             }
         }
 
