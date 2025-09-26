@@ -490,7 +490,7 @@ EOT;
     {
         Sitemap::hook('additional-items', function ($payload, $next) {
             $payload->items = $payload->items->merge([
-                (new Page())->with([
+                (new Page)->with([
                     'canonical_url' => url('additional-item'),
                     'last_modified' => Carbon::parse('2025-01-01'),
                     'change_frequency' => 'monthly',

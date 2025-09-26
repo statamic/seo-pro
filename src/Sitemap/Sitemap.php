@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\Sitemap;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
 use Statamic\Facades\Blink;
@@ -28,8 +27,8 @@ class Sitemap
             ->merge($this->publishedTerms())
             ->merge($this->publishedCollectionTerms())
             ->merge($this->additionalSitemapItems())
-            ->pipe(fn($pages) => $this->getPages($pages))
-            ->sortBy(fn($page) => substr_count(rtrim($page->path(), '/'), '/'))
+            ->pipe(fn ($pages) => $this->getPages($pages))
+            ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
             ->values()
             ->map
             ->toArray()
@@ -89,7 +88,7 @@ class Sitemap
         $sitemapCount = ceil($count / config('statamic.seo-pro.sitemap.pagination.limit', 100));
 
         return collect(range(1, $sitemapCount))
-            ->map(fn($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
+            ->map(fn ($page) => ['url' => route('statamic.seo-pro.sitemap.page.show', ['page' => $page])])
             ->all();
     }
 
