@@ -916,6 +916,31 @@ EOT);
         $response->assertDontSee('" rel="canonical"', false);
     }
 
+    /** @test */
+    public function it_outputs_paginated_page_in_title()
+    {
+        config()->set('statamic.seo-pro.pagination.enabled', true);
+        Blink::put('tag-paginator', new LengthAwarePaginator([1, 2, 3], 10, 10, 2));
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>About | Page 2 | Site Name</title>', false);
+
+        Blink::put('tag-paginator', new LengthAwarePaginator([1, 2, 3], 10, 10, 1));
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertDontSee('<title>About | Page 2 | Site Name</title>', false);
+    }
+
     protected function setCustomGlidePresetDimensions($app)
     {
         $app->config->set('statamic.seo-pro.assets', [

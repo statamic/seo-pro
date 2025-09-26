@@ -260,7 +260,17 @@ class Cascade
             return $title;
         }
 
-        $compiled = collect([$title, $siteNameSeparator, $siteName]);
+        $compiled = collect([$title]);
+
+        if (config('statamic.seo-pro.pagination') !== false) {
+            if ($paginator = Blink::get('tag-paginator')) {
+                if ($paginator->currentPage() > 1) {
+                    $compiled->push($siteNameSeparator, __('seo-pro::meta.pagination_page', ['page' => $paginator->currentPage()]));
+                }
+            }
+        }
+
+        $compiled->push($siteNameSeparator, $siteName);
 
         if ($siteNamePosition === 'before') {
             $compiled = $compiled->reverse();
