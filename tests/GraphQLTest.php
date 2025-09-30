@@ -18,7 +18,7 @@ class GraphQLTest extends TestCase
         $app['config']->set('statamic.seo-pro.assets.container', 'assets');
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

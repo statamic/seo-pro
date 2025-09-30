@@ -23,7 +23,7 @@ class MetaTagTest extends TestCase
         $app['config']->set('statamic.system.multisite', true);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->cleanUpViews();
 
