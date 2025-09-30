@@ -32,8 +32,8 @@ return [
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL when shared on social networks.',
 
-    'og_title' => 'Opengraph Title',
-    'og_title_instruct' => 'Pick an existing field or custom value to set as your opengraph title.',
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
 
     'social_section' => 'X',
     'social_section_instruct' => 'We automatically generate most X card fields from your meta data and site configuration.',

@@ -29,8 +29,8 @@ return [
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
 
-    'og_title' => 'Opengraph Title',
-    'og_title_instruct' => 'Pick an existing field or custom value to set as your opengraph title.',
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
 
     'twitter_handle' => 'X Handle',
     'twitter_handle_instruct' => 'Optionally override the X handle for this page.',

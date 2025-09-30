@@ -31,8 +31,8 @@ return [
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
 
-    'og_title' => 'Opengraph Title',
-    'og_title_instruct' => 'Pick an existing field or custom value to set as your opengraph title.',
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
 
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL in this section when shared on social networks.',
