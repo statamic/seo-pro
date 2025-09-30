@@ -213,6 +213,20 @@ class SiteDefaults extends Collection
                     'display' => __('seo-pro::messages.opengraph'),
                     'fields' => [
                         [
+                            'handle' => 'og_title',
+                            'field' => [
+                                'display' => __('seo-pro::fieldsets/defaults.og_title'),
+                                'instructions' => __('seo-pro::fieldsets/defaults.og_title_instruct'),
+                                'type' => 'seo_pro_source',
+                                'inherit' => false,
+                                'localizable' => true,
+                                'field' => [
+                                    'type' => 'text',
+                                ],
+                                'default' => '@seo:title',
+                            ],
+                        ],
+                        [
                             'handle' => 'image_section',
                             'field' => [
                                 'display' => __('seo-pro::fieldsets/defaults.image_section'),
@@ -234,20 +248,6 @@ class SiteDefaults extends Collection
                                 ],
                                 'localizable' => true,
                                 'field' => static::getAssetFieldConfig(),
-                            ],
-                        ],
-                        [
-                            'handle' => 'og_title',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.og_title'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.og_title_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'text',
-                                ],
-                                'default' => '@seo:title',
                             ],
                         ],
                     ],
