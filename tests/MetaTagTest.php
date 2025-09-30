@@ -812,8 +812,7 @@ EOT);
 
         $this
             ->prepareViews('antlers')
-            ->setSeoOnEntry(Entry::findByUri('/about'), [
-            ]);
+            ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
         $response->assertSee('<title>About Page 2 | Site Name</title>', false);
@@ -827,12 +826,20 @@ EOT);
         $response = $this->get('/about');
         $response->assertSee('<title>Site Name | About Page 2</title>', false);
 
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'site_name_position' => 'none',
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>About Page 2</title>', false);
+
         Blink::put('tag-paginator', new LengthAwarePaginator([1, 2, 3], 10, 10, 1));
 
         $this
             ->prepareViews('antlers')
-            ->setSeoOnEntry(Entry::findByUri('/about'), [
-            ]);
+            ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
         $response->assertDontSee('<title>About Page 2 | Site Name</title>', false);

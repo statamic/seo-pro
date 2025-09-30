@@ -262,16 +262,16 @@ class Cascade
             return $siteName;
         }
 
-        if (! $siteName || $siteNamePosition === 'none') {
-            return $title;
-        }
-
         if (config('statamic.seo-pro.pagination') !== false) {
             if ($paginator = Blink::get('tag-paginator')) {
                 if ($paginator->currentPage() > 1) {
                     $title = __('seo-pro::meta.pagination_page', ['title' => $title, 'page' => $paginator->currentPage()]);
                 }
             }
+        }
+
+        if (! $siteName || $siteNamePosition === 'none') {
+            return $title;
         }
 
         $compiled = collect([$title, $siteNameSeparator, $siteName]);
