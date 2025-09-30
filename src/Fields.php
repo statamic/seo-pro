@@ -194,6 +194,20 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'og_title',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.og_title"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.og_title_instruct"),
+                    'type' => 'seo_pro_source',
+                    'inherit' => true,
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                    'show_when' => $condition,
+                ],
+            ],
+            [
                 'handle' => 'image',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$langFile}.image"),
@@ -205,20 +219,6 @@ class Fields
                         'assets',
                     ],
                     'field' => static::getAssetFieldConfig(),
-                    'show_when' => $condition,
-                ],
-            ],
-            [
-                'handle' => 'og_title',
-                'field' => [
-                    'display' => __("seo-pro::fieldsets/{$langFile}.og_title"),
-                    'instructions' => __("seo-pro::fieldsets/{$langFile}.og_title_instruct"),
-                    'type' => 'seo_pro_source',
-                    'inherit' => true,
-                    'localizable' => true,
-                    'field' => [
-                        'type' => 'text',
-                    ],
                     'show_when' => $condition,
                 ],
             ],
