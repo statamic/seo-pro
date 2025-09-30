@@ -3,6 +3,8 @@
 namespace Tests;
 
 use Illuminate\Support\Collection as IlluminateCollection;
+use Orchestra\Testbench\Attributes\DefineEnvironment;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Console\Composer\Lock;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
@@ -24,7 +26,7 @@ class SitemapTest extends TestCase
         $this->files->makeDirectory($folder, 0755, true);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_sitemap_xml()
     {
         $content = $this
@@ -97,7 +99,7 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_404s_when_sitemap_xml_is_disabled()
     {
         Config::set('statamic.seo-pro.sitemap.enabled', false);
@@ -107,11 +109,8 @@ EOT;
             ->assertStatus(404);
     }
 
-    /**
-     * @test
-     *
-     * @environment-setup setCustomSitemapXmlUrl
-     */
+    #[Test]
+    #[DefineEnvironment('setCustomSitemapXmlUrl')]
     public function it_outputs_sitemap_xml_with_custom_url()
     {
         $this
@@ -127,7 +126,7 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings('<loc>http://cool-runnings.com</loc>', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_sitemap_xml_with_custom_view()
     {
         $this->files->put(resource_path('views/vendor/seo-pro/sitemap.antlers.html'), '{{ xml_header }} test');
@@ -141,7 +140,7 @@ EOT;
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?> test', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_cascade_to_generate_priorities()
     {
         $this
@@ -168,7 +167,7 @@ EOT;
         $this->assertEquals('0.1', $priorities->get('http://cool-runnings.com/dance'));
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_cascade_to_generate_frequencies()
     {
         $this
@@ -195,7 +194,7 @@ EOT;
         $this->assertEquals('weekly', $frequencies->get('http://cool-runnings.com/dance'));
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_generate_pages_for_content_without_uris()
     {
         $this->files->put(base_path('content/collections/articles.yaml'), 'route: null');
@@ -225,7 +224,7 @@ EOT;
         return collect($data['url']);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_paginated_sitemap_index_xml()
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
@@ -256,7 +255,7 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_paginated_sitemap_page_xml()
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
@@ -352,7 +351,7 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_404s_on_invalid_pagination_urls()
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
@@ -371,7 +370,7 @@ EOT;
             ->assertNotFound();
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_custom_sitemap_queries()
     {
         // Hacky/temporary version compare, because `reorder()` method we're using
