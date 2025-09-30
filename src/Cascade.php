@@ -283,7 +283,6 @@ class Cascade
             return $title;
         }
 
-        // fallback for previous approach
         if ($title = $this->data->get('title')) {
             return $title;
         }
@@ -306,7 +305,6 @@ class Cascade
             return $description;
         }
 
-        // fallback for previous approach
         return $this->data->get('description');
     }
 
