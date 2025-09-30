@@ -484,7 +484,7 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_additional_items()
     {
         Sitemap::hook('additional', function ($payload, $next) {
