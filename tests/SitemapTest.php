@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection as IlluminateCollection;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\Test;
@@ -10,6 +11,7 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\SeoPro\Sitemap\Page;
 use Statamic\SeoPro\Sitemap\Sitemap;
 use Statamic\Statamic;
 
@@ -480,6 +482,98 @@ EOT;
 EOT;
 
         $this->assertEquals($expected, $content);
+    }
+
+    #[Test]
+    public function it_outputs_additional_items()
+    {
+        Sitemap::hook('additional', function ($payload, $next) {
+            $payload->items->push((new Page)->with([
+                'canonical_url' => url('additional-item'),
+                'last_modified' => Carbon::parse('2025-01-01'),
+                'change_frequency' => 'monthly',
+                'priority' => 0.5,
+            ]));
+
+            return $next($payload);
+        });
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertCount(8, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<"EOT"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://cool-runnings.com</loc>
+        <lastmod>2020-11-24</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/dance</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/magic</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/nectar</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/topics</loc>
+        <lastmod>2020-01-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/additional-item</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+
     }
 }
 
