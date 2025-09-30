@@ -2,6 +2,7 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GraphQLTest extends TestCase
@@ -18,7 +19,7 @@ class GraphQLTest extends TestCase
         $app['config']->set('statamic.graphql.resources.collections', true);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_multisite_for_canonical_url_and_alternate_locales_in_html_meta()
     {
         $query = <<<'GQL'
@@ -64,7 +65,7 @@ GQL;
             ]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_multisite_for_canonical_url_and_alternate_locales_in_cascade_meta()
     {
         $query = <<<'GQL'
