@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Support\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
@@ -14,7 +15,7 @@ use Statamic\Support\Str;
 
 class ReportTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -26,7 +27,7 @@ class ReportTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_can_save_pending_report()
     {
         $this->assertFileDoesNotExist($this->reportsPath());
@@ -51,7 +52,7 @@ EXPECTED;
         $this->assertEqualsIgnoringLineEndings($expected, $this->files->get($this->reportsPath('1/report.yaml')));
     }
 
-    /** @test */
+    #[Test]
     public function it_increments_report_folder_numbers()
     {
         $this->assertFileDoesNotExist($this->reportsPath());
@@ -66,7 +67,7 @@ EXPECTED;
         $this->assertFileExists($this->reportsPath('3'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_generate_a_report()
     {
         $this
@@ -100,7 +101,7 @@ EXPECTED;
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_delete_old_reports_when_generating_by_default()
     {
         $this->generateEntries(1);
@@ -116,7 +117,7 @@ EXPECTED;
         $this->assertCount(17, $this->files->directories($this->reportsPath()));
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_delete_old_reports_when_explicit_all_is_configured()
     {
         Config::set('statamic.seo-pro.reports.keep_recent', 'all');
@@ -134,7 +135,7 @@ EXPECTED;
         $this->assertCount(17, $this->files->directories($this->reportsPath()));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_delete_old_reports_when_generating()
     {
         Config::set('statamic.seo-pro.reports.keep_recent', 13);
@@ -169,7 +170,7 @@ EXPECTED;
         $this->assertFileExists($this->reportsPath('17'));
     }
 
-    /** @test */
+    #[Test]
     public function it_properly_calculates_actionable_count()
     {
         $this
@@ -213,7 +214,7 @@ EXPECTED;
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_generate_a_large_report_with_multiple_chunked_jobs()
     {
         Config::set('statamic.seo-pro.reports.queue_chunk_size', 3);
@@ -257,7 +258,7 @@ EXPECTED;
         $this->assertCount(10, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
-    /** @test */
+    #[Test]
     public function it_skips_over_pages_with_disabled_seo()
     {
         $this
@@ -293,7 +294,7 @@ EXPECTED;
         $this->assertCount(9, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
-    /** @test */
+    #[Test]
     public function it_skips_over_entries_with_redirects()
     {
         $this->generateEntries(5);
@@ -327,7 +328,7 @@ EXPECTED;
         $this->assertCount(4, $this->files->allFiles($this->reportsPath('1/pages')));
     }
 
-    /** @test */
+    #[Test]
     public function it_properly_reports_on_unique_custom_title_values()
     {
         $this->generateEntries(5);
@@ -339,7 +340,7 @@ EXPECTED;
         $this->assertEqualsIgnoringLineEndings(0, $this->getReportResult('UniqueTitleTag'));
     }
 
-    /** @test */
+    #[Test]
     public function it_properly_reports_on_unique_custom_description_values()
     {
         $this->generateEntries(5);

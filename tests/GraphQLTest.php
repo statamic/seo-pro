@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Data;
 
@@ -18,7 +19,7 @@ class GraphQLTest extends TestCase
         $app['config']->set('statamic.seo-pro.assets.container', 'assets');
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -36,7 +37,7 @@ class GraphQLTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_for_entry_seo_meta_html()
     {
         $query = <<<'GQL'
@@ -87,7 +88,7 @@ GQL;
             ]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_for_entry_seo_cascade_so_user_can_render_custom_meta()
     {
         $query = <<<'GQL'
@@ -159,7 +160,7 @@ GQL;
             ]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_for_term_seo_meta_html()
     {
         $query = <<<'GQL'
@@ -201,7 +202,7 @@ GQL;
             ]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_for_term_seo_cascade_so_user_can_render_custom_meta()
     {
         $query = <<<'GQL'
@@ -270,7 +271,7 @@ GQL;
             ]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_gracefully_outputs_null_image_when_not_set()
     {
         $query = <<<'GQL'
