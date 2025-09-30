@@ -4,7 +4,7 @@ namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Testing\TestResponse;
-use Statamic\Extend\Manifest;
+use Statamic\Addons\Manifest;
 use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\SiteDefaults;
