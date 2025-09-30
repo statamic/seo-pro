@@ -43,8 +43,6 @@ class Fields
     {
         $langFile = $this->isContent ? 'content' : 'sections';
 
-        $condition = ['enabled' => 'is true'];
-
         return [
             [
                 'handle' => 'enabled',
@@ -62,7 +60,6 @@ class Fields
                     'display' => __('seo-pro::fieldsets/defaults.meta_section'),
                     'instructions' => __('seo-pro::fieldsets/defaults.meta_section_instruct'),
                     'type' => 'section',
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -78,7 +75,6 @@ class Fields
                         'type' => 'text',
                         'character_limit' => 60,
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -93,7 +89,6 @@ class Fields
                         'type' => 'textarea',
                         'character_limit' => 160,
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -107,7 +102,6 @@ class Fields
                     'disableable' => true,
                     'localizable' => true,
                     'field' => false,
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -127,7 +121,6 @@ class Fields
                             'none' => __('seo-pro::messages.disable'),
                         ],
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -142,7 +135,6 @@ class Fields
                     'field' => [
                         'type' => 'text',
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -154,7 +146,6 @@ class Fields
                     'type' => 'seo_pro_source',
                     'localizable' => true,
                     'field' => $this->isContent ? ['type' => 'text'] : false,
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -181,7 +172,6 @@ class Fields
                             'nosnippet',
                         ],
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -190,7 +180,6 @@ class Fields
                     'display' => __('seo-pro::fieldsets/defaults.image_section'),
                     'instructions' => __('seo-pro::fieldsets/defaults.image_section_instruct'),
                     'type' => 'section',
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -204,7 +193,6 @@ class Fields
                     'field' => [
                         'type' => 'text',
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -219,7 +207,6 @@ class Fields
                         'assets',
                     ],
                     'field' => static::getAssetFieldConfig(),
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -228,7 +215,6 @@ class Fields
                     'display' => __('seo-pro::fieldsets/defaults.social_section'),
                     'instructions' => __('seo-pro::fieldsets/defaults.social_section_instruct'),
                     'type' => 'section',
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -241,7 +227,6 @@ class Fields
                     'field' => [
                         'type' => 'text',
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -255,7 +240,6 @@ class Fields
                     'field' => [
                         'type' => 'text',
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -269,7 +253,6 @@ class Fields
                     'field' => [
                         'type' => 'textarea',
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -278,7 +261,6 @@ class Fields
                     'display' => __('seo-pro::fieldsets/defaults.sitemap_section'),
                     'instructions' => __('seo-pro::fieldsets/defaults.sitemap_section_instruct'),
                     'type' => 'section',
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -292,7 +274,6 @@ class Fields
                     'field' => false,
                     'from_field' => false,
                     'localizable' => true,
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -306,7 +287,6 @@ class Fields
                     'field' => [
                         'type' => 'text',
                     ],
-                    'show_when' => $condition,
                 ],
             ],
             [
@@ -328,7 +308,6 @@ class Fields
                             'never' => __('seo-pro::messages.never'),
                         ],
                     ],
-                    'show_when' => $condition,
                 ],
             ],
         ];
