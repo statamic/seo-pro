@@ -26,7 +26,7 @@ class Sitemap
             ->merge($this->publishedEntries())
             ->merge($this->publishedTerms())
             ->merge($this->publishedCollectionTerms())
-            ->merge($this->additionalSitemapItems())
+            ->merge($this->additionalItems())
             ->pipe(fn ($pages) => $this->getPages($pages))
             ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
             ->values()
@@ -62,7 +62,7 @@ class Sitemap
                 collect()
                     ->merge($this->publishedTerms())
                     ->merge($this->publishedCollectionTerms())
-                    ->merge($this->additionalSitemapItems())
+                    ->merge($this->additionalItems())
                     ->skip($offset)
                     ->take($remaining)
             );
@@ -194,9 +194,9 @@ class Sitemap
             });
     }
 
-    protected function additionalSitemapItems(): IlluminateCollection
+    protected function additionalItems(): IlluminateCollection
     {
-        $response = $this->runHooksWith('additional-items', ['items' => collect()]);
+        $response = $this->runHooksWith('additional', ['items' => collect()]);
 
         $items = $response->items ?? [];
 
