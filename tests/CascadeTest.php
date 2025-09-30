@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
@@ -19,7 +21,7 @@ class CascadeTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_from_site_defaults_and_home_entry()
     {
         $data = (new Cascade)
@@ -52,7 +54,7 @@ class CascadeTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_overwrites_data_in_cascade()
     {
         $data = (new Cascade)
@@ -91,7 +93,7 @@ class CascadeTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_compiled_title_from_cascaded_parts()
     {
         $data = (new Cascade)
@@ -110,7 +112,7 @@ class CascadeTest extends TestCase
         $this->assertEquals('Cool Writings >>> Jamaica', $data['compiled_title']);
     }
 
-    /** @test */
+    #[Test]
     public function it_parses_antlers()
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -150,11 +152,8 @@ class CascadeTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider phpInAntlersProvider
-     */
+    #[Test]
+    #[DataProvider('phpInAntlersProvider')]
     public function it_doesnt_parse_php_in_antlers($antlers, $output)
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -171,7 +170,7 @@ class CascadeTest extends TestCase
         $this->assertEquals($output, $data['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_parses_field_references()
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -189,7 +188,7 @@ class CascadeTest extends TestCase
         $this->assertEquals('Red', $data['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_without_exception_when_no_home_entry_exists()
     {
         Entry::findByUri('/')->delete();
@@ -222,7 +221,7 @@ class CascadeTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_404_title_with_404_in_response_code_in_context()
     {
         $data = (new Cascade)
@@ -236,7 +235,7 @@ class CascadeTest extends TestCase
         $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_from_custom_site_defaults_path()
     {
         $this->files->put(base_path('custom_seo.yaml'), <<<'EOT'

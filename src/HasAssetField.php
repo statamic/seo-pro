@@ -18,6 +18,7 @@ trait HasAssetField
         return [
             'type' => 'assets',
             'container' => $container,
+            'folder' => config('statamic.seo-pro.assets.folder'),
             'max_files' => 1,
         ];
     }

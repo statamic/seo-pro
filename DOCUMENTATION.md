@@ -40,7 +40,7 @@ It's better to configure your collections and taxonomies to dynamically pull fro
 
 ### Assets
 
-If you wish to use assets in your meta, you can [publish the SEO Pro config](#advanced-configuration) and specify an asset container, as well as the glide preset to be used.
+If you wish to use assets in your meta, you can [publish the SEO Pro config](#advanced-configuration) and specify an asset container, as well as a folder and glide preset to be used.
 
 > You may disable the glide preset altogether by setting `'open_graph_preset' => false,` in your config.
 
@@ -142,6 +142,31 @@ A `sitemap.xml` route is automatically generated for you.
 If you disable SEO on the section or item level, the relevant section/item will automatically be discluded from the sitemap.
 
 If you wish to completely disable the sitemap, change it's URL, or customize it's cache expiry, you can [publish the SEO Pro config](#advanced-configuration) and modify these settings within `config/statamic/seo-pro.php`.
+
+Custom URLs may be added to the sitemap via the `additional` hook:
+
+```php
+// app/Providers/AppServiceProvider.php
+
+use Statamic\SeoPro\Sitemap\Page;
+use Statamic\SeoPro\Sitemap\Sitemap;
+
+public function boot(): void
+{
+    // ...
+
+    Sitemap::hook('additional', function ($payload, $next) {
+        $payload->items->push((new Page)->with([
+            'canonical_url' => url('additional-item'),
+            'last_modified' => \Carbon\Carbon::parse('2025-01-01'),
+            'change_frequency' => 'monthly',
+            'priority' => 0.5,
+        ]));
+
+        return $next($payload);
+    });
+}
+```
 
 If you wish to customize the contents of the `sitemap.xml` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
 

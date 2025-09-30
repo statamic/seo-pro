@@ -1,19 +1,16 @@
 {
   "resources/css/cp.css": {
-    "file": "assets/cp-7025c2cd.css",
-    "isEntry": true,
-    "src": "resources/css/cp.css"
-  },
-  "resources/js/cp.css": {
-    "file": "assets/cp-56146771.css",
-    "src": "resources/js/cp.css"
+    "file": "assets/cp-BrG_81XI.css",
+    "src": "resources/css/cp.css",
+    "isEntry": true
   },
   "resources/js/cp.js": {
-    "css": [
-      "assets/cp-56146771.css"
-    ],
-    "file": "assets/cp-3890d5e1.js",
+    "file": "assets/cp-BWqu5jBW.js",
+    "name": "cp",
+    "src": "resources/js/cp.js",
     "isEntry": true,
-    "src": "resources/js/cp.js"
+    "css": [
+      "assets/cp-DvvmhN49.css"
+    ]
   }
 }

@@ -76,6 +76,7 @@ class Fields
                     'localizable' => true,
                     'field' => [
                         'type' => 'text',
+                        'character_limit' => 60,
                     ],
                     'show_when' => $condition,
                 ],
@@ -90,6 +91,7 @@ class Fields
                     'localizable' => true,
                     'field' => [
                         'type' => 'textarea',
+                        'character_limit' => 160,
                     ],
                     'show_when' => $condition,
                 ],
@@ -170,8 +172,13 @@ class Fields
                         'create' => true,
                         'multiple' => true,
                         'options' => [
+                            'follow',
+                            'index',
+                            'noarchive',
+                            'noimageindex',
                             'noindex',
                             'nofollow',
+                            'nosnippet',
                         ],
                     ],
                     'show_when' => $condition,

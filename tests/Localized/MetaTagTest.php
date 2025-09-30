@@ -2,6 +2,8 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
@@ -23,18 +25,15 @@ class MetaTagTest extends TestCase
         $app['config']->set('statamic.system.multisite', true);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->cleanUpViews();
 
         parent::tearDown();
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_multisite_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -60,11 +59,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_multisite_meta_for_non_home_page_route($viewType)
     {
         $this->prepareViews($viewType);
@@ -88,11 +84,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_when_it_doesnt_exist_for_page($viewType)
     {
         $this->prepareViews($viewType);
@@ -104,11 +97,8 @@ EOT;
         $response->assertDontSee('hreflang', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
     {
         $this->prepareViews($viewType);
@@ -138,11 +128,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_handles_duplicate_alternate_hreflangs($viewType)
     {
         $this->prepareViews($viewType);
@@ -166,11 +153,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_handles_duplicate_current_hreflang($viewType)
     {
         $this->prepareViews($viewType);
@@ -194,11 +178,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled($viewType)
     {
         Config::set('statamic.seo-pro.alternate_locales', false);
@@ -212,11 +193,8 @@ EOT;
         $response->assertDontSee('hreflang', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_excluded_sites($viewType)
     {
         Config::set('statamic.seo-pro.alternate_locales.excluded_sites', ['french']);
@@ -242,11 +220,8 @@ EOT;
         $this->assertStringNotContainsStringIgnoringLineEndings('hreflang="fr"', $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_unpublished_content($viewType)
     {
         $this->prepareViews($viewType);
@@ -270,11 +245,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_scheduled_content($viewType)
     {
         $this->prepareViews($viewType);
@@ -304,11 +276,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_expired_content($viewType)
     {
         $this->prepareViews($viewType);

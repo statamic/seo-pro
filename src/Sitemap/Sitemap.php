@@ -11,10 +11,11 @@ use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Support\Traits\Hookable;
 
 class Sitemap
 {
-    use GetsSectionDefaults;
+    use GetsSectionDefaults, Hookable;
 
     const CACHE_KEY = 'seo-pro.sitemap';
 
@@ -24,6 +25,7 @@ class Sitemap
             ->merge($this->publishedEntries())
             ->merge($this->publishedTerms())
             ->merge($this->publishedCollectionTerms())
+            ->merge($this->additionalItems())
             ->pipe(fn ($pages) => $this->getPages($pages))
             ->sortBy(fn ($page) => substr_count(rtrim($page->path(), '/'), '/'))
             ->values()
@@ -59,6 +61,7 @@ class Sitemap
                 collect()
                     ->merge($this->publishedTerms())
                     ->merge($this->publishedCollectionTerms())
+                    ->merge($this->additionalItems())
                     ->skip($offset)
                     ->take($remaining)
             );
@@ -92,6 +95,10 @@ class Sitemap
     {
         return $items
             ->map(function ($content) {
+                if ($content instanceof Page) {
+                    return $content;
+                }
+
                 $cascade = $content->value('seo');
 
                 if ($cascade === false || collect($cascade)->get('sitemap') === false) {
@@ -184,6 +191,15 @@ class Sitemap
             ->filter(function ($term) {
                 return view()->exists($term->template());
             });
+    }
+
+    protected function additionalItems(): IlluminateCollection
+    {
+        $response = $this->runHooksWith('additional', ['items' => collect()]);
+
+        $items = $response->items ?? [];
+
+        return $items instanceof IlluminateCollection ? $items : collect();
     }
 
     protected function getSiteDefaults()
