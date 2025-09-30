@@ -15,8 +15,7 @@ use Statamic\Support\Traits\Hookable;
 
 class Sitemap
 {
-    use GetsSectionDefaults;
-    use Hookable;
+    use GetsSectionDefaults, Hookable;
 
     const CACHE_KEY = 'seo-pro.sitemap';
 
