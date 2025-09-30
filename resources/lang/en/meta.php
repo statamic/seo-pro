@@ -2,6 +2,6 @@
 
 return [
 
-    'pagination_page' => 'Page :page',
+    'pagination_page' => ':title Page :page',
 
 ];
