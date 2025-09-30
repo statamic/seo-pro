@@ -4,8 +4,8 @@ return [
 
     'asset_container_instruct' => "The asset container used for any of SEO Pro's image fields.",
 
-    'og_image_dimensions' => 'OpenGraph Image Dimensions',
-    'og_image_dimensions_instruct' => 'According this <a href="https://www.h3xed.com/web-and-internet/how-to-use-og-image-meta-tag-facebook-reddit" target="_blank">this article</a>, the ideal image size for Facebook and Reddit Open Graph tags is 1200x1200 pixels.',
+    'og_image_dimensions' => 'Open Graph Image Dimensions',
+    'og_image_dimensions_instruct' => 'According to <a href="https://www.h3xed.com/web-and-internet/how-to-use-og-image-meta-tag-facebook-reddit" target="_blank">this article</a>, the ideal image size for Facebook and Reddit Open Graph tags is 1200x1200 pixels.',
 
     'open_graph_image_width' => 'Width',
     'open_graph_image_width_instruct' => 'In pixels',

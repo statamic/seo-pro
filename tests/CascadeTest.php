@@ -47,6 +47,8 @@ class CascadeTest extends TestCase
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
+            'twitter_title' => 'Home',
+            'twitter_description' => 'I see a bad-ass mother.',
         ];
 
         $this->assertArraySubset($expected, $data);
@@ -273,6 +275,87 @@ EOT
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
+        ];
+
+        $this->assertArraySubset($expected, $data);
+    }
+
+    /** @test */
+    public function it_overwrites_og_title()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'site_name' => 'Cool Writings',
+                'description' => 'Bob sled team',
+            ])
+            ->with([
+                'og_title' => 'John Candy',
+            ])
+            ->get();
+
+        $expected = [
+            'site_name' => 'Cool Writings',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => 'Home',
+            'description' => 'Bob sled team',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+            'compiled_title' => 'Home | Cool Writings',
+            'og_title' => 'John Candy',
+            'canonical_url' => 'http://cool-runnings.com',
+            'prev_url' => null,
+            'next_url' => null,
+            'home_url' => 'http://cool-runnings.com',
+            'humans_txt' => 'http://cool-runnings.com/humans.txt',
+            'site' => Site::get('default'),
+            'alternate_locales' => [],
+            'current_hreflang' => 'en',
+            'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
+        ];
+
+        $this->assertArraySubset($expected, $data);
+    }
+
+    /** @test */
+    public function it_overwrites_twitter_title_and_description()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'site_name' => 'Cool Writings',
+                'description' => 'Bob sled team',
+            ])
+            ->with([
+                'twitter_title' => 'John Candy',
+                'twitter_description' => 'Best bob sled team!',
+            ])
+            ->get();
+
+        $expected = [
+            'site_name' => 'Cool Writings',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => 'Home',
+            'description' => 'Bob sled team',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+            'compiled_title' => 'Home | Cool Writings',
+            'og_title' => 'Home',
+            'canonical_url' => 'http://cool-runnings.com',
+            'prev_url' => null,
+            'next_url' => null,
+            'home_url' => 'http://cool-runnings.com',
+            'humans_txt' => 'http://cool-runnings.com/humans.txt',
+            'site' => Site::get('default'),
+            'alternate_locales' => [],
+            'current_hreflang' => 'en',
+            'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
+            'twitter_title' => 'John Candy',
+            'twitter_description' => 'Best bob sled team!',
         ];
 
         $this->assertArraySubset($expected, $data);

@@ -31,11 +31,20 @@ return [
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
 
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
+
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL in this section when shared on social networks.',
 
-    'twitter_handle' => 'Twitter Handle',
-    'twitter_handle_instruct' => 'Choose a default twitter handle that corresponds to this section.',
+    'twitter_handle' => 'X Handle',
+    'twitter_handle_instruct' => 'Choose a default X handle that corresponds to this section.',
+
+    'twitter_title' => 'X Card Title',
+    'twitter_title_instruct' => 'Pick an existing field or custom value to set as your X card title.',
+
+    'twitter_description' => 'X Card Description',
+    'twitter_description_instruct' => 'Pick an existing field or custom value to set as your X card description.',
 
     'sitemap_section' => 'Site Map',
 

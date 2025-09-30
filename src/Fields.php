@@ -55,6 +55,14 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'meta_section',
+                'field' => [
+                    'display' => __('seo-pro::fieldsets/defaults.meta_section'),
+                    'instructions' => __('seo-pro::fieldsets/defaults.meta_section_instruct'),
+                    'type' => 'section',
+                ],
+            ],
+            [
                 'handle' => 'title',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$langFile}.title"),
@@ -167,6 +175,27 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'image_section',
+                'field' => [
+                    'display' => __('seo-pro::fieldsets/defaults.image_section'),
+                    'instructions' => __('seo-pro::fieldsets/defaults.image_section_instruct'),
+                    'type' => 'section',
+                ],
+            ],
+            [
+                'handle' => 'og_title',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.og_title"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.og_title_instruct"),
+                    'type' => 'seo_pro_source',
+                    'inherit' => true,
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
                 'handle' => 'image',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$langFile}.image"),
@@ -181,6 +210,14 @@ class Fields
                 ],
             ],
             [
+                'handle' => 'social_section',
+                'field' => [
+                    'display' => __('seo-pro::fieldsets/defaults.social_section'),
+                    'instructions' => __('seo-pro::fieldsets/defaults.social_section_instruct'),
+                    'type' => 'section',
+                ],
+            ],
+            [
                 'handle' => 'twitter_handle',
                 'field' => [
                     'display' => __("seo-pro::fieldsets/{$langFile}.twitter_handle"),
@@ -190,6 +227,40 @@ class Fields
                     'field' => [
                         'type' => 'text',
                     ],
+                ],
+            ],
+            [
+                'handle' => 'twitter_title',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.twitter_title"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.twitter_title_instruct"),
+                    'type' => 'seo_pro_source',
+                    'inherit' => true,
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'twitter_description',
+                'field' => [
+                    'display' => __("seo-pro::fieldsets/{$langFile}.twitter_description"),
+                    'instructions' => __("seo-pro::fieldsets/{$langFile}.twitter_description_instruct"),
+                    'type' => 'seo_pro_source',
+                    'inherit' => true,
+                    'localizable' => true,
+                    'field' => [
+                        'type' => 'textarea',
+                    ],
+                ],
+            ],
+            [
+                'handle' => 'sitemap_section',
+                'field' => [
+                    'display' => __('seo-pro::fieldsets/defaults.sitemap_section'),
+                    'instructions' => __('seo-pro::fieldsets/defaults.sitemap_section_instruct'),
+                    'type' => 'section',
                 ],
             ],
             [
