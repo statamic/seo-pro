@@ -7,11 +7,11 @@
     "dependencies": {
         "cross-env": "^7.0.2",
         "underscore": "~1.12.1",
-        "vue": "^2.6.11"
+        "vue": "^2.7.16"
     },
     "devDependencies": {
-        "@vitejs/plugin-vue2": "^2.2.0",
-        "laravel-vite-plugin": "^0.7.2",
-        "vite": "^4.5.14"
+        "@vitejs/plugin-vue2": "^2.3.3",
+        "laravel-vite-plugin": "^1.3.0",
+        "vite": "^6.0.0"
     }
 }
