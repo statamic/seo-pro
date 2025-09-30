@@ -488,15 +488,13 @@ EOT;
     /** @test */
     public function it_outputs_additional_items()
     {
-            $payload->items = $payload->items->merge([
-                (new Page)->with([
-                    'canonical_url' => url('additional-item'),
-                    'last_modified' => Carbon::parse('2025-01-01'),
-                    'change_frequency' => 'monthly',
-                    'priority' => 0.5,
-                ]),
-            ]);
         Sitemap::hook('additional', function ($payload, $next) {
+            $payload->items->push((new Page)->with([
+                'canonical_url' => url('additional-item'),
+                'last_modified' => Carbon::parse('2025-01-01'),
+                'change_frequency' => 'monthly',
+                'priority' => 0.5,
+            ]));
 
             return $next($payload);
         });
