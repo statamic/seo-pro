@@ -2,11 +2,13 @@
 
 namespace Tests;
 
+use Orchestra\Testbench\Attributes\DefineEnvironment;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 
 class HumansTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -17,7 +19,7 @@ class HumansTest extends TestCase
         $this->files->makeDirectory($folder, 0755, true);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_humans_txt()
     {
         $content = $this
@@ -47,7 +49,7 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_404s_when_humans_txt_is_disabled()
     {
         Config::set('statamic.seo-pro.humans.enabled', false);
@@ -57,7 +59,7 @@ EOT;
             ->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_humans_txt_with_altered_site_defaults()
     {
         $this->setSeoInSiteDefaults([
@@ -75,11 +77,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings('Description: Bob sled team!', $content);
     }
 
-    /**
-     * @test
-     *
-     * @environment-setup setCustomHumansTxtUrl
-     */
+    #[Test]
+    #[DefineEnvironment('setCustomHumansTxtUrl')]
     public function it_outputs_humans_txt_with_custom_url()
     {
         $this->setSeoInSiteDefaults([
@@ -99,7 +98,7 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings('Creator: Cool Runnings', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_humans_txt_with_custom_view()
     {
         $this->setSeoInSiteDefaults([
