@@ -7,22 +7,17 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
-use Tests\TestCase;
 use Tests\ViewScenarios;
 
-class MetaTagTest extends TestCase
+class MetaTagTest extends LocalizedTestCase
 {
     use ViewScenarios;
-
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
 
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('view.paths', [$this->viewsPath()]);
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
     }
 
     protected function tearDown(): void

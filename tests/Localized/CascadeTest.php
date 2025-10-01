@@ -6,20 +6,9 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
-use Tests\TestCase;
 
-class CascadeTest extends TestCase
+class CascadeTest extends LocalizedTestCase
 {
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
-    }
-
     #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_alternate_locales()
     {

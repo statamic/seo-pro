@@ -3,20 +3,9 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class SitemapTest extends TestCase
+class SitemapTest extends LocalizedTestCase
 {
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
