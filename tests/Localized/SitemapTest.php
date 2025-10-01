@@ -34,7 +34,7 @@ class SitemapTest extends TestCase
         return collect($data['url']);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_italian_sitemap_xml()
     {
         $content = $this
