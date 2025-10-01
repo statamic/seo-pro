@@ -12,11 +12,6 @@ class SiteDefaultsTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     #[Test]
     #[DefineEnvironment('setEloquentSiteDefaults')]
     public function it_uses_eloquent_defaults_when_requested()
