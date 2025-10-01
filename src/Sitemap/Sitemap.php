@@ -142,7 +142,8 @@ class Sitemap
             ->when(
                 $this->sites->isNotEmpty(),
                 fn (QueryBuilder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
-            )->whereIn('collection', $collections)
+            )
+            ->whereIn('collection', $collections)
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->orderBy('uri');
