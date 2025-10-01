@@ -1,11 +1,11 @@
 default:
   name: English
   locale: en_US
-  url: '{{ config:app:url }}/'
+  url: http://cool-runnings.com
 french:
   name: French
   locale: fr_FR
-  url: '{{ config:app:url }}/fr/'
+  url: http://cool-runnings.com/fr/
 italian:
   name: Italian
   locale: it_IT
@@ -13,4 +13,4 @@ italian:
 british:
   name: British
   locale: en_GB
-  url: '{{ config:app:url }}/en-gb/'
+  url: http://cool-runnings.com/en-gb/
