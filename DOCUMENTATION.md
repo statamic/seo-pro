@@ -143,6 +143,31 @@ If you disable SEO on the section or item level, the relevant section/item will 
 
 If you wish to completely disable the sitemap, change it's URL, or customize it's cache expiry, you can [publish the SEO Pro config](#advanced-configuration) and modify these settings within `config/statamic/seo-pro.php`.
 
+Custom URLs may be added to the sitemap via the `additional` hook:
+
+```php
+// app/Providers/AppServiceProvider.php
+
+use Statamic\SeoPro\Sitemap\Page;
+use Statamic\SeoPro\Sitemap\Sitemap;
+
+public function boot(): void
+{
+    // ...
+
+    Sitemap::hook('additional', function ($payload, $next) {
+        $payload->items->push((new Page)->with([
+            'canonical_url' => url('additional-item'),
+            'last_modified' => \Carbon\Carbon::parse('2025-01-01'),
+            'change_frequency' => 'monthly',
+            'priority' => 0.5,
+        ]));
+
+        return $next($payload);
+    });
+}
+```
+
 If you wish to customize the contents of the `sitemap.xml` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
 
 You can also [extend the Sitemap class](https://github.com/statamic/seo-pro/pull/361) if you need more advanced control over query logic, etc.

@@ -14,7 +14,9 @@ use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
+use Statamic\Fieldtypes\Bard;
 use Statamic\Fieldtypes\Text;
+use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\View\Cascade as ViewCascade;
@@ -100,6 +102,8 @@ class Cascade
             'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
+            'twitter_title' => $this->twitterTitle(),
+            'twitter_description' => $this->twitterDescription(),
         ])->all();
     }
 
@@ -232,7 +236,11 @@ class Cascade
             $item = Arr::get($this->current, $field);
 
             if ($item instanceof Value) {
-                $item = $item->value();
+                if ($item->fieldtype() instanceof Bard) {
+                    $item = (string) Statamic::modify($item)->bardText();
+                } else {
+                    $item = $item->value();
+                }
             }
         }
 
@@ -256,6 +264,14 @@ class Cascade
             return $siteName;
         }
 
+        if (config('statamic.seo-pro.pagination') !== false) {
+            if ($paginator = Blink::get('tag-paginator')) {
+                if ($paginator->currentPage() > 1) {
+                    $title = __('seo-pro::meta.pagination_page', ['title' => $title, 'page' => $paginator->currentPage()]);
+                }
+            }
+        }
+
         if (! $siteName || $siteNamePosition === 'none') {
             return $title;
         }
@@ -271,11 +287,33 @@ class Cascade
 
     protected function ogTitle()
     {
+        if ($title = $this->data->get('og_title')) {
+            return $title;
+        }
+
         if ($title = $this->data->get('title')) {
             return $title;
         }
 
         return $this->compiledTitle();
+    }
+
+    protected function twitterTitle()
+    {
+        if ($title = $this->data->get('twitter_title')) {
+            return $title;
+        }
+
+        return $this->data->get('title');
+    }
+
+    protected function twitterDescription()
+    {
+        if ($description = $this->data->get('twitter_description')) {
+            return $description;
+        }
+
+        return $this->data->get('description');
     }
 
     protected function lastModified()

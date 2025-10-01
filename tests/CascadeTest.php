@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
@@ -19,7 +21,7 @@ class CascadeTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_from_site_defaults_and_home_entry()
     {
         $data = (new Cascade)
@@ -45,12 +47,14 @@ class CascadeTest extends TestCase
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
+            'twitter_title' => 'Home',
+            'twitter_description' => 'I see a bad-ass mother.',
         ];
 
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_overwrites_data_in_cascade()
     {
         $data = (new Cascade)
@@ -89,7 +93,7 @@ class CascadeTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_compiled_title_from_cascaded_parts()
     {
         $data = (new Cascade)
@@ -108,7 +112,7 @@ class CascadeTest extends TestCase
         $this->assertEquals('Cool Writings >>> Jamaica', $data['compiled_title']);
     }
 
-    /** @test */
+    #[Test]
     public function it_parses_antlers()
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -148,11 +152,8 @@ class CascadeTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider phpInAntlersProvider
-     */
+    #[Test]
+    #[DataProvider('phpInAntlersProvider')]
     public function it_doesnt_parse_php_in_antlers($antlers, $output)
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -169,7 +170,7 @@ class CascadeTest extends TestCase
         $this->assertEquals($output, $data['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_parses_field_references()
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -187,7 +188,7 @@ class CascadeTest extends TestCase
         $this->assertEquals('Red', $data['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_without_exception_when_no_home_entry_exists()
     {
         Entry::findByUri('/')->delete();
@@ -220,7 +221,7 @@ class CascadeTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_404_title_with_404_in_response_code_in_context()
     {
         $data = (new Cascade)
@@ -234,7 +235,7 @@ class CascadeTest extends TestCase
         $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_from_custom_site_defaults_path()
     {
         $this->files->put(base_path('custom_seo.yaml'), <<<'EOT'
@@ -274,6 +275,87 @@ EOT
             'alternate_locales' => [],
             'last_modified' => null,
             'twitter_card' => 'summary_large_image',
+        ];
+
+        $this->assertArraySubset($expected, $data);
+    }
+
+    /** @test */
+    public function it_overwrites_og_title()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'site_name' => 'Cool Writings',
+                'description' => 'Bob sled team',
+            ])
+            ->with([
+                'og_title' => 'John Candy',
+            ])
+            ->get();
+
+        $expected = [
+            'site_name' => 'Cool Writings',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => 'Home',
+            'description' => 'Bob sled team',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+            'compiled_title' => 'Home | Cool Writings',
+            'og_title' => 'John Candy',
+            'canonical_url' => 'http://cool-runnings.com',
+            'prev_url' => null,
+            'next_url' => null,
+            'home_url' => 'http://cool-runnings.com',
+            'humans_txt' => 'http://cool-runnings.com/humans.txt',
+            'site' => Site::get('default'),
+            'alternate_locales' => [],
+            'current_hreflang' => 'en',
+            'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
+        ];
+
+        $this->assertArraySubset($expected, $data);
+    }
+
+    /** @test */
+    public function it_overwrites_twitter_title_and_description()
+    {
+        $data = (new Cascade)
+            ->with(SiteDefaults::load()->all())
+            ->with([
+                'site_name' => 'Cool Writings',
+                'description' => 'Bob sled team',
+            ])
+            ->with([
+                'twitter_title' => 'John Candy',
+                'twitter_description' => 'Best bob sled team!',
+            ])
+            ->get();
+
+        $expected = [
+            'site_name' => 'Cool Writings',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => 'Home',
+            'description' => 'Bob sled team',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+            'compiled_title' => 'Home | Cool Writings',
+            'og_title' => 'Home',
+            'canonical_url' => 'http://cool-runnings.com',
+            'prev_url' => null,
+            'next_url' => null,
+            'home_url' => 'http://cool-runnings.com',
+            'humans_txt' => 'http://cool-runnings.com/humans.txt',
+            'site' => Site::get('default'),
+            'alternate_locales' => [],
+            'current_hreflang' => 'en',
+            'last_modified' => null,
+            'twitter_card' => 'summary_large_image',
+            'twitter_title' => 'John Candy',
+            'twitter_description' => 'Best bob sled team!',
         ];
 
         $this->assertArraySubset($expected, $data);
