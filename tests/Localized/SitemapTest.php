@@ -2,6 +2,7 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SitemapTest extends TestCase
