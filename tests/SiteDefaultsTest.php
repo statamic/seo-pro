@@ -3,6 +3,8 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Orchestra\Testbench\Attributes\DefineEnvironment;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\SeoPro\Models\SeoDefaults;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -15,11 +17,8 @@ class SiteDefaultsTest extends TestCase
         parent::setUp();
     }
 
-    /**
-     * @test
-     *
-     * @environment-setup setEloquentSiteDefaults
-     */
+    #[Test]
+    #[DefineEnvironment('setEloquentSiteDefaults')]
     public function it_uses_eloquent_defaults_when_requested()
     {
         $this->assertInstanceOf(\Statamic\SeoPro\Eloquent\SiteDefaults::class, app(SiteDefaults::class));
