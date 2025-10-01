@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\GraphQL;
+use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
@@ -133,8 +134,6 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonGlidePresets()
     {
-        $server = app(\League\Glide\Server::class);
-
         $presets = collect([
             'seo_pro_twitter' => config('statamic.seo-pro.assets.twitter_preset'),
             'seo_pro_og' => config('statamic.seo-pro.assets.open_graph_preset'),
@@ -146,7 +145,7 @@ class ServiceProvider extends AddonServiceProvider
             $presets['seo_pro_twitter'] = $presets['seo_pro_og'];
         }
 
-        $server->setPresets($server->getPresets() + $presets->filter()->all());
+        Image::registerCustomManipulationPresets($presets->all());
 
         return $this;
     }
