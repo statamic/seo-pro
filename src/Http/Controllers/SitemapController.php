@@ -5,10 +5,10 @@ namespace Statamic\SeoPro\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Statamic\Facades;
 use Statamic\SeoPro\Sitemap\Sitemap;
 use Statamic\Sites\Site;
-use Illuminate\Support\Str;
 
 class SitemapController extends Controller
 {
