@@ -804,7 +804,7 @@ EOT);
         $response->assertDontSee('" rel="canonical"', false);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_paginated_page_in_title()
     {
         config()->set('statamic.seo-pro.pagination.enabled', true);

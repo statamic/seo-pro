@@ -280,7 +280,7 @@ EOT
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_overwrites_og_title()
     {
         $data = (new Cascade)
@@ -319,7 +319,7 @@ EOT
         $this->assertArraySubset($expected, $data);
     }
 
-    /** @test */
+    #[Test]
     public function it_overwrites_twitter_title_and_description()
     {
         $data = (new Cascade)
