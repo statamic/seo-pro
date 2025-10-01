@@ -17,13 +17,6 @@ class SitemapTest extends LocalizedTestCase
         $this->files->makeDirectory($folder, 0755, true);
     }
 
-    protected function getPagesFromSitemapXml($content)
-    {
-        $data = json_decode(json_encode(simplexml_load_string($content)), true);
-
-        return collect($data['url']);
-    }
-
     #[Test]
     public function it_outputs_italian_sitemap_xml()
     {
@@ -60,5 +53,12 @@ class SitemapTest extends LocalizedTestCase
 EOT;
 
         $this->assertEquals($expected, $content);
+    }
+
+    private function getPagesFromSitemapXml($content)
+    {
+        $data = json_decode(json_encode(simplexml_load_string($content)), true);
+
+        return collect($data['url']);
     }
 }
