@@ -40,7 +40,7 @@ class SitemapTest extends LocalizedTestCase
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ])->getContent();
+            ], escape: false)->getContent();
 
         $this->assertCount(2, $this->getPagesFromSitemapXml($content));
     }
