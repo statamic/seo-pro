@@ -374,7 +374,7 @@ EOT;
         $this->assertEquals(2, Blink::get('ran-custom-entries-query'));
         $this->assertEquals(1, Blink::get('ran-custom-entries-for-page-query'));
         $this->assertCount(5, $this->getPagesFromSitemapXml($content));
-/*
+        /*
         // $content = $this
         //     ->get('/sitemap_2.xml')
         //     ->assertOk()
@@ -400,7 +400,7 @@ EOT;
         // $this->assertEquals(4, Blink::get('ran-custom-entries-query'));
         // $this->assertEquals(2, Blink::get('ran-custom-entries-for-page-query'));
         // $this->assertCount(2, $this->getPagesFromSitemapXml($content));
-*/
+        */
     }
 
     #[Test]
