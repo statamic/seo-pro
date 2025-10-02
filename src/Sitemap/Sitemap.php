@@ -131,7 +131,7 @@ class Sitemap
                     ->withCurrent($content)
                     ->get();
 
-                if (SiteFacade::hasMultiple()) {
+                if ($this->sites->count() > 1) {
                     $data['hreflangs'] = $this->hrefLangs($content);
                 }
 
