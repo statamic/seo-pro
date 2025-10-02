@@ -2,24 +2,14 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
-use Tests\TestCase;
 
-class CascadeTest extends TestCase
+class CascadeTest extends LocalizedTestCase
 {
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
-    }
-
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_alternate_locales()
     {
         $entry = Entry::findByUri('/about', 'italian')->entry();
@@ -38,7 +28,7 @@ class CascadeTest extends TestCase
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_handles_duplicate_alternate_hreflangs()
     {
         $entry = Entry::findByUri('/', 'italian')->entry();
@@ -58,7 +48,7 @@ class CascadeTest extends TestCase
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_handles_duplicate_current_hreflang()
     {
         $entry = Entry::findByUri('/', 'default')->entry();

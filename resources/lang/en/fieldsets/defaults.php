@@ -32,11 +32,20 @@ return [
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL when shared on social networks.',
 
-    'social_section' => 'Twitter',
-    'social_section_instruct' => 'We automatically generate most Twitter Card fields from your meta data and site configuration.',
+    'og_title' => 'Open Graph Title',
+    'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
 
-    'twitter_handle' => 'Twitter Handle',
-    'twitter_handle_instruct' => 'Choose a default twitter handle that corresponds to the site.',
+    'social_section' => 'X',
+    'social_section_instruct' => 'We automatically generate most X card fields from your meta data and site configuration.',
+
+    'twitter_handle' => 'X Handle',
+    'twitter_handle_instruct' => 'Choose a default X handle that corresponds to the site.',
+
+    'twitter_title' => 'X Card Title',
+    'twitter_title_instruct' => 'Pick an existing field or custom value to set as your X card title.',
+
+    'twitter_description' => 'X Card Description',
+    'twitter_description_instruct' => 'Pick an existing field or custom value to set as your X card description.',
 
     'sitemap_section' => 'Site Map',
     'sitemap_section_instruct' => "Choose your default sitemap settings. If you're not sure, leave them blank for the standard default values.",

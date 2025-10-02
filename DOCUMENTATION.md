@@ -24,6 +24,24 @@ Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. T
 
 You may choose to pull data from other fields, enter hardcoded strings, or use Antlers templating. See [File Usage](#file-usage) for more details.
 
+#### Static Caching
+
+If you're using [Static Caching](https://statamic.dev/static-caching), you may configure invalidation rules to be triggered when SEO Pro's site defaults are updated:
+
+```php
+// config/statamic/static_caching.php
+
+'invalidation' => [
+    'rules' => [
+        'seo_pro_site_defaults' => [
+            'urls' => [
+                '/*',
+            ],
+        ],
+    ],
+],
+```
+
 ### Section Defaults
 
 Each section may be configured independently at the Collection / Taxonomy level. Head to `Tools > SEO Pro > Section Defaults` to configure default settings at this level. You may opt to inherit values from the defaults and tweak as necessary.
@@ -142,6 +160,31 @@ A `sitemap.xml` route is automatically generated for you.
 If you disable SEO on the section or item level, the relevant section/item will automatically be discluded from the sitemap.
 
 If you wish to completely disable the sitemap, change it's URL, or customize it's cache expiry, you can [publish the SEO Pro config](#advanced-configuration) and modify these settings within `config/statamic/seo-pro.php`.
+
+Custom URLs may be added to the sitemap via the `additional` hook:
+
+```php
+// app/Providers/AppServiceProvider.php
+
+use Statamic\SeoPro\Sitemap\Page;
+use Statamic\SeoPro\Sitemap\Sitemap;
+
+public function boot(): void
+{
+    // ...
+
+    Sitemap::hook('additional', function ($payload, $next) {
+        $payload->items->push((new Page)->with([
+            'canonical_url' => url('additional-item'),
+            'last_modified' => \Carbon\Carbon::parse('2025-01-01'),
+            'change_frequency' => 'monthly',
+            'priority' => 0.5,
+        ]));
+
+        return $next($payload);
+    });
+}
+```
 
 If you wish to customize the contents of the `sitemap.xml` view, you may also [publish the SEO Pro views](#publishing-views) and modify the provided antlers templates within your `resources/views/vendor/seo-pro` folder.
 

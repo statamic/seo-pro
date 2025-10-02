@@ -2,23 +2,19 @@
 
 namespace Tests\Localized;
 
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
-class GraphQLTest extends TestCase
+class GraphQLTest extends LocalizedTestCase
 {
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
-
     protected function getEnvironmentSetup($app)
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
         $app['config']->set('statamic.graphql.enabled', true);
         $app['config']->set('statamic.graphql.resources.collections', true);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_multisite_for_canonical_url_and_alternate_locales_in_html_meta()
     {
         $query = <<<'GQL'
@@ -65,7 +61,7 @@ GQL;
             ]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_multisite_for_canonical_url_and_alternate_locales_in_cascade_meta()
     {
         $query = <<<'GQL'

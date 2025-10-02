@@ -2,12 +2,16 @@
 
 namespace Tests;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection as IlluminateCollection;
+use Orchestra\Testbench\Attributes\DefineEnvironment;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Console\Composer\Lock;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
+use Statamic\SeoPro\Sitemap\Page;
 use Statamic\SeoPro\Sitemap\Sitemap;
 use Statamic\Statamic;
 
@@ -24,7 +28,7 @@ class SitemapTest extends TestCase
         $this->files->makeDirectory($folder, 0755, true);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_sitemap_xml()
     {
         $today = now()->format('Y-m-d');
@@ -84,7 +88,7 @@ class SitemapTest extends TestCase
         $this->assertCount(7, $this->getPagesFromSitemapXml($content));
     }
 
-    /** @test */
+    #[Test]
     public function it_404s_when_sitemap_xml_is_disabled()
     {
         Config::set('statamic.seo-pro.sitemap.enabled', false);
@@ -92,11 +96,8 @@ class SitemapTest extends TestCase
         $this->get('/sitemap.xml')->assertStatus(404);
     }
 
-    /**
-     * @test
-     *
-     * @environment-setup setCustomSitemapXmlUrl
-     */
+    #[Test]
+    #[DefineEnvironment('setCustomSitemapXmlUrl')]
     public function it_outputs_sitemap_xml_with_custom_url()
     {
         $this->get('/sitemap.xml')->assertStatus(404);
@@ -110,7 +111,7 @@ class SitemapTest extends TestCase
         $this->assertStringContainsStringIgnoringLineEndings('<loc>http://cool-runnings.com</loc>', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_sitemap_xml_with_custom_view()
     {
         $this->files->put(resource_path('views/vendor/seo-pro/sitemap.antlers.html'), '{{ xml_header }} test');
@@ -124,7 +125,7 @@ class SitemapTest extends TestCase
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?> test', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_cascade_to_generate_priorities()
     {
         $this
@@ -151,7 +152,7 @@ class SitemapTest extends TestCase
         $this->assertEquals('0.1', $priorities->get('http://cool-runnings.com/dance'));
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_cascade_to_generate_frequencies()
     {
         $this
@@ -178,7 +179,7 @@ class SitemapTest extends TestCase
         $this->assertEquals('weekly', $frequencies->get('http://cool-runnings.com/dance'));
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_generate_pages_for_content_without_uris()
     {
         $this->files->put(base_path('content/collections/articles.yaml'), 'route: null');
@@ -208,7 +209,7 @@ class SitemapTest extends TestCase
         return collect($data['url']);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_paginated_sitemap_index_xml()
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
@@ -239,7 +240,7 @@ EOT;
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_outputs_paginated_sitemap_page_xml()
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
@@ -300,7 +301,7 @@ EOT;
         $this->assertCount(2, $this->getPagesFromSitemapXml($content));
     }
 
-    /** @test */
+    #[Test]
     public function it_404s_on_invalid_pagination_urls()
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
@@ -311,7 +312,7 @@ EOT;
         $this->get('/sitemap_a.xml')->assertNotFound();
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_custom_sitemap_queries()
     {
         // Hacky/temporary version compare, because `reorder()` method we're using
@@ -400,6 +401,98 @@ EOT;
         // $this->assertEquals(2, Blink::get('ran-custom-entries-for-page-query'));
         // $this->assertCount(2, $this->getPagesFromSitemapXml($content));
 */
+    }
+
+    #[Test]
+    public function it_outputs_additional_items()
+    {
+        Sitemap::hook('additional', function ($payload, $next) {
+            $payload->items->push((new Page)->with([
+                'canonical_url' => url('additional-item'),
+                'last_modified' => Carbon::parse('2025-01-01'),
+                'change_frequency' => 'monthly',
+                'priority' => 0.5,
+            ]));
+
+            return $next($payload);
+        });
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->getContent();
+
+        $this->assertCount(8, $this->getPagesFromSitemapXml($content));
+
+        $today = now()->format('Y-m-d');
+
+        $expected = <<<"EOT"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://cool-runnings.com</loc>
+        <lastmod>2020-11-24</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/about</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/articles</loc>
+        <lastmod>2020-01-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/dance</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/magic</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/nectar</loc>
+        <lastmod>$today</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/topics</loc>
+        <lastmod>2020-01-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>http://cool-runnings.com/additional-item</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+</urlset>
+
+EOT;
+
+        $this->assertEquals($expected, $content);
+
     }
 }
 

@@ -2,25 +2,22 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
-use Tests\TestCase;
 use Tests\ViewScenarios;
 
-class MetaTagTest extends TestCase
+class MetaTagTest extends LocalizedTestCase
 {
     use ViewScenarios;
-
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
 
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('view.paths', [$this->viewsPath()]);
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
     }
 
     protected function tearDown(): void
@@ -30,11 +27,8 @@ class MetaTagTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_multisite_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -61,11 +55,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_multisite_meta_for_non_home_page_route($viewType)
     {
         $this->prepareViews($viewType);
@@ -90,11 +81,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_when_it_doesnt_exist_for_page($viewType)
     {
         $this->prepareViews($viewType);
@@ -106,26 +94,22 @@ EOT;
         $response->assertDontSee('hreflang', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_multisite_meta_for_canonical_url_and_alternate_locales($viewType)
     {
         $this->prepareViews($viewType);
 
         $expectedOgLocaleMeta = <<<'EOT'
-<meta property="og:locale" content="it_IT" />
+<meta property="og:locale" content="fr_FR" />
 <meta property="og:locale:alternate" content="en_US" />
-<meta property="og:locale:alternate" content="fr_FR" />
+<meta property="og:locale:alternate" content="it_IT" />
 EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/fr/about" rel="canonical" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
@@ -141,11 +125,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_handles_duplicate_alternate_hreflangs($viewType)
     {
         $this->prepareViews($viewType);
@@ -154,7 +135,6 @@ EOT;
 <link href="http://cool-runnings.com/fr" rel="canonical" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
-<link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it" hreflang="it" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 EOT;
@@ -170,11 +150,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_handles_duplicate_current_hreflang($viewType)
     {
         $this->prepareViews($viewType);
@@ -199,11 +176,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_when_alternate_locales_are_disabled($viewType)
     {
         Config::set('statamic.seo-pro.alternate_locales', false);
@@ -217,11 +191,8 @@ EOT;
         $response->assertDontSee('hreflang', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_excluded_sites($viewType)
     {
         Config::set('statamic.seo-pro.alternate_locales.excluded_sites', ['french']);
@@ -235,7 +206,6 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
@@ -248,11 +218,8 @@ EOT;
         $this->assertStringNotContainsStringIgnoringLineEndings('hreflang="fr"', $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_unpublished_content($viewType)
     {
         $this->prepareViews($viewType);
@@ -266,7 +233,6 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
@@ -277,11 +243,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_scheduled_content($viewType)
     {
         $this->prepareViews($viewType);
@@ -301,7 +264,6 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
@@ -312,11 +274,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_multisite_meta_for_expired_content($viewType)
     {
         $this->prepareViews($viewType);
@@ -336,7 +295,6 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
-<link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
 <link rel="alternate" href="http://corse-fantastiche.it/about" hreflang="it" />
 EOT;
 
