@@ -8,11 +8,17 @@ use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
+use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\Fields as SeoProFields;
+use Statamic\SeoPro\GetsSectionDefaults;
+use Statamic\SeoPro\SiteDefaults;
+use Statamic\Statamic;
 use Statamic\Support\Arr;
 
 class SeoProFieldtype extends Fieldtype
 {
+    use GetsSectionDefaults;
+
     protected $selectable = true;
     protected $icon = 'seo-search-graph';
 
@@ -77,6 +83,17 @@ class SeoProFieldtype extends Fieldtype
 
     public function augment($data)
     {
+        if (Statamic::isApiRoute()) {
+            $content = $this->field()->parent();
+
+            return (new Cascade)
+                ->with(SiteDefaults::load()->augmented())
+                ->with($this->getAugmentedSectionDefaults($content))
+                ->with($data)
+                ->withCurrent($content)
+                ->get();
+        }
+
         if (empty($data) || ! is_iterable($data)) {
             return $data;
         }
