@@ -417,82 +417,67 @@ EOT;
             return $next($payload);
         });
 
+        $today = now()->format('Y-m-d');
+
         $content = $this
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->getContent();
+            ->assertSeeInOrder([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/about</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/articles</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/dance</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/magic</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/nectar</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/topics</loc>',
+                '<lastmod>2020-01-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/additional-item</loc>',
+                '<lastmod>2025-01-01</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ])->getContent();
 
         $this->assertCount(8, $this->getPagesFromSitemapXml($content));
-
-        $today = now()->format('Y-m-d');
-
-        $expected = <<<"EOT"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com</loc>
-        <lastmod>2020-11-24</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/topics</loc>
-        <lastmod>2020-01-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/additional-item</loc>
-        <lastmod>2025-01-01</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT;
-
-        $this->assertEquals($expected, $content);
-
     }
 }
 
