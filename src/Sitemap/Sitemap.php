@@ -237,10 +237,10 @@ class Sitemap
 
     protected function hrefLangs(Entry $entry): array
     {
-        if (config('statamic.seo-pro.alternate_locales') === false) {
-            return [];
-        }
-        if (config('statamic.seo-pro.alternate_locales.enabled') === false) {
+        if (
+            config('statamic.seo-pro.alternate_locales') === false
+            || config('statamic.seo-pro.alternate_locales.enabled') === false
+        ) {
             return [];
         }
 
