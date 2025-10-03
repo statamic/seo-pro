@@ -39,7 +39,7 @@ class SitemapTest extends TestCase
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://cool-runnings.com</loc>',
                 '<lastmod>2020-11-24</lastmod>',
@@ -255,7 +255,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://cool-runnings.com/articles</loc>',
                 '<lastmod>2020-01-17</lastmod>',
@@ -285,7 +285,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://cool-runnings.com/nectar</loc>',
                 '<lastmod>'.$today.'</lastmod>',
@@ -342,7 +342,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://cool-runnings.com/articles</loc>',
                 '<lastmod>2020-01-17</lastmod>',
@@ -387,7 +387,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://cool-runnings.com</loc>',
                 '<lastmod>2020-11-24</lastmod>',
@@ -431,7 +431,7 @@ EOT;
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://cool-runnings.com</loc>',
                 '<lastmod>2020-11-24</lastmod>',

@@ -26,7 +26,7 @@ class SitemapTest extends LocalizedTestCase
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
                 '<loc>http://corse-fantastiche.it</loc>',
                 '<lastmod>2021-09-20</lastmod>',
