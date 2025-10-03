@@ -98,7 +98,7 @@ class Cascade
             'home_url' => Str::removeRight(Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/'), '/'),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
-            'is_default_site' => Site::default()->handle() == $this->site()->handle(),
+            'is_default_site' => Site::default()->handle() === $this->site()->handle(),
             'alternate_locales' => $alternateLocales = $this->alternateLocales(),
             'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
