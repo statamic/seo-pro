@@ -26,7 +26,7 @@ class SitemapTest extends LocalizedTestCase
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder([
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
                 '<url>',
                 '<loc>http://corse-fantastiche.it</loc>',
                 '<lastmod>2021-09-20</lastmod>',
@@ -40,16 +40,115 @@ class SitemapTest extends LocalizedTestCase
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)
-            ->getContent();
-
-        $this->assertCount(2, $this->getPagesFromSitemapXml($content));
+            ], escape: false)->getContent();
     }
 
-    private function getPagesFromSitemapXml($content)
+    #[Test]
+    public function it_outputs_default_sitemap_xml()
     {
-        $data = json_decode(json_encode(simplexml_load_string($content)), true);
+        $this
+            ->get('http://cool-runnings.com/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder($this->getDefaultSiteSitemapXml(), escape: false)
+            ->getContent();
+    }
 
-        return collect($data['url']);
+    private function getDefaultSiteSitemapXml(): array
+    {
+        $today = now()->format('Y-m-d');
+
+        return [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            '<url>',
+            '<loc>http://cool-runnings.com</loc>',
+            '<lastmod>2020-11-24</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr"/>',
+            '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/en-gb</loc>',
+            '<lastmod>2021-09-20</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr"/>',
+            '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/fr</loc>',
+            '<lastmod>2021-09-20</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr"/>',
+            '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/about</loc>',
+            '<lastmod>2020-01-17</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/about"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/about"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/articles</loc>',
+            '<lastmod>2020-01-17</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/articles"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/dance</loc>',
+            '<lastmod>'.$today.'</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/dance"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/magic</loc>',
+            '<lastmod>'.$today.'</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/magic"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/nectar</loc>',
+            '<lastmod>'.$today.'</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/nectar"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/nectar"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/topics</loc>',
+            '<lastmod>2020-01-20</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/topics"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/fr/about</loc>',
+            '<lastmod>2021-09-20</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/about"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/about"/>',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/fr/nectar</loc>',
+            '<lastmod>2021-09-20</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/nectar"/>',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/nectar"/>',
+            '</url>',
+            '</urlset>',
+        ];
     }
 }
