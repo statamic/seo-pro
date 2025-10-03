@@ -1,5 +1,5 @@
 {{ xml_header }}
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 {{ pages }}
     <url>
         <loc>{{ loc }}</loc>
@@ -7,7 +7,7 @@
         <changefreq>{{ changefreq }}</changefreq>
         <priority>{{ priority }}</priority>
         {{ hreflangs }}
-            <xhtml:link rel="alternate" hreflang="{{ hreflang }}" href="{{ href }}"/>
+            <xhtml:link rel="alternate" hreflang="{{ hreflang }}" href="{{ href }}" />
         {{ /hreflangs }}
     </url>
 {{ /pages }}
