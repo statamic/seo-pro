@@ -346,11 +346,9 @@ class Cascade
             ->filter(fn ($locale) => $this->model->in($locale)->status() === 'published')
             ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
             ->map(function ($locale) {
-                $site = Config::getSite($locale);
-
                 return [
-                    'is_default_site' => Site::default()->handle() == $site->handle(),
-                    'site' => $site,
+                    'is_default_site' => Site::default()->handle() === $locale,
+                    'site' => Site::get($locale),
                     'url' => $this->model->in($locale)->absoluteUrl(),
                 ];
             });
