@@ -6,14 +6,12 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection as IlluminateCollection;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\Test;
-use Statamic\Console\Composer\Lock;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Sitemap\Page;
 use Statamic\SeoPro\Sitemap\Sitemap;
-use Statamic\Statamic;
 
 class SitemapTest extends TestCase
 {
