@@ -380,33 +380,33 @@ EOT;
         $this->assertEquals(2, Blink::get('ran-custom-entries-query'));
         $this->assertEquals(1, Blink::get('ran-custom-entries-for-page-query'));
         $this->assertCount(5, $this->getPagesFromSitemapXml($content));
-        /*
-        // $content = $this
-        //     ->get('/sitemap_2.xml')
-        //     ->assertOk()
-        //     ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-        //     ->assertSeeInOrder([
-        //         '<?xml version="1.0" encoding="UTF-8"?>',
-        //         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        //         '<url>',
-        //         '<loc>http://cool-runnings.com</loc>',
-        //         '<lastmod>2020-11-24</lastmod>',
-        //         '<changefreq>monthly</changefreq>',
-        //         '<priority>0.5</priority>',
-        //         '</url>',
-        //         '<url>',
-        //         '<loc>http://cool-runnings.com/about</loc>',
-        //         '<lastmod>2020-01-17</lastmod>',
-        //         '<changefreq>monthly</changefreq>',
-        //         '<priority>0.5</priority>',
-        //         '</url>',
-        //         '</urlset>',
-        //     ])->getContent();
 
-        // $this->assertEquals(4, Blink::get('ran-custom-entries-query'));
-        // $this->assertEquals(2, Blink::get('ran-custom-entries-for-page-query'));
-        // $this->assertCount(2, $this->getPagesFromSitemapXml($content));
-        */
+        $content = $this
+            ->get('/sitemap_2.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/about</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ], escape: false)
+            ->getContent();
+
+        $this->assertEquals(4, Blink::get('ran-custom-entries-query'));
+        $this->assertEquals(2, Blink::get('ran-custom-entries-for-page-query'));
+        $this->assertCount(2, $this->getPagesFromSitemapXml($content));
     }
 
     #[Test]
