@@ -83,7 +83,8 @@ class SitemapTest extends TestCase
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)->getContent();
+            ], escape: false)
+            ->getContent();
 
         $this->assertCount(7, $this->getPagesFromSitemapXml($content));
     }
@@ -245,6 +246,7 @@ EOT;
     {
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
+
         $today = now()->format('Y-m-d');
 
         $content = $this
@@ -272,7 +274,8 @@ EOT;
                 '<changefreq>monthly</changefreq>',
                 '<priority>0.5</priority>',
                 '</url>',
-            ], escape: false)->getContent();
+            ], escape: false)
+            ->getContent();
 
         $this->assertCount(5, $this->getPagesFromSitemapXml($content));
 
@@ -296,7 +299,8 @@ EOT;
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)->getContent();
+            ], escape: false)
+            ->getContent();
 
         $this->assertCount(2, $this->getPagesFromSitemapXml($content));
     }
@@ -326,6 +330,7 @@ EOT;
 
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
+
         $today = now()->format('Y-m-d');
 
         $this->assertNull(Blink::get('ran-custom-entries-query'));
@@ -369,7 +374,8 @@ EOT;
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)->getContent();
+            ], escape: false)
+            ->getContent();
 
         $this->assertEquals(2, Blink::get('ran-custom-entries-query'));
         $this->assertEquals(1, Blink::get('ran-custom-entries-for-page-query'));
@@ -475,7 +481,8 @@ EOT;
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)->getContent();
+            ], escape: false)
+            ->getContent();
 
         $this->assertCount(8, $this->getPagesFromSitemapXml($content));
     }
