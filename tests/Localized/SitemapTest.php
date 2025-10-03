@@ -51,8 +51,7 @@ class SitemapTest extends LocalizedTestCase
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)
-            ->getContent();
+            ], escape: false);
     }
 
     #[Test]
@@ -62,8 +61,7 @@ class SitemapTest extends LocalizedTestCase
             ->get('http://cool-runnings.com/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->assertSeeInOrder($this->getDefaultSiteSitemapXml(), escape: false)
-            ->getContent();
+            ->assertSeeInOrder($this->getDefaultSiteSitemapXml(), escape: false);
     }
 
     private function getDefaultSiteSitemapXml(): array
