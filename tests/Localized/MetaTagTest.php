@@ -121,8 +121,8 @@ EOT;
 
         $content = $this->get('/fr/about')->content();
 
-        // $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
-        // $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
     }
 
