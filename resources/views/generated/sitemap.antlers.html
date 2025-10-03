@@ -6,7 +6,9 @@
         <lastmod>{{ lastmod }}</lastmod>
         <changefreq>{{ changefreq }}</changefreq>
         <priority>{{ priority }}</priority>
-        {{ partial :unless="hreflangs | is_empty" src="seo-pro::generated/hreflangs" }}
+        {{ hreflangs }}
+            <xhtml:link rel="alternate" hreflang="{{ hreflang }}" href="{{ href }}"/>
+        {{ /hreflangs }}
     </url>
 {{ /pages }}
 </urlset>
