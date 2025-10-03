@@ -4,8 +4,9 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
+use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Entries\QueryBuilder;
-use Statamic\Entries\Entry;
+use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry as EntryFacade;
@@ -235,7 +236,7 @@ class Sitemap
         });
     }
 
-    protected function hrefLangs(Entry $entry): array
+    protected function hrefLangs($content): array
     {
         if (
             config('statamic.seo-pro.alternate_locales') === false
@@ -244,6 +245,15 @@ class Sitemap
             return [];
         }
 
+        return match (true) {
+            $content instanceof Entry => $this->hrefLangsForEntry($content),
+            $content instanceof Term => $this->hrefLangsForTerm($content),
+            default => [],
+        };
+    }
+
+    private function hrefLangsForEntry(Entry $entry): array
+    {
         $sitesWithSameDomain = $this->sitesWithSameDomain($entry->site());
 
         return $sitesWithSameDomain
@@ -257,6 +267,25 @@ class Sitemap
             ->when($sitesWithSameDomain->contains($entry->root()->site()), function ($collection) use ($entry) {
                 $collection->push([
                     'href' => $entry->root()->absoluteUrl(),
+                    'hreflang' => 'x-default',
+                ]);
+            })
+            ->all();
+    }
+
+    private function hrefLangsForTerm(Term $term): array
+    {
+        $sitesWithSameDomain = $this->sitesWithSameDomain($term->site());
+
+        return $sitesWithSameDomain
+            ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
+            ->map(fn (Site $site) => [
+                'href' => $term->in($site->handle())->absoluteUrl(),
+                'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
+            ])
+            ->when($sitesWithSameDomain->contains($term->inDefaultLocale()->locale()), function ($collection) use ($term) {
+                $collection->push([
+                    'href' => $term->inDefaultLocale()->absoluteUrl(),
                     'hreflang' => 'x-default',
                 ]);
             })

@@ -15,6 +15,17 @@ class SitemapTest extends LocalizedTestCase
         }
 
         $this->files->makeDirectory($folder, 0755, true);
+
+        // Otherwise, terms won't be returned in the sitemap.
+        $this->files->ensureDirectoryExists(resource_path('views/topics'));
+        $this->files->put(resource_path('views/topics/show.antlers.html'), '');
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->files->deleteDirectory(resource_path('views/topics'));
     }
 
     #[Test]
@@ -159,6 +170,36 @@ class SitemapTest extends LocalizedTestCase
             '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/nectar" />',
             '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/nectar" />',
             '<xhtml:link rel="alternate" hreflang="x-default" href="http://cool-runnings.com/nectar" />',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/articles/topics/sneakers</loc>',
+            '<lastmod>2020-01-17</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/articles/topics/sneakers" />',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/articles/topics/sneakers" />',
+            '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb/articles/topics/sneakers" />',
+            '<xhtml:link rel="alternate" hreflang="x-default" href="http://cool-runnings.com/articles/topics/sneakers" />',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/articles/topics/soda</loc>',
+            '<lastmod>2020-01-17</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/articles/topics/soda" />',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/articles/topics/soda" />',
+            '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb/articles/topics/soda" />',
+            '<xhtml:link rel="alternate" hreflang="x-default" href="http://cool-runnings.com/articles/topics/soda" />',
+            '</url>',
+            '<url>',
+            '<loc>http://cool-runnings.com/articles/topics/dance</loc>',
+            '<lastmod>2020-01-17</lastmod>',
+            '<changefreq>monthly</changefreq>',
+            '<priority>0.5</priority>',
+            '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com/articles/topics/dance" />',
+            '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr/articles/topics/dance" />',
+            '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb/articles/topics/dance" />',
+            '<xhtml:link rel="alternate" hreflang="x-default" href="http://cool-runnings.com/articles/topics/dance" />',
             '</url>',
             '</urlset>',
         ];
