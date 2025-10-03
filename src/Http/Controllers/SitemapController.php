@@ -20,8 +20,6 @@ class SitemapController extends Controller
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
         $sites = Facades\Site::all()->filter(fn (Site $site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
 
-        $key = request()->getHttpHost();
-
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
             $content = Cache::remember(Sitemap::CACHE_KEY.'_'.$key.'_index', $cacheUntil, function () use ($sites) {
                 return view('seo-pro::sitemap_index', [
