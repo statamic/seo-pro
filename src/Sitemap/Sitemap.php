@@ -251,7 +251,8 @@ class Sitemap
             ->map(fn (Site $site) => [
                 'href' => $entry->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
-            ])->all();
+            ])
+            ->all();
     }
 
     private function sitesWithSameDomain(Site $site): IlluminateCollection
