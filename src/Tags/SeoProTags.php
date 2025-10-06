@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Tags;
 
+use Statamic\Facades\Image;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\RendersMetaHtml;
@@ -70,8 +71,6 @@ class SeoProTags extends Tags
      */
     protected function isGlidePresetEnabled($preset)
     {
-        $server = app(\League\Glide\Server::class);
-
-        return collect($server->getPresets())->has($preset);
+        return array_key_exists($preset, Image::customManipulationPresets());
     }
 }
