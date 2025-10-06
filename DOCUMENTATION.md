@@ -24,6 +24,24 @@ Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. T
 
 You may choose to pull data from other fields, enter hardcoded strings, or use Antlers templating. See [File Usage](#file-usage) for more details.
 
+#### Static Caching
+
+If you're using [Static Caching](https://statamic.dev/static-caching), you may configure invalidation rules to be triggered when SEO Pro's site defaults are updated:
+
+```php
+// config/statamic/static_caching.php
+
+'invalidation' => [
+    'rules' => [
+        'seo_pro_site_defaults' => [
+            'urls' => [
+                '/*',
+            ],
+        ],
+    ],
+],
+```
+
 ### Section Defaults
 
 Each section may be configured independently at the Collection / Taxonomy level. Head to `Tools > SEO Pro > Section Defaults` to configure default settings at this level. You may opt to inherit values from the defaults and tweak as necessary.

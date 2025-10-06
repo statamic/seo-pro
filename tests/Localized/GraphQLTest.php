@@ -3,18 +3,13 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class GraphQLTest extends TestCase
+class GraphQLTest extends LocalizedTestCase
 {
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
-
     protected function getEnvironmentSetup($app)
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
         $app['config']->set('statamic.graphql.enabled', true);
         $app['config']->set('statamic.graphql.resources.collections', true);
     }
