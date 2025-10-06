@@ -145,7 +145,7 @@ class ServiceProvider extends AddonServiceProvider
             $presets['seo_pro_twitter'] = $presets['seo_pro_og'];
         }
 
-        Image::registerCustomManipulationPresets($presets->all());
+        Image::registerCustomManipulationPresets($presets->filter()->all());
 
         return $this;
     }
