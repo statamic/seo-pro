@@ -7,6 +7,7 @@ use Illuminate\Support\Collection as IlluminateCollection;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Console\Composer\Lock;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
