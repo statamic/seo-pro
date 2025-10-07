@@ -2,24 +2,14 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults;
-use Tests\TestCase;
 
-class CascadeTest extends TestCase
+class CascadeTest extends LocalizedTestCase
 {
-    protected $siteFixturePath = __DIR__.'/../Fixtures/site-localized';
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('statamic.editions.pro', true);
-        $app['config']->set('statamic.system.multisite', true);
-    }
-
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_alternate_locales()
     {
         $entry = Entry::findByUri('/about', 'italian')->entry();
@@ -29,7 +19,7 @@ class CascadeTest extends TestCase
             ->withCurrent($entry)
             ->get();
 
-        $this->assertEquals('http://cool-runnings.com/it/about', $data['canonical_url']);
+        $this->assertEquals('http://corse-fantastiche.it/about', $data['canonical_url']);
         $this->assertEquals('it', $data['current_hreflang']);
 
         $this->assertEquals([
@@ -38,7 +28,7 @@ class CascadeTest extends TestCase
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_handles_duplicate_alternate_hreflangs()
     {
         $entry = Entry::findByUri('/', 'italian')->entry();
@@ -48,7 +38,7 @@ class CascadeTest extends TestCase
             ->withCurrent($entry)
             ->get();
 
-        $this->assertEquals('http://cool-runnings.com/it', $data['canonical_url']);
+        $this->assertEquals('http://corse-fantastiche.it', $data['canonical_url']);
         $this->assertEquals('it', $data['current_hreflang']);
 
         $this->assertEquals([
@@ -58,7 +48,7 @@ class CascadeTest extends TestCase
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_seo_cascade_for_canonical_url_and_handles_duplicate_current_hreflang()
     {
         $entry = Entry::findByUri('/', 'default')->entry();
@@ -74,7 +64,7 @@ class CascadeTest extends TestCase
         $this->assertEquals([
             'en-gb' => 'http://cool-runnings.com/en-gb',
             'fr' => 'http://cool-runnings.com/fr',
-            'it' => 'http://cool-runnings.com/it',
+            'it' => 'http://corse-fantastiche.it',
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
 }

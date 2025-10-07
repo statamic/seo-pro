@@ -6,6 +6,9 @@ use Facades\Statamic\View\Cascade as StatamicViewCacade;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Orchestra\Testbench\Attributes\DefineEnvironment;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Extensions\Pagination\LengthAwarePaginator as StatamicLengthAwarePaginator;
 use Statamic\Facades\Asset;
 use Statamic\Facades\Blink;
@@ -58,11 +61,8 @@ class MetaTagTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_normalized_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -90,11 +90,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_view_data($viewType)
     {
         $this->prepareViews($viewType);
@@ -121,11 +118,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_normalized_meta_when_visiting_statamic_route_with_raw_data_when_no_fallback_entry_exists($viewType)
     {
         Entry::findByUri('/')->deleteQuietly();
@@ -154,11 +148,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_collection($viewType)
     {
         $this
@@ -172,11 +163,8 @@ EOT;
         $response->assertDontSee('<link', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_meta_when_seo_is_disabled_on_entry($viewType)
     {
         $this
@@ -190,11 +178,8 @@ EOT;
         $response->assertDontSee('<link', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_compiled_title_meta($viewType)
     {
         $this
@@ -210,11 +195,8 @@ EOT;
         $response->assertSee('<title>Site Name &gt;&gt;&gt; Aboot</title>', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_uses_cascade_to_generate_meta($viewType)
     {
         $this
@@ -236,11 +218,8 @@ EOT;
         $response->assertSee('<title>Cool Runnings -- Aboot</title>', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_sanitized_title($viewType)
     {
         $this
@@ -258,11 +237,8 @@ EOT;
         $response->assertSee('<meta property="og:title" content="It&#039;s a me, Mario!" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_sanitized_description($viewType)
     {
         $this
@@ -277,11 +253,8 @@ EOT;
         $response->assertSee('<meta property="og:description" content="It&#039;s a me, Mario!" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_custom_twitter_card_with_short_summary($viewType)
     {
         $this->prepareViews($viewType);
@@ -293,11 +266,8 @@ EOT;
         $response->assertSee('<meta name="twitter:card" content="summary" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_twitter_handle_meta($viewType)
     {
         $this
@@ -318,11 +288,8 @@ EOT;
         $response->assertSee('<meta name="twitter:site" content="@itsluigi85" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_social_image($viewType)
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
@@ -341,13 +308,9 @@ EOT;
         $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw/stetson.jpg?p=seo_pro_twitter&s=095c80594c864bedc5c4c2cb2c83ee1c" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     *
-     * @environment-setup setNoGlidePresets
-     */
+    #[Test]
+    #[DefineEnvironment('setNoGlidePresets')]
+    #[DataProvider('viewScenarioProvider')]
     public function it_only_generates_one_social_image_when_the_field_is_an_array($viewType)
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
@@ -386,13 +349,9 @@ EOT;
 
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     *
-     * @environment-setup setCustomGlidePresetDimensions
-     */
+    #[Test]
+    #[DefineEnvironment('setCustomGlidePresetDimensions')]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_social_image_with_custom_glide_presets($viewType)
     {
         Artisan::call('statamic:glide:clear');
@@ -410,13 +369,9 @@ EOT;
         $response->assertSee('<meta property="og:image:height" content="600" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     *
-     * @environment-setup setCustomOgGlidePresetOnly
-     */
+    #[Test]
+    #[DefineEnvironment('setCustomOgGlidePresetOnly')]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_social_image_with_og_glide_preset_only($viewType)
     {
         Artisan::call('statamic:glide:clear');
@@ -435,13 +390,9 @@ EOT;
         $response->assertSee('<meta property="og:image:height" content="600" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     *
-     * @environment-setup setCustomTwitterGlidePresetOnly
-     */
+    #[Test]
+    #[DefineEnvironment('setCustomTwitterGlidePresetOnly')]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_social_image_with_twitter_glide_preset_only($viewType)
     {
         Artisan::call('statamic:glide:clear');
@@ -458,11 +409,8 @@ EOT;
         $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw/stetson.jpg?p=seo_pro_twitter&s=095c80594c864bedc5c4c2cb2c83ee1c" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_home_url_for_entry_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -472,11 +420,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com" rel="home" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_canonical_url_for_entry_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -486,11 +431,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_canonical_url_for_term_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -500,11 +442,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/topics/sneakers" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_canonical_url_meta_with_pagination($viewType)
     {
         $this->prepareViews($viewType);
@@ -514,11 +453,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about?page=2" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_canonical_url_meta_without_pagination($viewType)
     {
         Config::set('statamic.seo-pro.pagination.enabled_in_canonical_url', false);
@@ -530,11 +466,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_rel_next_prev_url_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -557,11 +490,8 @@ EOT;
         $response->assertDontSee('rel="next"', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_rel_next_prev_url_meta_with_first_page_enabled($viewType)
     {
         Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
@@ -573,11 +503,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about?page=1" rel="prev" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_rel_next_prev_url_meta_without_paginator($viewType)
     {
         $this->prepareViews($viewType);
@@ -588,11 +515,8 @@ EOT;
         $response->assertDontSee('rel="prev"', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_generate_any_pagination_when_completely_disabled($viewType)
     {
         Config::set('statamic.seo-pro.pagination', false);
@@ -606,11 +530,8 @@ EOT;
         $response->assertDontSee('rel="prev"', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_canonical_url_meta_with_custom_url($viewType)
     {
         $this
@@ -624,11 +545,8 @@ EOT;
         $response->assertSee('<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_applies_pagination_to_custom_canonical_url_on_same_domain($viewType)
     {
         $this
@@ -642,11 +560,9 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/pages/aboot?page=2" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_apply_pagination_to_external_custom_canonical_url($viewType)
     {
         $this
@@ -660,11 +576,9 @@ EOT;
         $response->assertSee('<link href="https://hot-walkings.com/pages/aboot" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+
+    #[DataProvider('viewScenarioProvider')]
     public function it_doesnt_apply_pagination_to_first_page($viewType)
     {
         $this->prepareViews($viewType);
@@ -674,11 +588,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_can_apply_pagination_to_first_page_when_configured_as_unique_page($viewType)
     {
         Config::set('statamic.seo-pro.pagination.enabled_on_first_page', true);
@@ -690,13 +601,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about?page=1" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     *
-     * @environment-setup useFakeSsgPaginator
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_applies_custom_pagination_routing_to_meta_urls($viewType)
     {
         $this->withoutExceptionHandling();
@@ -709,11 +615,8 @@ EOT;
         $response->assertSee('<link href="http://cool-runnings.com/about/page/4" rel="next" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_robots_meta($viewType)
     {
         $this->prepareViews($viewType);
@@ -740,11 +643,8 @@ EOT;
         $response->assertSee('<meta name="robots" content="noindex, nofollow" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_custom_humans_url($viewType)
     {
         Config::set('statamic.seo-pro.humans.url', 'aliens.md');
@@ -756,11 +656,8 @@ EOT;
         $response->assertSee('<link type="text/plain" rel="author" href="http://cool-runnings.com/aliens.md" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_search_engine_verification_codes($viewType)
     {
         $this
@@ -776,11 +673,8 @@ EOT;
         $response->assertSee('<meta name="msvalidate.01" content="bing123" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_proper_404_page_title($viewType)
     {
         $this->prepareViews($viewType);
@@ -795,11 +689,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_normalized_meta_from_custom_site_defaults_path($viewType)
     {
         $this->files->put(base_path('custom_seo.yaml'), <<<'EOT'
@@ -841,11 +732,8 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_hydrates_cascade_on_custom_routes_using_blade_directive($viewType)
     {
         if ($viewType === 'antlers') {
@@ -859,7 +747,7 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_loop_over_meta_data()
     {
         $this->withoutExceptionHandling();
@@ -878,7 +766,7 @@ EOT);
         $this->assertStringContainsStringIgnoringLineEndings('<h3>http://cool-runnings.com/the-view</h3>', $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_loop_over_aliased_meta_data()
     {
         $this->withoutExceptionHandling();
@@ -907,11 +795,8 @@ EOT);
         $this->assertStringContainsStringIgnoringLineEndings('<h3 class="canonical_url_without_scoping"></h3>', $content);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_meta_urls_with_trailing_slashes_when_configured($viewType)
     {
         $this->prepareViews($viewType);
@@ -925,11 +810,8 @@ EOT);
         $response->assertSee('<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_custom_canonical_url_with_trailing_slashes_when_configured($viewType)
     {
         $this
@@ -945,11 +827,8 @@ EOT);
         $response->assertSee('<link href="http://cool-runnings.com/pages/aboot/" rel="canonical" />', false);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider viewScenarioProvider
-     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_pagination_meta_urls_with_trailing_slashes_when_configured($viewType)
     {
         $this->prepareViews($viewType);
@@ -963,7 +842,7 @@ EOT);
         $response->assertSee('<link href="http://cool-runnings.com/about/?page=4" rel="next" />', false);
     }
     
-    /** @test */
+    #[Test]
     public function it_doesnt_output_canonical_when_robots_noindex()
     {
         $this
@@ -974,6 +853,47 @@ EOT);
 
         $response = $this->get('/about');
         $response->assertDontSee('" rel="canonical"', false);
+    }
+
+    #[Test]
+    public function it_outputs_paginated_page_in_title()
+    {
+        config()->set('statamic.seo-pro.pagination.enabled', true);
+        Blink::put('tag-paginator', new LengthAwarePaginator([1, 2, 3], 10, 10, 2));
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), []);
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>About Page 2 | Site Name</title>', false);
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'site_name_position' => 'before',
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>Site Name | About Page 2</title>', false);
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'site_name_position' => 'none',
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>About Page 2</title>', false);
+
+        Blink::put('tag-paginator', new LengthAwarePaginator([1, 2, 3], 10, 10, 1));
+
+        $this
+            ->prepareViews('antlers')
+            ->setSeoOnEntry(Entry::findByUri('/about'), []);
+
+        $response = $this->get('/about');
+        $response->assertDontSee('<title>About Page 2 | Site Name</title>', false);
     }
 
     protected function setCustomGlidePresetDimensions($app)

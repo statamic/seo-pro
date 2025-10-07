@@ -150,6 +150,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         );
     }
 
+    protected function assertArrayHasKeys(array $keys, array|\ArrayAccess $array): void
+    {
+        foreach ($keys as $key) {
+            $this->assertArrayHasKey($key, $array);
+        }
+    }
+
     private function addGqlMacros()
     {
         TestResponse::macro('assertGqlOk', function () {
