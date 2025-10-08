@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "statamic/cms": "^v6.0.0-alpha.7"
+        "statamic/cms": "^v6.0.0-alpha.11"
     },
     "require-dev": {
         "orchestra/testbench": "^9.6.1 || ^10.0",
