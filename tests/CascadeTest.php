@@ -3,9 +3,9 @@
 namespace Tests;
 
 use Illuminate\Pagination\LengthAwarePaginator;
-use Statamic\Facades\Blink;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;

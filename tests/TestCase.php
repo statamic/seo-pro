@@ -4,7 +4,6 @@ namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Testing\TestResponse;
-use Statamic\Addons\Manifest;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Facades\YAML;

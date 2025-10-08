@@ -11,6 +11,12 @@
         }
     },
     "extra": {
+        "download-dist": [
+            {
+                "url": "https://github.com/statamic/seo-pro/releases/download/{$version}/dist.tar.gz",
+                "path": "resources/dist"
+            }
+        ],
         "statamic": {
             "name": "SEO Pro",
             "description": "An all-in-one site reporting, metadata mastering, OG managing, Twitter card making, sitemap generating addon."
@@ -22,7 +28,8 @@
         }
     },
     "require": {
-        "statamic/cms": "^v6.0.0-alpha.7"
+        "statamic/cms": "^v6.0.0-alpha.11",
+        "pixelfear/composer-dist-plugin": "^0.1.6"
     },
     "require-dev": {
         "orchestra/testbench": "^9.6.1 || ^10.0",

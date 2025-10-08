@@ -841,7 +841,7 @@ EOT);
         $response->assertSee('<link href="http://cool-runnings.com/about/?page=2" rel="prev" />', false);
         $response->assertSee('<link href="http://cool-runnings.com/about/?page=4" rel="next" />', false);
     }
-    
+
     #[Test]
     public function it_doesnt_output_canonical_when_robots_noindex()
     {

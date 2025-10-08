@@ -29,6 +29,8 @@
 </style>
 
 <script>
+import { FieldtypeMixin as Fieldtype } from '@statamic/cms';
+
 export default {
 
     mixins: [Fieldtype],
@@ -59,7 +61,7 @@ export default {
         },
 
         metaUpdated(handle, value) {
-            this.$emit('meta-updated', {
+            this.updateMeta({
                 ...this.meta,
                 meta: {
                     ...this.meta.meta,
