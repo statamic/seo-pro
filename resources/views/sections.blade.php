@@ -43,9 +43,9 @@
         </div>
     @endif
 
-    @include('statamic::partials.docs-callout', [
-        'topic' => 'SEO Pro',
-        'url' => 'https://statamic.com/addons/statamic/seo-pro'
-    ])
+{{--    @include('statamic::partials.docs-callout', [--}}
+{{--        'topic' => 'SEO Pro',--}}
+{{--        'url' => 'https://statamic.com/addons/statamic/seo-pro'--}}
+{{--    ])--}}
 
 @stop
