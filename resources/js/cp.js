@@ -4,6 +4,7 @@ import StatusIcon from './components/reporting/StatusIcon.vue';
 import IndexScore from './components/reporting/IndexScore.vue';
 import Report from './components/reporting/Report.vue';
 import Index from './pages/Index.vue';
+import SectionDefaultsIndex from './pages/section-defaults/Index.vue';
 
 Statamic.booting(() => {
     Statamic.$components.register('seo_pro-fieldtype', SeoProFieldtype);
@@ -14,4 +15,5 @@ Statamic.booting(() => {
     Statamic.$components.register('seo-pro-index-score', IndexScore);
 
     Statamic.$components.register('Pages/SEOPro/Index', Index);
+    Statamic.$components.register('Pages/SEOPro/SectionDefaults/Index', SectionDefaultsIndex);
 });
