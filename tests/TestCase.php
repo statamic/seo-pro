@@ -6,6 +6,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Testing\TestResponse;
 use Statamic\Addons\Manifest;
 use Statamic\Facades\Site;
+use Statamic\Facades\URL;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\SiteDefaults;
 
@@ -38,6 +39,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->copyDirectoryFromFixture('assets');
 
         Site::setSites(YAML::file("{$this->siteFixturePath}/resources/sites.yaml")->parse());
+
+        URL::clearUrlCache();
 
         $this->restoreSiteDefaults();
 
