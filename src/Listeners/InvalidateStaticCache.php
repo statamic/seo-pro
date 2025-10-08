@@ -5,11 +5,11 @@ namespace Statamic\SeoPro\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Statamic\Facades;
+use Statamic\Facades\URL;
 use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
 use Statamic\Sites\Site;
 use Statamic\StaticCaching\Cacher;
 use Statamic\Support\Arr;
-use Statamic\Support\Str;
 
 class InvalidateStaticCache implements ShouldQueue
 {
@@ -34,22 +34,17 @@ class InvalidateStaticCache implements ShouldQueue
 
         $rules = collect(Arr::get($this->rules, 'seo_pro_site_defaults.urls'));
 
-        $absoluteUrls = $rules->filter(fn (string $rule): bool => $this->isAbsoluteUrl($rule))->all();
+        $absoluteUrls = $rules->filter(fn (string $rule): bool => URL::isAbsolute($rule))->all();
 
         $prefixedRelativeUrls = Facades\Site::all()->map(function (Site $site) use ($rules): Collection {
             return $rules
-                ->reject(fn (string $rule): bool => $this->isAbsoluteUrl($rule))
-                ->map(fn (string $rule): bool => Str::removeRight($site->url(), '/').Str::ensureLeft($rule, '/'));
+                ->reject(fn (string $rule): bool => URL::isAbsolute($rule))
+                ->map(fn (string $rule) => URL::tidy($site->url().'/'.$rule, withTrailingSlash: false));
         })->flatten()->all();
 
         $this->cacher->invalidateUrls([
             ...$absoluteUrls,
             ...$prefixedRelativeUrls,
         ]);
-    }
-
-    private function isAbsoluteUrl(string $url): bool
-    {
-        return isset(parse_url($url)['scheme']);
     }
 }
