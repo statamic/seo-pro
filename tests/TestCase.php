@@ -9,25 +9,13 @@ use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Testing\AddonTestCase;
 
-abstract class TestCase extends \Orchestra\Testbench\TestCase
+abstract class TestCase extends AddonTestCase
 {
     protected $siteFixturePath = __DIR__.'/Fixtures/site';
     protected $files;
-
-    protected function getPackageProviders($app)
-    {
-        return [
-            \Statamic\Providers\StatamicServiceProvider::class,
-            \Statamic\SeoPro\ServiceProvider::class,
-            \Rebing\GraphQL\GraphQLServiceProvider::class,
-        ];
-    }
-
-    protected function getPackageAliases($app)
-    {
-        return ['Statamic' => 'Statamic\Statamic'];
-    }
+    protected string $addonServiceProvider = \Statamic\SeoPro\ServiceProvider::class;
 
     protected function setUp(): void
     {
@@ -63,9 +51,9 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         }
     }
 
-    protected function resolveApplicationConfiguration($app)
+    protected function getEnvironmentSetUp($app)
     {
-        parent::resolveApplicationConfiguration($app);
+        parent::getEnvironmentSetUp($app);
 
         $configs = [
             'assets', 'cp', 'forms', 'routes', 'static_caching',
@@ -94,20 +82,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
             $app['config']->set(str_replace('/', '.', $config), require ("{$this->siteFixturePath}/config/{$config}.php"));
         }
-    }
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app->make(Manifest::class)->manifest = [
-            'statamic/seo-pro' => [
-                'id' => 'statamic/seo-pro',
-                'namespace' => 'Statamic\\SeoPro',
-                'autoload' => 'src',
-                'provider' => \Statamic\SeoPro\ServiceProvider::class,
-            ],
-        ];
     }
 
     protected function setSeoInSiteDefaults($seo)
