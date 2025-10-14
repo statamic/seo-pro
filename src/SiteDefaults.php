@@ -48,7 +48,7 @@ class SiteDefaults extends Collection
     public function augmented()
     {
         $contentValues = Blueprint::make()
-            ->setContents(['fields' => Fields::new()->getConfig()])
+            ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
             ->fields()
             ->addValues($this->items)
             ->augment()

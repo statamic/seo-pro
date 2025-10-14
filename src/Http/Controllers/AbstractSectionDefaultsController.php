@@ -5,6 +5,7 @@ namespace Statamic\SeoPro\Http\Controllers;
 use Illuminate\Http\Request;
 use Statamic\Contracts\Entries\Collection;
 use Statamic\Contracts\Taxonomies\Taxonomy;
+use Statamic\CP\PublishForm;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
@@ -31,45 +32,33 @@ abstract class AbstractSectionDefaultsController extends CpController
             $seo = ['enabled' => false];
         }
 
-        $blueprint = $this->blueprint();
-
-        $fields = $blueprint
-            ->fields()
-            ->addValues($seo)
-            ->preProcess();
-
-        return view('seo-pro::edit', [
-            'breadcrumbTitle' => __('seo-pro::messages.section_defaults'),
-            'breadcrumbUrl' => cp_route('seo-pro.section-defaults.index'),
-            'title' => $item->title().' SEO',
-            'action' => cp_route("seo-pro.section-defaults.{$sectionType}.update", $item),
-            'blueprint' => $blueprint->toPublishArray(),
-            'meta' => $fields->meta(),
-            'values' => $fields->values(),
-        ]);
+        return PublishForm::make($this->blueprint())
+            ->asConfig()
+            ->title($item->title().' SEO')
+            ->values($seo)
+            ->submittingTo(cp_route("seo-pro.section-defaults.{$sectionType}.update", $item));
     }
 
     public function update($handle, Request $request)
     {
         abort_unless(User::current()->can('edit seo section defaults'), 403);
 
-        $blueprint = $this->blueprint();
+        $values = PublishForm::make($this->blueprint())->submit($request->all());
 
-        $fields = $blueprint->fields()->addValues($request->all());
-
-        $fields->validate();
-
-        $values = Arr::removeNullValues($fields->process()->values()->all());
-
-        $item = $this->getSectionItem($handle);
-
-        $this->saveSectionItem($item, $values);
+        $this->saveSectionItem(
+            item: $this->getSectionItem($handle),
+            values: Arr::removeNullValues($values)
+        );
     }
 
     protected function blueprint()
     {
         return Blueprint::make()->setContents([
-            'fields' => Fields::new()->getConfig(),
+            'tabs' => [
+                'main' => [
+                    'sections' => Fields::new()->getConfig(),
+                ],
+            ],
         ]);
     }
 

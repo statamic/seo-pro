@@ -1,7 +1,5 @@
-.bg-yellow-dark {
-    background-color: #f6ad55;
-}
+@import "@statamic/cms/tailwind.css";
 
-.text-red-800 {
-    color: rgb(153 27 27);
+label[for="field_seo"] {
+    display: none;
 }

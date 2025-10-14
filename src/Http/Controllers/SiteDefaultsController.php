@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Statamic\CP\PublishForm;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\SiteDefaults;
@@ -16,20 +17,11 @@ class SiteDefaultsController extends CpController
 
         $siteDefaults = SiteDefaults::load();
 
-        $blueprint = $siteDefaults->blueprint();
-
-        $fields = $blueprint
-            ->fields()
-            ->addValues($siteDefaults->all())
-            ->preProcess();
-
-        return view('seo-pro::edit', [
-            'title' => __('seo-pro::messages.site_defaults'),
-            'action' => cp_route('seo-pro.site-defaults.update'),
-            'blueprint' => $blueprint->toPublishArray(),
-            'meta' => $fields->meta(),
-            'values' => $fields->values(),
-        ]);
+        return PublishForm::make($siteDefaults->blueprint())
+            ->asConfig()
+            ->title(__('seo-pro::messages.site_defaults'))
+            ->values($siteDefaults->all())
+            ->submittingTo(cp_route('seo-pro.site-defaults.update'));
     }
 
     public function update(Request $request)

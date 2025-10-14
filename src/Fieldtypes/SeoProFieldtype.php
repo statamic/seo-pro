@@ -54,7 +54,7 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fields()
     {
-        return new BlueprintFields($this->fieldConfig());
+        return new BlueprintFields(collect($this->fieldConfig())->pluck('fields')->flatten(1)->all());
     }
 
     protected function fieldConfig()
@@ -99,7 +99,13 @@ class SeoProFieldtype extends Fieldtype
         }
 
         return Blueprint::make()
-            ->setContents(['fields' => $this->fieldConfig()])
+            ->setContents([
+                'tabs' => [
+                    'main' => [
+                        'sections' => $this->fieldConfig(),
+                    ],
+                ],
+            ])
             ->fields()
             ->addValues($data)
             ->augment()

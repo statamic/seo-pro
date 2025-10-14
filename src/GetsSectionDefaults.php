@@ -30,7 +30,11 @@ trait GetsSectionDefaults
         return Blink::once($this->getCacheKey($parent).'.augmented', function () use ($parent) {
             return Blueprint::make()
                 ->setContents([
-                    'fields' => Fields::new()->getConfig(),
+                    'tabs' => [
+                        'main' => [
+                            'sections' => Fields::new()->getConfig(),
+                        ],
+                    ],
                 ])
                 ->fields()
                 ->addValues($seo = $parent->cascade('seo') ?: [])
