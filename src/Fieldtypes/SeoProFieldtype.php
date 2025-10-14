@@ -34,7 +34,7 @@ class SeoProFieldtype extends Fieldtype
     public function preload()
     {
         return [
-            'fields' => $this->fieldConfig(),
+            'fields' => $this->fields()->toPublishArray(),
             'meta' => $this->fields()->addValues($this->field->value())->meta(),
         ];
     }

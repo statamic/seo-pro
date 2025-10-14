@@ -1,81 +1,24 @@
+<script setup>
+import { Fieldtype } from '@statamic/cms';
+import { PublishFieldsProvider as FieldsProvider, PublishFields } from '@statamic/cms/ui';
+
+const emit = defineEmits(Fieldtype.emits);
+const props = defineProps(Fieldtype.props);
+const { expose, isReadOnly } = Fieldtype.use(emit, props);
+defineExpose(expose);
+
+// todo: sections?
+</script>
+
 <template>
-    <div class="publish-fields">
-        <publish-field
-            v-for="field in fields"
-            :key="field.handle"
-            :config="field"
-            :value="value[field.handle]"
-            :meta="meta.meta[field.handle]"
-            :read-only="isReadOnly || ! field.localizable"
-            :errors="errors(field.handle)"
-            class="form-group"
-            @meta-updated="metaUpdated(field.handle, $event)"
-            @focus="$emit('focus')"
-            @blur="$emit('blur')"
-            @input="updateKey(field.handle, $event)"
-        />
+    <div>
+	    <FieldsProvider
+		    :fields="meta.fields"
+		    :read-only="isReadOnly || !config.localizable"
+		    :field-path-prefix="`seo`"
+		    :meta-path-prefix="`seo.meta`"
+	    >
+			<PublishFields />
+	    </FieldsProvider>
     </div>
 </template>
-
-<style>
-.seo_pro-fieldtype > .field-inner > label {
-    display: none !important;
-}
-
-.seo_pro-fieldtype,
-.seo_pro-fieldtype .publish-fields {
-    padding: 0 !important;
-}
-</style>
-
-<script>
-import { FieldtypeMixin as Fieldtype } from '@statamic/cms';
-
-export default {
-
-    mixins: [Fieldtype],
-
-    inject: ['storeName'],
-
-    computed: {
-        fields() {
-            return _.chain(this.meta.fields)
-                .map(field => {
-                    return {
-                        handle: field.handle,
-                        ...field.field
-                    };
-                })
-                .values()
-                .value();
-        }
-    },
-
-    methods: {
-        updateKey(handle, value) {
-            let seoValue = this.value;
-
-            Vue.set(seoValue, handle, value);
-
-            this.update(seoValue);
-        },
-
-        metaUpdated(handle, value) {
-            this.updateMeta({
-                ...this.meta,
-                meta: {
-                    ...this.meta.meta,
-                    [handle]: value,
-                },
-            });
-        },
-
-        errors(handle) {
-            const state = this.$store.state.publish[this.storeName];
-            if (!state) return [];
-            return state.errors['seo.'+handle] || [];
-        },
-    },
-
-}
-</script>
