@@ -70,6 +70,22 @@ const sourceTypeDropdownChanged = (value) => {
 };
 
 const sourceFieldChanged = (field) => update({ ...props.value, value: field });
+
+const fieldPathPrefix = computed(() => {
+	if (props.fieldPathPrefix) {
+		return `${props.fieldPathPrefix}.${props.handle}.value`;
+	}
+
+	return `${props.handle}.value`;
+});
+
+const metaPathPrefix = computed(() => {
+	if (props.metaPathPrefix) {
+		return `${props.metaPathPrefix}.${props.handle}`;
+	}
+
+	return props.handle;
+});
 </script>
 
 <template>
@@ -136,8 +152,8 @@ const sourceFieldChanged = (field) => update({ ...props.value, value: field });
 	        <PublishField
 		        v-else-if="source === 'custom'"
 		        :config="fieldConfig"
-		        :field-path-prefix="`seo.${handle}.value`"
-		        :meta-path-prefix="`seo.meta.${handle}`"
+		        :field-path-prefix
+		        :meta-path-prefix
 		        v-slot="{ fieldtypeComponent, fieldtypeComponentProps, fieldtypeComponentEvents }"
 	        >
 		        <Component

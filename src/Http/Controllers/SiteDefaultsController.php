@@ -7,7 +7,6 @@ use Statamic\CP\PublishForm;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\SiteDefaults;
-use Statamic\Support\Arr;
 
 class SiteDefaultsController extends CpController
 {
@@ -28,13 +27,7 @@ class SiteDefaultsController extends CpController
     {
         abort_unless(User::current()->can('edit seo site defaults'), 403);
 
-        $blueprint = SiteDefaults::load()->blueprint();
-
-        $fields = $blueprint->fields()->addValues($request->all());
-
-        $fields->validate();
-
-        $values = Arr::removeNullValues($fields->process()->values()->all());
+        $values = PublishForm::make(SiteDefaults::load()->blueprint())->submit($request->all());
 
         SiteDefaults::load($values)->save();
     }
