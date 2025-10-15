@@ -1,8 +1,12 @@
+<script setup>
+defineProps({
+	status: String,
+});
+</script>
+
 <template>
-
     <div>
-        <span v-if="status === 'pending'" class="icon icon-circular-graph animation-spin"></span>
-
+        <span v-if="status === 'pending'" class="icon icon-circular-graph animation-spin" />
         <span
             v-else
             class="little-dot"
@@ -12,16 +16,5 @@
                 'bg-orange': status === 'warning'
             }"
         />
-
     </div>
-
 </template>
-
-
-<script>
-export default {
-
-    props: ['status']
-
-}
-</script>

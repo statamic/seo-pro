@@ -1,6 +1,6 @@
 <script setup>
 import { Link, Head } from '@statamic/cms/inertia';
-import {Header, CardPanel, Heading, Subheading, DocsCallout, Icon} from '@statamic/cms/ui';
+import { Header, CardPanel, Heading, Subheading, DocsCallout, Icon } from '@statamic/cms/ui';
 
 defineProps({
 	icon: String,

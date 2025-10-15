@@ -4,6 +4,7 @@ import StatusIcon from './components/reporting/StatusIcon.vue';
 import IndexScore from './components/reporting/IndexScore.vue';
 import Report from './components/reporting/Report.vue';
 import Index from './pages/Index.vue';
+import ReportsIndex from './pages/reports/Index.vue';
 import SectionDefaultsIndex from './pages/section-defaults/Index.vue';
 
 Statamic.booting(() => {
@@ -15,5 +16,6 @@ Statamic.booting(() => {
     Statamic.$components.register('seo-pro-index-score', IndexScore);
 
     Statamic.$inertia.register('seo-pro::Index', Index);
+    Statamic.$inertia.register('seo-pro::Reports/Index', ReportsIndex);
     Statamic.$inertia.register('seo-pro::SectionDefaults/Index', SectionDefaultsIndex);
 });
