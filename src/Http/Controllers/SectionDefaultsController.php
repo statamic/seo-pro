@@ -10,7 +10,7 @@ class SectionDefaultsController
 {
     public function index()
     {
-        return Inertia::render('SEOPro/SectionDefaults/Index', [
+        return Inertia::render('seo-pro::SectionDefaults/Index', [
             'collections' => Collection::all(),
             'taxonomies' => Taxonomy::all(),
         ]);

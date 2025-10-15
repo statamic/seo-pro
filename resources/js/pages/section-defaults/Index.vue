@@ -1,14 +1,15 @@
 <script setup>
-import { ref } from 'vue';
-// import { Link } from '@inertiajs/vue3';
-// import Head from '@/pages/layout/Head.vue';
+import { Link, Head } from '@statamic/cms/inertia';
 import { Header, Subheading, Panel, DocsCallout, Icon } from '@statamic/cms/ui';
 
-defineProps(['collections', 'taxonomies']);
+defineProps({
+	collections: Array,
+	taxonomies: Array,
+});
 </script>
 
 <template>
-<!--	<Head :title="__('seo-pro::messages.section_defaults')" />-->
+	<Head :title="__('seo-pro::messages.section_defaults')" />
 
 	<Header :title="__('seo-pro::messages.section_defaults')" />
 
@@ -27,7 +28,7 @@ defineProps(['collections', 'taxonomies']);
 							<td>
 								<div class="flex items-center gap-2">
 									<Icon name="collections" class="text-gray-500 me-1" />
-									<a :href="cp_url(`seo-pro/section-defaults/collections/${collection.handle}/edit`)" v-text="__(collection.title)" />
+									<Link :href="cp_url(`seo-pro/section-defaults/collections/${collection.handle}/edit`)" v-text="__(collection.title)" />
 								</div>
 							</td>
 						</tr>
@@ -50,7 +51,7 @@ defineProps(['collections', 'taxonomies']);
 							<td>
 								<div class="flex items-center gap-2">
 									<Icon name="taxonomies" class="text-gray-500 me-1" />
-									<a :href="cp_url(`seo-pro/section-defaults/taxonomies/${taxonomy.handle}/edit`)" v-text="__(taxonomy.title)" />
+									<Link :href="cp_url(`seo-pro/section-defaults/taxonomies/${taxonomy.handle}/edit`)" v-text="__(taxonomy.title)" />
 								</div>
 							</td>
 						</tr>

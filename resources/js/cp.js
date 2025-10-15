@@ -14,6 +14,6 @@ Statamic.booting(() => {
     Statamic.$components.register('seo-pro-report', Report);
     Statamic.$components.register('seo-pro-index-score', IndexScore);
 
-    Statamic.$components.register('Pages/SEOPro/Index', Index);
-    Statamic.$components.register('Pages/SEOPro/SectionDefaults/Index', SectionDefaultsIndex);
+    Statamic.$inertia.register('seo-pro::Index', Index);
+    Statamic.$inertia.register('seo-pro::SectionDefaults/Index', SectionDefaultsIndex);
 });

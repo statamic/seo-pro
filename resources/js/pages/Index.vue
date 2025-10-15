@@ -1,6 +1,5 @@
 <script setup>
-// import { Link } from '@inertiajs/vue3';
-// import Head from '@/pages/layout/Head.vue';
+import { Link, Head } from '@statamic/cms/inertia';
 import {Header, CardPanel, Heading, Subheading, DocsCallout, Icon} from '@statamic/cms/ui';
 
 defineProps({
@@ -12,15 +11,14 @@ defineProps({
 </script>
 
 <template>
-<!--	<Head :title="__('SEO Pro')" />-->
+	<Head :title="__('SEO Pro')" />
 
 	<div class="max-w-5xl mx-auto">
-		<Header :title="__('SEO Pro')" :icon /> <!-- TODO: icon -->
+		<Header :title="__('SEO Pro')" :icon />
 
 		<CardPanel>
 			<div class="flex flex-wrap starting-style-transition-children">
-				<!-- TODO: Make these Inertia Links -->
-				<a
+				<Link
 					v-if="canViewReports"
 					:href="cp_url('seo-pro/reports')"
 					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:border-dark-400 dark:hover:bg-dark-575 md:flex lg:w-1/2"
@@ -30,9 +28,9 @@ defineProps({
 						<Heading size="lg" :text="__('seo-pro::messages.reports')" />
 						<Subheading v-text="__('seo-pro::messages.seo_reports_description')" />
 					</div>
-				</a>
+				</Link>
 
-				<a
+				<Link
 					v-if="canEditSiteDefaults"
 					:href="cp_url('seo-pro/site-defaults/edit')"
 					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:border-dark-400 dark:hover:bg-dark-575 md:flex lg:w-1/2"
@@ -42,9 +40,9 @@ defineProps({
 						<Heading size="lg" :text="__('seo-pro::messages.site_defaults')" />
 						<Subheading v-text="__('seo-pro::messages.site_defaults_description')" />
 					</div>
-				</a>
+				</Link>
 
-				<a
+				<Link
 					v-if="canEditSectionDefaults"
 					:href="cp_url('seo-pro/section-defaults')"
 					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:border-dark-400 dark:hover:bg-dark-575 md:flex lg:w-1/2"
@@ -54,7 +52,7 @@ defineProps({
 						<Heading size="lg" :text="__('seo-pro::messages.section_defaults')" />
 						<Subheading v-text="__('seo-pro::messages.section_defaults_description')" />
 					</div>
-				</a>
+				</Link>
 			</div>
 		</CardPanel>
 
