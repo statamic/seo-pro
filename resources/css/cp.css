@@ -1,5 +1,7 @@
 @import "@statamic/cms/tailwind.css";
 
+@source '../**/*.vue';
+
 label[for="field_seo"] {
-    display: none;
+    @apply hidden;
 }
