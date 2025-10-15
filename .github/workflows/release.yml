@@ -20,8 +20,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build release assets
-        run: bash ./scripts/build-release.sh
+      - name: Compile assets
+        run: npm run build
 
       - name: Get Changelog
         id: changelog
