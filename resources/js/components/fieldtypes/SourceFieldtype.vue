@@ -1,7 +1,9 @@
 <script setup>
 import { Fieldtype } from '@statamic/cms';
-import { Select, Input, PublishField } from '@statamic/cms/ui';
+import { Select, Input, PublishField, injectPublishContext } from '@statamic/cms/ui';
 import { computed } from "vue";
+
+const { blueprint } = injectPublishContext();
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
@@ -33,35 +35,41 @@ const sourceTypeSelectOptions = computed(() => {
 	return options;
 });
 
-// const allowedFieldtypes = computed(() => {
-// 	return [
-// 		'text',
-// 		'textarea',
-// 		'markdown',
-// 		'bard',
-// 		...props.config.allowed_fieldtypes ?? [],
-// 	];
-// });
-
 const fieldConfig = computed(() => Object.assign(props.config.field, { placeholder: props.config.placeholder }));
 const placeholder = computed(() => props.config.placeholder);
 
-function sourceDropdownChanged(value) {
+const sourceFieldOptions = computed(() => {
+	const allowedFieldtypes = [
+		'text',
+		'textarea',
+		'markdown',
+		'bard',
+		...props.config.allowed_fieldtypes ?? [],
+	];
+
+	return blueprint.value.tabs
+		.flatMap(tab => tab.sections)
+		.flatMap(section => section.fields)
+		.filter(field => allowedFieldtypes.includes(field.type))
+		.map(field => ({ value: field.handle, label: field.display ?? field.handle }) );
+});
+
+const shouldShowSourceFieldDropdown = computed(() => sourceFieldOptions.value.length > 1);
+
+const sourceTypeDropdownChanged = (value) => {
 	let newValue = props.value;
 
 	newValue.source = value;
 
 	if (value !== 'field') {
 		newValue.value = props.meta.defaultValue;
-		updateMeta({...props.meta, fieldMeta: props.meta.defaultFieldMeta});
+		updateMeta({ ...props.meta, fieldMeta: props.meta.defaultFieldMeta });
 	}
 
 	update(newValue);
-}
+};
 
-function sourceFieldChanged(field) {
-	update({...props.value, value: field});
-}
+const sourceFieldChanged = (field) => update({ ...props.value, value: field });
 </script>
 
 <template>
@@ -74,7 +82,7 @@ function sourceFieldChanged(field) {
                 :disabled="isReadOnly"
                 :clearable="false"
                 :model-value="source"
-                @update:model-value="sourceDropdownChanged"
+                @update:model-value="sourceTypeDropdownChanged"
             />
         </div>
 
@@ -86,8 +94,38 @@ function sourceFieldChanged(field) {
             </div>
 
             <div v-else-if="source === 'field'">
-                <!-- TODO: Implement field suggestions v-select -->
+                <Select
+	                v-if="shouldShowSourceFieldDropdown"
+	                class="w-full"
+	                :placeholder="__('Field')"
+	                :options="sourceFieldOptions"
+                    :model-value="sourceField"
+                    @update:model-value="sourceFieldChanged"
+                >
+	                <template #option="option">
+		                <div class="flex items-center">
+			                <span v-text="option.label" />
+			                <span
+				                v-text="option.value"
+				                class="font-mono text-2xs text-gray-500 dark:text-dark-150"
+				                :class="{ 'ml-2': option.label }"
+			                />
+		                </div>
+	                </template>
+	                <template #selected-option="{ option }">
+		                <div class="flex items-center">
+			                <span v-text="option.label" />
+			                <span
+				                v-text="option.value"
+				                class="font-mono text-2xs text-gray-500 dark:text-dark-150"
+				                :class="{ 'ml-2': option.label }"
+			                />
+		                </div>
+	                </template>
+                </Select>
+
                 <Input
+	                v-else
 	                class="font-mono"
 	                :disabled="isReadOnly"
 	                :model-value="sourceField"
