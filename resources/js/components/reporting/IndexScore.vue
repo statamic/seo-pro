@@ -50,7 +50,7 @@ export default {
 
     methods: {
         updateScore() {
-            Statamic.$request.get(cp_url(`seo-pro/reports/${this.id}`)).then(response => {
+            Statamic.$request.get(cp_url(`seo-pro/reports/${this.id}/pages`)).then(response => {
                 if (response.data.status === 'pending' || response.data.status === 'generating') {
                     setTimeout(() => this.updateScore(), 1000);
                     return;
