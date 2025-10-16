@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
+use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blueprint;
@@ -54,7 +55,23 @@ class SeoProFieldtype extends Fieldtype
 
     protected function fields()
     {
-        return new BlueprintFields(collect($this->fieldConfig())->pluck('fields')->flatten(1)->all());
+        // SeoProFields includes actual sections. However, fieldtypes can't span across multiple
+        // sections, so we're mapping through the sections and adding the section fieldtype where necessary.
+        $fields = collect($this->fieldConfig())
+            ->map(function ($section) {
+                return [
+                    isset($section['display'])
+                        ? ['handle' => Str::slug($section['display']), 'field' => [ 'type' => 'section',  'display' => $section['display'], 'instructions' => $section['instructions']]]
+                        : null,
+                    ...$section['fields'],
+                ];
+            })
+            ->flatten(1)
+            ->filter()
+            ->values()
+            ->all();
+
+        return new BlueprintFields($fields);
     }
 
     protected function fieldConfig()
