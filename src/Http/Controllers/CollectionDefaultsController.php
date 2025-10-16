@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Statamic\Facades\Collection;
 
-class CollectionDefaultsController extends AbstractSectionDefaultsController
+class CollectionDefaultsController extends BaseSectionDefaultsController
 {
     protected static $sectionType = 'collections';
 

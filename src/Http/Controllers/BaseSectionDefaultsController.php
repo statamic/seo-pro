@@ -12,7 +12,7 @@ use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Fields;
 use Statamic\Support\Arr;
 
-abstract class AbstractSectionDefaultsController extends CpController
+abstract class BaseSectionDefaultsController extends CpController
 {
     protected static $sectionType;
 

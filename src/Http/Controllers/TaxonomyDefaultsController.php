@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Statamic\Facades\Taxonomy;
 
-class TaxonomyDefaultsController extends AbstractSectionDefaultsController
+class TaxonomyDefaultsController extends BaseSectionDefaultsController
 {
     protected static $sectionType = 'taxonomies';
 
