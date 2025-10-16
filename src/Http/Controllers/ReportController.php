@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Statamic\CP\Column;
+use Statamic\Exceptions\ForbiddenHttpException;
+use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Http\Resources\Reporting\Report as ReportResource;
@@ -69,7 +71,7 @@ class ReportController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        abort_unless($report = Report::find($id), 404);
+        throw_unless($report = Report::find($id), NotFoundHttpException::class);
 
         $report->generateIfNecessary();
 

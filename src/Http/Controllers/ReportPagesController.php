@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Statamic\CP\Column;
+use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Extensions\Pagination\LengthAwarePaginator;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
@@ -18,7 +19,7 @@ class ReportPagesController extends CpController
     {
         abort_unless(User::current()->can('view seo reports'), 403);
 
-        abort_unless($report = Report::find($id), 404);
+        throw_unless($report = Report::find($id), NotFoundHttpException::class);
 
         $sortField = request('sort', 'status');
         $sortDirection = request('order', 'asc');
