@@ -87,7 +87,7 @@ class SiteDefaults extends Collection
     protected function getDefaults()
     {
         return Blink::once('seo-pro::defaults', function () {
-            return Addon::get('statamic/seo-pro')->settings()->get('site_defaults');
+            return Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
         });
     }
 
