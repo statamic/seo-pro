@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import StatusIcon from "./StatusIcon.vue";
 import { Icon } from '@statamic/cms/ui';
 
@@ -28,10 +28,10 @@ const statusByScore = computed(() => {
 	}
 });
 
-const updateScore = () => {
-	axios.get(cp_url(`seo-pro/reports/${props.id}/pages`)).then(response => {
+const pollReport = () => {
+	axios.get(cp_url(`seo-pro/reports/${props.id}`)).then(response => {
 		if (response.data.status === 'pending' || response.data.status === 'generating') {
-			setTimeout(() => updateScore(), 1000);
+			setTimeout(() => pollReport(), 2000);
 			return;
 		}
 
@@ -40,9 +40,7 @@ const updateScore = () => {
 	});
 };
 
-onMounted(() => {
-	if (! score.value) updateScore();
-});
+if (! score.value) pollReport();
 </script>
 
 <template>

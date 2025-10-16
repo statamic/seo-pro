@@ -225,7 +225,7 @@ class Report implements Arrayable, Jsonable
         ];
 
         if ($this->isGenerated() && $this->pages() && $this->pages()->isNotEmpty()) {
-            $array['pages'] = $this->pagesToArray();
+            $array['pages'] = $this->pages()->map->toArray();
 
             Cache::put($this->cacheKey(static::TO_ARRAY_CACHE_KEY_SUFFIX), $array);
         }
@@ -258,24 +258,6 @@ class Report implements Arrayable, Jsonable
         return $array;
     }
 
-    protected function pagesToArray()
-    {
-        return $this
-            ->pages()
-            ->map(fn ($page) => $this->pageToArray($page));
-    }
-
-    protected function pageToArray($page)
-    {
-        return [
-            'status' => $page->status(),
-            'url' => $page->url(),
-            'id' => $page->id(),
-            'edit_url' => $page->editUrl(),
-            'results' => $page->getRuleResults(),
-        ];
-    }
-
     public function toJson($options = 0)
     {
         return json_encode($this->toArray());
@@ -287,7 +269,7 @@ class Report implements Arrayable, Jsonable
             return $pages;
         }
 
-        return $this->pages;
+        return $this->pages ?? collect();
     }
 
     public function withPages($preferCache = false)
@@ -316,15 +298,24 @@ class Report implements Arrayable, Jsonable
 
     public function data()
     {
+        return $this->withPages(true)->toArray();
+    }
+
+    public function generateIfNecessary(): self
+    {
         if ($this->isGenerating()) {
             return $this;
-        } elseif ($this->isPending()) {
+        }
+
+        if ($this->isPending()) {
             return $this->queueGenerate();
-        } elseif ($this->isLegacyReport()) {
+        }
+
+        if ($this->isLegacyReport()) {
             return $this->updateLegacyReport();
         }
 
-        return $this->withPages(true)->toArray();
+        return $this;
     }
 
     public static function all()

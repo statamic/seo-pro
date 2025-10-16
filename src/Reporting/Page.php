@@ -2,13 +2,14 @@
 
 namespace Statamic\SeoPro\Reporting;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Statamic\Facades\Data;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
-class Page
+class Page implements Arrayable
 {
     protected $id;
     protected $data;
@@ -158,6 +159,17 @@ class Page
             return route('settings.edit', ['settings' => 'routes']);
         }
 
-        return $this->model()->editUrl();
+        return $this->model()?->editUrl();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'status' => $this->status(),
+            'url' => $this->url(),
+            'id' => $this->id(),
+            'edit_url' => $this->editUrl(),
+            'results' => $this->getRuleResults(),
+        ];
     }
 }

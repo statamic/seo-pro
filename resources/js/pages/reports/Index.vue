@@ -20,11 +20,12 @@ const formatDate = (date) => {
 	<Head :title="__('seo-pro::messages.reports')" />
 
 	<div class="max-w-5xl mx-auto">
-		<Header :title="__('seo-pro::messages.reports')">
+		<Header :title="__('seo-pro::messages.reports')" icon="chart-monitoring-indicator">
 			<Button variant="primary" :href="createReportUrl" :text="__('seo-pro::messages.generate_report')" />
 		</Header>
 
 		<Listing
+			ref="listing"
 			:columns
 			:url="listingUrl"
 			:allow-search="false"
@@ -41,7 +42,12 @@ const formatDate = (date) => {
 					/>
 				</div>
 
-				<resource-deleter :ref="`deleter_${report.id}`" :route="report.delete_url" :resource="report" reload />
+				<resource-deleter
+					:ref="`deleter_${report.id}`"
+					:route="report.delete_url"
+					:resource="report"
+					@deleted="$refs.listing.refresh()"
+				/>
 			</template>
 			<template #cell-generated="{ row: report }">
 				<Link :href="report.url">{{ formatDate(report.date) }}</Link>
@@ -52,13 +58,14 @@ const formatDate = (date) => {
 			<template #cell-total_pages_crawled="{ row: report }">
 				<Link :href="report.url">{{ report.pages_crawled }}</Link>
 			</template>
-			<template v-if="canDeleteReports" #prepended-row-actions="{ row: report }">
+			<template #prepended-row-actions="{ row: report }">
 				<DropdownItem
 					:text="__('seo-pro::messages.view_report')"
 					:href="report.url"
 					icon="eye"
 				/>
 				<DropdownItem
+					v-if="canDeleteReports"
 					:text="__('seo-pro::messages.delete_report')"
 					icon="trash"
 					variant="destructive"

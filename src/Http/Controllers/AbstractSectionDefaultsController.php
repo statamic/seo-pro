@@ -34,6 +34,7 @@ abstract class AbstractSectionDefaultsController extends CpController
 
         return PublishForm::make($this->blueprint())
             ->asConfig()
+            ->icon('folder')
             ->title($item->title().' SEO')
             ->values($seo)
             ->submittingTo(cp_route("seo-pro.section-defaults.{$sectionType}.update", $item));

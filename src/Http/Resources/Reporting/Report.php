@@ -1,10 +1,10 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Resources;
+namespace Statamic\SeoPro\Http\Resources\Reporting;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ListedReport extends JsonResource
+class Report extends JsonResource
 {
     public function toArray($request)
     {

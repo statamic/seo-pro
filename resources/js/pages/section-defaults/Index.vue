@@ -11,19 +11,20 @@ defineProps({
 <template>
 	<Head :title="__('seo-pro::messages.section_defaults')" />
 
-	<Header :title="__('seo-pro::messages.section_defaults')" />
+	<div class="max-w-5xl mx-auto">
+		<Header :title="__('seo-pro::messages.section_defaults')" icon="folder" />
 
-	<section class="space-y-6 starting-style-transition-children">
-		<template v-if="collections.length">
-			<Subheading size="lg" class="mb-2" :text="__('Collections')" />
-			<Panel>
-				<table class="data-table">
-					<thead>
+		<section class="space-y-6 starting-style-transition-children">
+			<template v-if="collections.length">
+				<Subheading size="lg" class="mb-2" :text="__('Collections')" />
+				<Panel>
+					<table class="data-table">
+						<thead>
 						<tr>
 							<th>{{ __('Collection') }}</th>
 						</tr>
-					</thead>
-					<tbody>
+						</thead>
+						<tbody>
 						<tr v-for="collection in collections" :key="collection.handle">
 							<td>
 								<div class="flex items-center gap-2">
@@ -32,21 +33,21 @@ defineProps({
 								</div>
 							</td>
 						</tr>
-					</tbody>
-				</table>
-			</Panel>
-		</template>
+						</tbody>
+					</table>
+				</Panel>
+			</template>
 
-		<template v-if="taxonomies.length">
-			<Subheading size="lg" class="mb-2" :text="__('Taxonomies')" />
-			<Panel>
-				<table class="data-table">
-					<thead>
+			<template v-if="taxonomies.length">
+				<Subheading size="lg" class="mb-2" :text="__('Taxonomies')" />
+				<Panel>
+					<table class="data-table">
+						<thead>
 						<tr>
 							<th>{{ __('Taxonomy') }}</th>
 						</tr>
-					</thead>
-					<tbody>
+						</thead>
+						<tbody>
 						<tr v-for="taxonomy in taxonomies" :key="taxonomy.handle">
 							<td>
 								<div class="flex items-center gap-2">
@@ -55,11 +56,12 @@ defineProps({
 								</div>
 							</td>
 						</tr>
-					</tbody>
-				</table>
-			</Panel>
-		</template>
-	</section>
+						</tbody>
+					</table>
+				</Panel>
+			</template>
+		</section>
 
-	<DocsCallout :topic="__('SEO Pro')" url="https://statamic.com/addons/statamic/seo-pro/docs" />
+		<DocsCallout :topic="__('SEO Pro')" url="https://statamic.com/addons/statamic/seo-pro/docs" />
+	</div>
 </template>

@@ -6,8 +6,6 @@ const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
 const { expose, isReadOnly } = Fieldtype.use(emit, props);
 defineExpose(expose);
-
-// todo: sections?
 </script>
 
 <template>

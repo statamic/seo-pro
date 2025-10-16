@@ -89,8 +89,7 @@ const metaPathPrefix = computed(() => {
 </script>
 
 <template>
-    <div class="flex gap-y-2 gap-x-4">
-	    <!-- todo: make w-full in live preview and smaller breakpoints -->
+    <div class="flex @live-preview:flex-col gap-y-2 gap-x-4">
         <div class="w-80">
             <Select
 	            class="w-full"

@@ -4,12 +4,11 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Statamic\CP\Column;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
-use Statamic\SeoPro\Http\Resources\ListedReport;
+use Statamic\SeoPro\Http\Resources\Reporting\Report as ReportResource;
 use Statamic\SeoPro\Reporting\Report;
 
 class ReportController extends CpController
@@ -21,14 +20,16 @@ class ReportController extends CpController
         $reports = Report::all();
 
         if ($reports->isEmpty()) {
-            // todo: empty state
+            return Inertia::render('seo-pro::Reports/Empty', [
+                'createReportUrl' => cp_route('seo-pro.reports.create'),
+            ]);
         }
 
         $columns = [
-            Column::make('site_score'),
-            Column::make('generated'),
-            Column::make('actionable_pages'),
-            Column::make('total_pages_crawled'),
+            Column::make('site_score')->sortable(false),
+            Column::make('generated')->sortable(false),
+            Column::make('actionable_pages')->sortable(false),
+            Column::make('total_pages_crawled')->sortable(false),
         ];
 
         if ($request->wantsJson()) {
@@ -42,7 +43,7 @@ class ReportController extends CpController
                 currentPage: $currentPage,
             );
 
-            return ListedReport::collection($paginated)->additional([
+            return ReportResource::collection($paginated)->additional([
                 'meta' => ['columns' => $columns],
             ]);
         }
@@ -70,7 +71,17 @@ class ReportController extends CpController
 
         abort_unless($report = Report::find($id), 404);
 
-        return view('seo-pro::reports.show', ['report' => $report]);
+        $report->generateIfNecessary();
+
+        if ($request->wantsJson()) {
+            return $report->data();
+        }
+
+        return Inertia::render('seo-pro::Reports/Show', [
+            'report' => $report,
+            'createReportUrl' => cp_route('seo-pro.reports.create'),
+            'pagesUrl' => cp_route('seo-pro.reports.pages.index', $report->id()),
+        ]);
     }
 
     public function destroy($id)
