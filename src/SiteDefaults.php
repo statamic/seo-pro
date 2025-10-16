@@ -86,17 +86,30 @@ class SiteDefaults extends Collection
     protected function getDefaults()
     {
         return Blink::once('seo-pro::defaults', function () {
-            return Addon::get('statamic/seo-pro')->settings()->get('site_defaults', [
-                'site_name' => 'Site Name',
-                'site_name_position' => 'after',
-                'site_name_separator' => '|',
-                'title' => '@seo:title',
-                'description' => '@seo:content',
-                'canonical_url' => '@seo:permalink',
-                'priority' => 0.5,
-                'change_frequency' => 'monthly',
-            ]);
+            return [
+                ...$this->defaultValues(),
+                ...Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []),
+            ];
         });
+    }
+
+    /**
+     * The default values to be merged into the site's values.
+     *
+     * @return array
+     */
+    protected function defaultValues()
+    {
+        return [
+            'site_name' => 'Site Name',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => '@seo:title',
+            'description' => '@seo:content',
+            'canonical_url' => '@seo:permalink',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+        ];
     }
 
     /**
