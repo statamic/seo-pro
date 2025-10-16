@@ -72,7 +72,7 @@ class SiteDefaults extends Collection
      */
     public function save()
     {
-        Addon::get('statamic/seo-pro')->settings()->set($this->items)->save();
+        Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $this->items)->save();
 
         SiteDefaultsSaved::dispatch($this);
 
@@ -87,7 +87,7 @@ class SiteDefaults extends Collection
     protected function getDefaults()
     {
         return Blink::once('seo-pro::defaults', function () {
-            return Addon::get('statamic/seo-pro')->settings()->raw();
+            return Addon::get('statamic/seo-pro')->settings()->get('site_defaults');
         });
     }
 

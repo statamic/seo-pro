@@ -22,7 +22,9 @@ class MigrateToAddonSettings extends UpdateScript
 
         Addon::get('statamic/seo-pro')
             ->settings()
-            ->set(YAML::file($path)->parse())
+            ->set([
+                'site_defaults' => YAML::file($path)->parse(),
+            ])
             ->save();
 
         File::delete($path);

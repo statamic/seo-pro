@@ -22,8 +22,10 @@ EOT
         $settings = Addon::get('statamic/seo-pro')->settings();
 
         $this->assertEquals([
-            'title' => 'My Site',
-            'description' => 'Just another Statamic site',
+            'site_defaults' => [
+                'title' => 'My Site',
+                'description' => 'Just another Statamic site',
+            ],
         ], $settings->raw());
 
         $this->assertFileDoesNotExist(base_path('content/seo.yaml'));
