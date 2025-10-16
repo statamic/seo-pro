@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
-use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Events\SiteDefaultsSaved;
 
