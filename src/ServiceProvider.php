@@ -9,7 +9,6 @@ use Statamic\Facades\GraphQL;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
-use Statamic\SeoPro;
 
 class ServiceProvider extends AddonServiceProvider
 {
