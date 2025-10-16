@@ -24,7 +24,7 @@ class ReportPagesController extends CpController
         $sortField = $request->input('sort', 'status');
         $sortDirection = $request->input('order', 'asc');
 
-        $pages = $report->pages()
+        $pages = collect($report->pages())
             ->sortBy(
                 callback: fn ($page) => $this->sortablePageValue($page, $sortField),
                 descending: $sortDirection === 'desc',

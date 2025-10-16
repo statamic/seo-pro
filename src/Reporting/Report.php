@@ -269,7 +269,7 @@ class Report implements Arrayable, Jsonable
             return $pages;
         }
 
-        return $this->pages ?? collect();
+        return $this->pages;
     }
 
     public function withPages($preferCache = false)
