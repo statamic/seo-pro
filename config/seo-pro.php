@@ -2,10 +2,6 @@
 
 return [
 
-    'site_defaults' => [
-        'path' => base_path('content/seo.yaml'),
-    ],
-
     'assets' => [
         'container' => null,
         'folder' => null,

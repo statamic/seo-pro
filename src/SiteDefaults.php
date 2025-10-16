@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
+use Statamic\Facades\Addon;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
@@ -71,7 +72,7 @@ class SiteDefaults extends Collection
      */
     public function save()
     {
-        File::put($this->path(), YAML::dump($this->items));
+        Addon::get('statamic/seo-pro')->settings()->set($this->items)->save();
 
         SeoProSiteDefaultsSaved::dispatch($this);
 
@@ -86,20 +87,8 @@ class SiteDefaults extends Collection
     protected function getDefaults()
     {
         return Blink::once('seo-pro::defaults', function () {
-            return collect(YAML::file(__DIR__.'/../content/seo.yaml')->parse())
-                ->merge(YAML::file($this->path())->parse())
-                ->all();
+            return Addon::get('statamic/seo-pro')->settings()->raw();
         });
-    }
-
-    /**
-     * Get site defaults yaml path.
-     *
-     * @return string
-     */
-    protected function path()
-    {
-        return config('statamic.seo-pro.site_defaults.path');
     }
 
     /**
