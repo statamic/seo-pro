@@ -6,7 +6,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blink;
-use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
@@ -19,10 +18,6 @@ class CascadeTest extends TestCase
     {
         URL::enforceTrailingSlashes(false);
         URL::clearUrlCache();
-
-        if ($this->files->exists($path = base_path('custom_seo.yaml'))) {
-            $this->files->delete($path);
-        }
 
         parent::tearDown();
     }
@@ -239,51 +234,6 @@ class CascadeTest extends TestCase
 
         $this->assertEquals('404 Page Not Found', $data['title']);
         $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
-    }
-
-    #[Test]
-    public function it_generates_seo_cascade_from_custom_site_defaults_path()
-    {
-        $this->files->put(base_path('custom_seo.yaml'), <<<'EOT'
-site_name: Custom Site Name
-site_name_position: after
-site_name_separator: '|'
-title: '@seo:title'
-description: '@seo:content'
-canonical_url: '@seo:permalink'
-priority: 0.8
-change_frequency: monthly
-EOT
-        );
-
-        Config::set('statamic.seo-pro.site_defaults.path', base_path('custom_seo.yaml'));
-
-        $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->get();
-
-        $expected = [
-            'site_name' => 'Custom Site Name',
-            'site_name_position' => 'after',
-            'site_name_separator' => '|',
-            'title' => 'Home',
-            'description' => 'I see a bad-ass mother.',
-            'priority' => 0.8,
-            'change_frequency' => 'monthly',
-            'compiled_title' => 'Home | Custom Site Name',
-            'og_title' => 'Home',
-            'canonical_url' => 'http://cool-runnings.com',
-            'prev_url' => null,
-            'next_url' => null,
-            'home_url' => 'http://cool-runnings.com',
-            'humans_txt' => 'http://cool-runnings.com/humans.txt',
-            'site' => Site::get('default'),
-            'alternate_locales' => [],
-            'last_modified' => null,
-            'twitter_card' => 'summary_large_image',
-        ];
-
-        $this->assertArraySubset($expected, $data);
     }
 
     #[Test]

@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Events;
 use Statamic\Contracts\Git\ProvidesCommitMessage;
 use Statamic\Events\Event;
 
-class SeoProSiteDefaultsSaved extends Event implements ProvidesCommitMessage
+class SiteDefaultsSaved extends Event implements ProvidesCommitMessage
 {
     public $defaults;
 

@@ -1,8 +1,0 @@
-site_name: Site Name
-site_name_position: after
-site_name_separator: '|'
-title: '@seo:title'
-description: '@seo:content'
-canonical_url: '@seo:permalink'
-priority: 0.5
-change_frequency: monthly

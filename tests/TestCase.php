@@ -45,7 +45,7 @@ abstract class TestCase extends AddonTestCase
 
     protected function restoreSiteDefaults()
     {
-        if ($this->files->exists($path = base_path('content/seo.yaml'))) {
+        if ($this->files->exists($path = base_path('resources/addons/seo-pro.yaml'))) {
             $this->files->delete($path);
         }
     }

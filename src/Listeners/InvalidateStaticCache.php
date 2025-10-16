@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Statamic\Facades;
 use Statamic\Facades\URL;
-use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
+use Statamic\SeoPro\Events\SiteDefaultsSaved;
 use Statamic\Sites\Site;
 use Statamic\StaticCaching\Cacher;
 use Statamic\Support\Arr;
@@ -20,7 +20,7 @@ class InvalidateStaticCache implements ShouldQueue
         $this->rules = config('statamic.static_caching.invalidation.rules', []);
     }
 
-    public function handle(SeoProSiteDefaultsSaved $event): void
+    public function handle(SiteDefaultsSaved $event): void
     {
         if (! config('statamic.static_caching.strategy')) {
             return;
