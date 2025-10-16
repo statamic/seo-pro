@@ -8,7 +8,7 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\File;
 use Statamic\Facades\YAML;
-use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
+use Statamic\SeoPro\Events\SiteDefaultsSaved;
 
 class SiteDefaults extends Collection
 {
@@ -74,7 +74,7 @@ class SiteDefaults extends Collection
     {
         Addon::get('statamic/seo-pro')->settings()->set($this->items)->save();
 
-        SeoProSiteDefaultsSaved::dispatch($this);
+        SiteDefaultsSaved::dispatch($this);
 
         Blink::forget('seo-pro::defaults');
     }
