@@ -21,8 +21,8 @@ class ReportPagesController extends CpController
 
         throw_unless($report = Report::find($id), NotFoundHttpException::class);
 
-        $sortField = request('sort', 'status');
-        $sortDirection = request('order', 'asc');
+        $sortField = $request->input('sort', 'status');
+        $sortDirection = $request->input('order', 'asc');
 
         $pages = $report->pages()
             ->sortBy(
