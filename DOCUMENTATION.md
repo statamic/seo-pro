@@ -20,9 +20,9 @@ Empty meta tags will not be rendered, which allows you to optionally set your ow
 
 Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. The defaults will be used if you haven't set anything more specific at the collection or entry level.
 
-> Values configured here will be saved into `content/seo.yaml`.
-
 You may choose to pull data from other fields, enter hardcoded strings, or use Antlers templating. See [File Usage](#file-usage) for more details.
+
+Site Defaults are stored in `resources/addons/seo-pro.yaml` by default, but can be moved to the database via the `php please install:eloquent-driver` command.
 
 #### Static Caching
 

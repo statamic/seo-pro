@@ -3,11 +3,11 @@
 namespace Statamic\SeoPro;
 
 use Illuminate\Support\Collection;
+use Statamic\Facades\Addon;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
-use Statamic\Facades\File;
 use Statamic\Facades\YAML;
-use Statamic\SeoPro\Events\SeoProSiteDefaultsSaved;
+use Statamic\SeoPro\Events\SiteDefaultsSaved;
 
 class SiteDefaults extends Collection
 {
@@ -71,9 +71,9 @@ class SiteDefaults extends Collection
      */
     public function save()
     {
-        File::put($this->path(), YAML::dump($this->items));
+        Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $this->items)->save();
 
-        SeoProSiteDefaultsSaved::dispatch($this);
+        SiteDefaultsSaved::dispatch($this);
 
         Blink::forget('seo-pro::defaults');
     }
@@ -86,20 +86,30 @@ class SiteDefaults extends Collection
     protected function getDefaults()
     {
         return Blink::once('seo-pro::defaults', function () {
-            return collect(YAML::file(__DIR__.'/../content/seo.yaml')->parse())
-                ->merge(YAML::file($this->path())->parse())
-                ->all();
+            return [
+                ...$this->defaultValues(),
+                ...Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []),
+            ];
         });
     }
 
     /**
-     * Get site defaults yaml path.
+     * The default values to be merged into the site's values.
      *
-     * @return string
+     * @return array
      */
-    protected function path()
+    protected function defaultValues()
     {
-        return config('statamic.seo-pro.site_defaults.path');
+        return [
+            'site_name' => 'Site Name',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => '@seo:title',
+            'description' => '@seo:content',
+            'canonical_url' => '@seo:permalink',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+        ];
     }
 
     /**
