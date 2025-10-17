@@ -36,6 +36,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
+            ->bootAddonCommands()
             ->bootAddonGraphQL();
     }
 
@@ -126,6 +127,15 @@ class ServiceProvider extends AddonServiceProvider
         }
 
         Image::registerCustomManipulationPresets($presets->filter()->all());
+
+        return $this;
+    }
+
+    protected function bootAddonCommands()
+    {
+        $this->commands([
+            SeoPro\Commands\GenerateReportCommand::class,
+        ]);
 
         return $this;
     }
