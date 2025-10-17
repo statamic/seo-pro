@@ -98,6 +98,7 @@ class Cascade
             'home_url' => Str::removeRight(Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/'), '/'),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
+            'is_default_site' => Site::default()->handle() === $this->site()->handle(),
             'alternate_locales' => $alternateLocales = $this->alternateLocales(),
             'current_hreflang' => $this->currentHreflang($alternateLocales),
             'last_modified' => $this->lastModified(),
@@ -346,7 +347,8 @@ class Cascade
             ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
             ->map(function ($locale) {
                 return [
-                    'site' => Config::getSite($locale),
+                    'is_default_site' => Site::default()->handle() === $locale,
+                    'site' => Site::get($locale),
                     'url' => $this->model->in($locale)->absoluteUrl(),
                 ];
             });

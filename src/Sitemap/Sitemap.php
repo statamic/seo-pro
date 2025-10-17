@@ -4,14 +4,18 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
+use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Entries\QueryBuilder;
+use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry as EntryFacade;
+use Statamic\Facades\Site as SiteFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults;
+use Statamic\Sites\Site;
 use Statamic\Support\Traits\Hookable;
 
 class Sitemap
@@ -128,6 +132,10 @@ class Sitemap
                     ->withCurrent($content)
                     ->get();
 
+                if ($this->sites->count() > 1) {
+                    $data['hreflangs'] = $this->hrefLangs($content);
+                }
+
                 return (new Page)->with($data);
             })
             ->filter();
@@ -226,5 +234,72 @@ class Sitemap
         return Blink::once('seo-pro.site-defaults', function () {
             return SiteDefaults::load()->all();
         });
+    }
+
+    protected function hrefLangs($content): array
+    {
+        if (
+            config('statamic.seo-pro.alternate_locales') === false
+            || config('statamic.seo-pro.alternate_locales.enabled') === false
+        ) {
+            return [];
+        }
+
+        return match (true) {
+            $content instanceof Entry => $this->hrefLangsForEntry($content),
+            $content instanceof Term => $this->hrefLangsForTerm($content),
+            default => [],
+        };
+    }
+
+    private function hrefLangsForEntry(Entry $entry): array
+    {
+        $sitesWithSameDomain = $this->sitesWithSameDomain($entry->site());
+
+        return $sitesWithSameDomain
+            ->filter(fn (Site $site) => $entry->in($site->handle()))
+            ->filter(fn (Site $site) => $entry->in($site->handle())->published())
+            ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
+            ->map(fn (Site $site) => [
+                'href' => $entry->in($site->handle())->absoluteUrl(),
+                'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
+            ])
+            ->when($sitesWithSameDomain->contains($entry->root()->site()), function ($collection) use ($entry) {
+                $collection->push([
+                    'href' => $entry->root()->absoluteUrl(),
+                    'hreflang' => 'x-default',
+                ]);
+            })
+            ->all();
+    }
+
+    private function hrefLangsForTerm(Term $term): array
+    {
+        $sitesWithSameDomain = $this->sitesWithSameDomain($term->site());
+
+        return $sitesWithSameDomain
+            ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
+            ->map(fn (Site $site) => [
+                'href' => $term->in($site->handle())->absoluteUrl(),
+                'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
+            ])
+            ->when($sitesWithSameDomain->contains($term->inDefaultLocale()->locale()), function ($collection) use ($term) {
+                $collection->push([
+                    'href' => $term->inDefaultLocale()->absoluteUrl(),
+                    'hreflang' => 'x-default',
+                ]);
+            })
+            ->all();
+    }
+
+    private function sitesWithSameDomain(Site $site): IlluminateCollection
+    {
+        $pieces = parse_url($site->absoluteUrl());
+
+        $domain = $pieces['scheme'].'://'.$pieces['host'];
+
+        return SiteFacade::all()
+            ->filter(fn (Site $s) => str($s->absoluteUrl())->startsWith($domain))
+            ->values();
     }
 }
