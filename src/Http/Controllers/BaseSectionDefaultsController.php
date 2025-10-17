@@ -20,7 +20,7 @@ abstract class BaseSectionDefaultsController extends CpController
 
     public function edit($handle)
     {
-        abort_unless(User::current()->can('edit seo section defaults'), 403);
+        $this->authorize('edit seo section defaults');
 
         $sectionType = static::$sectionType;
 
@@ -42,7 +42,7 @@ abstract class BaseSectionDefaultsController extends CpController
 
     public function update($handle, Request $request)
     {
-        abort_unless(User::current()->can('edit seo section defaults'), 403);
+        $this->authorize('edit seo section defaults');
 
         $values = PublishForm::make($this->blueprint())->submit($request->all());
 

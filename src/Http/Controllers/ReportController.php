@@ -17,7 +17,7 @@ class ReportController extends CpController
 {
     public function index(Request $request)
     {
-        abort_unless(User::current()->can('view seo reports'), 403);
+        $this->authorize('view seo reports');
 
         $reports = Report::all();
 
@@ -60,7 +60,7 @@ class ReportController extends CpController
 
     public function create(Request $request)
     {
-        abort_unless(User::current()->can('view seo reports'), 403);
+        $this->authorize('view seo reports');
 
         $report = Report::create()->save();
 
@@ -69,7 +69,7 @@ class ReportController extends CpController
 
     public function show(Request $request, $id)
     {
-        abort_unless(User::current()->can('view seo reports'), 403);
+        $this->authorize('view seo reports');
 
         throw_unless($report = Report::find($id), NotFoundHttpException::class);
 
@@ -88,7 +88,7 @@ class ReportController extends CpController
 
     public function destroy($id)
     {
-        abort_unless(User::current()->can('delete seo reports'), 403);
+        $this->authorize('delete seo reports');
 
         return Report::find($id)->delete();
     }

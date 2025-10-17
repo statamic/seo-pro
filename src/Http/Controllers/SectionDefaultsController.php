@@ -5,13 +5,13 @@ namespace Statamic\SeoPro\Http\Controllers;
 use Inertia\Inertia;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Taxonomy;
-use Statamic\Facades\User;
+use Statamic\Http\Controllers\CP\CpController;
 
-class SectionDefaultsController
+class SectionDefaultsController extends CpController
 {
     public function index()
     {
-        abort_unless(User::current()->can('edit seo section defaults'), 403);
+        $this->authorize('edit seo section defaults');
 
         return Inertia::render('seo-pro::SectionDefaults/Index', [
             'collections' => Collection::all(),

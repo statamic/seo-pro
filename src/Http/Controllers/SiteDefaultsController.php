@@ -12,7 +12,7 @@ class SiteDefaultsController extends CpController
 {
     public function edit()
     {
-        abort_unless(User::current()->can('edit seo site defaults'), 403);
+        $this->authorize('edit seo site defaults');
 
         $siteDefaults = SiteDefaults::load();
 
@@ -26,7 +26,7 @@ class SiteDefaultsController extends CpController
 
     public function update(Request $request)
     {
-        abort_unless(User::current()->can('edit seo site defaults'), 403);
+        $this->authorize('edit seo site defaults');
 
         $values = PublishForm::make(SiteDefaults::load()->blueprint())->submit($request->all());
 
