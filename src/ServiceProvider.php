@@ -10,24 +10,10 @@ use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
-use Statamic\SeoPro;
 
 class ServiceProvider extends AddonServiceProvider
 {
     use GetsSectionDefaults;
-
-    protected $tags = [
-        SeoPro\Tags\SeoProTags::class,
-    ];
-
-    protected $fieldtypes = [
-        SeoPro\Fieldtypes\SeoProFieldtype::class,
-        SeoPro\Fieldtypes\SourceFieldtype::class,
-    ];
-
-    protected $widgets = [
-        SeoPro\Widgets\SeoProWidget::class,
-    ];
 
     protected $vite = [
         'input' => [
@@ -36,11 +22,6 @@ class ServiceProvider extends AddonServiceProvider
         ],
         'publicDirectory' => 'resources/dist',
         'hotFile' => __DIR__.'/../resources/dist/hot',
-    ];
-
-    protected $routes = [
-        'cp' => __DIR__.'/../routes/cp.php',
-        'web' => __DIR__.'/../routes/web.php',
     ];
 
     protected $config = false;
@@ -55,7 +36,6 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
-            ->bootAddonCommands()
             ->bootAddonGraphQL();
     }
 
@@ -146,15 +126,6 @@ class ServiceProvider extends AddonServiceProvider
         }
 
         Image::registerCustomManipulationPresets($presets->filter()->all());
-
-        return $this;
-    }
-
-    protected function bootAddonCommands()
-    {
-        $this->commands([
-            SeoPro\Commands\GenerateReportCommand::class,
-        ]);
 
         return $this;
     }
