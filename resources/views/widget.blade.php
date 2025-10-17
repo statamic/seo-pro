@@ -1,6 +1,6 @@
 <seo-pro-widget
     icon="{{ $icon }}"
     reports-url="{{ $reportsUrl }}"
-    create-report-url="{{ $createReportUrl }}"
+    create-url="{{ $createUrl }}"
     :report='@json($report->toArray())'
 ></seo-pro-widget>

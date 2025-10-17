@@ -1,9 +1,12 @@
 <script setup>
 import { Icon, EmptyStateMenu, EmptyStateItem, DocsCallout } from '@statamic/cms/ui';
 import { onMounted, onUnmounted } from 'vue';
+import useArchitecturalBackground from "../../architectural-background";
+
+useArchitecturalBackground();
 
 defineProps({
-	createReportUrl: String,
+	createUrl: String,
 });
 
 const className = 'bg-architectural-lines';
@@ -31,7 +34,7 @@ onUnmounted(() => remove());
 
 	<EmptyStateMenu :heading="__('seo-pro::messages.first_report')">
 		<EmptyStateItem
-			:href="createReportUrl"
+			:href="createUrl"
 			icon="chart-monitoring-indicator"
 			:heading="__('seo-pro::messages.generate_report')"
 			:description="__('seo-pro::messages.seo_reports_description')"

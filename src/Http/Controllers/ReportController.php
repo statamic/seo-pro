@@ -23,7 +23,7 @@ class ReportController extends CpController
 
         if ($reports->isEmpty()) {
             return Inertia::render('seo-pro::Reports/Empty', [
-                'createReportUrl' => cp_route('seo-pro.reports.create'),
+                'createUrl' => cp_route('seo-pro.reports.create'),
             ]);
         }
 
@@ -53,8 +53,8 @@ class ReportController extends CpController
         return Inertia::render('seo-pro::Reports/Index', [
             'columns' => $columns,
             'listingUrl' => cp_route('seo-pro.reports.index'),
-            'createReportUrl' => cp_route('seo-pro.reports.create'),
-            'canDeleteReports' => User::current()->can('delete seo reports'),
+            'createUrl' => cp_route('seo-pro.reports.create'),
+            'canDelete' => User::current()->can('delete seo reports'),
         ]);
     }
 

@@ -13,7 +13,7 @@ class SeoProWidget extends Widget
         return view('seo-pro::widget', [
             'icon' => File::get(__DIR__.'/../../resources/svg/nav-icon.svg'),
             'reportsUrl' => cp_route('seo-pro.reports.index'),
-            'createReportUrl' => cp_route('seo-pro.reports.create'),
+            'createUrl' => cp_route('seo-pro.reports.create'),
             'report' => Report::latestGenerated(),
         ]);
     }

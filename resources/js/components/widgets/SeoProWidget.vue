@@ -4,7 +4,7 @@ import { Widget, Button, Description } from '@statamic/cms/ui';
 defineProps({
 	icon: String,
 	reportsUrl: String,
-	createReportUrl: String,
+	createUrl: String,
 	report: Object,
 });
 </script>
@@ -12,7 +12,7 @@ defineProps({
 <template>
 	<Widget :title="__('SEO Pro')" :icon>
 		<template #actions>
-			<Button :href="reportsUrl" :text="__('seo-pro::messages.reports')" />
+			<Button :href="reportsUrl" size="sm" :text="__('seo-pro::messages.reports')" />
 		</template>
 
 		<div v-if="report" class="flex flex-col items-center justify-center gap-4" style="min-height: 159px">
@@ -31,7 +31,7 @@ defineProps({
 
 		<div v-else class="flex flex-col items-center justify-center gap-4" style="min-height: 159px">
 			<Description :text="__('seo-pro::messages.report_no_results_text')" />
-			<Button :href="reportsUrl" variant="primary" :text="__('seo-pro::messages.generate_your_first_report')" />
+			<Button :href="createUrl" variant="primary" :text="__('seo-pro::messages.generate_your_first_report')" />
 		</div>
 	</Widget>
 </template>

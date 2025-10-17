@@ -7,8 +7,8 @@ import IndexScore from '../../components/reporting/IndexScore.vue';
 defineProps({
 	columns: Array,
 	listingUrl: String,
-	createReportUrl: String,
-	canDeleteReports: Boolean,
+	createUrl: String,
+	canDelete: Boolean,
 });
 
 const formatDate = (date) => {
@@ -21,7 +21,7 @@ const formatDate = (date) => {
 
 	<div class="max-w-5xl mx-auto">
 		<Header :title="__('seo-pro::messages.reports')" icon="chart-monitoring-indicator">
-			<Button variant="primary" :href="createReportUrl" :text="__('seo-pro::messages.generate_report')" />
+			<Button variant="primary" :href="createUrl" :text="__('seo-pro::messages.generate_report')" />
 		</Header>
 
 		<Listing
@@ -65,7 +65,7 @@ const formatDate = (date) => {
 					icon="eye"
 				/>
 				<DropdownItem
-					v-if="canDeleteReports"
+					v-if="canDelete"
 					:text="__('seo-pro::messages.delete_report')"
 					icon="trash"
 					variant="destructive"
