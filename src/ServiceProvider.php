@@ -134,7 +134,7 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonCommands()
     {
         $this->commands([
-            SeoPro\Commands\GenerateReportCommand::class,
+            Commands\GenerateReportCommand::class,
         ]);
 
         return $this;
