@@ -23,8 +23,23 @@ return [
     'canonical_url' => 'Canonieke URL',
     'canonical_url_instruct' => 'Kies een bestaand veld om in te stellen als uw **standaard** canonieke URL. Elke collectie en taxonomie kan ook zijn eigen standaard hebben.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Kies opties voor de robots meta-tag. noindex voorkomt dat de pagina wordt geïndexeerd door zoekmachines. nofollow voorkomt dat zoekmachines links crawlen.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Controleer hoe zoekmachines uw pagina\'s crawlen en indexeren.',
+
+    'robots_indexing' => 'Indexering',
+    'robots_indexing_instruct' => 'Controleer of zoekmachines deze pagina kunnen indexeren.',
+
+    'robots_following' => 'Link Volgen',
+    'robots_following_instruct' => 'Controleer of zoekmachines links op deze pagina kunnen volgen.',
+
+    'robots_noarchive' => 'Geen Archief',
+    'robots_noarchive_instruct' => 'Voorkomen dat zoekmachines een gecachte link naar deze pagina tonen.',
+
+    'robots_noimageindex' => 'Geen Afbeelding Index',
+    'robots_noimageindex_instruct' => 'Voorkomen dat zoekmachines afbeeldingen op deze pagina indexeren.',
+
+    'robots_nosnippet' => 'Geen Snippet',
+    'robots_nosnippet_instruct' => 'Voorkomen dat zoekmachines een tekstsnippet voor deze pagina tonen.',
 
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van uw metadata en siteconfiguratie.',

@@ -23,8 +23,23 @@ return [
     'canonical_url' => 'Canonical URL',
     'canonical_url_instruct' => 'Vælg et eksisterende felt til at indstille som din **standard** canonical URL. Hver samling og taksonomi kan også have sin egen standard.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Vælg muligheder for robots meta tag. noindex forhindrer at siden bliver indekseret af søgemaskiner. nofollow forhindrer søgemaskiner i at kravle links.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Kontroller hvordan søgemaskiner kravler og indekserer dine sider.',
+
+    'robots_indexing' => 'Indeksering',
+    'robots_indexing_instruct' => 'Kontroller om søgemaskiner kan indeksere denne side.',
+
+    'robots_following' => 'Link Følgning',
+    'robots_following_instruct' => 'Kontroller om søgemaskiner kan følge links på denne side.',
+
+    'robots_noarchive' => 'Ingen Arkivering',
+    'robots_noarchive_instruct' => 'Forhindre søgemaskiner i at vise en cached link til denne side.',
+
+    'robots_noimageindex' => 'Ingen Billede Indeksering',
+    'robots_noimageindex_instruct' => 'Forhindre søgemaskiner i at indeksere billeder på denne side.',
+
+    'robots_nosnippet' => 'Ingen Snippet',
+    'robots_nosnippet_instruct' => 'Forhindre søgemaskiner i at vise en tekstsnippet for denne side.',
 
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'Vi genererer automatisk de fleste Open Graph-felter fra dine meta-data og webstedskonfiguration.',

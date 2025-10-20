@@ -199,22 +199,75 @@ class SiteDefaults extends Collection
                                         'localizable' => true,
                                     ],
                                 ],
+                            ],
+                        ],
+                    ],
+                ],
+                'robots' => [
+                    'display' => __('seo-pro::fieldsets/defaults.robots_section'),
+                    'instructions' => __('seo-pro::fieldsets/defaults.robots_section_instruct'),
+                    'sections' => [
+                        [
+                            'display' => __('seo-pro::fieldsets/defaults.robots_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.robots_section_instruct'),
+                            'fields' => [
                                 [
-                                    'handle' => 'robots',
+                                    'handle' => 'robots_indexing',
                                     'field' => [
-                                        'display' => __('seo-pro::fieldsets/defaults.robots'),
-                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_instruct'),
-                                        'type' => 'select',
-                                        'multiple' => true,
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_indexing'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_indexing_instruct'),
+                                        'type' => 'button_group',
                                         'options' => [
-                                            'noindex',
-                                            'nofollow',
+                                            'index' => 'Index',
+                                            'noindex' => 'Noindex',
                                         ],
+                                        'default' => 'index',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'robots_following',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_following'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_following_instruct'),
+                                        'type' => 'button_group',
+                                        'options' => [
+                                            'follow' => 'Follow',
+                                            'nofollow' => 'Nofollow',
+                                        ],
+                                        'default' => 'follow',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'robots_noarchive',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_noarchive'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_noarchive_instruct'),
+                                        'type' => 'toggle',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'robots_noimageindex',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_noimageindex'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_noimageindex_instruct'),
+                                        'type' => 'toggle',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'robots_nosnippet',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_nosnippet'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_nosnippet_instruct'),
+                                        'type' => 'toggle',
                                         'localizable' => true,
                                     ],
                                 ],
                             ],
-                        ]
+                        ],
                     ],
                 ],
                 'opengraph' => [

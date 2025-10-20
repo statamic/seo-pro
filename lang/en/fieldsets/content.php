@@ -24,7 +24,25 @@ return [
     'canonical_url_instruct' => 'Every URL in your site should have a unique canonical URL.',
 
     'robots' => 'Robots',
-    'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
+    'robots_instruct' => 'Control how search engines crawl and index this page.',
+
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Control how search engines crawl and index this page.',
+
+    'robots_indexing' => 'Indexing',
+    'robots_indexing_instruct' => 'Control whether search engines can index this page.',
+
+    'robots_following' => 'Link Following',
+    'robots_following_instruct' => 'Control whether search engines can follow links on this page.',
+
+    'robots_noarchive' => 'No Archive',
+    'robots_noarchive_instruct' => 'Prevent search engines from showing a cached link to this page.',
+
+    'robots_noimageindex' => 'No Image Index',
+    'robots_noimageindex_instruct' => 'Prevent search engines from indexing images on this page.',
+
+    'robots_nosnippet' => 'No Snippet',
+    'robots_nosnippet_instruct' => 'Prevent search engines from showing a text snippet for this page.',
 
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
