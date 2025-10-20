@@ -1,12 +1,11 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers;
+namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Statamic\CP\Column;
-use Statamic\Exceptions\ForbiddenHttpException;
 use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;

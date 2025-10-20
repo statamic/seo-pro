@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers;
+namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Statamic\Facades\Taxonomy;
 

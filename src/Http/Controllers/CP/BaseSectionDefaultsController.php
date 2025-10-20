@@ -1,13 +1,12 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers;
+namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Illuminate\Http\Request;
 use Statamic\Contracts\Entries\Collection;
 use Statamic\Contracts\Taxonomies\Taxonomy;
 use Statamic\CP\PublishForm;
 use Statamic\Facades\Blueprint;
-use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Fields;
 use Statamic\Support\Arr;
