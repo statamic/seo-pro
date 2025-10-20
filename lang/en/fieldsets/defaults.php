@@ -6,25 +6,40 @@ return [
     'meta_section_instruct' => 'Every URL in your site should have a unique meta title and description.',
 
     'title' => 'Meta Title',
-    'title_instruct' => 'Pick an existing field to set as your **default** meta title. Each Collection and Taxonomy can also have its own default.',
+    'title_instruct' => 'Choose the field to use for your page titles',
 
     'description' => 'Meta Description',
-    'description_instruct' => 'Pick an existing field to set as your **default** meta description. Each Collection and Taxonomy can also have its own default.',
+    'description_instruct' => 'Choose the field to use for your meta descriptions',
 
     'site_name' => 'Site Name',
-    'site_name_instruct' => "It's common practice to include the site's name in meta titles.",
+    'site_name_instruct' => 'Your site\'s name, added to meta titles for brand consistency.',
 
-    'site_name_position' => 'Site Name Position',
-    'site_name_position_instruct' => 'Before or after the the meta title is up to you.',
+    'site_name_position' => 'Name Position',
+    'site_name_position_instruct' => 'Show your site name before or after the page title. Or not at all.',
 
-    'site_name_separator' => 'Site Name Separator',
-    'site_name_separator_instruct' => 'The character(s) between the title and site name.',
+    'site_name_separator' => 'Separator',
+    'site_name_separator_instruct' => 'Choose what appears between the page title and site name.',
 
     'canonical_url' => 'Canonical URL',
-    'canonical_url_instruct' => 'Pick an existing field to set as your **default** canonical URL. Each Collection and Taxonomy can also have its own default.',
+    'canonical_url_instruct' => 'Choose the field for your canonical URLs (usually `permalink`).',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Control how search engines crawl and index your pages.',
+
+    'robots_indexing' => 'Indexing',
+    'robots_indexing_instruct' => 'Control whether search engines can index this site.',
+
+    'robots_following' => 'Link Following',
+    'robots_following_instruct' => 'Control whether search engines can follow links for this site.',
+
+    'robots_noarchive' => 'No Archive',
+    'robots_noarchive_instruct' => 'Prevent search engines from showing cached links for this site.',
+
+    'robots_noimageindex' => 'No Image Index',
+    'robots_noimageindex_instruct' => 'Prevent search engines from indexing images on this site.',
+
+    'robots_nosnippet' => 'No Snippet',
+    'robots_nosnippet_instruct' => 'Prevent search engines from showing text snippets for this site.',
 
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
@@ -33,36 +48,36 @@ return [
     'image_instruct' => 'Choose a default image field to represent each URL when shared on social networks.',
 
     'og_title' => 'Open Graph Title',
-    'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
+    'og_title_instruct' => 'Choose the field for your Open Graph titles.',
 
-    'social_section' => 'X',
-    'social_section_instruct' => 'We automatically generate most X card fields from your meta data and site configuration.',
+    'social_section' => 'X (Twitter)',
+    'social_section_instruct' => 'Choose the field for your X card titles and descriptions.',
 
-    'twitter_handle' => 'X Handle',
-    'twitter_handle_instruct' => 'Choose a default X handle that corresponds to the site.',
+    'twitter_handle' => 'Handle',
+    'twitter_handle_instruct' => 'Choose the field for your X handle.',
 
-    'twitter_title' => 'X Card Title',
-    'twitter_title_instruct' => 'Pick an existing field or custom value to set as your X card title.',
+    'twitter_title' => 'Card Title',
+    'twitter_title_instruct' => 'Choose the field for your X card titles.',
 
-    'twitter_description' => 'X Card Description',
-    'twitter_description_instruct' => 'Pick an existing field or custom value to set as your X card description.',
+    'twitter_description' => 'Card Description',
+    'twitter_description_instruct' => 'Choose the field or set a custom value for your default X card descriptions.',
 
     'sitemap_section' => 'Site Map',
-    'sitemap_section_instruct' => "Choose your default sitemap settings. If you're not sure, leave them blank for the standard default values.",
+    'sitemap_section_instruct' => 'Choose your sitemap settings.',
 
     'priority' => 'Priority',
-    'priority_instruct' => 'The priority of this URL relative to other URLs on your site. Valid values range from `0.0` to `1.0`.',
+    'priority_instruct' => 'Set the priority of this page in the sitemap. Valid values range from `0.0` to `1.0`.',
 
     'change_frequency' => 'Change Frequency',
-    'change_frequency_instruct' => 'A hint to search engines on how frequently the page is likely to change.',
+    'change_frequency_instruct' => 'Set how often the page is likely to change.',
 
     'search_section' => 'Search Engines',
-    'search_section_instruct' => "Verifying your site with popular search engines will help you track how well they're crawling your site.",
+    'search_section_instruct' => "Verify your site with popular search engines to track how well they're crawling your site.",
 
     'bing_verification' => 'Bing Verification Code',
-    'bing_verification_instruct' => 'Get your Bing verification code in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
+    'bing_verification_instruct' => 'Enter your Bing verification code in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
 
     'google_verification' => 'Google Verification Code',
-    'google_verification_instruct' => 'Get your Google verification code in [Google Search Console](https://search.google.com/search-console).',
+    'google_verification_instruct' => 'Enter your Google verification code in [Google Search Console](https://search.google.com/search-console).',
 
 ];

@@ -25,8 +25,23 @@ return [
     'canonical_url' => 'Canonical URL',
     'canonical_url_instruct' => 'Vælg et eksisterende felt som denne sektions **standard** canonical URL.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Vælg indstillinger for robots meta-tagget. noindex forhindrer, at siden indekseres af søgemaskiner. nofollow forhindrer, at søgemaskinerne crawler links.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Kontroller hvordan søgemaskiner kravler og indekserer sider i denne sektion.',
+
+    'robots_indexing' => 'Indeksering',
+    'robots_indexing_instruct' => 'Kontroller om søgemaskiner kan indeksere sider i denne sektion.',
+
+    'robots_following' => 'Link Følgning',
+    'robots_following_instruct' => 'Kontroller om søgemaskiner kan følge links på sider i denne sektion.',
+
+    'robots_noarchive' => 'Ingen Arkivering',
+    'robots_noarchive_instruct' => 'Forhindre søgemaskiner i at vise cached links for sider i denne sektion.',
+
+    'robots_noimageindex' => 'Ingen Billede Indeksering',
+    'robots_noimageindex_instruct' => 'Forhindre søgemaskiner i at indeksere billeder på sider i denne sektion.',
+
+    'robots_nosnippet' => 'Ingen Snippet',
+    'robots_nosnippet_instruct' => 'Forhindre søgemaskiner i at vise tekstsnippets for sider i denne sektion.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'Vi genererer automatisk de fleste Open Graph-felter fra din meta data og websteds konfiguration.',

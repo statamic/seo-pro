@@ -20,6 +20,27 @@ return [
     'description' => 'Description Meta',
     'description_instruct' => 'Choisissez un champ existant à définir comme ** méta description ** par défaut. Chaque collection et taxonomie peut également avoir son propre défaut.',
 
+    'canonical_url' => 'URL Canonique',
+    'canonical_url_instruct' => 'Choisissez un champ existant à définir comme ** URL canonique ** par défaut. Chaque collection et taxonomie peut également avoir son propre défaut.',
+
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Contrôlez comment les moteurs de recherche explorent et indexent vos pages.',
+
+    'robots_indexing' => 'Indexation',
+    'robots_indexing_instruct' => 'Contrôlez si les moteurs de recherche peuvent indexer cette page.',
+
+    'robots_following' => 'Suivi des Liens',
+    'robots_following_instruct' => 'Contrôlez si les moteurs de recherche peuvent suivre les liens sur cette page.',
+
+    'robots_noarchive' => 'Pas d\'Archive',
+    'robots_noarchive_instruct' => 'Empêcher les moteurs de recherche d\'afficher un lien en cache vers cette page.',
+
+    'robots_noimageindex' => 'Pas d\'Index d\'Images',
+    'robots_noimageindex_instruct' => 'Empêcher les moteurs de recherche d\'indexer les images sur cette page.',
+
+    'robots_nosnippet' => 'Pas de Snippet',
+    'robots_nosnippet_instruct' => 'Empêcher les moteurs de recherche d\'afficher un extrait de texte pour cette page.',
+
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'Nous générons automatiquement la plupart des champs Open Graph à partir de vos métadonnées et de la configuration de votre site..',
 

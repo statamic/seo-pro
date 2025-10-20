@@ -25,8 +25,23 @@ return [
     'canonical_url' => 'Kanonische URL',
     'canonical_url_instruct' => 'Wähle für die kanonischen URLs in diesem Bereich ein vorhandenes Feld als Standard.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Wähle Optionen für das Robots Meta-Tag. `noindex` verhindert, dass die Seite von Suchmaschinen indexiert wird. `nofollow` verhindert, dass Suchmaschinen Links crawlen.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Kontrolliere, wie Suchmaschinen Seiten in diesem Bereich crawlen und indizieren.',
+
+    'robots_indexing' => 'Indizierung',
+    'robots_indexing_instruct' => 'Kontrolliere, ob Suchmaschinen Seiten in diesem Bereich indizieren können.',
+
+    'robots_following' => 'Link-Verfolgung',
+    'robots_following_instruct' => 'Kontrolliere, ob Suchmaschinen Links auf Seiten in diesem Bereich verfolgen können.',
+
+    'robots_noarchive' => 'Kein Archiv',
+    'robots_noarchive_instruct' => 'Verhindere, dass Suchmaschinen gecachte Links für Seiten in diesem Bereich anzeigen.',
+
+    'robots_noimageindex' => 'Kein Bild-Index',
+    'robots_noimageindex_instruct' => 'Verhindere, dass Suchmaschinen Bilder auf Seiten in diesem Bereich indizieren.',
+
+    'robots_nosnippet' => 'Kein Snippet',
+    'robots_nosnippet_instruct' => 'Verhindere, dass Suchmaschinen Text-Snippets für Seiten in diesem Bereich anzeigen.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'Wir erstellen die meisten Open-Graph Felder automatisch aus deinen Metadaten und der Website-Konfiguration.',

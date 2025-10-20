@@ -23,8 +23,20 @@ return [
     'canonical_url' => 'URL canonico',
     'canonical_url_instruct' => 'Ogni URL del tuo sito dovrebbe avere un URL canonico univoco.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Scegli le opzioni per il meta tag robots. noindex impedisce l’indicizzazione, nofollow impedisce la scansione dei link.',
+    'robots_indexing' => 'Indicizzazione',
+    'robots_indexing_instruct' => 'Controlla se i motori di ricerca possono indicizzare questa pagina.',
+
+    'robots_following' => 'Seguimento Link',
+    'robots_following_instruct' => 'Controlla se i motori di ricerca possono seguire i link su questa pagina.',
+
+    'robots_noarchive' => 'Nessun Archivio',
+    'robots_noarchive_instruct' => 'Impedire ai motori di ricerca di mostrare un link in cache a questa pagina.',
+
+    'robots_noimageindex' => 'Nessun Indice Immagini',
+    'robots_noimageindex_instruct' => 'Impedire ai motori di ricerca di indicizzare le immagini su questa pagina.',
+
+    'robots_nosnippet' => 'Nessun Snippet',
+    'robots_nosnippet_instruct' => 'Impedire ai motori di ricerca di mostrare un frammento di testo per questa pagina.',
 
     'image' => 'Immagine social',
     'image_instruct' => 'Questa immagine sarà utilizzata come anteprima sui social network.',

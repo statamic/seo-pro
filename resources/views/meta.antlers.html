@@ -76,7 +76,7 @@
     {{ /image }}
 {{ /if }}
 
-{{ unless (robots | raw | contains('noindex')) }}
+{{ unless (robots_indexing == 'noindex') }}
     <link href="{{ home_url | striptags | entities | trim }}" rel="home" />
     <link href="{{ canonical_url | striptags | entities | trim }}" rel="canonical" />
 

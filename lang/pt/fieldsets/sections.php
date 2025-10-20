@@ -13,6 +13,27 @@ return [
     'description' => 'Meta Descrição',
     'description_instruct' => 'Escolha um campo existente para definir como meta descrição **padrão** da seção.',
 
+    'canonical_url' => 'URL Canônica',
+    'canonical_url_instruct' => 'Escolha um campo existente para definir como sua URL canônica **padrão**. Cada coleção e taxonomia também podem ter o seu próprio padrão.',
+
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Controle como os motores de busca rastreiam e indexam páginas nesta seção.',
+
+    'robots_indexing' => 'Indexação',
+    'robots_indexing_instruct' => 'Controle se os motores de busca podem indexar páginas nesta seção.',
+
+    'robots_following' => 'Seguimento de Links',
+    'robots_following_instruct' => 'Controle se os motores de busca podem seguir links em páginas desta seção.',
+
+    'robots_noarchive' => 'Sem Arquivo',
+    'robots_noarchive_instruct' => 'Prevenir que os motores de busca mostrem links em cache para páginas desta seção.',
+
+    'robots_noimageindex' => 'Sem Índice de Imagens',
+    'robots_noimageindex_instruct' => 'Prevenir que os motores de busca indexem imagens em páginas desta seção.',
+
+    'robots_nosnippet' => 'Sem Snippet',
+    'robots_nosnippet_instruct' => 'Prevenir que os motores de busca mostrem fragmentos de texto para páginas desta seção.',
+
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'Nós geramos automaticamente a maioria dos campos do Open Graph a partir dos seus metadados e configuração do site.',
 

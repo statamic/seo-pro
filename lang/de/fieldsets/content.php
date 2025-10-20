@@ -23,8 +23,23 @@ return [
     'canonical_url' => 'Kanonische URL',
     'canonical_url_instruct' => 'Jede URL auf deiner Website sollte eine eindeutige kanonische URL haben.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Wähle Optionen für das Robots Meta-Tag. `noindex` verhindert, dass die Seite von Suchmaschinen indiziert wird. `nofollow` verhindert, dass Suchmaschinen Links crawlen.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Kontrolliere, wie Suchmaschinen diese Seite crawlen und indizieren.',
+
+    'robots_indexing' => 'Indizierung',
+    'robots_indexing_instruct' => 'Kontrolliere, ob Suchmaschinen diese Seite indizieren können.',
+
+    'robots_following' => 'Link-Verfolgung',
+    'robots_following_instruct' => 'Kontrolliere, ob Suchmaschinen Links auf dieser Seite verfolgen können.',
+
+    'robots_noarchive' => 'Kein Archiv',
+    'robots_noarchive_instruct' => 'Verhindere, dass Suchmaschinen einen gecachten Link zu dieser Seite anzeigen.',
+
+    'robots_noimageindex' => 'Kein Bild-Index',
+    'robots_noimageindex_instruct' => 'Verhindere, dass Suchmaschinen Bilder auf dieser Seite indizieren.',
+
+    'robots_nosnippet' => 'Kein Snippet',
+    'robots_nosnippet_instruct' => 'Verhindere, dass Suchmaschinen ein Text-Snippet für diese Seite anzeigen.',
 
     'image' => 'Social Media Bild',
     'image_instruct' => 'Dieses Bild wird als Vorschaubild für soziale Netzwerke verwendet.',

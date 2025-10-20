@@ -89,8 +89,8 @@ const metaPathPrefix = computed(() => {
 </script>
 
 <template>
-    <div class="flex @live-preview:flex-col gap-y-2 gap-x-4">
-        <div class="w-80">
+    <div class="flex @live-preview:flex-col items-center gap-y-2 gap-x-4">
+        <div class="w-64">
             <Select
 	            class="w-full"
                 :options="sourceTypeSelectOptions"
@@ -103,9 +103,10 @@ const metaPathPrefix = computed(() => {
 
         <div class="flex-1">
             <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
-                <template v-if="placeholder !== false">
+                <ui-description v-if="placeholder" class="flex items-center gap-x-2">
+                    <!-- <ui-icon name="node-connect" class="size-3" /> -->
                     {{ placeholder }}
-                </template>
+                </ui-description>
             </div>
 
             <div v-else-if="source === 'field'">
