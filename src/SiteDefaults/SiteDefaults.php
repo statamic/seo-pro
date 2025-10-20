@@ -1,17 +1,75 @@
 <?php
 
-namespace Statamic\SeoPro;
+namespace Statamic\SeoPro\SiteDefaults;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
-use Statamic\Facades\YAML;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Events\SiteDefaultsSaved;
+use Statamic\SeoPro\Fields;
+use Statamic\SeoPro\HasAssetField;
 
+// todo: stop extending Collection
 class SiteDefaults extends Collection
 {
     use HasAssetField;
+
+    // todo: rename
+    public static function newGet(): Collection
+    {
+        $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+
+        // TODO: Should these defaults not exist on the blueprint fields?
+        if (empty($data)) {
+            $data = Site::multiEnabled() ? [Site::current()->handle() => self::defaultValues()] : self::defaultValues();
+        }
+
+        return Site::all()->map(function ($site) use ($data) {
+            $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : '', []);
+
+            return new LocalizedSiteDefaults($site->handle(), collect($values));
+        });
+    }
+
+    public static function origins(): Collection
+    {
+        return config()->collection(
+            key: 'statamic.seo-pro.site_defaults.origins',
+            default: Site::all()->mapWithKeys(fn ($site) => [$site->handle() => null])->all()
+        );
+    }
+
+    public static function in(string $locale): ?LocalizedSiteDefaults
+    {
+        if (! self::newGet()->has($locale)) {
+            return null;
+        }
+
+        return self::newGet()->get($locale);
+    }
+
+    // todo: rename
+    public static function newSave(LocalizedSiteDefaults $localized)
+    {
+        $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+
+        if (Site::multiEnabled()) {
+            $data[$localized->locale()] = $localized->all();
+        } else {
+            $data = $localized->all();
+        }
+
+        Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $data)->save();
+
+        return true;
+    }
+
+
+
+
 
     /**
      * Load site defaults collection.
@@ -28,6 +86,8 @@ class SiteDefaults extends Collection
     }
 
     /**
+     * @deprecated
+     *
      * Load site defaults collection.
      *
      * @param  array|Collection|null  $items
@@ -41,6 +101,8 @@ class SiteDefaults extends Collection
     }
 
     /**
+     * @deprecated
+     *
      * Get augmented.
      *
      * @return array
@@ -67,13 +129,13 @@ class SiteDefaults extends Collection
     }
 
     /**
+     * @deprecated
+     *
      * Save site defaults collection to yaml.
      */
     public function save()
     {
         Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $this->items)->save();
-
-        SiteDefaultsSaved::dispatch($this);
 
         Blink::forget('seo-pro::defaults');
     }
@@ -87,7 +149,7 @@ class SiteDefaults extends Collection
     {
         return Blink::once('seo-pro::defaults', function () {
             return [
-                ...$this->defaultValues(),
+                ...self::defaultValues(),
                 ...Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []),
             ];
         });
@@ -98,7 +160,7 @@ class SiteDefaults extends Collection
      *
      * @return array
      */
-    protected function defaultValues()
+    private static function defaultValues(): array
     {
         return [
             'site_name' => 'Site Name',
@@ -119,6 +181,8 @@ class SiteDefaults extends Collection
      */
     public function blueprint()
     {
+        // todo: move this to its own class
+
         return Blueprint::make()->setContents([
             'tabs' => [
                 'meta' => [

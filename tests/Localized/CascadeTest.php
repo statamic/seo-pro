@@ -5,7 +5,7 @@ namespace Tests\Localized;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class CascadeTest extends LocalizedTestCase
 {

@@ -4,13 +4,17 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Statamic\Console\Commands\Multisite;
+use Statamic\Facades\Addon;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\File;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
+use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -38,7 +42,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootAddonCommands()
-            ->bootAddonGraphQL();
+            ->bootAddonGraphQL()
+            ->bootMultisiteCommandHook();
     }
 
     protected function bootAddonConfig()
@@ -162,6 +167,19 @@ class ServiceProvider extends AddonServiceProvider
 
         GraphQL::addField('EntryInterface', 'seo', $seoField);
         GraphQL::addField('TermInterface', 'seo', $seoField);
+
+        return $this;
+    }
+
+    protected function bootMultisiteCommandHook()
+    {
+        Multisite::hook('after', function () {
+            $settings = Addon::get('statamic/seo-pro')->settings();
+
+            $settings->set('site_defaults', [
+                Site::default()->handle() => $settings->get('site_defaults', []),
+            ])->save();
+        });
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Statamic\Assets\Asset;
 use Statamic\Facades\Blink;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Statamic;
 
 class Fields

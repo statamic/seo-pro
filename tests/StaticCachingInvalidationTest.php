@@ -4,7 +4,7 @@ namespace Tests;
 
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\StaticCaching\Cacher;
 
 class StaticCachingInvalidationTest extends TestCase

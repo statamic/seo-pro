@@ -10,7 +10,7 @@ use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class CascadeTest extends TestCase
 {

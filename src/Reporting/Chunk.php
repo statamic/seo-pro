@@ -8,7 +8,7 @@ use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class Chunk
 {

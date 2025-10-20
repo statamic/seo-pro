@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class SiteDefaultsController extends CpController
 {

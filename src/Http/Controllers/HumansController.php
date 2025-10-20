@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class HumansController extends Controller
 {

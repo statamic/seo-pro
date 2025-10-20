@@ -11,7 +11,7 @@ use Statamic\Facades\Entry as EntryFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Support\Traits\Hookable;
 
 class Sitemap

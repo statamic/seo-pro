@@ -12,7 +12,7 @@ use Statamic\Fields\Fieldtype;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\Fields as SeoProFields;
 use Statamic\SeoPro\GetsSectionDefaults;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 

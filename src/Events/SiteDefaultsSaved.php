@@ -3,14 +3,9 @@
 namespace Statamic\SeoPro\Events;
 
 use Statamic\Events\Event;
+use Statamic\SeoPro\SiteDefaults\LocalizedSiteDefaults;
 
 class SiteDefaultsSaved extends Event
 {
-    public $defaults;
-
-    public function __construct($defaults)
-    {
-        $this->defaults = $defaults;
-    }
-
+    public function __construct(public LocalizedSiteDefaults $defaults) {}
 }

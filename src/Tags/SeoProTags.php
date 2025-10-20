@@ -6,7 +6,7 @@ use Statamic\Facades\Image;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\RendersMetaHtml;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Tags\Tags;
 
 class SeoProTags extends Tags

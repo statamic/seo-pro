@@ -2,6 +2,12 @@
 
 return [
 
+    'site_defaults' => [
+        'origins' => [
+            'default' => null,
+        ],
+    ],
+
     'assets' => [
         'container' => null,
         'folder' => null,
