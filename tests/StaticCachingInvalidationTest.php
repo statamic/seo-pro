@@ -28,7 +28,7 @@ class StaticCachingInvalidationTest extends TestCase
         config()->set('statamic.static_caching.strategy', null);
         config()->set('statamic.static_caching.invalidation.rules', 'all');
 
-        SiteDefaults::load()->save();
+        SiteDefaults::get()->first()->save();
     }
 
     #[Test]
@@ -40,7 +40,7 @@ class StaticCachingInvalidationTest extends TestCase
 
         config()->set('statamic.static_caching.invalidation.rules', 'all');
 
-        SiteDefaults::load()->save();
+        SiteDefaults::get()->first()->save();
     }
 
     #[Test]
@@ -62,6 +62,6 @@ class StaticCachingInvalidationTest extends TestCase
             ],
         ]);
 
-        SiteDefaults::load()->save();
+        SiteDefaults::get()->first()->save();
     }
 }

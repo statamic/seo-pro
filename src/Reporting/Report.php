@@ -452,7 +452,7 @@ class Report implements Arrayable, Jsonable
     public function defaults()
     {
         return collect((new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->get());
     }
 

@@ -3,6 +3,8 @@
 namespace Statamic\SeoPro\SiteDefaults;
 
 use Illuminate\Support\Collection;
+use Statamic\Facades\Blueprint;
+use Statamic\SeoPro\Fields;
 
 class LocalizedSiteDefaults
 {
@@ -33,7 +35,7 @@ class LocalizedSiteDefaults
 
     public function save(): bool
     {
-        $save = SiteDefaults::newSave($this);
+        $save = SiteDefaults::save($this);
 
         // todo: dispatch event
 
@@ -49,5 +51,31 @@ class LocalizedSiteDefaults
         }
 
         return SiteDefaults::in($origin);
+    }
+
+    public function blueprint(): \Statamic\Fields\Blueprint
+    {
+        return SiteDefaults::blueprint();
+    }
+
+    public function augmented(): array
+    {
+        $contentValues = Blueprint::make()
+            ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
+            ->fields()
+            ->addValues($this->all())
+            ->augment()
+            ->values();
+
+        $defaultValues = $this->blueprint()
+            ->fields()
+            ->addValues($this->all())
+            ->augment()
+            ->values();
+
+        return $defaultValues
+            ->merge($contentValues)
+            ->only($this->defaults->keys()->all())
+            ->all();
     }
 }

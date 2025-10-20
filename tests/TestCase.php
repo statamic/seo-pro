@@ -85,7 +85,7 @@ abstract class TestCase extends AddonTestCase
 
     protected function setSeoInSiteDefaults($seo)
     {
-        SiteDefaults::load($seo)->save();
+        SiteDefaults::get()->first()->set($seo)->save();
 
         return $this;
     }

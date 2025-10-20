@@ -16,7 +16,7 @@ class SiteDefaultsController extends CpController
 
         $this->authorize('edit seo site defaults');
 
-        $siteDefaults = SiteDefaults::load();
+        $siteDefaults = SiteDefaults::in($site);
         $blueprint = $siteDefaults->blueprint();
 
         $fields = $blueprint
@@ -53,12 +53,14 @@ class SiteDefaultsController extends CpController
     {
         $this->authorize('edit seo site defaults');
 
-        $fields = SiteDefaults::load()->blueprint()->fields()->addValues($request->all());
+        // todo: $site
+
+        $fields = SiteDefaults::in($site)->blueprint()->fields()->addValues($request->all());
 
         $fields->validate();
 
         $values = $fields->process()->values()->all();
 
-        SiteDefaults::load($values)->save();
+        SiteDefaults::in($site)->set($values)->save();
     }
 }

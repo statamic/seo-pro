@@ -80,7 +80,7 @@ class Chunk
         }
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->augmented())
+            ->with(SiteDefaults::get()->first()->augmented())
             ->with($this->getAugmentedSectionDefaults($content))
             ->with($content->augmentedValue('seo')->value())
             ->withCurrent($content)

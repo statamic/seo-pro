@@ -26,7 +26,7 @@ class CascadeTest extends TestCase
     public function it_generates_seo_cascade_from_site_defaults_and_home_entry()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->get();
 
         $expected = [
@@ -59,7 +59,7 @@ class CascadeTest extends TestCase
     public function it_overwrites_data_in_cascade()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'description' => 'Bob sled team',
@@ -98,7 +98,7 @@ class CascadeTest extends TestCase
     public function it_generates_compiled_title_from_cascaded_parts()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'site_name_position' => 'after',
@@ -121,7 +121,7 @@ class CascadeTest extends TestCase
         $entry->data(['favourite_colour' => 'Red'])->save();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'description' => '{{ favourite_colour | upper }}',
             ])
@@ -160,7 +160,7 @@ class CascadeTest extends TestCase
         $entry = Entry::findByUri('/about')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'description' => $antlers,
             ])
@@ -179,7 +179,7 @@ class CascadeTest extends TestCase
         $entry->data(['favourite_colour' => 'Red'])->save();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'description' => '@seo:favourite_colour',
             ])
@@ -195,7 +195,7 @@ class CascadeTest extends TestCase
         Entry::findByUri('/')->delete();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->get();
 
         $expected = [
@@ -226,7 +226,7 @@ class CascadeTest extends TestCase
     public function it_generates_404_title_with_404_in_response_code_in_context()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'response_code' => 404,
             ])
@@ -249,7 +249,7 @@ class CascadeTest extends TestCase
         ))->setPath($uri));
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->withCurrent($entry)
             ->get();
 
@@ -277,7 +277,7 @@ class CascadeTest extends TestCase
         URL::enforceTrailingSlashes();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->withCurrent($entry)
             ->get();
 
@@ -296,7 +296,7 @@ class CascadeTest extends TestCase
     public function it_overwrites_og_title()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'description' => 'Bob sled team',
@@ -335,7 +335,7 @@ class CascadeTest extends TestCase
     public function it_overwrites_twitter_title_and_description()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::get()->first()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'description' => 'Bob sled team',

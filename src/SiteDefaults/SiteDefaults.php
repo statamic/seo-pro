@@ -5,20 +5,15 @@ namespace Statamic\SeoPro\SiteDefaults;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Statamic\Facades\Addon;
-use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\Site;
-use Statamic\SeoPro\Events\SiteDefaultsSaved;
-use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\HasAssetField;
 
-// todo: stop extending Collection
-class SiteDefaults extends Collection
+class SiteDefaults
 {
     use HasAssetField;
 
-    // todo: rename
-    public static function newGet(): Collection
+    public static function get(): Collection
     {
         $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
 
@@ -28,7 +23,7 @@ class SiteDefaults extends Collection
         }
 
         return Site::all()->map(function ($site) use ($data) {
-            $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : '', []);
+            $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : null, []);
 
             return new LocalizedSiteDefaults($site->handle(), collect($values));
         });
@@ -44,15 +39,14 @@ class SiteDefaults extends Collection
 
     public static function in(string $locale): ?LocalizedSiteDefaults
     {
-        if (! self::newGet()->has($locale)) {
+        if (! self::get()->has($locale)) {
             return null;
         }
 
-        return self::newGet()->get($locale);
+        return self::get()->get($locale);
     }
 
-    // todo: rename
-    public static function newSave(LocalizedSiteDefaults $localized)
+    public static function save(LocalizedSiteDefaults $localized)
     {
         $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
 
@@ -67,121 +61,9 @@ class SiteDefaults extends Collection
         return true;
     }
 
-
-
-
-
-    /**
-     * Load site defaults collection.
-     *
-     * @param  array|Collection|null  $items
-     */
-    public function __construct($items = null)
+    public static function blueprint(): \Statamic\Fields\Blueprint
     {
-        if (! is_null($items)) {
-            $items = collect($items)->all();
-        }
-
-        $this->items = $items ?? $this->getDefaults();
-    }
-
-    /**
-     * @deprecated
-     *
-     * Load site defaults collection.
-     *
-     * @param  array|Collection|null  $items
-     * @return static
-     */
-    public static function load($items = null)
-    {
-        $class = app(SiteDefaults::class);
-
-        return new $class($items);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Get augmented.
-     *
-     * @return array
-     */
-    public function augmented()
-    {
-        $contentValues = Blueprint::make()
-            ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
-            ->fields()
-            ->addValues($this->items)
-            ->augment()
-            ->values();
-
-        $defaultValues = $this->blueprint()
-            ->fields()
-            ->addValues($this->items)
-            ->augment()
-            ->values();
-
-        return $defaultValues
-            ->merge($contentValues)
-            ->only(array_keys($this->items))
-            ->all();
-    }
-
-    /**
-     * @deprecated
-     *
-     * Save site defaults collection to yaml.
-     */
-    public function save()
-    {
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $this->items)->save();
-
-        Blink::forget('seo-pro::defaults');
-    }
-
-    /**
-     * Get site defaults from yaml.
-     *
-     * @return array
-     */
-    protected function getDefaults()
-    {
-        return Blink::once('seo-pro::defaults', function () {
-            return [
-                ...self::defaultValues(),
-                ...Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []),
-            ];
-        });
-    }
-
-    /**
-     * The default values to be merged into the site's values.
-     *
-     * @return array
-     */
-    private static function defaultValues(): array
-    {
-        return [
-            'site_name' => 'Site Name',
-            'site_name_position' => 'after',
-            'site_name_separator' => '|',
-            'title' => '@seo:title',
-            'description' => '@seo:content',
-            'canonical_url' => '@seo:permalink',
-            'priority' => 0.5,
-            'change_frequency' => 'monthly',
-        ];
-    }
-
-    /**
-     * Get site defaults blueprint.
-     *
-     * @return \Statamic\Fields\Blueprint
-     */
-    public function blueprint()
-    {
-        // todo: move this to its own class
+        // todo: consider extracting this into its own file
 
         return Blueprint::make()->setContents([
             'tabs' => [
@@ -503,5 +385,19 @@ class SiteDefaults extends Collection
                 ],
             ],
         ]);
+    }
+
+    private static function defaultValues(): array
+    {
+        return [
+            'site_name' => 'Site Name',
+            'site_name_position' => 'after',
+            'site_name_separator' => '|',
+            'title' => '@seo:title',
+            'description' => '@seo:content',
+            'canonical_url' => '@seo:permalink',
+            'priority' => 0.5,
+            'change_frequency' => 'monthly',
+        ];
     }
 }
