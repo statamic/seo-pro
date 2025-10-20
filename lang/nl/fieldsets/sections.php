@@ -25,8 +25,23 @@ return [
     'canonical_url' => 'Canonical URL',
     'canonical_url_instruct' => 'Kies een bestaand veld om in te stellen als de **standaard** canonical URL van dit gedeelte.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Kies opties voor de robots meta-tag. noindex voorkomt dat de pagina geïndexeerd wordt door zoekmachines. nofollow voorkomt dat zoekmachines links crawlen.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Controleer hoe zoekmachines pagina\'s in deze sectie crawlen en indexeren.',
+
+    'robots_indexing' => 'Indexering',
+    'robots_indexing_instruct' => 'Controleer of zoekmachines pagina\'s in deze sectie kunnen indexeren.',
+
+    'robots_following' => 'Link Volgen',
+    'robots_following_instruct' => 'Controleer of zoekmachines links op pagina\'s in deze sectie kunnen volgen.',
+
+    'robots_noarchive' => 'Geen Archief',
+    'robots_noarchive_instruct' => 'Voorkomen dat zoekmachines gecachte links voor pagina\'s in deze sectie tonen.',
+
+    'robots_noimageindex' => 'Geen Afbeelding Index',
+    'robots_noimageindex_instruct' => 'Voorkomen dat zoekmachines afbeeldingen op pagina\'s in deze sectie indexeren.',
+
+    'robots_nosnippet' => 'Geen Snippet',
+    'robots_nosnippet_instruct' => 'Voorkomen dat zoekmachines tekstsnippets voor pagina\'s in deze sectie tonen.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van uw metadata en siteconfiguratie.',

@@ -20,6 +20,27 @@ return [
     'description' => 'Meta Descripción',
     'description_instruct' => 'Seleciona un campo existente para que sea tu meta descripción **por defecto**. Cada Colección y Taxonomía puede tener su propio campo por defecto.',
 
+    'canonical_url' => 'URL Canónica',
+    'canonical_url_instruct' => 'Seleciona un campo existente para que sea tu URL canónica **por defecto**. Cada Colección y Taxonomía puede tener su propio campo por defecto.',
+
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Controla cómo los motores de búsqueda rastrean e indexan tus páginas.',
+
+    'robots_indexing' => 'Indexación',
+    'robots_indexing_instruct' => 'Controla si los motores de búsqueda pueden indexar esta página.',
+
+    'robots_following' => 'Seguimiento de Enlaces',
+    'robots_following_instruct' => 'Controla si los motores de búsqueda pueden seguir enlaces en esta página.',
+
+    'robots_noarchive' => 'Sin Archivo',
+    'robots_noarchive_instruct' => 'Prevenir que los motores de búsqueda muestren un enlace en caché a esta página.',
+
+    'robots_noimageindex' => 'Sin Índice de Imágenes',
+    'robots_noimageindex_instruct' => 'Prevenir que los motores de búsqueda indexen imágenes en esta página.',
+
+    'robots_nosnippet' => 'Sin Snippet',
+    'robots_nosnippet_instruct' => 'Prevenir que los motores de búsqueda muestren un fragmento de texto para esta página.',
+
     'image_section' => 'Open Graph',
     'image_section_instruct' => 'Generamos de forma automática la mayoría de campos Open Graph a partir de tus metadatos y configuración del sitio.',
 

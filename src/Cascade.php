@@ -104,6 +104,8 @@ class Cascade
             'twitter_card' => config('statamic.seo-pro.twitter.card'),
             'twitter_title' => $this->twitterTitle(),
             'twitter_description' => $this->twitterDescription(),
+            'robots' => $this->robots(),
+            'robots_indexing' => $this->robotsIndexing(),
         ])->all();
     }
 
@@ -474,6 +476,47 @@ class Cascade
         if (config('statamic.seo-pro.humans.enabled')) {
             return URL::makeAbsolute(Str::ensureLeft(config('statamic.seo-pro.humans.url'), '/'));
         }
+    }
+
+    protected function robots()
+    {
+        if ($this->data->has('robots')) {
+            $robots = $this->data->get('robots');
+
+            if ($robots instanceof \Statamic\Fields\Value) {
+                $robots = $robots->value();
+            }
+
+            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
+                return collect($robots)->pluck('key')->toArray();
+            }
+
+            return is_array($robots) ? $robots : [];
+        }
+
+        $robots = [];
+        if ($indexing = $this->data->get('robots_indexing')) {
+            $robots[] = $indexing;
+        }
+        if ($following = $this->data->get('robots_following')) {
+            $robots[] = $following;
+        }
+        if ($this->data->get('robots_noarchive')) {
+            $robots[] = 'noarchive';
+        }
+        if ($this->data->get('robots_noimageindex')) {
+            $robots[] = 'noimageindex';
+        }
+        if ($this->data->get('robots_nosnippet')) {
+            $robots[] = 'nosnippet';
+        }
+
+        return $robots;
+    }
+
+    protected function robotsIndexing()
+    {
+        return in_array('noindex', $this->robots()) ? 'noindex' : 'index';
     }
 
     protected function augmentData($data)

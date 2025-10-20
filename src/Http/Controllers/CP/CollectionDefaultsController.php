@@ -1,10 +1,10 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers;
+namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Statamic\Facades\Collection;
 
-class CollectionDefaultsController extends SectionDefaultsController
+class CollectionDefaultsController extends BaseSectionDefaultsController
 {
     protected static $sectionType = 'collections';
 

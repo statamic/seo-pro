@@ -11,6 +11,27 @@ return [
     'description' => 'Meta Descrição',
     'description_instruct' => 'Cada URL em seu site deve ter uma Meta Descrição exclusiva, idealmente com menos de 160 caracteres.',
 
+    'canonical_url' => 'URL Canônica',
+    'canonical_url_instruct' => 'Cada URL em seu site deve ter uma URL canônica única.',
+
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Controle como os motores de busca rastreiam e indexam esta página.',
+
+    'robots_indexing' => 'Indexação',
+    'robots_indexing_instruct' => 'Controle se os motores de busca podem indexar esta página.',
+
+    'robots_following' => 'Seguimento de Links',
+    'robots_following_instruct' => 'Controle se os motores de busca podem seguir links nesta página.',
+
+    'robots_noarchive' => 'Sem Arquivo',
+    'robots_noarchive_instruct' => 'Prevenir que os motores de busca mostrem um link em cache para esta página.',
+
+    'robots_noimageindex' => 'Sem Índice de Imagens',
+    'robots_noimageindex_instruct' => 'Prevenir que os motores de busca indexem imagens nesta página.',
+
+    'robots_nosnippet' => 'Sem Snippet',
+    'robots_nosnippet_instruct' => 'Prevenir que os motores de busca mostrem um fragmento de texto para esta página.',
+
     'image' => 'Imagem Social',
     'image_instruct' => 'Esta imagem é usada como uma imagem de visualização nas redes sociais.',
 

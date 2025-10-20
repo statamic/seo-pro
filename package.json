@@ -5,7 +5,10 @@
         "build": "vite build"
     },
     "dependencies": {
+        "@tailwindcss/vite": "^4.1.14",
+        "axios": "^1.12.2",
         "cross-env": "^7.0.2",
+        "tailwindcss": "^4.1.14",
         "underscore": "~1.12.1"
     },
     "devDependencies": {

@@ -23,8 +23,23 @@ return [
     'canonical_url' => 'Canonical URL',
     'canonical_url_instruct' => 'Hver URL på din hjemmeside bør have en unik canonical URL.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Vælg indstillinger for robots meta tagget. noindex forhindrer siden i at blive indekseret af søgemaskiner. nofollow forhindrer søgemaskiner i at krybe links.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Kontroller hvordan søgemaskiner kravler og indekserer denne side.',
+
+    'robots_indexing' => 'Indeksering',
+    'robots_indexing_instruct' => 'Kontroller om søgemaskiner kan indeksere denne side.',
+
+    'robots_following' => 'Link Følgning',
+    'robots_following_instruct' => 'Kontroller om søgemaskiner kan følge links på denne side.',
+
+    'robots_noarchive' => 'Ingen Arkivering',
+    'robots_noarchive_instruct' => 'Forhindre søgemaskiner i at vise en cached link til denne side.',
+
+    'robots_noimageindex' => 'Ingen Billede Indeksering',
+    'robots_noimageindex_instruct' => 'Forhindre søgemaskiner i at indeksere billeder på denne side.',
+
+    'robots_nosnippet' => 'Ingen Snippet',
+    'robots_nosnippet_instruct' => 'Forhindre søgemaskiner i at vise en tekstsnippet for denne side.',
 
     'image' => 'Socialt billede',
     'image_instruct' => 'Dette billede bruges som forhåndsvisning af sociale netværk.',

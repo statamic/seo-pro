@@ -25,8 +25,23 @@ return [
     'canonical_url' => 'URL canonico',
     'canonical_url_instruct' => 'Scegli un campo esistente da usare come **URL canonico predefinito** per questa sezione.',
 
-    'robots' => 'Robots',
-    'robots_instruct' => 'Scegli le opzioni per il meta tag robots. noindex impedisce l’indicizzazione, nofollow impedisce la scansione dei link.',
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Controlla come i motori di ricerca esplorano e indicizzano le pagine in questa sezione.',
+
+    'robots_indexing' => 'Indicizzazione',
+    'robots_indexing_instruct' => 'Controlla se i motori di ricerca possono indicizzare le pagine in questa sezione.',
+
+    'robots_following' => 'Seguimento Link',
+    'robots_following_instruct' => 'Controlla se i motori di ricerca possono seguire i link sulle pagine in questa sezione.',
+
+    'robots_noarchive' => 'Nessun Archivio',
+    'robots_noarchive_instruct' => 'Impedire ai motori di ricerca di mostrare link in cache per le pagine in questa sezione.',
+
+    'robots_noimageindex' => 'Nessun Indice Immagini',
+    'robots_noimageindex_instruct' => 'Impedire ai motori di ricerca di indicizzare le immagini sulle pagine in questa sezione.',
+
+    'robots_nosnippet' => 'Nessun Snippet',
+    'robots_nosnippet_instruct' => 'Impedire ai motori di ricerca di mostrare frammenti di testo per le pagine in questa sezione.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'Generiamo automaticamente la maggior parte dei campi Open Graph dai metadati e dalla configurazione del sito.',

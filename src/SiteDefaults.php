@@ -48,7 +48,7 @@ class SiteDefaults extends Collection
     public function augmented()
     {
         $contentValues = Blueprint::make()
-            ->setContents(['fields' => Fields::new()->getConfig()])
+            ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
             ->fields()
             ->addValues($this->items)
             ->augment()
@@ -120,239 +120,288 @@ class SiteDefaults extends Collection
     public function blueprint()
     {
         return Blueprint::make()->setContents([
-            'sections' => [
+            'tabs' => [
                 'meta' => [
                     'display' => __('seo-pro::messages.meta'),
-                    'fields' => [
+                    'sections' => [
                         [
-                            'handle' => 'meta_section',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.meta_section'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.meta_section_instruct'),
-                                'type' => 'section',
-                            ],
-                        ],
-                        [
-                            'handle' => 'title',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.title'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.title_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'text',
+                            'display' => __('seo-pro::fieldsets/defaults.meta_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.meta_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'title',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.title'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.title_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'text',
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'description',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.description'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.description_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'textarea',
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'site_name',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.site_name'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.site_name_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'site_name_position',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.site_name_position'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.site_name_position_instruct'),
+                                        'type' => 'select',
+                                        'options' => [
+                                            'after' => __('seo-pro::messages.after'),
+                                            'before' => __('seo-pro::messages.before'),
+                                            'none' => __('seo-pro::messages.disable'),
+                                        ],
+                                        'width' => 50,
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'site_name_separator',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.site_name_separator'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.site_name_separator_instruct'),
+                                        'type' => 'text',
+                                        'width' => 50,
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'canonical_url',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.canonical_url'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.canonical_url_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'field' => false,
+                                        'localizable' => true,
+                                    ],
                                 ],
                             ],
                         ],
+                    ],
+                ],
+                'robots' => [
+                    'display' => __('seo-pro::fieldsets/defaults.robots_section'),
+                    'instructions' => __('seo-pro::fieldsets/defaults.robots_section_instruct'),
+                    'sections' => [
                         [
-                            'handle' => 'description',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.description'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.description_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'textarea',
+                            'display' => __('seo-pro::fieldsets/defaults.robots_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.robots_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'robots_indexing',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_indexing'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_indexing_instruct'),
+                                        'type' => 'button_group',
+                                        'options' => [
+                                            'index' => 'Index',
+                                            'noindex' => 'Noindex',
+                                        ],
+                                        'default' => 'index',
+                                        'localizable' => true,
+                                    ],
                                 ],
-                            ],
-                        ],
-                        [
-                            'handle' => 'site_name',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.site_name'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.site_name_instruct'),
-                                'type' => 'text',
-                                'localizable' => true,
-                            ],
-                        ],
-                        [
-                            'handle' => 'site_name_position',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.site_name_position'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.site_name_position_instruct'),
-                                'type' => 'select',
-                                'options' => [
-                                    'after' => __('seo-pro::messages.after'),
-                                    'before' => __('seo-pro::messages.before'),
-                                    'none' => __('seo-pro::messages.disable'),
+                                [
+                                    'handle' => 'robots_following',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_following'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_following_instruct'),
+                                        'type' => 'button_group',
+                                        'options' => [
+                                            'follow' => 'Follow',
+                                            'nofollow' => 'Nofollow',
+                                        ],
+                                        'default' => 'follow',
+                                        'localizable' => true,
+                                    ],
                                 ],
-                                'width' => 50,
-                                'localizable' => true,
-                            ],
-                        ],
-                        [
-                            'handle' => 'site_name_separator',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.site_name_separator'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.site_name_separator_instruct'),
-                                'type' => 'text',
-                                'width' => 50,
-                                'localizable' => true,
-                            ],
-                        ],
-                        [
-                            'handle' => 'canonical_url',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.canonical_url'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.canonical_url_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'field' => false,
-                                'localizable' => true,
-                            ],
-                        ],
-                        [
-                            'handle' => 'robots',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.robots'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.robots_instruct'),
-                                'type' => 'select',
-                                'multiple' => true,
-                                'options' => [
-                                    'noindex',
-                                    'nofollow',
+                                [
+                                    'handle' => 'robots_noarchive',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_noarchive'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_noarchive_instruct'),
+                                        'type' => 'toggle',
+                                        'localizable' => true,
+                                    ],
                                 ],
-                                'localizable' => true,
+                                [
+                                    'handle' => 'robots_noimageindex',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_noimageindex'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_noimageindex_instruct'),
+                                        'type' => 'toggle',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'robots_nosnippet',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.robots_nosnippet'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.robots_nosnippet_instruct'),
+                                        'type' => 'toggle',
+                                        'localizable' => true,
+                                    ],
+                                ],
                             ],
                         ],
                     ],
                 ],
                 'opengraph' => [
                     'display' => __('seo-pro::messages.opengraph'),
-                    'fields' => [
+                    'sections' => [
                         [
-                            'handle' => 'og_title',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.og_title'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.og_title_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'text',
+                            'fields' => [
+                                [
+                                    'handle' => 'og_title',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.og_title'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.og_title_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'text',
+                                        ],
+                                        'default' => '@seo:title',
+                                    ],
                                 ],
-                                'default' => '@seo:title',
                             ],
                         ],
                         [
-                            'handle' => 'image_section',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.image_section'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.image_section_instruct'),
-                                'type' => 'section',
-                            ],
-                        ],
-                        [
-                            'handle' => 'image',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.image'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.image_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'default' => false,
-                                'disableable' => true,
-                                'allowed_fieldtypes' => [
-                                    'assets',
+                            'display' => __('seo-pro::fieldsets/defaults.image_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.image_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'image',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.image'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.image_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'default' => false,
+                                        'disableable' => true,
+                                        'allowed_fieldtypes' => [
+                                            'assets',
+                                        ],
+                                        'localizable' => true,
+                                        'field' => static::getAssetFieldConfig(),
+                                    ],
                                 ],
-                                'localizable' => true,
-                                'field' => static::getAssetFieldConfig(),
                             ],
                         ],
                     ],
                 ],
                 'social' => [
                     'display' => __('seo-pro::messages.social'),
-                    'fields' => [
+                    'sections' => [
                         [
-                            'handle' => 'social_section',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.social_section'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.social_section_instruct'),
-                                'type' => 'section',
-                            ],
-                        ],
-                        [
-                            'handle' => 'twitter_handle',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.twitter_handle'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.twitter_handle_instruct'),
-                                'type' => 'text',
-                                'localizable' => true,
-                            ],
-                        ],
-                        [
-                            'handle' => 'twitter_title',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.twitter_title'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.twitter_title_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'text',
+                            'display' => __('seo-pro::fieldsets/defaults.social_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.social_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'twitter_handle',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.twitter_handle'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.twitter_handle_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                    ],
                                 ],
-                                'default' => '@seo:title',
-                            ],
-                        ],
-                        [
-                            'handle' => 'twitter_description',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.twitter_description'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.twitter_description_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'textarea',
+                                [
+                                    'handle' => 'twitter_title',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.twitter_title'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.twitter_title_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'text',
+                                        ],
+                                        'default' => '@seo:title',
+                                    ],
                                 ],
-                                'default' => '@seo:description',
+                                [
+                                    'handle' => 'twitter_description',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.twitter_description'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.twitter_description_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'textarea',
+                                        ],
+                                        'default' => '@seo:description',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
                 ],
                 'sitemap' => [
                     'display' => __('seo-pro::messages.sitemap'),
-                    'fields' => [
+                    'sections' => [
                         [
-                            'handle' => 'sitemap_section',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.sitemap_section'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.sitemap_section_instruct'),
-                                'type' => 'section',
-                            ],
-                        ],
-                        [
-                            'handle' => 'priority',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.priority'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.priority_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'text',
+                            'display' => __('seo-pro::fieldsets/defaults.sitemap_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.sitemap_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'priority',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.priority'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.priority_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'text',
+                                        ],
+                                    ],
                                 ],
-                            ],
-                        ],
-                        [
-                            'handle' => 'change_frequency',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.change_frequency'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.change_frequency_instruct'),
-                                'type' => 'seo_pro_source',
-                                'inherit' => false,
-                                'localizable' => true,
-                                'field' => [
-                                    'type' => 'select',
-                                    'options' => [
-                                        'hourly' => __('seo-pro::messages.hourly'),
-                                        'daily' => __('seo-pro::messages.daily'),
-                                        'weekly' => __('seo-pro::messages.weekly'),
-                                        'monthly' => __('seo-pro::messages.monthly'),
-                                        'yearly' => __('seo-pro::messages.yearly'),
-                                        'never' => __('seo-pro::messages.never'),
+                                [
+                                    'handle' => 'change_frequency',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.change_frequency'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.change_frequency_instruct'),
+                                        'type' => 'seo_pro_source',
+                                        'inherit' => false,
+                                        'localizable' => true,
+                                        'field' => [
+                                            'type' => 'select',
+                                            'options' => [
+                                                'hourly' => __('seo-pro::messages.hourly'),
+                                                'daily' => __('seo-pro::messages.daily'),
+                                                'weekly' => __('seo-pro::messages.weekly'),
+                                                'monthly' => __('seo-pro::messages.monthly'),
+                                                'yearly' => __('seo-pro::messages.yearly'),
+                                                'never' => __('seo-pro::messages.never'),
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -361,31 +410,29 @@ class SiteDefaults extends Collection
                 ],
                 'search' => [
                     'display' => __('seo-pro::messages.search_engines'),
-                    'fields' => [
+                    'sections' => [
                         [
-                            'handle' => 'search_section',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.search_section'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.search_section_instruct'),
-                                'type' => 'section',
-                            ],
-                        ],
-                        [
-                            'handle' => 'bing_verification',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.bing_verification'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.bing_verification_instruct'),
-                                'type' => 'text',
-                                'localizable' => true,
-                            ],
-                        ],
-                        [
-                            'handle' => 'google_verification',
-                            'field' => [
-                                'display' => __('seo-pro::fieldsets/defaults.google_verification'),
-                                'instructions' => __('seo-pro::fieldsets/defaults.google_verification_instruct'),
-                                'type' => 'text',
-                                'localizable' => true,
+                            'display' => __('seo-pro::fieldsets/defaults.search_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.search_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'bing_verification',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.bing_verification'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.bing_verification_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'google_verification',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.google_verification'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.google_verification_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                    ],
+                                ],
                             ],
                         ],
                     ],

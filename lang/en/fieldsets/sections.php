@@ -26,7 +26,25 @@ return [
     'canonical_url_instruct' => "Pick an existing field to set as this section's **default** canonical URL.",
 
     'robots' => 'Robots',
-    'robots_instruct' => 'Pick options for the robots meta tag. noindex prevents the page being indexed by search engines. nofollow prevents search engines from crawling links.',
+    'robots_instruct' => 'Control how search engines crawl and index pages in this section.',
+
+    'robots_section' => 'Robots',
+    'robots_section_instruct' => 'Control how search engines crawl and index pages in this section.',
+
+    'robots_indexing' => 'Indexing',
+    'robots_indexing_instruct' => 'Control whether search engines can index pages in this section.',
+
+    'robots_following' => 'Link Following',
+    'robots_following_instruct' => 'Control whether search engines can follow links on pages in this section.',
+
+    'robots_noarchive' => 'No Archive',
+    'robots_noarchive_instruct' => 'Prevent search engines from showing cached links for pages in this section.',
+
+    'robots_noimageindex' => 'No Image Index',
+    'robots_noimageindex_instruct' => 'Prevent search engines from indexing images on pages in this section.',
+
+    'robots_nosnippet' => 'No Snippet',
+    'robots_nosnippet_instruct' => 'Prevent search engines from showing text snippets for pages in this section.',
 
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
