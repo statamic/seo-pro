@@ -1,34 +1,36 @@
 <script setup>
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { onMounted, onUnmounted, ref, useTemplateRef, computed } from 'vue';
 import { Header, Button, PublishContainer, PublishTabs } from '@statamic/cms/ui';
-import { Pipeline, Request, BeforeSaveHooks, AfterSaveHooks, PipelineStopped } from '@statamic/cms/save-pipeline';
+import { Pipeline, Request, BeforeSaveHooks, AfterSaveHooks } from '@statamic/cms/save-pipeline';
 import { Head } from '@statamic/cms/inertia';
+import SiteSelector from '../../components/SiteSelector.vue';
 
 const props = defineProps({
-	blueprint: {
-		type: Object,
-		required: true,
-	},
-	initialValues: {
-		type: Object,
-		required: true,
-		default: () => ({}),
-	},
-	initialMeta: {
-		type: Object,
-		required: true,
-		default: () => ({}),
-	},
-	action: {
-		type: String,
-		required: true,
-	},
+	blueprint: Object,
+	initialValues: Object,
+	initialMeta: Object,
+	initialLocalizations: Array,
+	initialLocalizedFields: Array,
+	initialHasOrigin: Boolean,
+	initialOriginValues: Object,
+	initialOriginMeta: Object,
+	initialSite: String,
+	action: String,
 });
 
 const container = useTemplateRef('container');
 const values = ref(props.initialValues);
 const meta = ref(props.initialMeta);
 const errors = ref({});
+const localizing = ref(false);
+const localizations = ref(props.initialLocalizations);
+const localizedFields = ref(props.initialLocalizedFields);
+const hasOrigin = ref(props.initialHasOrigin);
+const originValues = ref(props.initialOriginValues);
+const originMeta = ref(props.initialOriginMeta);
+const site = ref(props.initialSite);
+const syncFieldConfirmationText = ref(__('messages.sync_entry_field_confirmation_text'));
+const pendingLocalization = ref(null);
 const saving = ref(false);
 
 function save() {
@@ -54,6 +56,51 @@ onMounted(() => {
 });
 
 onUnmounted(() => saveKeyBinding.destroy());
+
+const isDirty = computed(() => Statamic.$dirty.has('site-defaults'));
+const showLocalizationSelector = computed(() => localizations.value.length > 1);
+
+const localizationSelected = (localizationHandle) => {
+	let localization = localizations.value.find((localization) => localization.handle === localizationHandle);
+
+	if (localization.active) return;
+
+	if (isDirty.value) {
+		pendingLocalization.value = localization;
+		return;
+	}
+
+	switchToLocalization(localization);
+};
+
+const confirmSwitchLocalization = () => {
+	switchToLocalization(pendingLocalization.value);
+	pendingLocalization.value = null;
+};
+
+const switchToLocalization = (localization) => {
+	localizing.value = localization.handle;
+
+	// if (this.publishContainer === 'base') {
+	// 	window.history.replaceState({}, '', localization.url);
+	// }
+
+	// todo: implement
+	// this.$axios.get(localization.url).then((response) => {
+	// 	const data = response.data;
+	// 	this.values = data.values;
+	// 	this.originValues = data.originValues;
+	// 	this.meta = data.meta;
+	// 	this.localizations = data.localizations;
+	// 	this.localizedFields = data.localizedFields;
+	// 	this.hasOrigin = data.hasOrigin;
+	// 	this.actions = data.actions;
+	// 	this.fieldset = data.blueprint;
+	// 	this.site = localization.handle;
+	// 	this.localizing = false;
+	// 	this.$nextTick(() => this.$refs.container.clearDirtyState());
+	// });
+};
 </script>
 
 <template>
@@ -61,17 +108,39 @@ onUnmounted(() => saveKeyBinding.destroy());
 
 	<div class="max-w-5xl mx-auto">
 		<Header :title="__('seo-pro::messages.site_defaults')" icon="earth">
-			<Button v-if="!readOnly" variant="primary" :text="__('Save')" @click="save" :disabled="saving" />
+			<SiteSelector
+				v-if="showLocalizationSelector"
+				:sites="localizations"
+				:model-value="site"
+				@update:modelValue="localizationSelected"
+			/>
+
+			<Button variant="primary" :text="__('Save')" @click="save" :disabled="saving" />
 		</Header>
+
 		<PublishContainer
 			ref="container"
-			:blueprint="blueprint"
-			:meta="meta"
-			:errors="errors"
-			as-config
+			name="site-defaults"
+			:blueprint
 			v-model="values"
+			:meta
+			:errors
+			:site
+			:localized-fields
+			:sync-field-confirmation-text
+			as-config
 		>
 			<PublishTabs />
 		</PublishContainer>
+
+		<confirmation-modal
+			v-if="pendingLocalization"
+			:title="__('Unsaved Changes')"
+			:body-text="__('Are you sure? Unsaved changes will be lost.')"
+			:button-text="__('Continue')"
+			:danger="true"
+			@confirm="confirmSwitchLocalization"
+			@cancel="pendingLocalization = null"
+		/>
 	</div>
 </template>
