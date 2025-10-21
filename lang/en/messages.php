@@ -54,6 +54,7 @@ return [
         'warning' => 'Warning',
         'fail' => 'Fail',
         'site_name' => 'A site name must be defined.',
+        'site_name_multisite' => 'Each site must have a site name defined.',
         'unique_title_actionable_pill' => 'Title',
         'unique_title_site' => 'Each page should have a unique title tag.',
         'unique_title_page' => 'The title tag should be unique.',

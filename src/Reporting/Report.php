@@ -449,13 +449,6 @@ class Report implements Arrayable, Jsonable
         return ! in_array($this->status(), ['pending', 'generating']);
     }
 
-    public function defaults()
-    {
-        return collect((new Cascade)
-            ->with(SiteDefaults::get()->first()->all())
-            ->get());
-    }
-
     public function score()
     {
         if (! $this->isGenerated()) {

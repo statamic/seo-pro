@@ -101,19 +101,19 @@ class LocalizedSiteDefaults
         $contentValues = Blueprint::make()
             ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
             ->fields()
-            ->addValues($this->all())
+            ->addValues($this->values()->all())
             ->augment()
             ->values();
 
         $siteDefaultValues = $this->blueprint()
             ->fields()
-            ->addValues($this->all())
+            ->addValues($this->values()->all())
             ->augment()
             ->values();
 
         return $siteDefaultValues
             ->merge($contentValues)
-            ->only($this->defaults()->keys()->all())
+            ->only($this->keys()->all())
             ->all();
     }
 
