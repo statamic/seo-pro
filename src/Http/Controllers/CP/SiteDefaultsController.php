@@ -9,7 +9,6 @@ use Statamic\Fields\Blueprint;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\SiteDefaults\LocalizedSiteDefaults;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
-use Statamic\Support\Arr;
 
 class SiteDefaultsController extends CpController
 {
@@ -75,7 +74,7 @@ class SiteDefaultsController extends CpController
             $values = $values->only($request->input('_localized'));
         }
 
-        $siteDefaults->set(Arr::removeNullValues($values->all()));
+        $siteDefaults->set($values->filter()->all());
 
         $save = $siteDefaults->save();
 

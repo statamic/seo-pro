@@ -105,15 +105,15 @@ class LocalizedSiteDefaults
             ->augment()
             ->values();
 
-        $defaultValues = $this->blueprint()
+        $siteDefaultValues = $this->blueprint()
             ->fields()
             ->addValues($this->all())
             ->augment()
             ->values();
 
-        return $defaultValues
+        return $siteDefaultValues
             ->merge($contentValues)
-            ->only($this->defaults->keys()->all())
+            ->only($this->defaults()->keys()->all())
             ->all();
     }
 
