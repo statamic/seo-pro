@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Sitemap;
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
 use Statamic\Contracts\Entries\Entry;
-use Statamic\Contracts\Entries\QueryBuilder;
+use Statamic\Contracts\Query\Builder;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
@@ -132,9 +132,7 @@ class Sitemap
                     ->withCurrent($content)
                     ->get();
 
-                if ($this->sites->count() > 1) {
-                    $data['hreflangs'] = $this->hrefLangs($content);
-                }
+                $data['hreflangs'] = $this->hrefLangs($content);
 
                 return (new Page)->with($data);
             })
@@ -156,7 +154,7 @@ class Sitemap
         return EntryFacade::query()
             ->when(
                 $this->sites->isNotEmpty(),
-                fn (QueryBuilder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
+                fn (Builder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
             )
             ->whereIn('collection', $collections)
             ->whereNotNull('uri')
@@ -190,7 +188,10 @@ class Sitemap
         return Taxonomy::all()
             ->flatMap(function ($taxonomy) {
                 return $taxonomy->cascade('seo') !== false
-                    ? $taxonomy->queryTerms()->get()
+                    ? $taxonomy
+                        ->queryTerms()
+                        ->when($this->sites->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites->map->handle()->all()))
+                        ->get()
                     : collect();
             })
             ->filter
@@ -210,7 +211,10 @@ class Sitemap
             })
             ->flatMap(function ($taxonomy) {
                 return $taxonomy->cascade('seo') !== false
-                    ? $taxonomy->queryTerms()->get()->map->collection($taxonomy->collection())
+                    ? $taxonomy
+                        ->queryTerms()
+                        ->when($this->sites->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites->map->handle()->all()))
+                        ->get()->map->collection($taxonomy->collection())
                     : collect();
             })
             ->filter
