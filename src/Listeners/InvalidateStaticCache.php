@@ -36,11 +36,9 @@ class InvalidateStaticCache implements ShouldQueue
 
         $absoluteUrls = $rules->filter(fn (string $rule): bool => URL::isAbsolute($rule))->all();
 
-        $prefixedRelativeUrls = Facades\Site::all()->map(function (Site $site) use ($rules): Collection {
-            return $rules
-                ->reject(fn (string $rule): bool => URL::isAbsolute($rule))
-                ->map(fn (string $rule) => URL::tidy($site->url().'/'.$rule, withTrailingSlash: false));
-        })->flatten()->all();
+        $prefixedRelativeUrls = $rules
+            ->reject(fn (string $rule): bool => URL::isAbsolute($rule))
+            ->map(fn (string $rule) => URL::tidy($event->defaults->site()->url().'/'.$rule, withTrailingSlash: false));
 
         $this->cacher->invalidateUrls([
             ...$absoluteUrls,
