@@ -3,11 +3,8 @@
 namespace Statamic\SeoPro\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Collection;
-use Statamic\Facades;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\Events\SiteDefaultsSaved;
-use Statamic\Sites\Site;
 use Statamic\StaticCaching\Cacher;
 use Statamic\Support\Arr;
 

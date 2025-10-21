@@ -12,8 +12,6 @@ use Statamic\Facades\File;
 use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
 use Statamic\Facades\YAML;
-use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class Report implements Arrayable, Jsonable
 {
