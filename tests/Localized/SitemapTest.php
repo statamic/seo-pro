@@ -57,7 +57,8 @@ class SitemapTest extends LocalizedTestCase
                 '</url>',
                 '</urlset>',
             ], escape: false)
-            ->assertDontSee('<loc>http://cool-runnings.com</loc>');
+            ->assertDontSee('<loc>http://cool-runnings.com</loc>', escape: false)
+            ->assertDontSee('<loc>http://cool-runnings.com/articles/topics/sneakers</loc>', escape: false);
     }
 
     #[Test]
@@ -68,7 +69,8 @@ class SitemapTest extends LocalizedTestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->assertSeeInOrder($this->getDefaultSiteSitemapXml(), escape: false)
-            ->assertDontSee('<loc>http://corse-fantastiche.it</loc>');
+            ->assertDontSee('<loc>http://corse-fantastiche.it</loc>', escape: false)
+            ->assertDontSee('<loc>http://corse-fantastiche.it/about</loc>', escape: false);
     }
 
     private function getDefaultSiteSitemapXml(): array
