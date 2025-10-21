@@ -5,24 +5,27 @@ namespace Statamic\SeoPro\SiteDefaults;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Statamic\Facades\Addon;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Site;
 
 class SiteDefaults
 {
     public static function get(): Collection
     {
-        $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+        return Blink::once('seo-pro::site-defaults', function () {
+            $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
 
-        return Site::all()->map(function ($site) use ($data) {
-            $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : null);
+            return Site::all()->map(function ($site) use ($data) {
+                $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : null);
 
-            // When there are no values set, and it's a root localization, use defaults
-            // from the blueprint as initial values.
-            if (empty($values) && self::origins()->get($site->handle()) === null) {
-                $values = self::defaultValues();
-            }
+                // When there are no values set, and it's a root localization, use defaults
+                // from the blueprint as initial values.
+                if (empty($values) && self::origins()->get($site->handle()) === null) {
+                    $values = self::defaultValues();
+                }
 
-            return new LocalizedSiteDefaults($site->handle(), collect($values));
+                return new LocalizedSiteDefaults($site->handle(), collect($values));
+            });
         });
     }
 
@@ -54,6 +57,8 @@ class SiteDefaults
         }
 
         Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $data)->save();
+
+        Blink::forget('seo-pro::site-defaults');
 
         return true;
     }
