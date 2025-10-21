@@ -56,7 +56,8 @@ class SitemapTest extends LocalizedTestCase
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false);
+            ], escape: false)
+            ->assertDontSee('<loc>http://cool-runnings.com</loc>');
     }
 
     #[Test]
@@ -66,7 +67,8 @@ class SitemapTest extends LocalizedTestCase
             ->get('http://cool-runnings.com/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->assertSeeInOrder($this->getDefaultSiteSitemapXml(), escape: false);
+            ->assertSeeInOrder($this->getDefaultSiteSitemapXml(), escape: false)
+            ->assertDontSee('<loc>http://corse-fantastiche.it</loc>');
     }
 
     private function getDefaultSiteSitemapXml(): array
