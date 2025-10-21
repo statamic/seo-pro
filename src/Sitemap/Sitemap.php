@@ -254,9 +254,9 @@ class Sitemap
 
     private function hrefLangsForEntry(Entry $entry): array
     {
-        $sitesWithSameDomain = $this->sitesWithSameDomain($entry->site());
+        $sites = SiteFacade::all()->values();
 
-        return $sitesWithSameDomain
+        return $sites
             ->filter(fn (Site $site) => $entry->in($site->handle()))
             ->filter(fn (Site $site) => $entry->in($site->handle())->published())
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
@@ -264,7 +264,7 @@ class Sitemap
                 'href' => $entry->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sitesWithSameDomain->contains($entry->root()->site()), function ($collection) use ($entry) {
+            ->when($sites->contains($entry->root()->site()), function ($collection) use ($entry) {
                 $collection->push([
                     'href' => $entry->root()->absoluteUrl(),
                     'hreflang' => 'x-default',
