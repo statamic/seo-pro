@@ -6,27 +6,14 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\GraphQL;
+use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
-use Statamic\SeoPro;
 
 class ServiceProvider extends AddonServiceProvider
 {
     use GetsSectionDefaults;
-
-    protected $tags = [
-        SeoPro\Tags\SeoProTags::class,
-    ];
-
-    protected $fieldtypes = [
-        SeoPro\Fieldtypes\SeoProFieldtype::class,
-        SeoPro\Fieldtypes\SourceFieldtype::class,
-    ];
-
-    protected $widgets = [
-        SeoPro\Widgets\SeoProWidget::class,
-    ];
 
     protected $vite = [
         'input' => [
@@ -35,11 +22,6 @@ class ServiceProvider extends AddonServiceProvider
         ],
         'publicDirectory' => 'resources/dist',
         'hotFile' => __DIR__.'/../resources/dist/hot',
-    ];
-
-    protected $routes = [
-        'cp' => __DIR__.'/../routes/cp.php',
-        'web' => __DIR__.'/../routes/web.php',
     ];
 
     protected $config = false;
@@ -133,8 +115,6 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonGlidePresets()
     {
-        $server = app(\League\Glide\Server::class);
-
         $presets = collect([
             'seo_pro_twitter' => config('statamic.seo-pro.assets.twitter_preset'),
             'seo_pro_og' => config('statamic.seo-pro.assets.open_graph_preset'),
@@ -146,7 +126,7 @@ class ServiceProvider extends AddonServiceProvider
             $presets['seo_pro_twitter'] = $presets['seo_pro_og'];
         }
 
-        $server->setPresets($server->getPresets() + $presets->filter()->all());
+        Image::registerCustomManipulationPresets($presets->filter()->all());
 
         return $this;
     }
@@ -154,7 +134,7 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonCommands()
     {
         $this->commands([
-            SeoPro\Commands\GenerateReportCommand::class,
+            Commands\GenerateReportCommand::class,
         ]);
 
         return $this;

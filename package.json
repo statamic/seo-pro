@@ -12,6 +12,6 @@
     "devDependencies": {
         "@vitejs/plugin-vue2": "^2.3.3",
         "laravel-vite-plugin": "^1.3.0",
-        "vite": "^6.0.0"
+        "vite": "^6.4.1"
     }
 }
