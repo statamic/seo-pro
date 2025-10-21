@@ -13,10 +13,6 @@ class SiteDefaults
     {
         $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
 
-        if (empty($data)) {
-            $data = Site::multiEnabled() ? [Site::current()->handle() => self::defaultValues()] : self::defaultValues();
-        }
-
         return Site::all()->map(function ($site) use ($data) {
             $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : null, []);
 
@@ -59,19 +55,5 @@ class SiteDefaults
     public static function blueprint(): \Statamic\Fields\Blueprint
     {
         return Blueprint::get();
-    }
-
-    private static function defaultValues(): array
-    {
-        return [
-            'site_name' => 'Site Name',
-            'site_name_position' => 'after',
-            'site_name_separator' => '|',
-            'title' => '@seo:title',
-            'description' => '@seo:content',
-            'canonical_url' => '@seo:permalink',
-            'priority' => 0.5,
-            'change_frequency' => 'monthly',
-        ];
     }
 }
