@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Statamic\Assets\Asset;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Statamic;
 
@@ -449,7 +450,7 @@ class Fields
         }
 
         $cascade = Blink::once('seo-pro::placeholder.cascade', function () {
-            $cascade = (new Cascade)->with(SiteDefaults::get()->first()->all());
+            $cascade = (new Cascade)->with(SiteDefaults::in($this->data?->locale() ?? Site::selected()->handle())->all());
 
             if ($this->data) {
                 $cascade = $cascade

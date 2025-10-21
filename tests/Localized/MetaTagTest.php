@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Tests\ViewScenarios;
 
 class MetaTagTest extends LocalizedTestCase
@@ -300,5 +301,32 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_uses_the_correct_site_defaults_localization($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        SiteDefaults::in('default')
+            ->set('site_name', 'Cool Runnings')
+            ->set('site_name_position', 'after')
+            ->save();
+
+        SiteDefaults::in('french')
+            ->set('site_name', 'Corse Fantastiche')
+            ->set('site_name_position', 'before')
+            ->save();
+
+        $content = $this->get('/')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Home | Cool Runnings</title>', $content);
+
+        $content = $this->get('/fr')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Corse Fantastiche | Home</title>', $content);
     }
 }

@@ -3,8 +3,11 @@
 namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
+use Statamic\Facades;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
+use Statamic\Sites\Site;
 
 class HumansController extends Controller
 {
@@ -12,16 +15,16 @@ class HumansController extends Controller
     {
         abort_unless(config('statamic.seo-pro.humans.enabled'), 404);
 
+        $site = Facades\Site::all()->first(fn (Site $site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
+
         $cascade = (new Cascade)
-            ->with(SiteDefaults::get()->first()->all()) // todo: this should really get the first site on this domain
+            ->with(SiteDefaults::in($site->handle())->all())
             ->get();
 
         $contents = view('seo-pro::humans', $cascade);
 
-        $response = response()
+        return response()
             ->make($contents)
             ->header('Content-Type', 'text/plain');
-
-        return $response;
     }
 }

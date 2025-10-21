@@ -8,7 +8,6 @@ use Statamic\Contracts\Entries\QueryBuilder;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry as EntryFacade;
-use Statamic\Facades\Site;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
@@ -123,7 +122,7 @@ class Sitemap
 
                 $data = (new Cascade)
                     ->forSitemap()
-                    ->with($this->getSiteDefaults())
+                    ->with($this->getSiteDefaults($content->locale()))
                     ->with($this->getSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
@@ -222,10 +221,8 @@ class Sitemap
         return $items instanceof IlluminateCollection ? $items : collect();
     }
 
-    protected function getSiteDefaults()
+    protected function getSiteDefaults(string $site): array
     {
-        return Blink::once('seo-pro.site-defaults', function () {
-            return SiteDefaults::in($this->sites->first() ?? Site::default()->handle())->all();
-        });
+        return Blink::once("seo-pro.site-defaults.{$site}", fn () => SiteDefaults::in($site)->all());
     }
 }
