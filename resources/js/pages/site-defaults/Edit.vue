@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted, ref, useTemplateRef, computed } from 'vue';
+import axios from 'axios';
+import { onMounted, onUnmounted, ref, useTemplateRef, computed, nextTick } from 'vue';
 import { Header, Button, PublishContainer, PublishTabs } from '@statamic/cms/ui';
 import { Pipeline, Request, BeforeSaveHooks, AfterSaveHooks } from '@statamic/cms/save-pipeline';
 import { Head } from '@statamic/cms/inertia';
@@ -7,6 +8,7 @@ import SiteSelector from '../../components/SiteSelector.vue';
 
 const props = defineProps({
 	blueprint: Object,
+	initialReference: String,
 	initialValues: Object,
 	initialMeta: Object,
 	initialLocalizations: Array,
@@ -19,6 +21,7 @@ const props = defineProps({
 });
 
 const container = useTemplateRef('container');
+const reference = ref(props.initialReference);
 const values = ref(props.initialValues);
 const meta = ref(props.initialMeta);
 const errors = ref({});
@@ -37,9 +40,12 @@ function save() {
 	new Pipeline()
 		.provide({ container, errors, saving })
 		.through([
-			new BeforeSaveHooks('site-default'),
-			new Request(props.action, 'patch'),
-			new AfterSaveHooks('site-default'),
+			new BeforeSaveHooks('site-defaults'),
+			new Request(props.action, 'patch', {
+				site: site.value,
+				_localized: localizedFields.value,
+			}),
+			new AfterSaveHooks('site-defaults'),
 		])
 		.then((response) => {
 			Statamic.$toast.success(__('Saved'));
@@ -81,25 +87,22 @@ const confirmSwitchLocalization = () => {
 const switchToLocalization = (localization) => {
 	localizing.value = localization.handle;
 
-	// if (this.publishContainer === 'base') {
-	// 	window.history.replaceState({}, '', localization.url);
-	// }
+	window.history.replaceState({}, '', localization.url);
 
-	// todo: implement
-	// this.$axios.get(localization.url).then((response) => {
-	// 	const data = response.data;
-	// 	this.values = data.values;
-	// 	this.originValues = data.originValues;
-	// 	this.meta = data.meta;
-	// 	this.localizations = data.localizations;
-	// 	this.localizedFields = data.localizedFields;
-	// 	this.hasOrigin = data.hasOrigin;
-	// 	this.actions = data.actions;
-	// 	this.fieldset = data.blueprint;
-	// 	this.site = localization.handle;
-	// 	this.localizing = false;
-	// 	this.$nextTick(() => this.$refs.container.clearDirtyState());
-	// });
+	axios.get(localization.url).then((response) => {
+		const data = response.data;
+		reference.value = data.initialReference;
+		values.value = data.initialValues;
+		originValues.value = data.initialOriginValues;
+		originMeta.value = data.initialOriginMeta;
+		meta.value = data.initialMeta;
+		localizations.value = data.initialLocalizations;
+		localizedFields.value = data.initialLocalizedFields;
+		hasOrigin.value = data.initialHasOrigin;
+		site.value = localization.handle;
+		localizing.value = false;
+		nextTick(() => container.value.clearDirtyState());
+	});
 };
 </script>
 
@@ -121,17 +124,19 @@ const switchToLocalization = (localization) => {
 		<PublishContainer
 			ref="container"
 			name="site-defaults"
+			:reference
 			:blueprint
 			v-model="values"
 			:meta
 			:errors
 			:site
-			:localized-fields
+			:origin-values
+			:origin-meta
+			v-model:modified-fields="localizedFields"
 			:sync-field-confirmation-text
+			:track-dirty-state="true"
 			as-config
-		>
-			<PublishTabs />
-		</PublishContainer>
+		/>
 
 		<confirmation-modal
 			v-if="pendingLocalization"
