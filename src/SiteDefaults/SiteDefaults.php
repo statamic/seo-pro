@@ -31,10 +31,9 @@ class SiteDefaults
 
     public static function origins(): Collection
     {
-        return config()->collection(
-            key: 'statamic.seo-pro.site_defaults.origins',
-            default: Site::all()->mapWithKeys(fn ($site) => [$site->handle() => null])->all()
-        );
+        return Site::all()
+            ->mapWithKeys(fn ($site) => [$site->handle() => null])
+            ->merge(config('statamic.seo-pro.site_defaults.origins'));
     }
 
     public static function in(string $locale): ?LocalizedSiteDefaults
