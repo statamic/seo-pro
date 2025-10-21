@@ -4,11 +4,12 @@ namespace Statamic\SeoPro\SiteDefaults;
 
 use Illuminate\Support\Collection;
 use Statamic\Facades\Blueprint;
+use Statamic\SeoPro\Events\SiteDefaultsSaved;
 use Statamic\SeoPro\Fields;
 
 class LocalizedSiteDefaults
 {
-    public function __construct(private string $locale, private Collection $defaults) {}
+    public function __construct(private readonly string $locale, private Collection $defaults) {}
 
     public function locale(): string
     {
@@ -37,7 +38,7 @@ class LocalizedSiteDefaults
     {
         $save = SiteDefaults::save($this);
 
-        // todo: dispatch event
+        SiteDefaultsSaved::dispatch($this);
 
         return $save;
     }
