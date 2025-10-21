@@ -30,7 +30,6 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
-                                        'default' => '@seo:title',
                                     ],
                                 ],
                                 [
@@ -44,7 +43,6 @@ class Blueprint
                                         'field' => [
                                             'type' => 'textarea',
                                         ],
-                                        'default' => '@seo:content',
                                     ],
                                 ],
                                 [
@@ -54,7 +52,6 @@ class Blueprint
                                         'instructions' => __('seo-pro::fieldsets/defaults.site_name_instruct'),
                                         'type' => 'text',
                                         'localizable' => true,
-                                        'default' => 'Site Name',
                                     ],
                                 ],
                                 [
@@ -70,7 +67,6 @@ class Blueprint
                                         ],
                                         'width' => 50,
                                         'localizable' => true,
-                                        'default' => 'after',
                                     ],
                                 ],
                                 [
@@ -81,7 +77,6 @@ class Blueprint
                                         'type' => 'text',
                                         'width' => 50,
                                         'localizable' => true,
-                                        'default' => '|',
                                     ],
                                 ],
                                 [
@@ -93,7 +88,6 @@ class Blueprint
                                         'inherit' => false,
                                         'field' => false,
                                         'localizable' => true,
-                                        'default' => '@seo:permalink',
                                     ],
                                 ],
                             ],
@@ -183,7 +177,6 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
-                                        'default' => '@seo:title',
                                     ],
                                 ],
                             ],
@@ -239,7 +232,6 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
-                                        'default' => '@seo:title',
                                     ],
                                 ],
                                 [
@@ -253,7 +245,6 @@ class Blueprint
                                         'field' => [
                                             'type' => 'textarea',
                                         ],
-                                        'default' => '@seo:description',
                                     ],
                                 ],
                             ],
@@ -278,7 +269,6 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
-                                        'default' => 0.5,
                                     ],
                                 ],
                                 [
@@ -300,7 +290,6 @@ class Blueprint
                                                 'never' => __('seo-pro::messages.never'),
                                             ],
                                         ],
-                                        'default' => 'monthly',
                                     ],
                                 ],
                             ],
