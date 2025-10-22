@@ -47,6 +47,7 @@ class SiteDefaultsController extends CpController
             'initialOriginMeta' => $originMeta ?? null,
             'initialSite' => $site,
             'action' => cp_route('seo-pro.site-defaults.update'),
+            'configureUrl' => cp_route('seo-pro.site-defaults.configure.edit'),
         ];
 
         if ($request->wantsJson()) {

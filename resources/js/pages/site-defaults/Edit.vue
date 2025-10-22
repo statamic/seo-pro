@@ -1,10 +1,11 @@
 <script setup>
 import axios from 'axios';
 import { onMounted, onUnmounted, ref, useTemplateRef, computed, nextTick } from 'vue';
-import { Header, Button, PublishContainer, PublishTabs } from '@statamic/cms/ui';
+import { Header, Dropdown, DropdownMenu, DropdownItem, Button, PublishContainer } from '@statamic/cms/ui';
 import { Pipeline, Request, BeforeSaveHooks, AfterSaveHooks } from '@statamic/cms/save-pipeline';
 import { Head } from '@statamic/cms/inertia';
 import SiteSelector from '../../components/SiteSelector.vue';
+import ConfigureModal from '../../components/site-defaults/ConfigureModal.vue';
 
 const props = defineProps({
 	blueprint: Object,
@@ -18,6 +19,7 @@ const props = defineProps({
 	initialOriginMeta: Object,
 	initialSite: String,
 	action: String,
+	configureUrl: String,
 });
 
 const container = useTemplateRef('container');
@@ -35,6 +37,7 @@ const site = ref(props.initialSite);
 const syncFieldConfirmationText = ref(__('messages.sync_entry_field_confirmation_text'));
 const pendingLocalization = ref(null);
 const saving = ref(false);
+const configureModalOpen = ref(false);
 
 function save() {
 	new Pipeline()
@@ -111,6 +114,15 @@ const switchToLocalization = (localization) => {
 
 	<div class="max-w-5xl mx-auto">
 		<Header :title="__('seo-pro::messages.site_defaults')" icon="earth">
+			<Dropdown v-if="showLocalizationSelector">
+				<template #trigger>
+					<Button icon="dots" variant="ghost" :aria-label="__('Open dropdown menu')" />
+				</template>
+				<DropdownMenu>
+					<DropdownItem :text="__('Configure')" icon="cog" @click="configureModalOpen = true" />
+				</DropdownMenu>
+			</Dropdown>
+
 			<SiteSelector
 				v-if="showLocalizationSelector"
 				:sites="localizations"
@@ -136,6 +148,12 @@ const switchToLocalization = (localization) => {
 			:sync-field-confirmation-text
 			:track-dirty-state="true"
 			as-config
+		/>
+
+		<ConfigureModal
+			v-if="configureModalOpen"
+			:route="configureUrl"
+			@closed="configureModalOpen = false"
 		/>
 
 		<confirmation-modal
