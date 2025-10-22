@@ -268,8 +268,8 @@ class Sitemap
                 'href' => $entry->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sites->contains($entry->root()->site()), function ($collection) use ($entry) {
-                $collection->push([
+            ->when($sites->contains($entry->root()->site()), function ($hreflangs) use ($entry) {
+                $hreflangs->push([
                     'href' => $entry->root()->absoluteUrl(),
                     'hreflang' => 'x-default',
                 ]);
@@ -279,31 +279,20 @@ class Sitemap
 
     private function hrefLangsForTerm(Term $term): array
     {
-        $sitesWithSameDomain = $this->sitesWithSameDomain($term->site());
+        $sites = SiteFacade::all()->values();
 
-        return $sitesWithSameDomain
+        return $sites
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
             ->map(fn (Site $site) => [
                 'href' => $term->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sitesWithSameDomain->contains($term->inDefaultLocale()->locale()), function ($collection) use ($term) {
-                $collection->push([
+            ->when($sites->contains($term->inDefaultLocale()->locale()), function ($hreflangs) use ($term) {
+                $hreflangs->push([
                     'href' => $term->inDefaultLocale()->absoluteUrl(),
                     'hreflang' => 'x-default',
                 ]);
             })
             ->all();
-    }
-
-    private function sitesWithSameDomain(Site $site): IlluminateCollection
-    {
-        $pieces = parse_url($site->absoluteUrl());
-
-        $domain = $pieces['scheme'].'://'.$pieces['host'];
-
-        return SiteFacade::all()
-            ->filter(fn (Site $s) => str($s->absoluteUrl())->startsWith($domain))
-            ->values();
     }
 }
