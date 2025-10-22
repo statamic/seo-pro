@@ -3,11 +3,9 @@
 namespace Statamic\SeoPro\Http\Controllers;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Str;
-use Statamic\Facades;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
-use Statamic\Sites\Site;
 
 class HumansController extends Controller
 {
@@ -15,10 +13,8 @@ class HumansController extends Controller
     {
         abort_unless(config('statamic.seo-pro.humans.enabled'), 404);
 
-        $site = Facades\Site::all()->first(fn (Site $site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
-
         $cascade = (new Cascade)
-            ->with(SiteDefaults::in($site->handle())->all())
+            ->with(SiteDefaults::in(Site::current()->handle())->all())
             ->get();
 
         $contents = view('seo-pro::humans', $cascade);
