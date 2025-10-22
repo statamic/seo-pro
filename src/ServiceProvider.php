@@ -176,9 +176,16 @@ class ServiceProvider extends AddonServiceProvider
         Multisite::hook('after', function () {
             $settings = Addon::get('statamic/seo-pro')->settings();
 
-            $settings->set('site_defaults', [
-                Site::default()->handle() => $settings->get('site_defaults', []),
-            ])->save();
+            $settings->set([
+                'site_defaults' => [
+                    Site::default()->handle() => $settings->get('site_defaults', []),
+                ],
+                'site_defaults_sites' => [
+                    Site::default()->handle() => null,
+                ],
+            ]);
+
+            $settings->save();
         });
 
         return $this;
