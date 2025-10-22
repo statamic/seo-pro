@@ -495,18 +495,23 @@ class Cascade
         }
 
         $robots = [];
+
         if ($indexing = $this->data->get('robots_indexing')) {
             $robots[] = $indexing;
         }
+
         if ($following = $this->data->get('robots_following')) {
             $robots[] = $following;
         }
+
         if ($this->data->get('robots_noarchive')) {
             $robots[] = 'noarchive';
         }
+
         if ($this->data->get('robots_noimageindex')) {
             $robots[] = 'noimageindex';
         }
+
         if ($this->data->get('robots_nosnippet')) {
             $robots[] = 'nosnippet';
         }
