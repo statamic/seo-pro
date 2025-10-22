@@ -44,6 +44,7 @@ GQL;
             '<link href="http://cool-runnings.com/fr/nectar" rel="canonical" />',
             '<link rel="alternate" href="http://cool-runnings.com/fr/nectar" hreflang="fr" />',
             '<link rel="alternate" href="http://cool-runnings.com/nectar" hreflang="en" />',
+            '<link rel="alternate" href="http://cool-runnings.com/nectar" hreflang="x-default" />',
             '<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />',
         ])->implode('');
 
