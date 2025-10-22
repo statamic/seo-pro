@@ -2,20 +2,10 @@
 
 namespace Statamic\SeoPro\Events;
 
-use Statamic\Contracts\Git\ProvidesCommitMessage;
 use Statamic\Events\Event;
+use Statamic\SeoPro\SiteDefaults\LocalizedSiteDefaults;
 
-class SiteDefaultsSaved extends Event implements ProvidesCommitMessage
+class SiteDefaultsSaved extends Event
 {
-    public $defaults;
-
-    public function __construct($defaults)
-    {
-        $this->defaults = $defaults;
-    }
-
-    public function commitMessage()
-    {
-        return __('SEO Pro site defaults saved', [], config('statamic.git.locale'));
-    }
+    public function __construct(public LocalizedSiteDefaults $defaults) {}
 }

@@ -3,32 +3,102 @@
 namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Illuminate\Http\Request;
-use Statamic\CP\PublishForm;
+use Inertia\Inertia;
+use Statamic\Facades\Site;
+use Statamic\Fields\Blueprint;
 use Statamic\Http\Controllers\CP\CpController;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\LocalizedSiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class SiteDefaultsController extends CpController
 {
-    public function edit()
+    public function edit(Request $request)
     {
         $this->authorize('edit seo site defaults');
 
-        $siteDefaults = SiteDefaults::load();
+        $site = $request->site ?? Site::selected()->handle();
 
-        return PublishForm::make($siteDefaults->blueprint())
-            ->asConfig()
-            ->icon('earth')
-            ->title(__('seo-pro::messages.site_defaults'))
-            ->values($siteDefaults->all())
-            ->submittingTo(cp_route('seo-pro.site-defaults.update'));
+        $siteDefaults = SiteDefaults::in($site);
+        $blueprint = $siteDefaults->blueprint();
+
+        [$values, $meta] = $this->extractFromFields($siteDefaults, $blueprint);
+
+        if ($hasOrigin = $siteDefaults->hasOrigin()) {
+            [$originValues, $originMeta] = $this->extractFromFields($siteDefaults->origin(), $blueprint);
+        }
+
+        $viewData = [
+            'blueprint' => $blueprint->toPublishArray(),
+            'initialReference' => $siteDefaults->reference(),
+            'initialValues' => $values,
+            'initialMeta' => $meta,
+            'initialLocalizations' => SiteDefaults::get()->map(function ($localized) use ($siteDefaults): array {
+                return [
+                    'handle' => $localized->locale(),
+                    'name' => $localized->site()->name(),
+                    'active' => $localized->locale() === $siteDefaults->locale(),
+                    'origin' => ! $localized->hasOrigin(),
+                    'url' => $localized->editUrl(),
+                ];
+            })->values()->all(),
+            'initialLocalizedFields' => $siteDefaults->defaults()->keys()->all(),
+            'initialHasOrigin' => $hasOrigin,
+            'initialOriginValues' => $originValues ?? null,
+            'initialOriginMeta' => $originMeta ?? null,
+            'initialSite' => $site,
+            'action' => cp_route('seo-pro.site-defaults.update'),
+            'configureUrl' => cp_route('seo-pro.site-defaults.configure.edit'),
+        ];
+
+        if ($request->wantsJson()) {
+            return $viewData;
+        }
+
+        return Inertia::render('seo-pro::SiteDefaults/Edit', $viewData);
     }
 
     public function update(Request $request)
     {
         $this->authorize('edit seo site defaults');
 
-        $values = PublishForm::make(SiteDefaults::load()->blueprint())->submit($request->all());
+        $site = $request->site ?? Site::selected()->handle();
 
-        SiteDefaults::load($values)->save();
+        $siteDefaults = SiteDefaults::in($site);
+
+        $fields = $siteDefaults->blueprint()->fields()->addValues($request->all());
+
+        $fields->validate();
+
+        $values = $fields->process()->values();
+
+        if ($siteDefaults->hasOrigin()) {
+            $values = $values->only($request->input('_localized'));
+        }
+
+        $siteDefaults->set($values->filter()->all());
+
+        $save = $siteDefaults->save();
+
+        return ['saved' => $save];
+    }
+
+    private function extractFromFields(LocalizedSiteDefaults $defaults, Blueprint $blueprint): array
+    {
+        $values = collect();
+        $target = $defaults;
+
+        while ($target) {
+            $values = $target->defaults()->merge($values);
+            $target = $target->origin();
+        }
+
+        $values = $values->all();
+
+        $fields = $blueprint
+            ->fields()
+            ->addValues($values)
+            ->preProcess();
+
+        return [$fields->values()->all(), $fields->meta()->all()];
     }
 }

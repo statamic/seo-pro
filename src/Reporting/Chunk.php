@@ -8,7 +8,7 @@ use Statamic\Facades\File;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class Chunk
 {
@@ -80,7 +80,7 @@ class Chunk
         }
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->augmented())
+            ->with(SiteDefaults::in($content->locale())->augmented())
             ->with($this->getAugmentedSectionDefaults($content))
             ->with($content->augmentedValue('seo')->value())
             ->withCurrent($content)

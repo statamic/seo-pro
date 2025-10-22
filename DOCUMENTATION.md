@@ -22,6 +22,10 @@ Head to `Tools > SEO Pro > Site Defaults` and configure your default settings. T
 
 You may choose to pull data from other fields, enter hardcoded strings, or use Antlers templating. See [File Usage](#file-usage) for more details.
 
+If you're using Statamic's [Multi-Site](https://statamic.dev/multi-site) feature, site defaults are localizable, meaning defaults can be set per site. You may configure an "origin" for each localization, determining which site to inherit values from if none are set for the current site.
+
+#### Storage
+
 Site Defaults are stored in `resources/addons/seo-pro.yaml` by default, but can be moved to the database via the `php please install:eloquent-driver` command.
 
 #### Static Caching

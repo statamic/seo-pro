@@ -4,7 +4,8 @@ namespace Tests;
 
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\Facades\Site;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\StaticCaching\Cacher;
 
 class StaticCachingInvalidationTest extends TestCase
@@ -28,7 +29,7 @@ class StaticCachingInvalidationTest extends TestCase
         config()->set('statamic.static_caching.strategy', null);
         config()->set('statamic.static_caching.invalidation.rules', 'all');
 
-        SiteDefaults::load()->save();
+        SiteDefaults::in('default')->save();
     }
 
     #[Test]
@@ -40,7 +41,7 @@ class StaticCachingInvalidationTest extends TestCase
 
         config()->set('statamic.static_caching.invalidation.rules', 'all');
 
-        SiteDefaults::load()->save();
+        SiteDefaults::in('default')->save();
     }
 
     #[Test]
@@ -62,6 +63,37 @@ class StaticCachingInvalidationTest extends TestCase
             ],
         ]);
 
-        SiteDefaults::load()->save();
+        SiteDefaults::in('default')->save();
+    }
+
+    #[Test]
+    public function invalidates_urls_when_site_defaults_are_saved_in_a_multisite()
+    {
+        config()->set('statamic.system.multisite', true);
+
+        Site::setSites([
+            'default' => ['url' => 'http://test.com', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.fr', 'locale' => 'fr_FR'],
+        ]);
+
+        $cacher = Mockery::mock(Cacher::class)->shouldReceive('invalidateUrls')->with([
+            'http://example.com/baz',
+            'http://test.fr/foo',
+            'http://test.fr/bar',
+        ])->once()->getMock();
+
+        $this->app->bind(Cacher::class, fn () => $cacher);
+
+        config()->set('statamic.static_caching.invalidation.rules', [
+            'seo_pro_site_defaults' => [
+                'urls' => [
+                    '/foo',
+                    '/bar',
+                    'http://example.com/baz',
+                ],
+            ],
+        ]);
+
+        SiteDefaults::in('fr')->save();
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class GraphQLTest extends LocalizedTestCase
 {
@@ -99,6 +100,65 @@ GQL;
                                 'url' => 'http://cool-runnings.com/nectar',
                             ],
                         ],
+                    ],
+                ],
+            ]]);
+    }
+
+    #[Test]
+    public function it_queries_localized_site_default_values()
+    {
+        SiteDefaults::in('default')->set('site_name', 'Cool Runnings')->save();
+        SiteDefaults::in('french')->set('site_name', 'Corse Fantastiche')->save();
+
+        $query = <<<'GQL'
+{
+    entry(id: "8e4b4e60-5dfb-47b0-a2d7-a904d64aeb80") {
+        locale
+        seo {
+            title
+            site_name
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'locale' => 'default',
+                    'seo' => [
+                        'title' => 'Nectar of the Gods',
+                        'site_name' => 'Cool Runnings',
+                    ],
+                ],
+            ]]);
+
+        $query = <<<'GQL'
+{
+    entry(id: "d9848738-ca48-433e-b85f-8e9571780e0c") {
+        locale
+        seo {
+            title
+            site_name
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'locale' => 'french',
+                    'seo' => [
+                        'title' => 'Les Nectar of the Gods',
+                        'site_name' => 'Corse Fantastiche',
                     ],
                 ],
             ]]);

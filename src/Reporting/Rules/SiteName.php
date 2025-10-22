@@ -2,7 +2,10 @@
 
 namespace Statamic\SeoPro\Reporting\Rules;
 
+use Illuminate\Support\Collection;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Reporting\Rule;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class SiteName extends Rule
 {
@@ -11,12 +14,14 @@ class SiteName extends Rule
 
     public function description()
     {
-        return __('seo-pro::messages.rules.site_name');
+        return Site::hasMultiple()
+            ? __('seo-pro::messages.rules.site_name_multisite')
+            : __('seo-pro::messages.rules.site_name');
     }
 
     public function process()
     {
-        $this->passes = ! empty(trim($this->siteName()));
+        $this->passes = $this->siteNames()->filter(fn ($siteName) => empty(trim($siteName)))->isEmpty();
     }
 
     public function status()
@@ -36,12 +41,15 @@ class SiteName extends Rule
 
     public function comment()
     {
-        return $this->siteName();
+        return Site::multiEnabled() ? null : $this->siteNames()->first();
     }
 
-    protected function siteName()
+    private function siteNames(): Collection
     {
-        return $this->report->defaults()->get('site_name');
+        return SiteDefaults::get()
+            ->map->augmented()
+            ->pluck('site_name')
+            ->values();
     }
 
     public function maxPoints()

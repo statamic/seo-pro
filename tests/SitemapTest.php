@@ -612,7 +612,6 @@ EOT;
 EOT;
 
         $this->assertEquals($expected, $content);
-
     }
 }
 

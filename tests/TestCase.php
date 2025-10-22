@@ -7,7 +7,7 @@ use Illuminate\Testing\TestResponse;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Facades\YAML;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Testing\AddonTestCase;
 
 abstract class TestCase extends AddonTestCase
@@ -85,7 +85,13 @@ abstract class TestCase extends AddonTestCase
 
     protected function setSeoInSiteDefaults($seo)
     {
-        SiteDefaults::load($seo)->save();
+        $siteDefaults = SiteDefaults::in('default');
+
+        foreach ($seo as $key => $value) {
+            $siteDefaults->set($key, $value);
+        }
+
+        $siteDefaults->save();
 
         return $this;
     }

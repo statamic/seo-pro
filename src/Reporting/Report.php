@@ -12,8 +12,6 @@ use Statamic\Facades\File;
 use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
 use Statamic\Facades\YAML;
-use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\SiteDefaults;
 
 class Report implements Arrayable, Jsonable
 {
@@ -447,13 +445,6 @@ class Report implements Arrayable, Jsonable
     public function isGenerated()
     {
         return ! in_array($this->status(), ['pending', 'generating']);
-    }
-
-    public function defaults()
-    {
-        return collect((new Cascade)
-            ->with(SiteDefaults::load()->all())
-            ->get());
     }
 
     public function score()

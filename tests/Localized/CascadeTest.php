@@ -5,7 +5,7 @@ namespace Tests\Localized;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
-use Statamic\SeoPro\SiteDefaults;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class CascadeTest extends LocalizedTestCase
 {
@@ -15,7 +15,7 @@ class CascadeTest extends LocalizedTestCase
         $entry = Entry::findByUri('/about', 'italian')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::in('italian')->all())
             ->withCurrent($entry)
             ->get();
 
@@ -34,7 +34,7 @@ class CascadeTest extends LocalizedTestCase
         $entry = Entry::findByUri('/', 'italian')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::in('italian')->all())
             ->withCurrent($entry)
             ->get();
 
@@ -54,7 +54,7 @@ class CascadeTest extends LocalizedTestCase
         $entry = Entry::findByUri('/', 'default')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->with(SiteDefaults::in('italian')->all())
             ->withCurrent($entry)
             ->get();
 

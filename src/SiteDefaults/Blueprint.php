@@ -1,125 +1,16 @@
 <?php
 
-namespace Statamic\SeoPro;
+namespace Statamic\SeoPro\SiteDefaults;
 
-use Illuminate\Support\Collection;
-use Statamic\Facades\Addon;
-use Statamic\Facades\Blink;
-use Statamic\Facades\Blueprint;
-use Statamic\Facades\YAML;
-use Statamic\SeoPro\Events\SiteDefaultsSaved;
+use Statamic\SeoPro\HasAssetField;
 
-class SiteDefaults extends Collection
+class Blueprint
 {
     use HasAssetField;
 
-    /**
-     * Load site defaults collection.
-     *
-     * @param  array|Collection|null  $items
-     */
-    public function __construct($items = null)
+    public static function get(): \Statamic\Fields\Blueprint
     {
-        if (! is_null($items)) {
-            $items = collect($items)->all();
-        }
-
-        $this->items = $items ?? $this->getDefaults();
-    }
-
-    /**
-     * Load site defaults collection.
-     *
-     * @param  array|Collection|null  $items
-     * @return static
-     */
-    public static function load($items = null)
-    {
-        $class = app(SiteDefaults::class);
-
-        return new $class($items);
-    }
-
-    /**
-     * Get augmented.
-     *
-     * @return array
-     */
-    public function augmented()
-    {
-        $contentValues = Blueprint::make()
-            ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
-            ->fields()
-            ->addValues($this->items)
-            ->augment()
-            ->values();
-
-        $defaultValues = $this->blueprint()
-            ->fields()
-            ->addValues($this->items)
-            ->augment()
-            ->values();
-
-        return $defaultValues
-            ->merge($contentValues)
-            ->only(array_keys($this->items))
-            ->all();
-    }
-
-    /**
-     * Save site defaults collection to yaml.
-     */
-    public function save()
-    {
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $this->items)->save();
-
-        SiteDefaultsSaved::dispatch($this);
-
-        Blink::forget('seo-pro::defaults');
-    }
-
-    /**
-     * Get site defaults from yaml.
-     *
-     * @return array
-     */
-    protected function getDefaults()
-    {
-        return Blink::once('seo-pro::defaults', function () {
-            return [
-                ...$this->defaultValues(),
-                ...Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []),
-            ];
-        });
-    }
-
-    /**
-     * The default values to be merged into the site's values.
-     *
-     * @return array
-     */
-    protected function defaultValues()
-    {
-        return [
-            'site_name' => 'Site Name',
-            'site_name_position' => 'after',
-            'site_name_separator' => '|',
-            'title' => '@seo:title',
-            'description' => '@seo:content',
-            'canonical_url' => '@seo:permalink',
-            'priority' => 0.5,
-            'change_frequency' => 'monthly',
-        ];
-    }
-
-    /**
-     * Get site defaults blueprint.
-     *
-     * @return \Statamic\Fields\Blueprint
-     */
-    public function blueprint()
-    {
-        return Blueprint::make()->setContents([
+        return \Statamic\Facades\Blueprint::make()->setContents([
             'tabs' => [
                 'meta' => [
                     'display' => __('seo-pro::messages.meta'),
@@ -286,7 +177,6 @@ class SiteDefaults extends Collection
                                         'field' => [
                                             'type' => 'text',
                                         ],
-                                        'default' => '@seo:title',
                                     ],
                                 ],
                             ],
@@ -342,7 +232,6 @@ class SiteDefaults extends Collection
                                         'field' => [
                                             'type' => 'text',
                                         ],
-                                        'default' => '@seo:title',
                                     ],
                                 ],
                                 [
@@ -356,7 +245,6 @@ class SiteDefaults extends Collection
                                         'field' => [
                                             'type' => 'textarea',
                                         ],
-                                        'default' => '@seo:description',
                                     ],
                                 ],
                             ],
