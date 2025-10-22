@@ -258,9 +258,8 @@ class Sitemap
 
     private function hrefLangsForEntry(Entry $entry): array
     {
-        $sites = SiteFacade::all()->values();
-
-        return $sites
+        return SiteFacade::all()
+            ->values()
             ->filter(fn (Site $site) => $entry->in($site->handle()))
             ->filter(fn (Site $site) => $entry->in($site->handle())->published())
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
@@ -268,31 +267,26 @@ class Sitemap
                 'href' => $entry->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sites->contains($entry->root()->site()), function ($hreflangs) use ($entry) {
-                $hreflangs->push([
-                    'href' => $entry->root()->absoluteUrl(),
-                    'hreflang' => 'x-default',
-                ]);
-            })
+            ->push([
+                'href' => $entry->root()->absoluteUrl(),
+                'hreflang' => 'x-default',
+            ])
             ->all();
     }
 
     private function hrefLangsForTerm(Term $term): array
     {
-        $sites = SiteFacade::all()->values();
-
-        return $sites
+        return SiteFacade::all()
+            ->values()
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
             ->map(fn (Site $site) => [
                 'href' => $term->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sites->contains($term->inDefaultLocale()->locale()), function ($hreflangs) use ($term) {
-                $hreflangs->push([
-                    'href' => $term->inDefaultLocale()->absoluteUrl(),
-                    'hreflang' => 'x-default',
-                ]);
-            })
+            ->push([
+                'href' => $term->inDefaultLocale()->absoluteUrl(),
+                'hreflang' => 'x-default',
+            ])
             ->all();
     }
 }
