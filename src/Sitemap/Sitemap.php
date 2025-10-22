@@ -258,9 +258,7 @@ class Sitemap
 
     private function hrefLangsForEntry(Entry $entry): array
     {
-        $sites = SiteFacade::all()->values();
-
-        return $sites
+        return SiteFacade::all()
             ->filter(fn (Site $site) => $entry->in($site->handle()))
             ->filter(fn (Site $site) => $entry->in($site->handle())->published())
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
@@ -268,42 +266,25 @@ class Sitemap
                 'href' => $entry->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sites->contains($entry->root()->site()), function ($collection) use ($entry) {
-                $collection->push([
-                    'href' => $entry->root()->absoluteUrl(),
-                    'hreflang' => 'x-default',
-                ]);
-            })
+            ->push([
+                'href' => $entry->root()->absoluteUrl(),
+                'hreflang' => 'x-default',
+            ])
             ->all();
     }
 
     private function hrefLangsForTerm(Term $term): array
     {
-        $sitesWithSameDomain = $this->sitesWithSameDomain($term->site());
-
-        return $sitesWithSameDomain
+        return SiteFacade::all()
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
             ->map(fn (Site $site) => [
                 'href' => $term->in($site->handle())->absoluteUrl(),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
-            ->when($sitesWithSameDomain->contains($term->inDefaultLocale()->locale()), function ($collection) use ($term) {
-                $collection->push([
-                    'href' => $term->inDefaultLocale()->absoluteUrl(),
-                    'hreflang' => 'x-default',
-                ]);
-            })
+            ->push([
+                'href' => $term->inDefaultLocale()->absoluteUrl(),
+                'hreflang' => 'x-default',
+            ])
             ->all();
-    }
-
-    private function sitesWithSameDomain(Site $site): IlluminateCollection
-    {
-        $pieces = parse_url($site->absoluteUrl());
-
-        $domain = $pieces['scheme'].'://'.$pieces['host'];
-
-        return SiteFacade::all()
-            ->filter(fn (Site $s) => str($s->absoluteUrl())->startsWith($domain))
-            ->values();
     }
 }
