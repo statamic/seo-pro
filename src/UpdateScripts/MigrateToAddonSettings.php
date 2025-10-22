@@ -16,7 +16,7 @@ class MigrateToAddonSettings extends UpdateScript
 
     public function update()
     {
-        if (! File::exists($path = base_path('content/seo.yaml'))) {
+        if (! File::exists($path = config('statamic.seo-pro.site_defaults.path', base_path('content/seo.yaml')))) {
             return $this;
         }
 
