@@ -3,7 +3,7 @@ import axios from 'axios';
 import { onMounted, onUnmounted, ref, useTemplateRef, computed, nextTick } from 'vue';
 import { Header, Dropdown, DropdownMenu, DropdownItem, Button, PublishContainer } from '@statamic/cms/ui';
 import { Pipeline, Request, BeforeSaveHooks, AfterSaveHooks } from '@statamic/cms/save-pipeline';
-import { Head } from '@statamic/cms/inertia';
+import { Head, router } from '@statamic/cms/inertia';
 import SiteSelector from '../../components/SiteSelector.vue';
 import ConfigureModal from '../../components/site-defaults/ConfigureModal.vue';
 
@@ -153,6 +153,7 @@ const switchToLocalization = (localization) => {
 		<ConfigureModal
 			v-if="configureModalOpen"
 			:route="configureUrl"
+			@saved="() => router.reload()"
 			@closed="configureModalOpen = false"
 		/>
 

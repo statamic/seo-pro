@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Modal, Icon, Field, Heading, Select, Button, } from '@statamic/cms/ui';
 import { ref, onMounted } from 'vue';
 
-const emit = defineEmits(['closed']);
+const emit = defineEmits(['closed', 'saved']);
 const props = defineProps({ route: String });
 
 const open = ref(true);
@@ -24,6 +24,7 @@ const save = () => {
 	axios.patch(props.route, { sites: sites.value })
 		.then(() => {
 			Statamic.$toast.success(__('Saved'));
+			emit('saved');
 			close();
 		})
 		.catch((e) => {
