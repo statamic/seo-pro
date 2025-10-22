@@ -349,8 +349,8 @@ class Cascade
                 $site = Site::get($locale);
 
                 return [
-                    'is_default_site' => $site->isDefault(),
                     'site' => $site,
+                    'is_default_site' => $site->isDefault(),
                     'url' => $this->model->in($locale)->absoluteUrl(),
                 ];
             });
