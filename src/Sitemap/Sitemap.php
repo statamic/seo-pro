@@ -5,11 +5,6 @@ namespace Statamic\SeoPro\Sitemap;
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
-use Statamic\Contracts\Entries\QueryBuilder;
-use Statamic\Facades\Blink;
-use Statamic\Facades\Collection;
-use Statamic\Facades\Entry as EntryFacade;
-use Statamic\Facades\Site;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Contracts\Taxonomies\Term;
@@ -104,7 +99,7 @@ class Sitemap
 
     private function sites(): IlluminateCollection
     {
-        $sites = Site::all()->filter(fn ($site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
+        $sites = SiteFacade::all()->filter(fn ($site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
 
         return $this->runHooks('sites', $sites);
     }
