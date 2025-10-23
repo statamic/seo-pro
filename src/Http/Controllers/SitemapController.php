@@ -9,15 +9,14 @@ use Statamic\SeoPro\Sitemap\Sitemap;
 
 class SitemapController extends Controller
 {
-    public function __construct(public Sitemap $sitemap)
-    {}
+    public function __construct(public Sitemap $sitemap) {}
 
     public function index()
     {
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
-        $cacheKey = join('_', [Sitemap::CACHE_KEY, request()->getHttpHost(), $this->sitemap->sites()->map->handle()->join('')]);
+        $cacheKey = implode('_', [Sitemap::CACHE_KEY, request()->getHttpHost(), $this->sitemap->sites()->map->handle()->join('')]);
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
             $content = Cache::remember("{$cacheKey}_index", $cacheUntil, function () {
@@ -45,7 +44,7 @@ class SitemapController extends Controller
         abort_unless(filter_var($page, FILTER_VALIDATE_INT), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
-        $cacheKey = Sitemap::CACHE_KEY.'_'.$page;
+        $cacheKey = implode('_', [Sitemap::CACHE_KEY, $page, request()->getHttpHost(), $this->sitemap->sites()->map->handle()->join('')]);
 
         $content = Cache::remember($cacheKey, $cacheUntil, function () use ($page) {
             abort_if(empty($pages = $this->sitemap->paginatedPages($page)), 404);
