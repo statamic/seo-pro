@@ -248,36 +248,29 @@ class SitemapTest extends TestCase
     }
 
     #[Test]
-    public function it_outputs_paginated_sitemap_index_xml()
+    #[DataProvider('trailingSlashProvider')]
+    public function it_outputs_paginated_sitemap_index_xml($setupTrailingSlashes, $processExpected)
     {
-        // TODO: Test that enforcing trailing slashes doesn't affect the xml URLs on this page.
+        $setupTrailingSlashes();
 
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
-        $content = $this
+        $this
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->getContent();
-
-        $expected = <<<'EOT'
-<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <sitemap>
-        <loc>http://cool-runnings.com/sitemap_1.xml</loc>
-    </sitemap>
-
-    <sitemap>
-        <loc>http://cool-runnings.com/sitemap_2.xml</loc>
-    </sitemap>
-
-</sitemapindex>
-
-EOT;
-
-        $this->assertEquals($expected, $content);
+            ->assertSeeInOrder([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<sitemap>',
+                '<loc>http://cool-runnings.com/sitemap_1.xml</loc>',
+                '</sitemap>',
+                '<sitemap>',
+                '<loc>http://cool-runnings.com/sitemap_2.xml</loc>',
+                '</sitemap>',
+                '</sitemapindex>',
+            ]);
     }
 
     #[Test]
