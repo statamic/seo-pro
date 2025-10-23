@@ -2,7 +2,9 @@
 
 namespace Tests\Localized;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\URL;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
 class SitemapTest extends LocalizedTestCase
@@ -29,16 +31,44 @@ class SitemapTest extends LocalizedTestCase
         $this->files->deleteDirectory(resource_path('views/topics'));
     }
 
-    // todo: these tests should have the trailing slash rewrites in them
+    public static function trailingSlashProvider()
+    {
+        return [
+            'without trailing slashes (default)' => [
+                fn () => null,
+                fn ($expected) => $expected,
+            ],
+            'with trailing slashes' => [
+                fn () => URL::enforceTrailingSlashes(true),
+                function ($expected) {
+                    if (is_array($expected)) {
+                        return array_map(function ($line) {
+                            return str($line)
+                                ->replace('</loc>', '/</loc>')
+                                ->replaceMatches('/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)" \/>/', function ($matches) {
+                                    return "<xhtml:link rel=\"alternate\" hreflang=\"{$matches[1]}\" href=\"{$matches[2]}/\" />";
+                                })
+                                ->__toString();
+                        }, $expected);
+                    }
+
+                    return str_replace('</loc>', '/</loc>', $expected);
+                },
+            ],
+        ];
+    }
 
     #[Test]
-    public function it_outputs_italian_sitemap_xml()
+    #[DataProvider('trailingSlashProvider')]
+    public function it_outputs_italian_sitemap_xml($setupTrailingSlashes, $processExpected)
     {
+        $setupTrailingSlashes();
+
         $this
             ->get('http://corse-fantastiche.it/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->assertSeeInOrder([
+            ->assertSeeInOrder($processExpected([
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
@@ -59,16 +89,19 @@ class SitemapTest extends LocalizedTestCase
                 '<priority>0.5</priority>',
                 '</url>',
                 '</urlset>',
-            ], escape: false)
+            ]), escape: false)
             ->assertDontSee('<loc>http://cool-runnings.com</loc>', escape: false)
             ->assertDontSee('<loc>http://cool-runnings.com/articles/topics/sneakers</loc>', escape: false);
     }
 
     #[Test]
-    public function it_uses_localized_site_defaults_in_sitemap_xml()
+    #[DataProvider('trailingSlashProvider')]
+    public function it_uses_localized_site_defaults_in_sitemap_xml($setupTrailingSlashes, $processExpected)
     {
         // There are multiple sites on the cool-runnings.com domain.
         // Pages from each site should return a different "changefreq" and "priority" (as per their site defaults).
+
+        $setupTrailingSlashes();
 
         SiteDefaults::in('default')->set('change_frequency', 'monthly')->set('priority', 0.2)->save();
         SiteDefaults::in('french')->set('change_frequency', 'weekly')->set('priority', 0.4)->save();
@@ -78,7 +111,7 @@ class SitemapTest extends LocalizedTestCase
             ->get('http://cool-runnings.com/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->assertSeeInOrder([
+            ->assertSeeInOrder($processExpected([
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
                 '<url>',
@@ -99,7 +132,7 @@ class SitemapTest extends LocalizedTestCase
                 '<changefreq>weekly</changefreq>',
                 '<priority>0.4</priority>',
                 '</url>',
-            ], escape: false)
+            ]), escape: false)
             ->getContent();
 
         $this->assertCount(15, $this->getPagesFromSitemapXml($content));
