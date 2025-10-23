@@ -81,10 +81,10 @@ const fieldPathPrefix = computed(() => {
 
 const metaPathPrefix = computed(() => {
 	if (props.metaPathPrefix) {
-		return `${props.metaPathPrefix}.${props.handle}`;
+		return `${props.metaPathPrefix}.${props.handle}.fieldMeta`;
 	}
 
-	return props.handle;
+	return `${props.handle}.fieldMeta`;
 });
 </script>
 
