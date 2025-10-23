@@ -96,8 +96,9 @@ class Sitemap
 
     private function sites(): IlluminateCollection
     {
-        return Site::all()->filter(fn ($site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
+        $sites = Site::all()->filter(fn ($site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
 
+        return $this->runHooks('sites', $sites);
     }
 
     protected function getPages($items)
