@@ -46,7 +46,13 @@ class SitemapTest extends TestCase
             ],
             'with trailing slashes' => [
                 fn () => URL::enforceTrailingSlashes(true),
-                fn ($expected) => str_replace('</loc>', '/</loc>', $expected),
+                function ($expected) {
+                    if (is_array($expected)) {
+                        return array_map(fn ($line) => str_replace('</loc>', '/</loc>', $line), $expected);
+                    }
+
+                    return str_replace('</loc>', '/</loc>', $expected);
+                },
             ],
         ];
     }
@@ -57,74 +63,62 @@ class SitemapTest extends TestCase
     {
         $setupTrailingSlashes();
 
+        $today = now()->format('Y-m-d');
+
         $content = $this
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder($processExpected([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/about</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/articles</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/dance</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/magic</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/nectar</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/topics</loc>',
+                '<lastmod>2020-01-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ]), escape: false)
             ->getContent();
 
         $this->assertCount(7, $this->getPagesFromSitemapXml($content));
-
-        $today = now()->format('Y-m-d');
-
-        $expected = $processExpected(<<<"EOT"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com</loc>
-        <lastmod>2020-11-24</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/topics</loc>
-        <lastmod>2020-01-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT);
-
-        $this->assertEquals($expected, $content);
     }
 
     #[Test]
@@ -132,9 +126,7 @@ EOT);
     {
         Config::set('statamic.seo-pro.sitemap.enabled', false);
 
-        $content = $this
-            ->get('/sitemap.xml')
-            ->assertStatus(404);
+        $this->get('/sitemap.xml')->assertStatus(404);
     }
 
     #[Test]
@@ -144,9 +136,7 @@ EOT);
     {
         $setupTrailingSlashes();
 
-        $this
-            ->get('/sitemap.xml')
-            ->assertStatus(404);
+        $this->get('/sitemap.xml')->assertStatus(404);
 
         $content = $this
             ->get('/gps.xml')
@@ -299,94 +289,74 @@ EOT;
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
+        $today = now()->format('Y-m-d');
+
         $content = $this
             ->get('/sitemap_1.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder($processExpected([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/about</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/articles</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/dance</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/magic</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+            ]), escape: false)
             ->getContent();
 
         $this->assertCount(5, $this->getPagesFromSitemapXml($content));
-
-        $today = now()->format('Y-m-d');
-
-        $expected = $processExpected(<<<"EOT"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com</loc>
-        <lastmod>2020-11-24</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT);
-
-        $this->assertEquals($expected, $content);
 
         $content = $this
             ->get('/sitemap_2.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder($processExpected([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com/nectar</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/topics</loc>',
+                '<lastmod>2020-01-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ]), escape: false)
             ->getContent();
 
         $this->assertCount(2, $this->getPagesFromSitemapXml($content));
-
-        $today = now()->format('Y-m-d');
-
-        $expected = $processExpected(<<<"EOT"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/topics</loc>
-        <lastmod>2020-01-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT);
-
-        $this->assertEquals($expected, $content);
     }
 
     #[Test]
@@ -395,17 +365,9 @@ EOT);
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
-        $this
-            ->get('/sitemap_3.xml')
-            ->assertNotFound();
-
-        $this
-            ->get('/sitemap_3a.xml')
-            ->assertNotFound();
-
-        $this
-            ->get('/sitemap_a.xml')
-            ->assertNotFound();
+        $this->get('/sitemap_3.xml')->assertNotFound();
+        $this->get('/sitemap_3a.xml')->assertNotFound();
+        $this->get('/sitemap_a.xml')->assertNotFound();
     }
 
     #[Test]
@@ -426,6 +388,8 @@ EOT);
         config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
         config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
 
+        $today = now()->format('Y-m-d');
+
         $this->assertNull(Blink::get('ran-custom-entries-query'));
         $this->assertNull(Blink::get('ran-custom-entries-for-page-query'));
 
@@ -433,94 +397,73 @@ EOT);
             ->get('/sitemap_1.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder($processExpected([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com/articles</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/dance</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/magic</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/nectar</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/topics</loc>',
+                '<lastmod>2020-01-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ]), escape: false)
             ->getContent();
 
         $this->assertEquals(2, Blink::get('ran-custom-entries-query'));
         $this->assertEquals(1, Blink::get('ran-custom-entries-for-page-query'));
         $this->assertCount(5, $this->getPagesFromSitemapXml($content));
 
-        $today = now()->format('Y-m-d');
-
-        $expected = <<<"EOT"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/topics</loc>
-        <lastmod>2020-01-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT;
-
-        $this->assertEquals($processExpected($expected), $content);
-
         $content = $this
             ->get('/sitemap_2.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder($processExpected([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/about</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ]), escape: false)
             ->getContent();
 
         $this->assertEquals(4, Blink::get('ran-custom-entries-query'));
         $this->assertEquals(2, Blink::get('ran-custom-entries-for-page-query'));
         $this->assertCount(2, $this->getPagesFromSitemapXml($content));
-
-        $today = now()->format('Y-m-d');
-
-        $expected = <<<'EOT'
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com</loc>
-        <lastmod>2020-11-24</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT;
-
-        $this->assertEquals($processExpected($expected), $content);
     }
 
     #[Test]
@@ -537,81 +480,68 @@ EOT;
             return $next($payload);
         });
 
+        $today = now()->format('Y-m-d');
+
         $content = $this
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/about</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/articles</loc>',
+                '<lastmod>2020-01-17</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/dance</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/magic</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/nectar</loc>',
+                '<lastmod>'.$today.'</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/topics</loc>',
+                '<lastmod>2020-01-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/additional-item</loc>',
+                '<lastmod>2025-01-01</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ], escape: false)
             ->getContent();
 
         $this->assertCount(8, $this->getPagesFromSitemapXml($content));
-
-        $today = now()->format('Y-m-d');
-
-        $expected = <<<"EOT"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://cool-runnings.com</loc>
-        <lastmod>2020-11-24</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/about</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/articles</loc>
-        <lastmod>2020-01-17</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/dance</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/magic</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/nectar</loc>
-        <lastmod>$today</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/topics</loc>
-        <lastmod>2020-01-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/additional-item</loc>
-        <lastmod>2025-01-01</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT;
-
-        $this->assertEquals($expected, $content);
     }
 }
 

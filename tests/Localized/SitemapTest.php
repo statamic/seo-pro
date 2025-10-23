@@ -16,42 +16,52 @@ class SitemapTest extends LocalizedTestCase
         }
 
         $this->files->makeDirectory($folder, 0755, true);
+
+        // Otherwise, terms won't be returned in the sitemap.
+        $this->files->ensureDirectoryExists(resource_path('views/topics'));
+        $this->files->put(resource_path('views/topics/show.antlers.html'), '');
     }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->files->deleteDirectory(resource_path('views/topics'));
+    }
+
+    // todo: these tests should have the trailing slash rewrites in them
 
     #[Test]
     public function it_outputs_italian_sitemap_xml()
     {
-        $content = $this
+        $this
             ->get('http://corse-fantastiche.it/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
-            ->getContent();
-
-        $this->assertCount(2, $this->getPagesFromSitemapXml($content));
-
-        $expected = <<<'EOT'
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <url>
-        <loc>http://corse-fantastiche.it</loc>
-        <lastmod>2021-09-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>http://corse-fantastiche.it/about</loc>
-        <lastmod>2021-09-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-</urlset>
-
-EOT;
-
-        $this->assertEquals($expected, $content);
+            ->assertSeeInOrder([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://corse-fantastiche.it</loc>',
+                '<lastmod>2021-09-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '<xhtml:link rel="alternate" hreflang="en-us" href="http://cool-runnings.com" />',
+                '<xhtml:link rel="alternate" hreflang="fr-fr" href="http://cool-runnings.com/fr" />',
+                '<xhtml:link rel="alternate" hreflang="it-it" href="http://corse-fantastiche.it" />',
+                '<xhtml:link rel="alternate" hreflang="en-gb" href="http://cool-runnings.com/en-gb" />',
+                '<xhtml:link rel="alternate" hreflang="x-default" href="http://cool-runnings.com" />',
+                '</url>',
+                '<url>',
+                '<loc>http://corse-fantastiche.it/about</loc>',
+                '<lastmod>2021-09-20</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ], escape: false)
+            ->assertDontSee('<loc>http://cool-runnings.com</loc>', escape: false)
+            ->assertDontSee('<loc>http://cool-runnings.com/articles/topics/sneakers</loc>', escape: false);
     }
 
     #[Test]
@@ -68,37 +78,34 @@ EOT;
             ->get('http://cool-runnings.com/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder([
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                '<url>',
+                '<loc>http://cool-runnings.com</loc>',
+                '<lastmod>2020-11-24</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.2</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/en-gb</loc>',
+                '<lastmod>2021-09-20</lastmod>',
+                '<changefreq>daily</changefreq>',
+                '<priority>1</priority>',
+                '</url>',
+                '<url>',
+                '<loc>http://cool-runnings.com/fr</loc>',
+                '<lastmod>2021-09-20</lastmod>',
+                '<changefreq>weekly</changefreq>',
+                '<priority>0.4</priority>',
+                '</url>',
+            ], escape: false)
             ->getContent();
 
-        $this->assertCount(11, $this->getPagesFromSitemapXml($content));
-
-        $expected = <<<'EOT'
-    <url>
-        <loc>http://cool-runnings.com</loc>
-        <lastmod>2020-11-24</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/en-gb</loc>
-        <lastmod>2021-09-20</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>1</priority>
-    </url>
-
-    <url>
-        <loc>http://cool-runnings.com/fr</loc>
-        <lastmod>2021-09-20</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.4</priority>
-    </url>
-EOT;
-
-        $this->assertStringContainsStringIgnoringLineEndings($expected, $content);
+        $this->assertCount(15, $this->getPagesFromSitemapXml($content));
     }
 
-    private function getPagesFromSitemapXml($content)
+    protected function getPagesFromSitemapXml($content)
     {
         $data = json_decode(json_encode(simplexml_load_string($content)), true);
 
