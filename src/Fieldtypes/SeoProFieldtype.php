@@ -61,7 +61,7 @@ class SeoProFieldtype extends Fieldtype
             ->map(function ($section) {
                 return [
                     isset($section['display'])
-                        ? ['handle' => Str::slug($section['display']), 'field' => ['type' => 'section',  'display' => $section['display'], 'instructions' => $section['instructions']]]
+                        ? ['handle' => Str::slug($section['display'].'_section'), 'field' => ['type' => 'section',  'display' => $section['display'], 'instructions' => $section['instructions'] ?? null]]
                         : null,
                     ...$section['fields'],
                 ];
