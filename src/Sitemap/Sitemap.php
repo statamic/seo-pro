@@ -97,7 +97,7 @@ class Sitemap
             ->all();
     }
 
-    private function sites(): IlluminateCollection
+    public function sites(): IlluminateCollection
     {
         $sites = SiteFacade::all()->filter(fn ($site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
 
