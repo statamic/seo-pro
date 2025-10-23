@@ -28,6 +28,9 @@ class SitemapTest extends LocalizedTestCase
     {
         parent::tearDown();
 
+        URL::enforceTrailingSlashes(false);
+        URL::clearUrlCache();
+
         $this->files->deleteDirectory(resource_path('views/topics'));
     }
 
