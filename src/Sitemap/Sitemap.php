@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Contracts\Taxonomies\Term;
@@ -23,13 +24,6 @@ class Sitemap
     use GetsSectionDefaults, Hookable;
 
     const CACHE_KEY = 'seo-pro.sitemap';
-
-    private IlluminateCollection $sites;
-
-    public function __construct()
-    {
-        $this->sites = collect();
-    }
 
     public function pages(): array
     {
@@ -103,11 +97,11 @@ class Sitemap
             ->all();
     }
 
-    public function forSites(IlluminateCollection $sites): self
+    private function sites(): IlluminateCollection
     {
-        $this->sites = $sites;
+        $sites = SiteFacade::all()->filter(fn ($site) => Str::of($site->absoluteUrl())->startsWith(request()->schemeAndHttpHost()));
 
-        return $this;
+        return $this->runHooks('sites', $sites);
     }
 
     protected function getPages($items)
@@ -153,8 +147,8 @@ class Sitemap
 
         return EntryFacade::query()
             ->when(
-                $this->sites->isNotEmpty(),
-                fn (Builder $query) => $query->whereIn('site', $this->sites->map->handle()->all())
+                $this->sites()->isNotEmpty(),
+                fn (Builder $query) => $query->whereIn('site', $this->sites()->map->handle()->all())
             )
             ->whereIn('collection', $collections)
             ->whereNotNull('uri')
@@ -190,7 +184,7 @@ class Sitemap
                 return $taxonomy->cascade('seo') !== false
                     ? $taxonomy
                         ->queryTerms()
-                        ->when($this->sites->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites->map->handle()->all()))
+                        ->when($this->sites()->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites()->map->handle()->all()))
                         ->get()
                     : collect();
             })
@@ -213,7 +207,7 @@ class Sitemap
                 return $taxonomy->cascade('seo') !== false
                     ? $taxonomy
                         ->queryTerms()
-                        ->when($this->sites->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites->map->handle()->all()))
+                        ->when($this->sites()->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites()->map->handle()->all()))
                         ->get()->map->collection($taxonomy->collection())
                     : collect();
             })
