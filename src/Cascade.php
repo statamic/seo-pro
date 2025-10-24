@@ -391,6 +391,7 @@ class Cascade
         return strtolower(str_replace('_', '-', $locale));
     }
 
+    /** @noinspection PhpUnused */
     protected function parseTitleField($value)
     {
         if ($value instanceof Value) {
@@ -400,6 +401,7 @@ class Cascade
         return trim($value);
     }
 
+    /** @noinspection PhpUnused */
     protected function parseDescriptionField($value)
     {
         if ($value instanceof Value) {
@@ -419,6 +421,7 @@ class Cascade
         return iconv('UTF-8', 'UTF-8//IGNORE', $value);
     }
 
+    /** @noinspection PhpUnused */
     protected function parseImageField($value)
     {
         return $value instanceof Collection || $value instanceof Builder
