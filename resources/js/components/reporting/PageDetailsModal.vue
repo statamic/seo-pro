@@ -24,25 +24,21 @@ const close = () => {
 	    <div class="flex flex-col gap-3">
 		    <div
 		        v-for="item in page.results"
-		        class="flex leading-normal p-2 rounded-xl"
+		        class="flex leading-normal p-2 rounded-lg gap-x-3"
 		        :class="{ 'bg-red-50 dark:bg-dark-400': item.status !== 'pass' }"
 		    >
-			    <StatusIcon :status="item.status" class="mr-3" />
+			    <StatusIcon :status="item.status" class="mt-1" />
 			    <div class="flex-1 prose text-gray-700">
-				    <div class="text-gray-900 dark:text-dark-100" v-html="item.description" />
-				    <div class="text-xs" :class="{ 'text-red-500': item.status !== 'pass' }" v-if="item.comment" v-html="item.comment" />
+				    <ui-heading size="sm" class="text-gray-900 dark:text-dark-100" :text="item.description" />
+				    <ui-description :class="{ 'text-red-500': item.status !== 'pass' }" v-if="item.comment" :text="item.comment" />
 			    </div>
 		    </div>
 	    </div>
 
 	    <template #footer>
 		    <div class="flex items-center justify-between pt-3 pb-1">
-			    <a v-if="page.url" :href="page.url" target="_blank" class="font-normal font-mono text-xs text-gray-700 hover:text-blue grow truncate" v-text="page.url" />
-
-			    <div class="flex items-center justify-end space-x-3">
-				    <Button v-if="page.url" :href="page.url" target="_blank" variant="ghost" :text="__('Visit')" />
-				    <Button v-if="page.edit_url" :href="page.edit_url" target="_blank" variant="ghost" :text="__('Edit')" />
-			    </div>
+			    <a v-if="page.url" :href="page.url" target="_blank" class="font-normal font-mono text-xs ps-2 text-gray-700 hover:text-blue-500! grow truncate" v-text="page.url" />
+                <Button v-if="page.edit_url" :href="page.edit_url" target="_blank" :text="__('Edit Entry')" />
 		    </div>
 	    </template>
     </Modal>
