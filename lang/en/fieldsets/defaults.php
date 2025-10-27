@@ -23,6 +23,19 @@ return [
     'canonical_url' => 'Canonical URL',
     'canonical_url_instruct' => 'Choose the field for your canonical URLs (usually `permalink`).',
 
+    'json_ld_section' => 'JSON-LD',
+
+    'json_ld_entity_section' => 'Entity Information',
+    'json_ld_entity_instruct' => 'Basic details about the organization or person this site represents.',
+    'json_ld_entity' => 'Entity',
+    'json_ld_organization_name' => 'Organization Name',
+    'json_ld_organization_logo' => 'Organization Logo',
+    'json_ld_person_name' => 'Person Name',
+
+    'json_ld_breadcrumbs_section' => 'Breadcrumbs',
+    'json_ld_breadcrumbs' => 'Breadcrumbs',
+    'json_ld_breadcrumbs_instruct' => 'Enable breadcrumb structured data to show this page\'s location in your site hierarchy in search results. [Learn more](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb)',
+
     'robots_section' => 'Robots',
     'robots_section_instruct' => 'Control how search engines crawl and index your pages.',
 

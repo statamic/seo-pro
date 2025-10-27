@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
+use Statamic\Facades\Asset;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
@@ -95,7 +96,7 @@ class Cascade
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
             'next_url' => $this->nextUrl(),
-            'home_url' => Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/'),
+            'home_url' => $this->homeUrl(),
             'humans_txt' => $this->humans(),
             'site' => $this->site(),
             'is_default_site' => $this->site()->isDefault(),
@@ -107,6 +108,7 @@ class Cascade
             'twitter_description' => $this->twitterDescription(),
             'robots' => $this->robots(),
             'robots_indexing' => $this->robotsIndexing(),
+            'json_ld' => $this->jsonLd(),
         ])->all();
     }
 
@@ -132,6 +134,11 @@ class Cascade
     public function value($key)
     {
         return $this->get()[$key] ?? null;
+    }
+
+    public function homeUrl()
+    {
+        return Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/');
     }
 
     public function canonicalUrl()
@@ -527,6 +534,66 @@ class Cascade
     protected function robotsIndexing()
     {
         return in_array('noindex', $this->robots()) ? 'noindex' : 'index';
+    }
+
+    protected function jsonLd()
+    {
+        $snippets = collect();
+
+        $jsonLdEntity = (string) $this->data->get('json_ld_entity');
+        $jsonLdOrganizationName = (string) $this->data->get('json_ld_organization_name');
+        $jsonLdOrganizationLogo = $this->data->get('json_ld_organization_logo');
+        $jsonLdPersonName = (string) $this->data->get('json_ld_person_name');
+
+        if ($jsonLdEntity === 'Organization' && $jsonLdOrganizationName) {
+            if ($jsonLdOrganizationLogo && ! $jsonLdOrganizationLogo instanceof Value) {
+                $jsonLdOrganizationLogo = Asset::find($jsonLdOrganizationLogo);
+            }
+
+            $snippets->push(json_encode(array_filter([
+                '@context' => 'https://schema.org',
+                '@type' => 'Organization',
+                'name' => $jsonLdOrganizationName,
+                '@id' => $this->homeUrl().'#organization',
+                'url' => $this->homeUrl(),
+                'logo' => $jsonLdOrganizationLogo
+                    ? Statamic::tag('glide')->src($jsonLdOrganizationLogo)->square(512)->absolute(true)->fetch()
+                    : null,
+            ]), JSON_UNESCAPED_SLASHES));
+        }
+
+        if ($jsonLdEntity === 'Person' && $jsonLdPersonName) {
+            $snippets->push(json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'Person',
+                'name' => $jsonLdPersonName,
+                '@id' => $this->homeUrl().'#person',
+                'url' => $this->homeUrl(),
+            ], JSON_UNESCAPED_SLASHES));
+        }
+
+        if ($this->data->get('json_ld_breadcrumbs') && request()->segment(1)) {
+            $breadcrumbs = Statamic::tag('nav:breadcrumbs')->fetch();
+
+            $snippets->push(json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => $breadcrumbs->map(function ($crumb, $index) {
+                    return [
+                        '@type' => 'ListItem',
+                        'position' => $index,
+                        'name' => $crumb->title,
+                        'item' => $crumb->absoluteUrl(),
+                    ];
+                })->all(),
+            ], JSON_UNESCAPED_SLASHES));
+        }
+
+        if ($jsonLdSchema = $this->data->get('json_ld_schema')) {
+            $snippets->push($jsonLdSchema);
+        }
+
+        return $snippets;
     }
 
     protected function augmentData($data)

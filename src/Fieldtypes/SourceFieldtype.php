@@ -37,6 +37,12 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'inherit', 'value' => $data];
         }
 
+        // When the original value is null, the Code Fieldtype returns a default value.
+        // However, that breaks our inheritance logic above, so we need to account for it separately.
+        if (! $originalData && $this->sourceField()?->fieldtype()->handle() === 'code') {
+            return ['source' => 'inherit', 'value' => null];
+        }
+
         // Handle issue with legacy `sitemap: true` section default.
         // This shouldn't ever be explicitly set `true` in Statamic v3,
         // but it may be migrated as `true` when coming from Statamic v2.
@@ -119,6 +125,6 @@ class SourceFieldtype extends Fieldtype
 
     public function rules(): array
     {
-        return [new SourceFieldRule];
+        return [new SourceFieldRule($this->sourceField())];
     }
 }

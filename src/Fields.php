@@ -5,6 +5,7 @@ namespace Statamic\SeoPro;
 use Statamic\Assets\Asset;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Site;
+use Statamic\SeoPro\Fieldtypes\Rules\ValidJsonLd;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Statamic;
 
@@ -158,6 +159,36 @@ class Fields
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'field' => $this->isContent ? ['type' => 'text'] : false,
+                            'always_save' => true,
+                            'unless' => ['enabled' => 'equals false'],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'display' => __("seo-pro::fieldsets/{$langFile}.json_ld"),
+                'fields' => [
+                    [
+                        'handle' => 'json_ld_schema',
+                        'field' => [
+                            'display' => __("seo-pro::fieldsets/{$langFile}.json_ld_schema"),
+                            'instructions' => __("seo-pro::fieldsets/{$langFile}.json_ld_schema_instruct"),
+                            'placeholder' => $this->getPlaceholder('json_ld_schema'),
+                            'type' => 'seo_pro_source',
+                            'from_field' => false,
+                            'disableable' => true,
+                            'inherit' => $this->isContent,
+                            'localizable' => true,
+                            'full_width_setting' => true,
+                            'field' => [
+                                'type' => 'code',
+                                'mode' => 'javascript',
+                                'mode_selectable' => false,
+                                'show_mode_label' => false,
+                                'validate' => [
+                                    new ValidJsonLd,
+                                ],
+                            ],
                             'always_save' => true,
                             'unless' => ['enabled' => 'equals false'],
                         ],

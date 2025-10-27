@@ -94,6 +94,71 @@ class Blueprint
                         ],
                     ],
                 ],
+                'json-ld' => [
+                    'display' => __('seo-pro::fieldsets/defaults.json_ld_section'),
+                    'sections' => [
+                        [
+                            'display' => __('seo-pro::fieldsets/defaults.json_ld_entity_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.json_ld_entity_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'json_ld_entity',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_entity'),
+                                        'type' => 'button_group',
+                                        'localizable' => true,
+                                        'options' => [
+                                            'Organization' => 'Organization',
+                                            'Person' => 'Person',
+                                        ],
+                                        'default' => 'Organization',
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'json_ld_organization_name',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_organization_name'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                        'if' => ['json_ld_entity' => 'equals Organization'],
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'json_ld_organization_logo',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_organization_logo'),
+                                        'localizable' => true,
+                                        'if' => ['json_ld_entity' => 'equals Organization'],
+                                        ...static::getAssetFieldConfig(),
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'json_ld_person_name',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_person_name'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                        'if' => ['json_ld_entity' => 'equals Person'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'display' => __('seo-pro::fieldsets/defaults.json_ld_breadcrumbs_section'),
+                            'fields' => [
+                                [
+                                    'handle' => 'json_ld_breadcrumbs',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_breadcrumbs'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.json_ld_breadcrumbs_instruct'),
+                                        'type' => 'toggle',
+                                        'localizable' => true,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'robots' => [
                     'display' => __('seo-pro::fieldsets/defaults.robots_section'),
                     'instructions' => __('seo-pro::fieldsets/defaults.robots_section_instruct'),

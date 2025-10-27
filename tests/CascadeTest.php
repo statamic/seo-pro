@@ -372,4 +372,51 @@ class CascadeTest extends TestCase
 
         $this->assertArraySubset($expected, $data);
     }
+
+    #[Test]
+    public function it_generates_json_ld_data()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'description' => 'Bob sled team',
+            'json_ld_entity' => 'Person',
+            'json_ld_person_name' => 'Derice Bannock',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->with([
+                'title' => 'Home',
+                'json_ld_schema' => '{"@context":"https://schema.org","@type":"WebPage","name":"{{ title }}"}',
+            ])
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
+            '{"@context":"https://schema.org","@type":"WebPage","name":"Home"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'description' => 'Bob sled team',
+            'json_ld_entity' => 'Person',
+            'json_ld_person_name' => 'Derice Bannock',
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->get('/dance');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
+            '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":0,"name":"Home","item":"http://cool-runnings.com"},{"@type":"ListItem","position":1,"name":"\'Dance Like No One is Watching\' Is Bad Advice","item":"http://cool-runnings.com/dance"}]}',
+        ], $data['json_ld']->all());
+    }
 }
