@@ -114,17 +114,11 @@ You may configure data for the Organization/Person objects, as well as enable br
 
 ![JSON-LD Tab on Site Defaults page](./docs-site-defaults-json-ld.png)
 
-You may also configure a JSON-LD object on a per-entry/term basis (or via section defaults), which will be added to the `<head>` of your site. You can use Antlers to pull data from fields as necessary:
+You can then configure JSON-LD objects for your content via section defaults, which can be overridden on a per-entry/term basis.
 
-```json
-{
-   "@context": "https://schema.org",
-   "@type": "WebPage",
-   "name": "{{ title }}",
-   "description": "{{ intro }}",
-   "url": "{{ canonical_url }}"
-}
-```
+You can even use Antlers to pull data from fields as necessary:
+
+![JSON-LD Schema field on Section Defaults page](./docs-json-ld-schema.png)
 
 ## Reports
 
