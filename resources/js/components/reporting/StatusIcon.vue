@@ -7,14 +7,8 @@ defineProps({
 <template>
     <div>
         <span v-if="status === 'pending'" class="icon icon-circular-graph animation-spin" />
-        <span
-            v-else
-            class="little-dot"
-            :class="{
-                'bg-green-600': status === 'pass',
-                'bg-red-500': status === 'fail',
-                'bg-orange': status === 'warning'
-            }"
-        />
+        <ui-icon name="checkmark" class="text-green-600" v-else-if="status === 'pass'" />
+        <ui-icon name="x" class="text-red-500" v-else-if="status === 'fail'" />
+        <ui-icon name="alert-circle" class="text-orange" v-else-if="status === 'warning'" />
     </div>
 </template>
