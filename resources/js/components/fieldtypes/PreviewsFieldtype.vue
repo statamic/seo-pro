@@ -1,21 +1,111 @@
 <script setup>
-import { Field } from '@statamic/cms/ui';
+import { Fieldtype } from '@statamic/cms';
+import { Field, injectPublishContext } from '@statamic/cms/ui';
 import { computed } from 'vue';
+import striptags from "striptags";
 
-const hostname = 'seo-pro-sandbox.test';
-const url = 'https://seo-pro-sandbox.test/dance';
-const title = 'Compiled title goes here';
-const description = 'Aute sit ut consectetur. Lorem anim voluptate nisi in excepteur amet consectetur reprehenderit exercitation velit excepteur tempor cupidatat. Incididunt et ex id aute est elit mollit eu nostrud ex aliqua do. Culpa ad magna mollit non nulla. Aute incididunt est eiusmod eiusmod sunt veniam. Do et anim et labore ut eu do minim quis aliqua laboris. Enim incididunt quis est. Magna commodo aliquip in do ullamco fugiat id aute officia sint.';
-const imageUrl = 'https://ichef.bbci.co.uk/food/ic/food_16x9_160/recipes/healthier_flapjack_10498_16x9.jpg';
+const emit = defineEmits(Fieldtype.emits);
+const props = defineProps(Fieldtype.props);
+const { expose } = Fieldtype.use(emit, props);
+defineExpose(expose);
+
+const { values: publishValues, meta: publishMeta, blueprint } = injectPublishContext();
+
+function resolveSeoValue(field) {
+	let value = publishValues.value.seo[field];
+
+	// todo: handle inherited images
+	if (value.source === 'inherit') {
+		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
+
+		return seoField.field?.placeholder || seoField.placeholder;
+	}
+
+	if (value.source === 'field') {
+		if (! publishValues.value.hasOwnProperty(value.value)) return;
+
+		let sourceField = blueprint.value.tabs
+			.flatMap(tab => tab.sections)
+			.flatMap(section => section.fields)
+			.find(field => field.handle === value.value);
+
+		let sourceFieldValue = publishValues.value[value.value];
+
+		switch (sourceField.type) {
+			case 'markdown':
+				return striptags(markdown(sourceFieldValue));
+			case 'bard':
+				if (typeof sourceFieldValue === 'string') {
+					return striptags(sourceFieldValue);
+				}
+
+				let text = '';
+				let originalValue = clone(sourceFieldValue);
+
+				while (originalValue.length > 0) {
+					let item = originalValue.shift();
+
+					if (! item.type) continue;
+
+					if (item.type === 'text') {
+						text += ` ${item.text || ''}`;
+					}
+
+					originalValue.unshift(...(item.content ?? []));
+				}
+
+				return text;
+			case 'assets':
+				return publishMeta.value[value.value]?.data[0]?.url;
+			default:
+				return sourceFieldValue;
+		}
+	}
+
+	if (value.source === 'custom') {
+		return value.value;
+	}
+}
+
+// Borrowed from Cascade::compiledTitle()
+const title = computed(() => {
+	const seoTitle = resolveSeoValue('title');
+	const siteName = resolveSeoValue('site_name');
+	const siteNameSeparator = resolveSeoValue('site_name_separator');
+	const siteNamePosition = resolveSeoValue('site_name_position');
+
+	if (! seoTitle) {
+		return siteName;
+	}
+
+	if (! siteName || siteNamePosition === 'none') {
+		return seoTitle;
+	}
+
+	let compiled = [seoTitle, siteNameSeparator, siteName];
+
+	if (siteNamePosition === 'before') {
+		compiled = compiled.reverse();
+	}
+
+	return compiled.join(' ');
+});
+
+const url = computed(() => props.meta.url); // todo: figure out how to handle slug changes...
+const hostname = computed(() => new URL(url.value).hostname);
+const description = computed(() => resolveSeoValue('description'));
+const image = computed(() => resolveSeoValue('image'));
+const twitterTitle = computed(() => resolveSeoValue('twitter_title') || resolveSeoValue('title'));
+const facebookTitle = computed(() => resolveSeoValue('og_title') || resolveSeoValue('title'));
 
 const googleUrlComponents = computed(() => {
-	const urlObject = new URL(url);
+	const urlObject = new URL(url.value);
 
-	const origin = urlObject.origin; // "https://google.com"
+	const origin = urlObject.origin;
 
 	const pathSegments = urlObject.pathname
 		.split('/')
-		.filter(segment => segment.length > 0); // ["foo", "bar"]
+		.filter(segment => segment.length > 0);
 
 	return [origin, ...pathSegments];
 });
@@ -25,7 +115,7 @@ const googleUrlComponents = computed(() => {
 	<div class="flex flex-col gap-4">
 		<Field :label="__('Google Preview')">
 			<div class="bg-white dark:!bg-[#1f1f1f] max-w-[652px] border rounded-lg p-4 flex">
-				<div>
+				<div class="min-w-0">
 					<a class="flex flex-row items-center mb-1.5" :href="url" target="_blank">
 						<!-- TODO: Favicon -->
 						<div class="size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3"></div>
@@ -39,11 +129,11 @@ const googleUrlComponents = computed(() => {
 					</a>
 
 					<a class="block !text-[#1a0dab] dark:!text-[#99c3ff] text-xl mb-1 truncate max-w-xl" :href="url" target="_blank" v-text="title" />
-					<div class="text-[#1f1f1f] dark:text-[#bfbfbf] text-sm line-clamp-2" v-text="description" />
+					<div v-if="description" class="text-[#1f1f1f] dark:text-[#bfbfbf] text-sm line-clamp-2" v-text="description" />
 				</div>
-				<a v-if="imageUrl" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
+				<a v-if="image" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
 					<div class="size-[92px]">
-						<img class="rounded-[8px] size-full object-cover" :src="imageUrl">
+						<img class="rounded-[8px] size-full object-cover" :src="image">
 					</div>
 				</a>
 			</div>
@@ -51,9 +141,9 @@ const googleUrlComponents = computed(() => {
 
 		<Field :label="__('X (Twitter) Preview')">
 			<a class="block max-w-[663px] max-h-[347px] rounded-[16px] border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
-				<img class="size-full object-cover" :src="imageUrl" />
+				<img class="size-full object-cover" :src="image" />
 				<div class="absolute bottom-[12px] left-[12px] right-[12px]">
-					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded-[4px] truncate max-w-xl" v-text="title" />
+					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded-[4px] truncate max-w-xl" v-text="twitterTitle" />
 				</div>
 			</a>
 		</Field>
@@ -61,11 +151,11 @@ const googleUrlComponents = computed(() => {
 		<Field :label="__('Facebook Preview')">
 			<a class="block max-w-[680px] border rounded-lg overflow-hidden" :href="url" target="_blank">
 				<div class="w-full h-[354px]">
-					<img class="size-full object-cover" :src="imageUrl" />
+					<img class="size-full object-cover" :src="image" />
 				</div>
 				<div class="bg-[#F2F4F7] dark:bg-[#1C1C1D] px-4 py-3">
 					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="hostname" />
-					<div class="text-[#080809] dark:text-[#E2E5E9] text-[1.0625rem] font-semibold truncate max-w-xl" v-text="title" />
+					<div class="text-[#080809] dark:text-[#E2E5E9] text-[1.0625rem] font-semibold truncate max-w-xl" v-text="facebookTitle" />
 				</div>
 			</a>
 		</Field>

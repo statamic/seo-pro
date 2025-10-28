@@ -265,6 +265,8 @@ class Cascade
 
     protected function compiledTitle()
     {
+        // Logic duplicated in PreviewsFieldtype.vue
+
         $title = Str::trim($this->data->get('title'));
         $siteName = Str::trim($this->data->get('site_name'));
         $siteNameSeparator = Str::trim($this->data->get('site_name_separator'));

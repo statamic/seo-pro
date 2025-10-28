@@ -73,7 +73,6 @@ class Blueprint
             'type' => 'seo_pro',
             'listable' => false,
             'display' => 'SEO',
-            'localizable' => true,
         ], 'SEO');
 
         static::$addingField = false;

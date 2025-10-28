@@ -8,8 +8,10 @@ class SeoProPreviews extends Fieldtype
 {
     public $selectable = false;
 
-    public function preProcess($data)
+    public function preload()
     {
-        return $data;
+        return [
+            'url' => $this->field->parent()->absoluteUrl(),
+        ];
     }
 }
