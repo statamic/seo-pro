@@ -142,14 +142,14 @@ const googleUrlComponents = computed(() => {
 		</Field>
 
 		<Field :label="__('X (Twitter) Preview')">
-			<a v-if="image" class="block max-w-[663px] max-h-[347px] rounded-[16px] border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
+			<a v-if="image" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
 				<img class="size-full object-cover" :src="image" />
-				<div class="absolute bottom-[12px] left-[12px] right-[12px]">
-					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded-[4px] truncate max-w-xl" v-text="twitterTitle" />
+				<div class="absolute bottom-3 left-3 right-3">
+					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded truncate max-w-xl" v-text="twitterTitle" />
 				</div>
 			</a>
 
-			<a v-else class="flex max-w-[663px] h-[131px] rounded-[16px] border overflow-hidden dark:bg-[#060606]" :href="url" target="_blank">
+			<a v-else class="flex max-w-[663px] h-[131px] rounded-2xl border overflow-hidden dark:bg-[#060606]" :href="url" target="_blank">
 				<div class="w-[130px] max-h-full bg-[#F7F9F9] dark:bg-[#16181C] flex items-center justify-center border-r">
 					<svg viewBox="0 0 24 24" aria-hidden="true" class="size-[30px] text-[#536471] dark:text-[#71767B]">
 						<g>
@@ -157,7 +157,7 @@ const googleUrlComponents = computed(() => {
 						</g>
 					</svg>
 				</div>
-				<div class="p-3 flex-1 flex flex-col justify-center gap-[2px] text-[15px]">
+				<div class="p-3 flex-1 flex flex-col justify-center gap-0.5 text-[15px]">
 					<div class="text-[#536471] dark:text-[#71767B]" v-text="domain" />
 					<div class="text-[#0F1419] dark:text-[#E7E9EA]" v-text="twitterTitle" />
 					<div class="text-[#536471] dark:text-[#71767B] line-clamp-2" v-text="twitterDescription" />
@@ -171,7 +171,7 @@ const googleUrlComponents = computed(() => {
 					<img class="size-full object-cover" :src="image" />
 				</div>
 				<div class="bg-[#F2F4F7] dark:bg-[#1C1C1D] px-4 py-3">
-					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="domain" />
+					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-2" v-text="domain" />
 					<div class="text-[#080809] dark:text-[#E2E5E9] text-[1.0625rem] font-semibold truncate max-w-xl" v-text="facebookTitle" />
 				</div>
 			</a>
