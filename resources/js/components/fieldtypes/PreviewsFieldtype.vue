@@ -15,12 +15,14 @@ const { values: publishValues, meta: publishMeta, blueprint } = injectPublishCon
 const resolveSeoValue = (field) => {
 	let value = publishValues.value.seo[field];
 
-	// todo: handle inherited images
-	// todo: handle the inherited field being changed... we should really grab the value of said inherited field rather than the placeholder
 	if (value.source === 'inherit') {
 		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
 
-		return seoField.field?.placeholder || seoField.placeholder;
+		if (seoField.field?.type === 'assets') {
+			return props.meta.assetContainerUrl + '/' + seoField.placeholder;
+		}
+
+		return seoField.placeholder;
 	}
 
 	if (value.source === 'field') {
