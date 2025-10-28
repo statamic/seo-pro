@@ -152,7 +152,7 @@ const googleUrlComponents = computed(() => {
 			<div class="bg-white dark:!bg-[#1f1f1f] max-w-[652px] border rounded-lg p-4 flex">
 				<div class="min-w-0">
 					<a class="flex flex-row items-center mb-1.5" :href="url" target="_blank">
-						<div class="size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3">
+						<div class="shrink-0 size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3">
 							<img v-if="meta.faviconUrl" class="size-full" :src="meta.faviconUrl" />
 							<div v-else class="p-1">
 								<svg focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -160,13 +160,9 @@ const googleUrlComponents = computed(() => {
 								</svg>
 							</div>
 						</div>
-						<div>
+						<div class="min-w-0">
 							<div class="text-[#202124] dark:text-[#dadce0] text-sm" v-text="domain" />
-							<!-- todo: truncate url -->
-							<div class="text-[#4d5156] dark:text-[#bdc1c6] text-xs">
-								<span v-text="googleUrlComponents[0]" />
-								<span v-for="(component, index) in googleUrlComponents.slice(1)" :key="index" v-text="' › ' + component" />
-							</div>
+							<div class="text-[#4d5156] dark:text-[#bdc1c6] text-xs truncate" v-text="googleUrlComponents.join(' › ')" />
 						</div>
 					</a>
 
