@@ -101,6 +101,11 @@ const twitterTitle = computed(() => resolveSeoValue('twitter_title') || resolveS
 const twitterDescription = computed(() => resolveSeoValue('twitter_description') || resolveSeoValue('description'));
 const facebookTitle = computed(() => resolveSeoValue('og_title') || resolveSeoValue('title') || title.value);
 
+watch(
+	() => props.meta.initialUrl,
+	() => (url.value = props.meta.initialUrl),
+);
+
 const fetchUpdatedUrl = async () => {
 	axios
 		.post(props.meta.previewUrl, {
