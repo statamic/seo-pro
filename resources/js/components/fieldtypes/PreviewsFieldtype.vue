@@ -118,8 +118,9 @@ const googleUrlComponents = computed(() => {
 			<div class="bg-white dark:!bg-[#1f1f1f] max-w-[652px] border rounded-lg p-4 flex">
 				<div class="min-w-0">
 					<a class="flex flex-row items-center mb-1.5" :href="url" target="_blank">
-						<!-- TODO: Favicon -->
-						<div class="size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3"></div>
+						<div class="size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3">
+							<img class="size-full" :src="`https://www.google.com/s2/favicons?domain=${domain}&sz=64}`" />
+						</div>
 						<div>
 							<div class="text-[#202124] dark:text-[#dadce0] text-sm" v-text="domain" />
 							<div class="text-[#4d5156] dark:text-[#bdc1c6] text-xs">
