@@ -167,6 +167,7 @@ class Fields
             ],
             [
                 'display' => __("seo-pro::fieldsets/{$langFile}.json_ld"),
+                'instructions' => __("seo-pro::fieldsets/{$langFile}.json_ld_instruct"),
                 'fields' => [
                     [
                         'handle' => 'json_ld_schema',

@@ -24,6 +24,7 @@ return [
     'canonical_url_instruct' => 'Every URL in your site should have a unique canonical URL.',
 
     'json_ld' => 'JSON-LD',
+    'json_ld_instruct' => 'Configure the JSON-LD schema for this page.',
     'json_ld_schema' => 'Schema',
     'json_ld_schema_instruct' => 'Paste your custom schema objects here (`Recipe`, `Event`, etc). You can use Antlers to output data from the item. Will be wrapped in the appropriate script tag.',
 
