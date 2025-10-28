@@ -16,6 +16,7 @@ class PreviewController extends CpController
         foreach ($request->params as $key => $value) {
             if ($key === 'slug') {
                 $item->slug($value);
+
                 continue;
             }
 
