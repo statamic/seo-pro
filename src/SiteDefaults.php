@@ -201,8 +201,13 @@ class SiteDefaults extends Collection
                                 'type' => 'select',
                                 'multiple' => true,
                                 'options' => [
+                                    'follow',
+                                    'index',
+                                    'noarchive',
+                                    'noimageindex',
                                     'noindex',
                                     'nofollow',
+                                    'nosnippet',
                                 ],
                                 'localizable' => true,
                             ],
