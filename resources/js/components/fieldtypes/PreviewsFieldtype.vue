@@ -92,10 +92,11 @@ const title = computed(() => {
 });
 
 const url = computed(() => props.meta.url); // todo: figure out how to handle slug changes...
-const hostname = computed(() => new URL(url.value).hostname);
+const domain = computed(() => new URL(url.value).hostname);
 const description = computed(() => resolveSeoValue('description'));
 const image = computed(() => resolveSeoValue('image'));
 const twitterTitle = computed(() => resolveSeoValue('twitter_title') || resolveSeoValue('title'));
+const twitterDescription = computed(() => resolveSeoValue('twitter_description') || resolveSeoValue('description'));
 const facebookTitle = computed(() => resolveSeoValue('og_title') || resolveSeoValue('title'));
 
 const googleUrlComponents = computed(() => {
@@ -120,7 +121,7 @@ const googleUrlComponents = computed(() => {
 						<!-- TODO: Favicon -->
 						<div class="size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3"></div>
 						<div>
-							<div class="text-[#202124] dark:text-[#dadce0] text-sm" v-text="hostname" />
+							<div class="text-[#202124] dark:text-[#dadce0] text-sm" v-text="domain" />
 							<div class="text-[#4d5156] dark:text-[#bdc1c6] text-xs">
 								<span v-text="googleUrlComponents[0]" />
 								<span v-for="(component, index) in googleUrlComponents.slice(1)" :key="index" v-text="' › ' + component" />
@@ -140,21 +141,36 @@ const googleUrlComponents = computed(() => {
 		</Field>
 
 		<Field :label="__('X (Twitter) Preview')">
-			<a class="block max-w-[663px] max-h-[347px] rounded-[16px] border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
+			<a v-if="image" class="block max-w-[663px] max-h-[347px] rounded-[16px] border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
 				<img class="size-full object-cover" :src="image" />
 				<div class="absolute bottom-[12px] left-[12px] right-[12px]">
 					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded-[4px] truncate max-w-xl" v-text="twitterTitle" />
+				</div>
+			</a>
+
+			<a v-else class="flex max-w-[663px] h-[131px] rounded-[16px] border overflow-hidden dark:bg-[#060606]" :href="url" target="_blank">
+				<div class="w-[130px] max-h-full bg-[#F7F9F9] dark:bg-[#16181C] flex items-center justify-center border-r">
+					<svg viewBox="0 0 24 24" aria-hidden="true" class="size-[30px] text-[#536471] dark:text-[#71767B]">
+						<g>
+							<path fill="currentColor" d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path>
+						</g>
+					</svg>
+				</div>
+				<div class="p-3 flex-1 flex flex-col justify-center gap-[2px] text-[15px]">
+					<div class="text-[#536471] dark:text-[#71767B]" v-text="domain" />
+					<div class="text-[#0F1419] dark:text-[#E7E9EA]" v-text="twitterTitle" />
+					<div class="text-[#536471] dark:text-[#71767B] line-clamp-2" v-text="twitterDescription" />
 				</div>
 			</a>
 		</Field>
 
 		<Field :label="__('Facebook Preview')">
 			<a class="block max-w-[680px] border rounded-lg overflow-hidden" :href="url" target="_blank">
-				<div class="w-full h-[354px]">
+				<div v-if="image" class="w-full h-[354px]">
 					<img class="size-full object-cover" :src="image" />
 				</div>
 				<div class="bg-[#F2F4F7] dark:bg-[#1C1C1D] px-4 py-3">
-					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="hostname" />
+					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="domain" />
 					<div class="text-[#080809] dark:text-[#E2E5E9] text-[1.0625rem] font-semibold truncate max-w-xl" v-text="facebookTitle" />
 				</div>
 			</a>
