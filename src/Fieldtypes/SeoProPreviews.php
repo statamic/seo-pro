@@ -2,6 +2,8 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\AssetContainer;
@@ -19,6 +21,7 @@ class SeoProPreviews extends Fieldtype
             'routeFields' => Antlers::identifiers($this->getRouteString()),
             'previewUrl' => cp_route('seo-pro.preview'),
             'assetContainerUrl' => AssetContainer::find(config('statamic.seo-pro.assets.container'))->url(),
+            'faviconUrl' => $this->faviconUrl(),
         ];
     }
 
@@ -35,5 +38,26 @@ class SeoProPreviews extends Fieldtype
         return Str::of($route)
             ->replaceMatches('/(?<!\{)\{(?!\{)|(?<!\})\}(?!\})/', '$0$0')
             ->toString();
+    }
+
+    private function faviconUrl(): ?string
+    {
+        $domain = parse_url($this->field->parent()?->absoluteUrl() ?? Site::selected()->url(), PHP_URL_HOST);
+
+        return Cache::rememberForever("seo-pro::favicon.{$domain}", function () use ($domain) {
+            $url = "https://www.google.com/s2/favicons?domain={$domain}";
+
+            try {
+                $response = Http::head($url);
+
+                if ($response->ok()) {
+                    return $url;
+                }
+            } catch (\Exception $e) {
+                //
+            }
+
+            return null;
+        });
     }
 }
