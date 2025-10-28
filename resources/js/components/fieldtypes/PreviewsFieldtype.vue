@@ -1,7 +1,8 @@
 <script setup>
+import axios from 'axios';
 import { Fieldtype } from '@statamic/cms';
 import { Field, injectPublishContext } from '@statamic/cms/ui';
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import striptags from "striptags";
 
 const emit = defineEmits(Fieldtype.emits);
@@ -11,10 +12,11 @@ defineExpose(expose);
 
 const { values: publishValues, meta: publishMeta, blueprint } = injectPublishContext();
 
-function resolveSeoValue(field) {
+const resolveSeoValue = (field) => {
 	let value = publishValues.value.seo[field];
 
 	// todo: handle inherited images
+	// todo: handle the inherited field being changed... we should really grab the value of said inherited field rather than the placeholder
 	if (value.source === 'inherit') {
 		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
 
@@ -91,15 +93,40 @@ const title = computed(() => {
 	return compiled.join(' ');
 });
 
-const url = computed(() => props.meta.url); // todo: figure out how to handle slug changes...
-const domain = computed(() => new URL(url.value).hostname);
+const url = ref(props.meta.initialUrl);
+const domain = computed(() => url.value ? new URL(url.value).hostname : window.location.hostname);
 const description = computed(() => resolveSeoValue('description'));
 const image = computed(() => resolveSeoValue('image'));
-const twitterTitle = computed(() => resolveSeoValue('twitter_title') || resolveSeoValue('title'));
+const twitterTitle = computed(() => resolveSeoValue('twitter_title') || resolveSeoValue('title') || title.value);
 const twitterDescription = computed(() => resolveSeoValue('twitter_description') || resolveSeoValue('description'));
-const facebookTitle = computed(() => resolveSeoValue('og_title') || resolveSeoValue('title'));
+const facebookTitle = computed(() => resolveSeoValue('og_title') || resolveSeoValue('title') || title.value);
+
+const fetchUpdatedUrl = async () => {
+	axios
+		.post(props.meta.previewUrl, {
+			id: publishValues.value.id,
+			params: props.meta.routeFields.reduce((acc, handle) => {
+				acc[handle] = publishValues.value[handle];
+				return acc;
+			}, {}),
+		})
+		.then(response => (url.value = response.data.url))
+		.catch(error => Statamic.$toast.error(__('Something went wrong')));
+};
+
+if (publishValues.value.id) {
+	props.meta.routeFields.forEach(field => {
+		watch(
+			() => publishValues.value[field],
+			() => fetchUpdatedUrl(),
+			{ deep: true }
+		);
+	});
+}
 
 const googleUrlComponents = computed(() => {
+	if (! url.value) return [];
+
 	const urlObject = new URL(url.value);
 
 	const origin = urlObject.origin;
