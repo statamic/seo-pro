@@ -61,6 +61,14 @@ class Blueprint
 
         static::$addingField = true;
 
+        $this->blueprint->ensureFieldInTab('seo_previews', [
+            'type' => 'seo_pro_previews',
+            'listable' => false,
+            'display' => 'SEO Previews',
+            'localizable' => true,
+            'hide_display' => true,
+        ], 'SEO', true);
+
         $this->blueprint->ensureFieldInTab('seo', [
             'type' => 'seo_pro',
             'listable' => false,
@@ -77,6 +85,7 @@ class Blueprint
     public function removeSeoFields()
     {
         $this->blueprint->removeTab('SEO');
+        $this->blueprint->removeField('seo_previews');
     }
 
     /**
