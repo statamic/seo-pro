@@ -1,6 +1,6 @@
 <script setup>
 import { Fieldtype } from '@statamic/cms';
-import { Select, Input, PublishField, injectPublishContext } from '@statamic/cms/ui';
+import { Select, Input, PublishField, injectPublishContext, Description } from '@statamic/cms/ui';
 import { computed } from "vue";
 
 const { blueprint } = injectPublishContext();
@@ -103,9 +103,9 @@ const metaPathPrefix = computed(() => {
 
         <div class="flex-1">
             <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
-                <ui-description v-if="placeholder" class="flex items-center gap-x-2 px-1">
+                <Description v-if="placeholder" class="flex items-center gap-x-2 px-1">
                     {{ placeholder }}
-                </ui-description>
+                </Description>
             </div>
 
             <div v-else-if="source === 'field'">

@@ -1,6 +1,6 @@
 <script setup>
 import StatusIcon from './StatusIcon.vue';
-import { Modal, Button } from '@statamic/cms/ui';
+import { Modal, Button, Heading, Description } from '@statamic/cms/ui';
 import { ref } from 'vue';
 
 const emit = defineEmits(['closed']);
@@ -29,8 +29,8 @@ const close = () => {
 		    >
 			    <StatusIcon :status="item.status" class="mt-1" />
 			    <div class="flex-1 prose text-gray-700">
-				    <ui-heading size="sm" class="text-gray-900 dark:text-dark-100" :text="item.description" />
-				    <ui-description :class="{ 'text-red-500': item.status !== 'pass' }" v-if="item.comment" :text="item.comment" />
+				    <Heading size="sm" class="text-gray-900 dark:text-dark-100" :text="item.description" />
+				    <Description :class="{ 'text-red-500': item.status !== 'pass' }" v-if="item.comment" :text="item.comment" />
 			    </div>
 		    </div>
 	    </div>
