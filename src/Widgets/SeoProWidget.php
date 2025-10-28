@@ -4,13 +4,14 @@ namespace Statamic\SeoPro\Widgets;
 
 use Illuminate\Support\Facades\File;
 use Statamic\SeoPro\Reporting\Report;
+use Statamic\Widgets\VueComponent;
 use Statamic\Widgets\Widget;
 
 class SeoProWidget extends Widget
 {
-    public function html()
+    public function component()
     {
-        return view('seo-pro::widget', [
+        return VueComponent::render('seo-pro-widget', [
             'icon' => File::get(__DIR__.'/../../resources/svg/nav-icon.svg'),
             'reportsUrl' => cp_route('seo-pro.reports.index'),
             'createUrl' => cp_route('seo-pro.reports.create'),
