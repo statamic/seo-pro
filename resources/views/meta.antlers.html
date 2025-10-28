@@ -113,3 +113,7 @@
 {{ if bing_verification }}
     <meta name="msvalidate.01" content="{{ bing_verification | striptags | entities | trim }}" />
 {{ /if }}
+
+{{ json_ld }}
+    <script type="application/ld+json">{{ value }}</script>
+{{ /json_ld }}

@@ -23,6 +23,10 @@ return [
     'canonical_url' => 'Canonical URL',
     'canonical_url_instruct' => 'Every URL in your site should have a unique canonical URL.',
 
+    'json_ld' => 'JSON-LD',
+    'json_ld_schema' => 'Schema',
+    'json_ld_schema_instruct' => 'Paste your custom schema objects here (`Recipe`, `Event`, etc). You can use Antlers to output data from the item. Will be wrapped in the appropriate script tag.',
+
     'robots' => 'Robots',
     'robots_instruct' => 'Control how search engines crawl and index this page.',
 

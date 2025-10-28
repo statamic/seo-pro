@@ -108,6 +108,18 @@ You may use Statamic Antlers templating in your strings. When doing this, the ad
 description: "{{ content | strip_tags | truncate(250, '...') }}"
 ```
 
+## JSON-LD
+
+You may configure data for the Organization/Person objects, as well as enable breadcrumb data from your Site Defaults:
+
+![JSON-LD Tab on Site Defaults page](./docs-site-defaults-json-ld.png)
+
+You can then configure JSON-LD objects for your content via section defaults, which can be overridden on a per-entry/term basis.
+
+You can even use Antlers to pull data from fields as necessary:
+
+![JSON-LD Schema field on Section Defaults page](./docs-json-ld-schema.png)
+
 ## Reports
 
 You may generate an SEO report that checks all the pages of your site against a number of tests. The tests include mandatory items like title tag uniqueness, or suggested items like URLs being no more than 3 segments. Failing a mandatory item will result in a fail where failing a suggested item will result in a warning.
