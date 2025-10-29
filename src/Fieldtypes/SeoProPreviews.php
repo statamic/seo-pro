@@ -20,7 +20,9 @@ class SeoProPreviews extends Fieldtype
             'initialUrl' => $this->field->parent()?->absoluteUrl(),
             'routeFields' => Antlers::identifiers($this->getRouteString()),
             'previewUrl' => cp_route('seo-pro.preview'),
-            'assetContainerUrl' => AssetContainer::find(config('statamic.seo-pro.assets.container'))->url(),
+            'assetContainerUrl' => config('statamic.seo-pro.assets.container')
+                ? AssetContainer::find(config('statamic.seo-pro.assets.container'))->url()
+                : null,
             'faviconUrl' => $this->faviconUrl(),
         ];
     }
