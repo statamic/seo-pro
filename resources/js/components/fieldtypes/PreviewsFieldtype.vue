@@ -71,15 +71,13 @@ const resolveSeoValue = (field) => {
 	}
 }
 
-// Borrowed from Cascade::compiledTitle()
 const title = computed(() => {
 	const seoTitle = resolveSeoValue('title');
 	const siteName = resolveSeoValue('site_name');
 	const siteNameSeparator = resolveSeoValue('site_name_separator');
 	const siteNamePosition = resolveSeoValue('site_name_position');
 
-	if (! seoTitle) {
-		return siteName;
+	if (! seoTitle) {		return siteName;
 	}
 
 	if (! siteName || siteNamePosition === 'none') {
