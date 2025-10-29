@@ -67,14 +67,19 @@ const resolveSeoValue = (field) => {
 	}
 
 	if (value.source === 'custom') {
+		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
+
+		if (seoField.field?.type === 'assets') {
+			return publishMeta.value.seo.meta[field].fieldMeta.data[0]?.url;
+		}
+
 		return value.value;
 	}
 }
 
 const title = computed(() => {
 	const seoTitle = resolveSeoValue('title');
-	const siteName = resolveSeoValue('site_name');
-	const siteNameSeparator = resolveSeoValue('site_name_separator');
+	const siteName = resolveSeoValue('site_name');	const siteNameSeparator = resolveSeoValue('site_name_separator');
 	const siteNamePosition = resolveSeoValue('site_name_position');
 
 	if (! seoTitle) {
