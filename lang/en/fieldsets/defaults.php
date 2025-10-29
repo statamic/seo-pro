@@ -26,11 +26,15 @@ return [
     'json_ld_section' => 'JSON-LD',
 
     'json_ld_entity_section' => 'Entity Information',
-    'json_ld_entity_instruct' => 'Basic details about the organization or person this site represents.',
+    'json_ld_entity_section_instruct' => 'Basic details about the organization or person this site represents.',
     'json_ld_entity' => 'Entity',
+    'json_ld_entity_instruct' => 'This helps search engines understand the structured data on your site and improves the likelihood of it appearing with rich search results.',
     'json_ld_organization_name' => 'Organization Name',
+    'json_ld_organization_name_instruct' => 'The name of the organization this site represents.',
     'json_ld_organization_logo' => 'Organization Logo',
+    'json_ld_organization_logo_instruct' => 'The logo of the organization this site represents.',
     'json_ld_person_name' => 'Person Name',
+    'json_ld_person_name_instruct' => 'The full name of the person this site represents.',
 
     'json_ld_breadcrumbs_section' => 'Breadcrumbs',
     'json_ld_breadcrumbs' => 'Breadcrumbs',
