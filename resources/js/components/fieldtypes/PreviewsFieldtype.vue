@@ -212,7 +212,7 @@ const googleUrlComponents = computed(() => {
 					<img class="size-full object-cover" :src="image" />
 				</div>
 				<div class="bg-[#F2F4F7] dark:bg-[#1C1C1D] px-4 py-3">
-					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-2" v-text="domain" />
+					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="domain" />
 					<div class="text-[#080809] dark:text-[#E2E5E9] text-[1.0625rem] font-semibold truncate max-w-xl" v-text="facebookTitle" />
 				</div>
 			</a>
