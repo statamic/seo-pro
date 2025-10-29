@@ -79,7 +79,8 @@ const resolveSeoValue = (field) => {
 
 const title = computed(() => {
 	const seoTitle = resolveSeoValue('title');
-	const siteName = resolveSeoValue('site_name');	const siteNameSeparator = resolveSeoValue('site_name_separator');
+	const siteName = resolveSeoValue('site_name');
+	const siteNameSeparator = resolveSeoValue('site_name_separator');
 	const siteNamePosition = resolveSeoValue('site_name_position');
 
 	if (! seoTitle) {
