@@ -22,6 +22,20 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageDescription()
     {
+        if (!isset($this->length) || $this->length === 0) {
+            return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
+        }
+
+        $config = config('seo-pro.reports.meta_description_length');
+        $passMax = $config['pass_max'] ?? 240;
+
+        if ($this->length > $passMax) {
+            return __('seo-pro::messages.rules.meta_description_length_page_failing_too_long', [
+                'length' => $this->length,
+                'max' => $passMax,
+            ]);
+        }
+
         return __('seo-pro::messages.rules.meta_description_length_page');
     }
 
