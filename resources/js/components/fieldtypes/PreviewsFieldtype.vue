@@ -154,7 +154,7 @@ const googleUrlComponents = computed(() => {
 <template>
 	<div class="flex flex-col gap-4">
 		<Field :label="__('Google Preview')">
-			<div class="bg-white dark:!bg-[#1f1f1f] max-w-[652px] border rounded-lg p-4 flex">
+			<div class="bg-white dark:!bg-[#1f1f1f] max-w-[652px] border rounded-lg p-4 flex justify-between">
 				<div class="min-w-0">
 					<a class="flex flex-row items-center mb-1.5" :href="url" target="_blank">
 						<div class="shrink-0 size-[28px] bg-[#f3f5f6] !border !border-[#d2d2d2] dark:!border-[#5c5f5e] rounded-[50%] mr-3">
