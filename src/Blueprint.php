@@ -61,19 +61,28 @@ class Blueprint
 
         static::$addingField = true;
 
-        $this->blueprint->ensureFieldInTab('seo_previews', [
-            'type' => 'seo_pro_previews',
-            'listable' => false,
-            'display' => 'SEO Previews',
-            'localizable' => true,
-            'hide_display' => true,
-        ], 'SEO', true);
+        $this->blueprint->ensureFieldInTab(
+            handle: 'seo_previews',
+            config: [
+                'type' => 'seo_pro_previews',
+                'listable' => false,
+                'display' => 'SEO Previews',
+                'localizable' => true,
+                'hide_display' => true,
+            ],
+            tab: 'SEO',
+            prepend: true
+        );
 
-        $this->blueprint->ensureFieldInTab('seo', [
-            'type' => 'seo_pro',
-            'listable' => false,
-            'display' => 'SEO',
-        ], 'SEO');
+        $this->blueprint->ensureFieldInTab(
+            handle: 'seo',
+            config: [
+                'type' => 'seo_pro',
+                'listable' => false,
+                'display' => 'SEO',
+            ],
+            tab: 'SEO'
+        );
 
         static::$addingField = false;
     }
