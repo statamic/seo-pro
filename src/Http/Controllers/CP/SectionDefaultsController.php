@@ -14,8 +14,8 @@ class SectionDefaultsController extends CpController
         $this->authorize('edit seo section defaults');
 
         return Inertia::render('seo-pro::SectionDefaults/Index', [
-            'collections' => Collection::all(),
-            'taxonomies' => Taxonomy::all(),
+            'collections' => Collection::all()->sortBy('title')->values(),
+            'taxonomies' => Taxonomy::all()->sortBy('title')->values(),
         ]);
     }
 }
