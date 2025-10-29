@@ -13,7 +13,7 @@ class PreviewController extends CpController
     {
         $item = Data::find($request->id);
 
-        foreach ($request->params as $key => $value) {
+        foreach ($request->values as $key => $value) {
             if ($key === 'slug') {
                 $item->slug($value);
 

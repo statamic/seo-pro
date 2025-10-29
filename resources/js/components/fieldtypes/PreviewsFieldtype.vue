@@ -112,7 +112,7 @@ const fetchUpdatedUrl = async () => {
 	axios
 		.post(props.meta.previewUrl, {
 			id: publishValues.value.id,
-			params: props.meta.routeFields.reduce((acc, handle) => {
+			values: props.meta.routeFields.reduce((acc, handle) => {
 				acc[handle] = publishValues.value[handle];
 				return acc;
 			}, {}),
@@ -120,7 +120,6 @@ const fetchUpdatedUrl = async () => {
 		.then(response => (url.value = response.data.url))
 		.catch(error => Statamic.$toast.error(__('Something went wrong')));
 };
-
 if (publishValues.value.id) {
 	props.meta.routeFields.forEach(field => {
 		watch(
