@@ -77,7 +77,8 @@ const title = computed(() => {
 	const siteNameSeparator = resolveSeoValue('site_name_separator');
 	const siteNamePosition = resolveSeoValue('site_name_position');
 
-	if (! seoTitle) {		return siteName;
+	if (! seoTitle) {
+		return siteName;
 	}
 
 	if (! siteName || siteNamePosition === 'none') {
@@ -118,6 +119,7 @@ const fetchUpdatedUrl = async () => {
 		.then(response => (url.value = response.data.url))
 		.catch(error => Statamic.$toast.error(__('Something went wrong')));
 };
+
 if (publishValues.value.id) {
 	props.meta.routeFields.forEach(field => {
 		watch(
