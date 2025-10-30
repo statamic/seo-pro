@@ -376,6 +376,46 @@ EXPECTED;
     }
 
     #[Test]
+    public function it_properly_reports_on_title_length()
+    {
+        $this->generateEntries(5);
+
+        // No title
+        Entry::all()
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['title' => null])->save());
+
+        // Too short of a title (< 30 characters)
+        Entry::all()
+            ->skip(1)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['title' => 'Short'])->save());
+
+        // Ideal title length (30-60 characters)
+        Entry::all()
+            ->skip(2)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['title' => 'This is a perfectly sized title for SEO'])->save());
+
+        // Moderately long title (61-70 characters)
+        Entry::all()
+            ->skip(3)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['title' => 'This title is a bit longer than ideal but still acceptable range'])->save());
+
+        // Extremely long title (> 71 characters)
+        Entry::all()
+            ->skip(4)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['title' => 'This title is way too long and definitely exceeds the maximum recommended length for SEO purposes'])->save());
+
+        $this->assertEquals([
+            'failures' => 2, // From the empty title and extremely long title
+            'warnings' => 2, // From the short title and moderately long title
+        ], $this->getReportResult('IdealTitleLength'));
+    }
+
+    #[Test]
     public function it_properly_reports_on_unique_custom_description_values()
     {
         $this->generateEntries(5);
@@ -384,6 +424,46 @@ EXPECTED;
             ->each(fn ($entry, $id) => $entry->set('seo', ['description' => 'Custom Description'.$id])->save());
 
         $this->assertEqualsIgnoringLineEndings(0, $this->getReportResult('UniqueMetaDescription'));
+    }
+
+    #[Test]
+    public function it_properly_reports_on_description_length()
+    {
+        $this->generateEntries(5);
+
+        // No description...
+        Entry::all()
+            ->take(1)
+            ->each(fn ($entry) => $entry->save());
+
+        // Too short of a description (< 120 characters)
+        Entry::all()
+            ->skip(1)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['description' => 'Way too short.'])->save());
+
+        // Ideal description length (120-160 characters)
+        Entry::all()
+            ->skip(2)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['description' => 'This description is just about the right length for the report result to be a pass. Time for some gobbledygook to pad it out.'])->save());
+
+        // Moderately long description (161-240 characters)
+        Entry::all()
+            ->skip(3)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['description' => 'This description is a bit longer than ideal but not extremely long. It should trigger a warning status since it falls between the pass max and warn max thresholds. More padding text here.'])->save());
+
+        // Extremely long description (> 241 characters)
+        Entry::all()
+            ->skip(4)
+            ->take(1)
+            ->each(fn ($entry) => $entry->set('seo', ['description' => 'This description is way too long and should definitely fail the report rule. It exceeds the maximum warning threshold and goes into failure territory. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'])->save());
+
+        $this->assertEquals([
+            'failures' => 2, // From the empty description and extremely long description
+            'warnings' => 2, // From the short description and moderately long description
+        ], $this->getReportResult('IdealMetaDescriptionLength'));
     }
 
     public function reportsPath($path = null)
