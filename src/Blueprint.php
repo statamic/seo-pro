@@ -94,7 +94,6 @@ class Blueprint
     {
         $this->blueprint->removeTab('SEO Meta');
         $this->blueprint->removeTab('SEO Previews');
-        $this->blueprint->removeField('seo_previews');
     }
 
     /**
