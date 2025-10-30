@@ -32,7 +32,9 @@ class Report implements Arrayable, Jsonable
     public static $rules = [
         Rules\SiteName::class,
         Rules\UniqueTitleTag::class,
+        Rules\IdealTitleLength::class,
         Rules\UniqueMetaDescription::class,
+        Rules\IdealMetaDescriptionLength::class,
         Rules\NoUnderscoresInUrl::class,
         Rules\ThreeSegmentUrls::class,
     ];

@@ -48,6 +48,16 @@ return [
     'reports' => [
         'keep_recent' => 'all',
         'queue_chunk_size' => 1000,
+        'title_length' => [
+            'warn_min' => 30,
+            'pass_max' => 60,
+            'warn_max' => 70,
+        ],
+        'meta_description_length' => [
+            'warn_min' => 120,
+            'pass_max' => 160,
+            'warn_max' => 240,
+        ],
     ],
 
 ];
