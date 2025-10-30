@@ -88,7 +88,13 @@ pages_actionable: 10
 results:
   SiteName: true
   UniqueTitleTag: 0
+  IdealTitleLength:
+    failures: 0
+    warnings: 10
   UniqueMetaDescription: 10
+  IdealMetaDescriptionLength:
+    failures: 10
+    warnings: 0
   NoUnderscoresInUrl: 0
   ThreeSegmentUrls: 0
 
@@ -173,6 +179,11 @@ EXPECTED;
     #[Test]
     public function it_properly_calculates_actionable_count()
     {
+        // Prevent the title and description length warnings from failing the report.
+        // Otherwise, pages_actionable will always be 10.
+        config()->set('statamic.seo-pro.reports.title_length.warn_min', 0);
+        config()->set('statamic.seo-pro.reports.meta_description_length.warn_min', 0);
+
         $this
             ->generateEntries(5)
             ->generateTerms(5);
@@ -201,7 +212,13 @@ pages_actionable: 6
 results:
   SiteName: true
   UniqueTitleTag: 4
+  IdealTitleLength:
+    failures: 0
+    warnings: 0
   UniqueMetaDescription: 2
+  IdealMetaDescriptionLength:
+    failures: 0
+    warnings: 0
   NoUnderscoresInUrl: 0
   ThreeSegmentUrls: 0
 
@@ -243,7 +260,13 @@ pages_actionable: 10
 results:
   SiteName: true
   UniqueTitleTag: 0
+  IdealTitleLength:
+    failures: 0
+    warnings: 10
   UniqueMetaDescription: 10
+  IdealMetaDescriptionLength:
+    failures: 10
+    warnings: 0
   NoUnderscoresInUrl: 0
   ThreeSegmentUrls: 0
 
@@ -281,7 +304,13 @@ pages_actionable: 9
 results:
   SiteName: true
   UniqueTitleTag: 0
+  IdealTitleLength:
+    failures: 0
+    warnings: 9
   UniqueMetaDescription: 9
+  IdealMetaDescriptionLength:
+    failures: 9
+    warnings: 0
   NoUnderscoresInUrl: 0
   ThreeSegmentUrls: 0
 
@@ -315,7 +344,13 @@ pages_actionable: 4
 results:
   SiteName: true
   UniqueTitleTag: 0
+  IdealTitleLength:
+    failures: 0
+    warnings: 4
   UniqueMetaDescription: 4
+  IdealMetaDescriptionLength:
+    failures: 4
+    warnings: 0
   NoUnderscoresInUrl: 0
   ThreeSegmentUrls: 0
 
