@@ -27,8 +27,7 @@ class IdealMetaDescriptionLength extends Rule
             return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
         }
 
-        $config = config('statamic.seo-pro.reports.meta_description_length');
-        $warnMax = $config['warn_max'] ?? 240;
+        $warnMax = config('statamic.seo-pro.reports.meta_description_length.warn_max', 240);
 
         if ($this->length > $warnMax) {
             return __('seo-pro::messages.rules.meta_description_length_page_failing_too_long', [
@@ -55,12 +54,14 @@ class IdealMetaDescriptionLength extends Rule
 
         $this->report->pages()->each(function ($page) {
             $rule = new static;
+
             $rule
                 ->setPage($page)
                 ->setReport($this->report)
                 ->load($page->results()[$this->id()]);
 
             $status = $rule->status();
+
             if ($status === 'fail') {
                 $this->failures++;
             } elseif ($status === 'warning') {
@@ -92,20 +93,17 @@ class IdealMetaDescriptionLength extends Rule
 
     public function loadSite($data)
     {
-        if (is_array($data)) {
-            $this->failures = $data['failures'] ?? 0;
-            $this->warnings = $data['warnings'] ?? 0;
-        } else {
-            // Legacy support: old format was just a count of failures
-            $this->failures = $data ?? 0;
-            $this->warnings = 0;
+        if (! $data) {
+            return;
         }
+
+        $this->failures = $data['failures'] ?? 0;
+        $this->warnings = $data['warnings'] ?? 0;
     }
 
     public function pageFailingComment()
     {
-        $config = config('statamic.seo-pro.reports.meta_description_length');
-        $warnMax = $config['warn_max'] ?? 240;
+        $warnMax = config('statamic.seo-pro.reports.meta_description_length', 240);
 
         if ($this->length === 0) {
             return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
@@ -138,16 +136,14 @@ class IdealMetaDescriptionLength extends Rule
 
     public function processPage()
     {
-        $description = $this->page->get('description');
-        $this->length = $description ? mb_strlen($description) : 0;
+        $this->length = strlen($this->page->get('description', ''));
     }
 
     public function pageStatus()
     {
-        $config = config('statamic.seo-pro.reports.meta_description_length');
-        $warnMin = $config['warn_min'] ?? 120;
-        $passMax = $config['pass_max'] ?? 160;
-        $warnMax = $config['warn_max'] ?? 240;
+        $warnMin = config('statamic.seo-pro.reports.meta_description_length.warn_min', 120);
+        $passMax = config('statamic.seo-pro.reports.meta_description_length.pass_max', 160);
+        $warnMax = config('statamic.seo-pro.reports.meta_description_length.warn_max', 240);
 
         if ($this->length === 0) {
             return 'fail';

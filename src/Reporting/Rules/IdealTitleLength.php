@@ -27,8 +27,7 @@ class IdealTitleLength extends Rule
             return __('seo-pro::messages.rules.title_length_page_failing_missing');
         }
 
-        $config = config('seo-pro.reports.title_length');
-        $warnMax = $config['warn_max'] ?? 70;
+        $warnMax = config('seo-pro.reports.title_length.warn_max', 70);
 
         if ($this->length > $warnMax) {
             return __('seo-pro::messages.rules.title_length_page_failing_too_long', [
@@ -55,12 +54,14 @@ class IdealTitleLength extends Rule
 
         $this->report->pages()->each(function ($page) {
             $rule = new static;
+
             $rule
                 ->setPage($page)
                 ->setReport($this->report)
                 ->load($page->results()[$this->id()]);
 
             $status = $rule->status();
+
             if ($status === 'fail') {
                 $this->failures++;
             } elseif ($status === 'warning') {
@@ -92,20 +93,17 @@ class IdealTitleLength extends Rule
 
     public function loadSite($data)
     {
-        if (is_array($data)) {
-            $this->failures = $data['failures'] ?? 0;
-            $this->warnings = $data['warnings'] ?? 0;
-        } else {
-            // Legacy support: old format was just a count of failures
-            $this->failures = $data ?? 0;
-            $this->warnings = 0;
+        if (! $data) {
+            return;
         }
+
+        $this->failures = $data['failures'] ?? 0;
+        $this->warnings = $data['warnings'] ?? 0;
     }
 
     public function pageFailingComment()
     {
-        $config = config('seo-pro.reports.title_length');
-        $warnMax = $config['warn_max'] ?? 70;
+        $warnMax = config('seo-pro.reports.title_length.warn_max', 70);
 
         if ($this->length === 0) {
             return __('seo-pro::messages.rules.title_length_page_failing_missing');
@@ -138,16 +136,14 @@ class IdealTitleLength extends Rule
 
     public function processPage()
     {
-        $title = $this->page->get('title');
-        $this->length = $title ? mb_strlen($title) : 0;
+        $this->length = strlen($this->page->get('title', ''));
     }
 
     public function pageStatus()
     {
-        $config = config('seo-pro.reports.title_length');
-        $warnMin = $config['warn_min'] ?? 30;
-        $passMax = $config['pass_max'] ?? 60;
-        $warnMax = $config['warn_max'] ?? 70;
+        $warnMin = config('statamic.seo-pro.reports.title_length.warn_min', 30);
+        $passMax = config('statamic.seo-pro.reports.title_length.pass_max', 60);
+        $warnMax = config('statamic.seo-pro.reports.title_length.warn_max', 70);
 
         if ($this->length === 0) {
             return 'fail';
