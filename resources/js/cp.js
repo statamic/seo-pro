@@ -5,6 +5,7 @@ import ReportsShow from './pages/reports/Show.vue';
 import SectionDefaultsIndex from './pages/section-defaults/Index.vue';
 import SiteDefaultsEdit from './pages/site-defaults/Edit.vue';
 import SeoProFieldtype from './components/fieldtypes/SeoProFieldtype.vue';
+import PreviewsFieldtype from "./components/fieldtypes/PreviewsFieldtype.vue";
 import SourceFieldtype from './components/fieldtypes/SourceFieldtype.vue';
 import SeoProWidget from "./components/widgets/SeoProWidget.vue";
 
@@ -17,6 +18,7 @@ Statamic.booting(() => {
     Statamic.$inertia.register('seo-pro::SiteDefaults/Edit', SiteDefaultsEdit);
 
     Statamic.$components.register('seo_pro-fieldtype', SeoProFieldtype);
+    Statamic.$components.register('seo_pro_previews-fieldtype', PreviewsFieldtype);
     Statamic.$components.register('seo_pro_source-fieldtype', SourceFieldtype);
 
     Statamic.$components.register('seo-pro-widget', SeoProWidget);

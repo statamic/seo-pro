@@ -22,4 +22,6 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
     Route::patch('section-defaults/collections/{seo_pro_collection}', [Controllers\CP\CollectionDefaultsController::class, 'update'])->name('section-defaults.collections.update');
     Route::get('section-defaults/taxonomies/{seo_pro_taxonomy}/edit', [Controllers\CP\TaxonomyDefaultsController::class, 'edit'])->name('section-defaults.taxonomies.edit');
     Route::patch('section-defaults/taxonomies/{seo_pro_taxonomy}', [Controllers\CP\TaxonomyDefaultsController::class, 'update'])->name('section-defaults.taxonomies.update');
+
+    Route::post('preview', Controllers\CP\PreviewController::class)->name('preview');
 });
