@@ -23,11 +23,11 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageDescription()
     {
-        if (!isset($this->length) || $this->length === 0) {
+        if (! isset($this->length) || $this->length === 0) {
             return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
         }
 
-        $config = config('seo-pro.reports.meta_description_length');
+        $config = config('statamic.seo-pro.reports.meta_description_length');
         $warnMax = $config['warn_max'] ?? 240;
 
         if ($this->length > $warnMax) {
@@ -104,7 +104,7 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageFailingComment()
     {
-        $config = config('seo-pro.reports.meta_description_length');
+        $config = config('statamic.seo-pro.reports.meta_description_length');
         $warnMax = $config['warn_max'] ?? 240;
 
         if ($this->length === 0) {
@@ -144,7 +144,7 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageStatus()
     {
-        $config = config('seo-pro.reports.meta_description_length');
+        $config = config('statamic.seo-pro.reports.meta_description_length');
         $warnMin = $config['warn_min'] ?? 120;
         $passMax = $config['pass_max'] ?? 160;
         $warnMax = $config['warn_max'] ?? 240;
