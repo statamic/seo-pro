@@ -114,6 +114,7 @@ const metaPathPrefix = computed(() => {
 	                class="w-full"
 	                :placeholder="__('Field')"
 	                :options="sourceFieldOptions"
+	                :disabled="isReadOnly"
                     :model-value="sourceField"
                     @update:model-value="sourceFieldChanged"
                 >
