@@ -27,7 +27,15 @@ class IdealMetaDescriptionLength extends Rule
             return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
         }
 
+        $warnMin = config('statamic.seo-pro.reports.meta_description_length.warn_min', 120);
         $warnMax = config('statamic.seo-pro.reports.meta_description_length.warn_max', 240);
+
+        if ($this->length < $warnMin) {
+            return __('seo-pro::messages.rules.meta_description_length_page_failing_too_short', [
+                'length' => $this->length,
+                'min' => $warnMin,
+            ]);
+        }
 
         if ($this->length > $warnMax) {
             return __('seo-pro::messages.rules.meta_description_length_page_failing_too_long', [

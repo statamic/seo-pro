@@ -27,7 +27,15 @@ class IdealTitleLength extends Rule
             return __('seo-pro::messages.rules.title_length_page_failing_missing');
         }
 
+        $warnMin = config('seo-pro.reports.title_length.warn_min', 30);
         $warnMax = config('seo-pro.reports.title_length.warn_max', 70);
+
+        if ($this->length < $warnMin) {
+            return __('seo-pro::messages.rules.title_length_page_failing_too_short', [
+                'length' => $this->length,
+                'min' => $warnMin,
+            ]);
+        }
 
         if ($this->length > $warnMax) {
             return __('seo-pro::messages.rules.title_length_page_failing_too_long', [
