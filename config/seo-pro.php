@@ -49,10 +49,14 @@ return [
         'keep_recent' => 'all',
         'queue_chunk_size' => 1000,
         'title_length' => [
-            'pass_max' => 70,
+            'warn_min' => 30,
+            'pass_max' => 60,
+            'warn_max' => 70,
         ],
         'meta_description_length' => [
-            'pass_max' => 240,
+            'warn_min' => 120,
+            'pass_max' => 160,
+            'warn_max' => 240,
         ],
     ],
 
