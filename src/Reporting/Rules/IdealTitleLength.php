@@ -27,8 +27,8 @@ class IdealTitleLength extends Rule
             return __('seo-pro::messages.rules.title_length_page_failing_missing');
         }
 
-        $warnMin = config('seo-pro.reports.title_length.warn_min', 30);
-        $warnMax = config('seo-pro.reports.title_length.warn_max', 70);
+        $warnMin = config('statamic.seo-pro.reports.title_length.warn_min', 30);
+        $warnMax = config('statamic.seo-pro.reports.title_length.warn_max', 70);
 
         if ($this->length < $warnMin) {
             return __('seo-pro::messages.rules.title_length_page_failing_too_short', [
@@ -111,7 +111,7 @@ class IdealTitleLength extends Rule
 
     public function pageFailingComment()
     {
-        $warnMax = config('seo-pro.reports.title_length.warn_max', 70);
+        $warnMax = config('statamic.seo-pro.reports.title_length.warn_max', 70);
 
         if ($this->length === 0) {
             return __('seo-pro::messages.rules.title_length_page_failing_missing');

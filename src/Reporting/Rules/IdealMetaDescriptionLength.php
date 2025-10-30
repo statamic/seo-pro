@@ -111,7 +111,7 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageFailingComment()
     {
-        $warnMax = config('statamic.seo-pro.reports.meta_description_length', 240);
+        $warnMax = config('statamic.seo-pro.reports.meta_description_length.warn_max', 240);
 
         if ($this->length === 0) {
             return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
