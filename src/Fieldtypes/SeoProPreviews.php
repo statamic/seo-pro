@@ -35,6 +35,7 @@ class SeoProPreviews extends Fieldtype
             $item instanceof \Statamic\Contracts\Entries\Entry => $item->route(),
             $item instanceof \Statamic\Contracts\Entries\Collection => $item->route(Site::selected()->handle()),
             $item instanceof \Statamic\Contracts\Taxonomies\Taxonomy, $item instanceof \Statamic\Contracts\Taxonomies\Term => '{{ slug }}',
+            default => '',
         };
 
         return Str::of($route)
