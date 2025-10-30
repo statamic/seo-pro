@@ -7,6 +7,7 @@
 - Localizable Site Defaults #436 by @duncanmcclean
 - Structured Data (JSON-LD) support #440 by @duncanmcclean
 - Search Engine & Social Card Previews #442 by @duncanmcclean
+- Added report rules for ideal title & description lengths #443 by @jackmcdade
 - Allow enforcement of trailing slashes on urls and links #393 by @jesseleite
 
 ### What's improved
