@@ -2,73 +2,99 @@
 
 return [
 
-    'meta_section' => 'Metadaten ',
-    'meta_section_instruct' => 'Jede URL deiner Website sollte einen Meta-Titel und eine Meta-Beschreibung haben, die eindeutig sind.',
+    'meta_section' => 'Meta-Daten',
+    'meta_section_instruct' => 'Jede URL auf deiner Website sollte einen eindeutigen Meta-Titel und eine eindeutige Meta-Beschreibung haben.',
 
     'title' => 'Meta-Titel',
-    'title_instruct' => 'Wähle für den Meta-Titel ein vorhandenes Feld als Standard. Jede Sammlung und Taxonomie kann auch ihre eigene Einstellung haben.',
+    'title_instruct' => 'Wähle das Feld, das für deine Seitentitel verwendet werden soll.',
 
     'description' => 'Meta-Beschreibung',
-    'description_instruct' => 'Wähle für die Meta-Beschreibung ein vorhandenes Feld als Standard. Jede Sammlung und Taxonomie kann auch ihre eigene Einstellung haben.',
+    'description_instruct' => 'Wähle das Feld, das für deine Seitentitel verwendet werden soll.',
 
-    'site_name' => 'Name der Website',
-    'site_name_instruct' => 'Es ist üblich, den Namen der Website in die Seitentitel einzufügen.',
+    'site_name' => 'Website-Name',
+    'site_name_instruct' => 'Der Name deiner Website, der zu Meta-Titeln hinzugefügt wird, um die Markenidentität zu gewährleisten.',
 
-    'site_name_position' => 'Name der Website: Position',
-    'site_name_position_instruct' => 'Ob vor oder nach dem Titel bleibt dir überlassen.',
+    'site_name_position' => 'Position des Namens',
+    'site_name_position_instruct' => 'Zeige den Website-Namen vor oder nach dem Seitentitel an – oder überhaupt nicht.',
 
-    'site_name_separator' => 'Name der Website: Trennzeichen',
-    'site_name_separator_instruct' => 'Das (oder die) Zeichen zwischen Titel und Name der Website.',
+    'site_name_separator' => 'Trennzeichen',
+    'site_name_separator_instruct' => 'Lege fest, was zwischen dem Seitentitel und dem Website-Namen angezeigt werden soll.',
 
-    'canonical_url' => 'Kanonische URL',
-    'canonical_url_instruct' => 'Wähle für die kanonische URL ein vorhandenes Feld als Standard. Jede Sammlung und Taxonomie kann auch ihre eigene Einstellung haben.',
+    'canonical_url' => 'Canonical-URL',
+    'canonical_url_instruct' => 'Wähle das Feld für deine kanonischen URLs (meist `permalink`).',
+
+    'json_ld_section' => 'JSON-LD',
+
+    'json_ld_entity_section' => 'Entity-Informationen',
+    'json_ld_entity_section_instruct' => 'Basisinformationen über die Organisation oder Person, die diese Website repräsentiert.',
+    'json_ld_entity' => 'Entity',
+    'json_ld_entity_instruct' => 'Dies hilft Suchmaschinen, die strukturierten Daten auf deiner Website zu verstehen und erhöht die Wahrscheinlichkeit, dass sie mit Rich Snippets in den Suchergebnissen erscheint.',
+    'json_ld_organization_name' => 'Name der Organisation',
+    'json_ld_organization_name_instruct' => 'Der Name der Organisation, die diese Website repräsentiert.',
+    'json_ld_organization_logo' => 'Logo der Organisation',
+    'json_ld_organization_logo_instruct' => 'Das Logo der Organisation, die diese Website repräsentiert.',
+    'json_ld_person_name' => 'Name der Person',
+    'json_ld_person_name_instruct' => 'Der vollständige Name der Person, die diese Website repräsentiert.',
+
+    'json_ld_breadcrumbs_section' => 'Breadcrumbs',
+    'json_ld_breadcrumbs' => 'Breadcrumbs',
+    'json_ld_breadcrumbs_instruct' => 'Aktiviere strukturierte Breadcrumb-Daten, um den Standort dieser Seite in der Website-Hierarchie in den Suchergebnissen anzuzeigen. [Mehr erfahren](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb)',
 
     'robots_section' => 'Robots',
-    'robots_section_instruct' => 'Kontrolliere, wie Suchmaschinen deine Seiten crawlen und indizieren.',
+    'robots_section_instruct' => 'Lege fest, wie Suchmaschinen deine Seiten crawlen und indexieren.',
 
-    'robots_indexing' => 'Indizierung',
-    'robots_indexing_instruct' => 'Kontrolliere, ob Suchmaschinen diese Seite indizieren können.',
+    'robots_indexing' => 'Indexierung',
+    'robots_indexing_instruct' => 'Lege fest, ob Suchmaschinen diese Website indexieren dürfen.',
 
     'robots_following' => 'Link-Verfolgung',
-    'robots_following_instruct' => 'Kontrolliere, ob Suchmaschinen Links auf dieser Seite verfolgen können.',
+    'robots_following_instruct' => 'Lege fest, ob Suchmaschinen den Links auf dieser Website folgen dürfen.',
 
     'robots_noarchive' => 'Kein Archiv',
-    'robots_noarchive_instruct' => 'Verhindere, dass Suchmaschinen einen gecachten Link zu dieser Seite anzeigen.',
+    'robots_noarchive_instruct' => 'Verhindere, dass Suchmaschinen zwischengespeicherte Versionen dieser Website anzeigen.',
 
-    'robots_noimageindex' => 'Kein Bild-Index',
-    'robots_noimageindex_instruct' => 'Verhindere, dass Suchmaschinen Bilder auf dieser Seite indizieren.',
+    'robots_noimageindex' => 'Keine Bild-Indexierung',
+    'robots_noimageindex_instruct' => 'Verhindere, dass Suchmaschinen Bilder auf dieser Website indexieren.',
 
     'robots_nosnippet' => 'Kein Snippet',
-    'robots_nosnippet_instruct' => 'Verhindere, dass Suchmaschinen ein Text-Snippet für diese Seite anzeigen.',
+    'robots_nosnippet_instruct' => 'Verhindere, dass Suchmaschinen Textausschnitte für diese Website anzeigen.',
 
     'image_section' => 'Open Graph',
-    'image_section_instruct' => 'Wir erstellen die meisten Open-Graph Felder automatisch aus deinen Metadaten und der Website-Konfiguration.',
+    'image_section_instruct' => 'Die meisten Open-Graph-Felder werden automatisch aus deinen Meta-Daten und der Website-Konfiguration generiert.',
 
     'image' => 'Bild',
-    'image_instruct' => 'Wähle ein Feld für ein Bild, das jede URL beim Teilen in sozialen Netzwerken als Standard anzeigen soll.',
+    'image_instruct' => 'Lege ein Standard-Bildfeld fest, das beim Teilen jeder URL in sozialen Netzwerken angezeigt wird.',
 
-    'social_section' => 'Twitter',
-    'social_section_instruct' => 'Wir erstellen die meisten Twitter-Card Felder automatisch aus deinen Metadaten und der Website-Konfiguration.',
+    'og_title' => 'Open-Graph-Titel',
+    'og_title_instruct' => 'Wähle das Feld für deine Open-Graph-Titel.',
 
-    'twitter_handle' => 'Twitter-Handle',
-    'twitter_handle_instruct' => 'Wähle einen voreingestellten Twitter-Handle, der zur Website passt.',
+    'social_section' => 'X (Twitter)',
+    'social_section_instruct' => 'Wähle das Feld für deine X-Card-Titel und -Beschreibungen.',
+
+    'twitter_handle' => 'Handle',
+    'twitter_handle_instruct' => 'Wähle das Feld für dein X-Handle.',
+
+    'twitter_title' => 'Card-Titel',
+    'twitter_title_instruct' => 'Wähle das Feld für deine X-Card-Titel.',
+
+    'twitter_description' => 'Card-Beschreibung',
+    'twitter_description_instruct' => 'Wähle das Feld oder lege einen eigenen Wert für die Standard-X-Card-Beschreibungen fest.',
 
     'sitemap_section' => 'Sitemap',
-    'sitemap_section_instruct' => 'Wähle deine Voreinstellungen für die Sitemap. Wenn du unsicher sind, lasse die Felder zugunsten der üblichen Standardwerte leer.',
+    'sitemap_section_instruct' => 'Wähle deine Sitemap-Einstellungen.',
 
     'priority' => 'Priorität',
-    'priority_instruct' => 'Die Wichtigkeit dieser URL relativ zu anderen URLs auf deiner Website. Gültige Werte reichen von `0.0` bis `1.0`.',
+    'priority_instruct' => 'Lege die Priorität dieser Seite in der Sitemap fest. Gültige Werte liegen zwischen `0.0` und `1.0`.',
 
-    'change_frequency' => 'Frequenz',
-    'change_frequency_instruct' => 'Ein Hinweis für Suchmaschinen, wie häufig sich die Seite wahrscheinlich ändern wird.',
+    'change_frequency' => 'Änderungsfrequenz',
+    'change_frequency_instruct' => 'Lege fest, wie häufig sich die Seite voraussichtlich ändert.',
 
     'search_section' => 'Suchmaschinen',
-    'search_section_instruct' => 'Durch die Verifizierung deiner Website bei beliebten Suchmaschinen kannst du prüfen, wie gut deine Website von diesen gecrawlt wird.',
+    'search_section_instruct' => 'Verifiziere deine Website bei führenden Suchmaschinen, um nachzuverfolgen, wie gut sie deine Seite crawlen.',
 
-    'bing_verification' => 'Bing Verifizierungscode',
-    'bing_verification_instruct' => 'Hol dir deinen Bing-Verifizierungscode in den [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
+    'bing_verification' => 'Bing-Verifizierungscode',
+    'bing_verification_instruct' => 'Gib deinen Bing-Verifizierungscode aus den [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster) ein.',
 
-    'google_verification' => 'Google Verifizierungscode',
-    'google_verification_instruct' => 'Hol dir deinen Googler-Verifizierungscode in der [Google Search Console](https://search.google.com/search-console).',
+    'google_verification' => 'Google-Verifizierungscode',
+    'google_verification_instruct' => 'Gib deinen Google-Verifizierungscode aus der [Google Search Console](https://search.google.com/search-console) ein.',
 
 ];
