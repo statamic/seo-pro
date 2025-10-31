@@ -14,6 +14,7 @@
 - Site Defaults are now stored using Statamic's Addon Settings feature #432 by @duncanmcclean
 - Robots have been split off into their own section by @jackmcdade
 - "Enabled" toggle in SEO Settings now controls the visibility of SEO fields
+- Updated German translations #444 by @helloDanuk
 
 ### Breaking changes
 - Dropped support for PHP 8.1 and Laravel 10
