@@ -489,6 +489,34 @@ EOT;
 
         $this->assertCount(8, $this->getPagesFromSitemapXml($content));
     }
+
+    #[Test]
+    public function it_sanitizes_special_characters()
+    {
+        Sitemap::hook('additional', function ($payload, $next) {
+            $payload->items->push((new Page())->with([
+                'canonical_url' => url('\'"<>&'),
+                'last_modified' => Carbon::parse('2025-01-01'),
+                'change_frequency' => 'monthly',
+                'priority' => 0.5,
+            ]));
+            return $next($payload);
+        });
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertSeeInOrder([
+                '<url>',
+                '<loc>http://cool-runnings.com/&apos;&quot;&lt;&gt;&amp;</loc>',
+                '<lastmod>2025-01-01</lastmod>',
+                '<changefreq>monthly</changefreq>',
+                '<priority>0.5</priority>',
+                '</url>',
+                '</urlset>',
+            ], escape: false);
+    }
 }
 
 class CustomSitemap extends Sitemap
