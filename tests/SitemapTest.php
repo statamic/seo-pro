@@ -494,12 +494,13 @@ EOT;
     public function it_sanitizes_special_characters()
     {
         Sitemap::hook('additional', function ($payload, $next) {
-            $payload->items->push((new Page())->with([
+            $payload->items->push((new Page)->with([
                 'canonical_url' => url('\'"<>&'),
                 'last_modified' => Carbon::parse('2025-01-01'),
                 'change_frequency' => 'monthly',
                 'priority' => 0.5,
             ]));
+
             return $next($payload);
         });
 
