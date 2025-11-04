@@ -2,7 +2,7 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {{ sitemaps }}
     <sitemap>
-        <loc>{{ url }}</loc>
+        <loc>{{$htmlspecialchars($url, ENT_QUOTES|ENT_XML1, 'UTF-8')$}}</loc>
     </sitemap>
 {{ /sitemaps }}
 </sitemapindex>
