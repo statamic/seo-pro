@@ -20,7 +20,7 @@ class Page
 
     public function loc()
     {
-        return $this->data->get('canonical_url');
+        return htmlspecialchars($this->data->get('canonical_url'), ENT_QUOTES | ENT_XML1, 'UTF-8');
     }
 
     public function lastmod()
