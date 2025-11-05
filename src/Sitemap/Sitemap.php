@@ -258,11 +258,11 @@ class Sitemap
             ->filter(fn (Site $site) => $entry->in($site->handle())->published())
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
             ->map(fn (Site $site) => [
-                'href' => $entry->in($site->handle())->absoluteUrl(),
+                'href' => $this->sanitizeUrl($entry->in($site->handle())->absoluteUrl()),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
             ->push([
-                'href' => $entry->root()->absoluteUrl(),
+                'href' => $this->sanitizeUrl($entry->root()->absoluteUrl()),
                 'hreflang' => 'x-default',
             ])
             ->all();
@@ -274,13 +274,18 @@ class Sitemap
             ->values()
             ->reject(fn (Site $site) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($site->handle()))
             ->map(fn (Site $site) => [
-                'href' => $term->in($site->handle())->absoluteUrl(),
+                'href' => $this->sanitizeUrl($term->in($site->handle())->absoluteUrl()),
                 'hreflang' => strtolower(str_replace('_', '-', $site->locale())),
             ])
             ->push([
-                'href' => $term->inDefaultLocale()->absoluteUrl(),
+                'href' => $this->sanitizeUrl($term->inDefaultLocale()->absoluteUrl()),
                 'hreflang' => 'x-default',
             ])
             ->all();
+    }
+
+    private function sanitizeUrl(string $url): string
+    {
+        return htmlspecialchars($url, ENT_QUOTES | ENT_XML1, 'UTF-8');
     }
 }
