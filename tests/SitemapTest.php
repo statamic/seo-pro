@@ -504,7 +504,7 @@ EOT;
             return $next($payload);
         });
 
-        $content = $this
+        $this
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
