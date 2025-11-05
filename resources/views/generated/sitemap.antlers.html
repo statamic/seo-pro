@@ -2,12 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 {{ pages }}
     <url>
-        <loc>{{$ htmlspecialchars($loc, ENT_QUOTES|ENT_XML1, 'UTF-8') $}}</loc>
+        <loc>{{ loc }}</loc>
         <lastmod>{{ lastmod }}</lastmod>
         <changefreq>{{ changefreq }}</changefreq>
         <priority>{{ priority }}</priority>
         {{ hreflangs }}
-            <xhtml:link rel="alternate" hreflang="{{ hreflang }}" href="{{$ htmlspecialchars($href, ENT_QUOTES|ENT_XML1, 'UTF-8') $}}" />
+            <xhtml:link rel="alternate" hreflang="{{ hreflang }}" href="{{ href }}" />
         {{ /hreflangs }}
     </url>
 {{ /pages }}
