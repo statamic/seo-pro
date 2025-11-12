@@ -1,6 +1,6 @@
 # Release Notes
 
-## 7.0.0 (2025-xx-xx)
+## 7.0.0-beta.1 (2025-11-12)
 
 ### What's new
 - Updated the Control Panel for Statamic 6
