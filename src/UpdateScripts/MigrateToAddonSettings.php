@@ -12,7 +12,7 @@ class MigrateToAddonSettings extends UpdateScript
 {
     public function shouldUpdate($newVersion, $oldVersion)
     {
-        return $this->isUpdatingTo('7.0.0');
+        return $this->isUpdatingTo('7.0.0-beta.2');
     }
 
     public function update()
