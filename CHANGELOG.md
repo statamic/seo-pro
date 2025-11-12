@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.0.0-beta.2 (2025-11-12)
+
+### What's fixed
+- Fixed an issue where the addon settings update script wouldn't run when updating by @duncanmcclean
+
+
+
 ## 7.0.0-beta.1 (2025-11-12)
 
 ### What's new
