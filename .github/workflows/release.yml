@@ -12,12 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js 20.19.0
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.19.0
+      - name: Install Composer Dependencies
+        run: composer install
 
-      - name: Install dependencies
+      - name: Install NPM Dependencies
         run: npm ci
 
       - name: Compile assets
@@ -38,7 +36,7 @@ jobs:
           tag_name: ${{ steps.changelog.outputs.version }}
           release_name: ${{ steps.changelog.outputs.version }}
           body: ${{ steps.changelog.outputs.text }}
-          prerelease: ${{ contains(github.ref, '-alpha') || contains(github.ref, '-beta') }}
+          prerelease: ${{ contains(github.ref, '-beta') }}
 
       - name: Upload dist zip to release
         uses: actions/upload-release-asset@v1.0.1
