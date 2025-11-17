@@ -120,8 +120,8 @@ class Sitemap
 
                 $data = (new Cascade)
                     ->forSitemap()
-                    ->with($this->getSiteDefaults())
-                    ->with($this->getSectionDefaults($content))
+                    ->withSiteDefaults($this->getSiteDefaults())
+                    ->withSectionDefaults($this->getSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
                     ->get();

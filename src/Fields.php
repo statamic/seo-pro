@@ -326,11 +326,11 @@ class Fields
         }
 
         $cascade = Blink::once('seo-pro::placeholder.cascade', function () {
-            $cascade = (new Cascade)->with(SiteDefaults::load()->all());
+            $cascade = (new Cascade)->withSiteDefaults(SiteDefaults::load()->all());
 
             if ($this->data) {
                 $cascade = $cascade
-                    ->with($this->getSectionDefaults($this->data))
+                    ->withSectionDefaults($this->getSectionDefaults($this->data))
                     ->with($this->data->value('seo', []))
                     ->withCurrent($this->data);
             }

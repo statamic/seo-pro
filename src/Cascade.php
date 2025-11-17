@@ -24,6 +24,8 @@ use Statamic\View\Cascade as ViewCascade;
 class Cascade
 {
     protected $data;
+    protected $siteDefaults;
+    protected $sectionDefaults;
     protected $current;
     protected $explicitUrl;
     protected $model;
@@ -46,6 +48,24 @@ class Cascade
     public function with($array)
     {
         $this->data = $this->data->merge($array);
+
+        return $this;
+    }
+
+    public function withSiteDefaults($data)
+    {
+        $this->with($data);
+
+        $this->siteDefaults = $data;
+
+        return $this;
+    }
+
+    public function withSectionDefaults($data)
+    {
+        $this->with($data);
+
+        $this->sectionDefaults = $data;
 
         return $this;
     }
