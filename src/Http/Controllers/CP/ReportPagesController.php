@@ -43,9 +43,9 @@ class ReportPagesController extends CpController
         return PageResource::collection($paginator)->additional([
             'meta' => [
                 'columns' => [
-                    Column::make('status')->label(__('Status')),
-                    Column::make('url')->label(__('URL')),
-                    Column::make('actionable')->label(__('Actionable'))->sortable(false),
+                    Column::make('status')->label(__('seo-pro::messages.page_status')),
+                    Column::make('url')->label(__('seo-pro::messages.page_url')),
+                    Column::make('actionable')->label(__('seo-pro::messages.page_actionable'))->sortable(false),
                 ],
             ],
         ]);
