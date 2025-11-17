@@ -59,7 +59,7 @@ if (isGenerating.value) {
 			<Button variant="primary" :href="createReportUrl" :text="__('seo-pro::messages.generate_report')" />
 		</Header>
 
-		<Panel v-if="isCachedHeaderReady" :heading="__('Summary')">
+		<Panel v-if="isCachedHeaderReady" :heading="__('seo-pro::messages.summary')">
 			<Card class="flex flex-col gap-y-4">
 				<div class="flex items-center justify-between">
 					<div>
@@ -67,15 +67,15 @@ if (isGenerating.value) {
 						<div class="text-lg">{{ formatRelativeDate(report.date) }}</div>
 					</div>
 					<div>
-						<Description class="mb-1" :text="__('Actionable Pages')" />
+						<Description class="mb-1" :text="__('seo-pro::messages.actionable_pages')" />
 						<div class="text-lg">{{ report.pages_actionable || 'N/A' }}</div>
 					</div>
 					<div>
-						<Description class="mb-1" :text="__('Total Pages Crawled')" />
+						<Description class="mb-1" :text="__('seo-pro::messages.total_pages_crawled')" />
 						<div class="text-lg">{{ report.pages_crawled }}</div>
 					</div>
 					<div>
-						<Description class="mb-1" :text="__('Site Score')" />
+						<Description class="mb-1" :text="__('seo-pro::messages.site_score')" />
 						<div class="text-lg" :class="{ 'text-red-500': report.score < 70, 'text-orange': report.score < 90, 'text-green-600': report.score >= 90 }">{{ report.score }}%</div>
 					</div>
 				</div>
