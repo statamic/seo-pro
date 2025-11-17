@@ -120,20 +120,20 @@ const metaPathPrefix = computed(() => {
                 >
 	                <template #option="option">
 		                <div class="flex items-center">
-			                <span v-text="option.label" />
+			                <span class="flex-shrink-0" v-text="option.label" />
 			                <span
 				                v-text="option.value"
-				                class="font-mono text-2xs text-gray-500 dark:text-dark-150"
+				                class="font-mono text-2xs text-gray-500 dark:text-dark-150 truncate"
 				                :class="{ 'ml-2': option.label }"
 			                />
 		                </div>
 	                </template>
 	                <template #selected-option="{ option }">
 		                <div class="flex items-center">
-			                <span v-text="option.label" />
+			                <span class="flex-shrink-0" v-text="option.label" />
 			                <span
 				                v-text="option.value"
-				                class="font-mono text-2xs text-gray-500 dark:text-dark-150"
+				                class="font-mono text-2xs text-gray-500 dark:text-dark-150 truncate"
 				                :class="{ 'ml-2': option.label }"
 			                />
 		                </div>
