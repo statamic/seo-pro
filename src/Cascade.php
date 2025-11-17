@@ -230,6 +230,8 @@ class Cascade
 
     protected function parse($key, $item)
     {
+        $original = $item;
+
         if (is_array($item)) {
             return array_map(function ($item) use ($key) {
                 return $this->parse($key, $item);
@@ -261,6 +263,17 @@ class Cascade
                     $item = (string) Statamic::modify($item)->bardText();
                 } else {
                     $item = $item->value();
+                }
+            }
+
+            // When the field is empty, attempt to fall back to the section or site defaults.
+            if (! $item) {
+                if (isset($this->sectionDefaults[$key]) && $this->sectionDefaults[$key] !== $original) {
+                    return $this->parse($key, $this->sectionDefaults[$key]);
+                }
+
+                if (isset($this->siteDefaults[$key]) && $this->siteDefaults[$key] !== $original) {
+                    return $this->parse($key, $this->siteDefaults[$key]);
                 }
             }
         }
