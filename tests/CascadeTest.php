@@ -4,10 +4,13 @@ namespace Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Blink;
+use Statamic\Facades\Blueprint;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\SiteDefaults;
 
 class CascadeTest extends TestCase
@@ -110,6 +113,32 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('Cool Writings >>> Jamaica', $data['compiled_title']);
+    }
+
+    #[Test]
+    public function it_falls_back_to_site_default_when_from_field_value_is_empty()
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $sectionDefaults = Blueprint::make()
+            ->setContents([
+                'fields' => Fields::new()->getConfig(),
+            ])
+            ->fields()
+            ->addValues([
+                'image' => '@seo:cover',
+            ])
+            ->augment()
+            ->values()
+            ->only(['image']);
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::load(['image' => 'seo/default.jpg'])->all())
+            ->withSectionDefaults($sectionDefaults)
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('seo/default.jpg', $data['image']);
     }
 
     #[Test]
