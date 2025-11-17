@@ -100,8 +100,8 @@ class SeoProFieldtype extends Fieldtype
             $content = $this->field()->parent();
 
             return (new Cascade)
-                ->with(SiteDefaults::load()->augmented())
-                ->with($this->getAugmentedSectionDefaults($content))
+                ->withSiteDefaults(SiteDefaults::load()->augmented())
+                ->withSectionDefaults($this->getAugmentedSectionDefaults($content))
                 ->with($augmented)
                 ->withCurrent($content)
                 ->get();

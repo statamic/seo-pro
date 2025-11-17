@@ -4,10 +4,12 @@ namespace Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Blueprint;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
+use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\SiteDefaults;
 
 class CascadeTest extends TestCase
@@ -25,7 +27,7 @@ class CascadeTest extends TestCase
     public function it_generates_seo_cascade_from_site_defaults_and_home_entry()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->get();
 
         $expected = [
@@ -58,7 +60,7 @@ class CascadeTest extends TestCase
     public function it_overwrites_data_in_cascade()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'description' => 'Bob sled team',
@@ -97,7 +99,7 @@ class CascadeTest extends TestCase
     public function it_generates_compiled_title_from_cascaded_parts()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'site_name_position' => 'after',
@@ -113,6 +115,32 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_falls_back_to_site_default_when_from_field_value_is_empty()
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $sectionDefaults = Blueprint::make()
+            ->setContents([
+                'fields' => Fields::new()->getConfig(),
+            ])
+            ->fields()
+            ->addValues([
+                'image' => '@seo:cover',
+            ])
+            ->augment()
+            ->values()
+            ->only(['image']);
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::load(['image' => 'seo/default.jpg'])->all())
+            ->withSectionDefaults($sectionDefaults)
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('seo/default.jpg', $data['image']);
+    }
+
+    #[Test]
     public function it_parses_antlers()
     {
         $entry = Entry::findByUri('/about')->entry();
@@ -120,7 +148,7 @@ class CascadeTest extends TestCase
         $entry->data(['favourite_colour' => 'Red'])->save();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'description' => '{{ favourite_colour | upper }}',
             ])
@@ -159,7 +187,7 @@ class CascadeTest extends TestCase
         $entry = Entry::findByUri('/about')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'description' => $antlers,
             ])
@@ -178,7 +206,7 @@ class CascadeTest extends TestCase
         $entry->data(['favourite_colour' => 'Red'])->save();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'description' => '@seo:favourite_colour',
             ])
@@ -194,7 +222,7 @@ class CascadeTest extends TestCase
         Entry::findByUri('/')->delete();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->get();
 
         $expected = [
@@ -225,7 +253,7 @@ class CascadeTest extends TestCase
     public function it_generates_404_title_with_404_in_response_code_in_context()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'response_code' => 404,
             ])
@@ -253,7 +281,7 @@ EOT
         Config::set('statamic.seo-pro.site_defaults.path', base_path('custom_seo.yaml'));
 
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->get();
 
         $expected = [
@@ -284,7 +312,7 @@ EOT
     public function it_overwrites_og_title()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'description' => 'Bob sled team',
@@ -323,7 +351,7 @@ EOT
     public function it_overwrites_twitter_title_and_description()
     {
         $data = (new Cascade)
-            ->with(SiteDefaults::load()->all())
+            ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
                 'site_name' => 'Cool Writings',
                 'description' => 'Bob sled team',
