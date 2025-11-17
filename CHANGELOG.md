@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.0.0-beta.3 (2025-11-17)
+
+### What's fixed
+- Truncated options in source fieldtype #455 by @duncanmcclean
+- Fixed translation strings #454 by @duncanmcclean
+
+
+
 ## 7.0.0-beta.2 (2025-11-12)
 
 ### What's fixed
