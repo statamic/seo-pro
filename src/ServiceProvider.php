@@ -156,8 +156,8 @@ class ServiceProvider extends AddonServiceProvider
                 'type' => GraphQL::type('SeoPro'),
                 'resolve' => function ($item) {
                     return (new Cascade)
-                        ->with(SiteDefaults::in($item->locale())->augmented())
-                        ->with($this->getAugmentedSectionDefaults($item))
+                        ->withSiteDefaults(SiteDefaults::in($item->locale())->augmented())
+                        ->withSectionDefaults($this->getAugmentedSectionDefaults($item))
                         ->with($item->seo)
                         ->withCurrent($item)
                         ->get();

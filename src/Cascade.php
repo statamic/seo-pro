@@ -25,6 +25,8 @@ use Statamic\View\Cascade as ViewCascade;
 class Cascade
 {
     protected $data;
+    protected $siteDefaults;
+    protected $sectionDefaults;
     protected $current;
     protected $explicitUrl;
     protected $model;
@@ -47,6 +49,24 @@ class Cascade
     public function with($array)
     {
         $this->data = $this->data->merge($array);
+
+        return $this;
+    }
+
+    public function withSiteDefaults($data)
+    {
+        $this->with($data);
+
+        $this->siteDefaults = $data;
+
+        return $this;
+    }
+
+    public function withSectionDefaults($data)
+    {
+        $this->with($data);
+
+        $this->sectionDefaults = $data;
 
         return $this;
     }
@@ -219,6 +239,8 @@ class Cascade
 
     protected function parse($key, $item)
     {
+        $original = $item;
+
         if (is_array($item)) {
             return array_map(function ($item) use ($key) {
                 return $this->parse($key, $item);
@@ -250,6 +272,17 @@ class Cascade
                     $item = (string) Statamic::modify($item)->bardText();
                 } else {
                     $item = $item->value();
+                }
+            }
+
+            // When the field is empty, attempt to fall back to the section or site defaults.
+            if (! $item) {
+                if (isset($this->sectionDefaults[$key]) && $this->sectionDefaults[$key] !== $original) {
+                    return $this->parse($key, $this->sectionDefaults[$key]);
+                }
+
+                if (isset($this->siteDefaults[$key]) && $this->siteDefaults[$key] !== $original) {
+                    return $this->parse($key, $this->siteDefaults[$key]);
                 }
             }
         }

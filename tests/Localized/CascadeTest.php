@@ -15,7 +15,7 @@ class CascadeTest extends LocalizedTestCase
         $entry = Entry::findByUri('/about', 'italian')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::in('italian')->all())
+            ->withSiteDefaults(SiteDefaults::in('italian')->all())
             ->withCurrent($entry)
             ->get();
 
@@ -34,7 +34,7 @@ class CascadeTest extends LocalizedTestCase
         $entry = Entry::findByUri('/', 'italian')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::in('italian')->all())
+            ->withSiteDefaults(SiteDefaults::in('italian')->all())
             ->withCurrent($entry)
             ->get();
 
@@ -54,7 +54,7 @@ class CascadeTest extends LocalizedTestCase
         $entry = Entry::findByUri('/', 'default')->entry();
 
         $data = (new Cascade)
-            ->with(SiteDefaults::in('italian')->all())
+            ->withSiteDefaults(SiteDefaults::in('italian')->all())
             ->withCurrent($entry)
             ->get();
 

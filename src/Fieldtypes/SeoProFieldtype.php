@@ -108,22 +108,11 @@ class SeoProFieldtype extends Fieldtype
 
     public function augment($data)
     {
-        if (Statamic::isApiRoute()) {
-            $content = $this->field()->parent();
-
-            return (new Cascade)
-                ->with(SiteDefaults::in($this->field()->parent()->locale())->augmented())
-                ->with($this->getAugmentedSectionDefaults($content))
-                ->with($data)
-                ->withCurrent($content)
-                ->get();
-        }
-
         if (empty($data) || ! is_iterable($data)) {
             return $data;
         }
 
-        return Blueprint::make()
+        $augmented = Blueprint::make()
             ->setContents([
                 'tabs' => [
                     'main' => [
@@ -137,6 +126,19 @@ class SeoProFieldtype extends Fieldtype
             ->values()
             ->only(array_keys($data))
             ->all();
+
+        if (Statamic::isApiRoute()) {
+            $content = $this->field()->parent();
+
+            return (new Cascade)
+                ->withSiteDefaults(SiteDefaults::in($content->locale())->augmented())
+                ->withSectionDefaults($this->getAugmentedSectionDefaults($content))
+                ->with($augmented)
+                ->withCurrent($content)
+                ->get();
+        }
+
+        return $augmented;
     }
 
     public function toGqlType()

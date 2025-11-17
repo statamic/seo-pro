@@ -80,8 +80,8 @@ class Chunk
         }
 
         $data = (new Cascade)
-            ->with(SiteDefaults::in($content->locale())->augmented())
-            ->with($this->getAugmentedSectionDefaults($content))
+            ->withSiteDefaults(SiteDefaults::in($content->locale())->augmented())
+            ->withSectionDefaults($this->getAugmentedSectionDefaults($content))
             ->with($content->augmentedValue('seo')->value())
             ->withCurrent($content)
             ->get();

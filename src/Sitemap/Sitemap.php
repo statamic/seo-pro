@@ -120,8 +120,8 @@ class Sitemap
 
                 $data = (new Cascade)
                     ->forSitemap()
-                    ->with($this->getSiteDefaults($content->locale()))
-                    ->with($this->getSectionDefaults($content))
+                    ->withSiteDefaults($this->getSiteDefaults($content->locale()))
+                    ->withSectionDefaults($this->getSectionDefaults($content))
                     ->with($cascade ?: [])
                     ->withCurrent($content)
                     ->get();
