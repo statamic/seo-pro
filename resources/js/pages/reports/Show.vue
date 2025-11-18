@@ -143,7 +143,7 @@ if (isGenerating.value) {
 					/>
 				</template>
 				<template #prepended-row-actions="{ row: page }">
-					<DropdownItem v-if="page.url" icon="eye" target="_blank" :href="page.url" :text="__('Visit')" />
+					<DropdownItem v-if="page.url" icon="eye" target="_blank" :href="page.url" :text="__('seo-pro::messages.visit')" />
 					<DropdownItem v-if="page.edit_url" icon="edit" target="_blank" :href="page.edit_url" :text="__('Edit')" />
 				</template>
 			</Listing>
