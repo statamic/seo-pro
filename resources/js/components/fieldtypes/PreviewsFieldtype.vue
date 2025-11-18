@@ -153,7 +153,7 @@ const googleUrlComponents = computed(() => {
 
 <template>
 	<div class="flex flex-col gap-4">
-		<Field :label="__('Google Preview')">
+        <Field :label="__('seo-pro::messages.google_preview')">
 			<div class="bg-white dark:!bg-[#1f1f1f] max-w-[652px] border rounded-lg p-4 flex justify-between">
 				<div class="min-w-0">
 					<a class="flex flex-row items-center mb-1.5" :href="url" target="_blank">
@@ -182,7 +182,7 @@ const googleUrlComponents = computed(() => {
 			</div>
 		</Field>
 
-		<Field :label="__('X (Twitter) Preview')">
+		<Field :label="__('seo-pro::messages.x_twitter_preview')">
 			<a v-if="image" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
 				<img class="size-full object-cover" :src="image" />
 				<div class="absolute bottom-3 left-3 right-3">
@@ -206,7 +206,7 @@ const googleUrlComponents = computed(() => {
 			</a>
 		</Field>
 
-		<Field :label="__('Facebook Preview')">
+		<Field :label="__('seo-pro::messages.facebook_preview')">
 			<a class="block max-w-[680px] border rounded-lg overflow-hidden" :href="url" target="_blank">
 				<div v-if="image" class="w-full h-[354px]">
 					<img class="size-full object-cover" :src="image" />
