@@ -87,11 +87,11 @@ if (isGenerating.value) {
 				<table class="data-table">
 					<tbody>
 						<tr v-for="item in report.results">
-							<td class="w-8 text-center">
+							<td class="w-8 text-center text-pretty">
 								<StatusIcon :status="item.status" />
 							</td>
 							<td class="!pl-0">{{ item.description }}</td>
-							<td class="text-right">
+							<td class="text-right text-pretty">
 								<Description :text="item.comment" />
 							</td>
 						</tr>
