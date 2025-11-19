@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@statamic/cms/inertia';
+import { Head, Link, router } from '@statamic/cms/inertia';
 import { DateFormatter } from '@statamic/cms';
 import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cms/ui';
 import IndexScore from '../../components/reporting/IndexScore.vue';
@@ -10,6 +10,10 @@ defineProps({
 	createUrl: String,
 	canDelete: Boolean,
 });
+
+const requestCompleted = ({ items }) => {
+	if (items.length === 0) router.reload();
+};
 
 const formatDate = (date) => {
 	return new DateFormatter().options('datetime').date(date).toString();
@@ -32,6 +36,7 @@ const formatDate = (date) => {
 			:allow-presets="false"
 			:allow-customizing-columns="false"
 			:preferences-prefix="`seo_pro.reports`"
+			@request-completed="requestCompleted"
 		>
 			<template #cell-site_score="{ row: report }">
 				<Link :href="report.url">

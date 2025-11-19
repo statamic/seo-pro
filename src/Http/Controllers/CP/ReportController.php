@@ -20,12 +20,6 @@ class ReportController extends CpController
 
         $reports = Report::all();
 
-        if ($reports->isEmpty()) {
-            return Inertia::render('seo-pro::Reports/Empty', [
-                'createUrl' => cp_route('seo-pro.reports.create'),
-            ]);
-        }
-
         $columns = [
             Column::make('site_score')->sortable(false),
             Column::make('generated')->sortable(false),
@@ -46,6 +40,12 @@ class ReportController extends CpController
 
             return ReportResource::collection($paginated)->additional([
                 'meta' => ['columns' => $columns],
+            ]);
+        }
+
+        if ($reports->isEmpty()) {
+            return Inertia::render('seo-pro::Reports/Empty', [
+                'createUrl' => cp_route('seo-pro.reports.create'),
             ]);
         }
 
