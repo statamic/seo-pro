@@ -109,10 +109,10 @@ class Blueprint
                                         'type' => 'button_group',
                                         'localizable' => true,
                                         'options' => [
-                                            'Organization' => 'Organization',
-                                            'Person' => 'Person',
+                                            'organization' => __('seo-pro::messages.organization'),
+                                            'person' => __('seo-pro::messages.person'),
                                         ],
-                                        'default' => 'Organization',
+                                        'default' => 'organization',
                                     ],
                                 ],
                                 [
