@@ -46,6 +46,7 @@ const formatDate = (date) => {
 					:ref="`deleter_${report.id}`"
 					:route="report.delete_url"
 					:resource="report"
+					:resource-title="__('seo-pro::messages.report')"
 					@deleted="$refs.listing.refresh()"
 				/>
 			</template>
