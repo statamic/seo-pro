@@ -34,13 +34,13 @@ const formatDate = (date) => {
 			:preferences-prefix="`seo_pro.reports`"
 		>
 			<template #cell-site_score="{ row: report }">
-				<div class="flex items-center">
+				<Link :href="report.url">
 					<IndexScore
 						:id="report.id"
 						:initial-status="report.status"
 						:initial-score="report.score"
 					/>
-				</div>
+				</Link>
 
 				<resource-deleter
 					:ref="`deleter_${report.id}`"
