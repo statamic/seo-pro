@@ -71,7 +71,7 @@ return [
     'social_section_instruct' => 'Choose the field for your X card titles and descriptions.',
 
     'twitter_handle' => 'Handle',
-    'twitter_handle_instruct' => 'Choose the field for your X handle.',
+    'twitter_handle_instruct' => 'Enter the handle of your X profile.',
 
     'twitter_title' => 'Card Title',
     'twitter_title_instruct' => 'Choose the field for your X card titles.',
@@ -92,9 +92,9 @@ return [
     'search_section_instruct' => "Verify your site with popular search engines to track how well they're crawling your site.",
 
     'bing_verification' => 'Bing Verification Code',
-    'bing_verification_instruct' => 'Enter your Bing verification code in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
+    'bing_verification_instruct' => 'Enter your verification code from [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
 
     'google_verification' => 'Google Verification Code',
-    'google_verification_instruct' => 'Enter your Google verification code in [Google Search Console](https://search.google.com/search-console).',
+    'google_verification_instruct' => 'Enter your verification code from [Google Search Console](https://search.google.com/search-console).',
 
 ];
