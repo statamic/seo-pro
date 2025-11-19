@@ -115,7 +115,6 @@ if (isGenerating.value) {
 				:allow-search="false"
 				:allow-presets="false"
 				:allow-customizing-columns="false"
-				:push-query="true"
 			>
 				<template #cell-status="{ row: page }">
 					<div class="flex items-center">
