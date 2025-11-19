@@ -45,7 +45,7 @@ if (! score.value) pollReport();
 
 <template>
 	<div>
-		<div v-if="score">
+		<div v-if="score" class="flex items-center">
 			<StatusIcon :status="statusByScore" class="inline-block ml-1 mr-3" />
 			{{ score }}%
 		</div>
