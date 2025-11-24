@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\File;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
@@ -21,7 +22,11 @@ class SeoProFieldtype extends Fieldtype
     use GetsSectionDefaults;
 
     protected $selectable = true;
-    protected $icon = 'seo-search-graph';
+
+    public function icon()
+    {
+        return File::get(__DIR__.'/../../resources/svg/nav-icon.svg');
+    }
 
     public function preProcess($data)
     {
