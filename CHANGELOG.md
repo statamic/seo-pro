@@ -1,5 +1,23 @@
 # Release Notes
 
+## 7.0.0-beta.4 (2025-11-24)
+
+### What's fixed
+- Tweak site default translations
+- Added `text-pretty` to rows in report summary table
+- Don't rely on pages being in the cache
+- Fixed an error when deleting last report
+- Fixed "Delete null" in report deletion modal
+- Clicking the site score should take you to the report
+- Fixed alignment of site score
+- Avoid pushing query params when visiting the reports show page
+- Fixed some more translation strings #458 by @helloDanuk
+
+### Breaking changes
+- Dropped support for Laravel 11 & PHP 8.2 #468 by @duncanmcclean
+
+
+
 ## 7.0.0-beta.3 (2025-11-17)
 
 ### What's fixed
