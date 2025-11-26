@@ -1,10 +1,3 @@
-<p align="center">
-<picture>
-    <source srcset="https://statamic.com/assets/branding/squircle/statamic-logo-lime-white.svg" media="(prefers-color-scheme: dark)">
-    <img align="center" width="320" alt="Statamic Logo" src="https://statamic.com/assets/branding/squircle/statamic-logo-lime.svg">
-</picture>
-</p>
-
 # SEO Pro
 
 > SEO Pro is an all-in-one site reporting, metadata wrangling, Open Graph managing, Twitter card making, sitemap generating, turnkey addon.
