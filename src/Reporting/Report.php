@@ -244,6 +244,10 @@ class Report implements Arrayable, Jsonable
         foreach ($results as $class => $result) {
             $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
 
+            if (! class_exists($class)) {
+                continue;
+            }
+
             $rule = (new $class)->setReport($this);
 
             $rule->load($result);
