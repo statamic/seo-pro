@@ -97,6 +97,11 @@ class Page
 
         foreach ($this->results as $class => $array) {
             $class = "Statamic\\SeoPro\\Reporting\\Rules\\$class";
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
             $rule = new $class;
 
             if (! $rule->validatesPages()) {
