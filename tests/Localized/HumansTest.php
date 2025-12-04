@@ -30,7 +30,7 @@ class HumansTest extends LocalizedTestCase
         $content = $this
             ->get('http://cool-runnings.com/humans.txt')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertContentType('text/plain; charset=utf-8')
             ->getContent();
 
         $expected = <<<'EOT'
