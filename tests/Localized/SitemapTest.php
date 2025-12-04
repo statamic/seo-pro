@@ -70,7 +70,7 @@ class SitemapTest extends LocalizedTestCase
         $this
             ->get('http://corse-fantastiche.it/sitemap.xml')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertContentType('text/xml; charset=utf-8')
             ->assertSeeInOrder($processExpected([
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
@@ -113,7 +113,7 @@ class SitemapTest extends LocalizedTestCase
         $content = $this
             ->get('http://cool-runnings.com/sitemap.xml')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/xml; charset=UTF-8')
+            ->assertContentType('text/xml; charset=utf-8')
             ->assertSeeInOrder($processExpected([
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',

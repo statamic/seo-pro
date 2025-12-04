@@ -25,7 +25,7 @@ class HumansTest extends TestCase
         $content = $this
             ->get('/humans.txt')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertContentType('text/plain; charset=utf-8')
             ->getContent();
 
         $expected = <<<'EOT'
@@ -70,7 +70,7 @@ EOT;
         $content = $this
             ->get('/humans.txt')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertContentType('text/plain; charset=utf-8')
             ->getContent();
 
         $this->assertStringContainsStringIgnoringLineEndings('Creator: Cool Runnings', $content);
@@ -92,7 +92,7 @@ EOT;
         $content = $this
             ->get('/aliens.md')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertContentType('text/plain; charset=utf-8')
             ->getContent();
 
         $this->assertStringContainsStringIgnoringLineEndings('Creator: Cool Runnings', $content);
@@ -110,7 +110,7 @@ EOT;
         $content = $this
             ->get('/humans.txt')
             ->assertOk()
-            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertContentType('text/plain; charset=utf-8')
             ->getContent();
 
         $this->assertEquals('Nice view, Cool Runnings!', $content);
