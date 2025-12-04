@@ -1,7 +1,9 @@
 <script setup>
-import axios from 'axios';
 import { Modal, Icon, Field, Heading, Select, Button, } from '@statamic/cms/ui';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, getCurrentInstance } from 'vue';
+
+const instance = getCurrentInstance();
+const { $axios } = instance.appContext.config.globalProperties;
 
 const emit = defineEmits(['closed', 'saved']);
 const props = defineProps({ route: String });
@@ -44,7 +46,7 @@ const close = () => {
 onMounted(() => {
 	busy.value = true;
 
-	axios.get(props.route)
+	$axios.get(props.route)
 		.then((response) => {
 			sites.value = response.data.sites;
 		})

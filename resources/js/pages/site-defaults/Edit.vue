@@ -1,11 +1,13 @@
 <script setup>
-import axios from 'axios';
-import { onMounted, onUnmounted, ref, useTemplateRef, computed, nextTick } from 'vue';
+import { onMounted, onUnmounted, ref, useTemplateRef, computed, nextTick, getCurrentInstance } from 'vue';
 import { Header, Dropdown, DropdownMenu, DropdownItem, Button, PublishContainer } from '@statamic/cms/ui';
 import { Pipeline, Request, BeforeSaveHooks, AfterSaveHooks } from '@statamic/cms/save-pipeline';
 import { Head, router } from '@statamic/cms/inertia';
 import SiteSelector from '../../components/SiteSelector.vue';
 import ConfigureModal from '../../components/site-defaults/ConfigureModal.vue';
+
+const instance = getCurrentInstance();
+const { $axios } = instance.appContext.config.globalProperties;
 
 const props = defineProps({
 	blueprint: Object,
@@ -92,7 +94,7 @@ const switchToLocalization = (localization) => {
 
 	window.history.replaceState({}, '', localization.url);
 
-	axios.get(localization.url).then((response) => {
+	$axios.get(localization.url).then((response) => {
 		const data = response.data;
 		reference.value = data.initialReference;
 		values.value = data.initialValues;

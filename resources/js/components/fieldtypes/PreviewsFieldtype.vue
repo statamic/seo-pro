@@ -1,9 +1,11 @@
 <script setup>
-import axios from 'axios';
 import { Fieldtype } from '@statamic/cms';
 import { Field, injectPublishContext } from '@statamic/cms/ui';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, getCurrentInstance } from 'vue';
 import striptags from "striptags";
+
+const instance = getCurrentInstance();
+const { $axios } = instance.appContext.config.globalProperties;
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
@@ -114,7 +116,7 @@ watch(
 );
 
 const fetchUpdatedUrl = async () => {
-	axios
+	$axios
 		.post(props.meta.previewUrl, {
 			id: publishValues.value.id,
 			values: props.meta.routeFields.reduce((acc, handle) => {
