@@ -18,7 +18,7 @@ const resolveSeoValue = (field) => {
 	if (value.source === 'inherit') {
 		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
 
-		if (seoField.field?.type === 'assets') {
+		if (seoField.field?.type === 'assets' && seoField.placeholder) {
 			return props.meta.assetContainerUrl + '/' + seoField.placeholder;
 		}
 
