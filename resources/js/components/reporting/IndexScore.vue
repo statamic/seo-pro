@@ -1,8 +1,10 @@
 <script setup>
-import axios from 'axios';
-import { ref, computed } from 'vue';
+import { ref, computed, getCurrentInstance } from 'vue';
 import StatusIcon from "./StatusIcon.vue";
 import { Icon } from '@statamic/cms/ui';
+
+const instance = getCurrentInstance();
+const { $axios } = instance.appContext.config.globalProperties;
 
 const props = defineProps({
 	id: String,
@@ -29,7 +31,7 @@ const statusByScore = computed(() => {
 });
 
 const pollReport = () => {
-	axios.get(cp_url(`seo-pro/reports/${props.id}`)).then(response => {
+	$axios.get(cp_url(`seo-pro/reports/${props.id}`)).then(response => {
 		if (response.data.status === 'pending' || response.data.status === 'generating') {
 			setTimeout(() => pollReport(), 2000);
 			return;
