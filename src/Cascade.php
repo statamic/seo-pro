@@ -228,8 +228,11 @@ class Cascade
         return URL::makeAbsolute($nextUrl);
     }
 
-    protected function parse($key, $item)
-    {
+    protected function parse(
+        string $key,
+        mixed $item,
+        bool $hasAttemptedToFallbackToSection = false
+    ) {
         $original = $item;
 
         if (is_array($item)) {
@@ -268,12 +271,16 @@ class Cascade
 
             // When the field is empty, attempt to fall back to the section or site defaults.
             if (! $item) {
-                if (isset($this->sectionDefaults[$key]) && $this->sectionDefaults[$key] !== $original) {
-                    return $this->parse($key, $this->sectionDefaults[$key]);
+                if (
+                    ! $hasAttemptedToFallbackToSection
+                    && isset($this->sectionDefaults[$key])
+                    && $this->sectionDefaults[$key] !== $original
+                ) {
+                    return $this->parse($key, $this->sectionDefaults[$key], hasAttemptedToFallbackToSection: true);
                 }
 
                 if (isset($this->siteDefaults[$key]) && $this->siteDefaults[$key] !== $original) {
-                    return $this->parse($key, $this->siteDefaults[$key]);
+                    return $this->parse($key, $this->siteDefaults[$key], $hasAttemptedToFallbackToSection);
                 }
             }
         }
