@@ -1,5 +1,17 @@
 # Release Notes
 
+## 7.0.0-beta.5 (2025-12-08)
+
+### What's fixed
+- German translations #474 by @helloDanuk
+- Column labels on reports index page are now properly translated by @duncanmcclean
+- Fixed `HumansTest` by @duncanmcclean
+- Dropped `axios` dependency #472 by @duncanmcclean
+- Avoid constructing SEO Preview image URL when inherited value is empty by @duncanmcclean
+- Fixed fieldtype icon by @duncanmcclean
+
+
+
 ## 7.0.0-beta.4 (2025-11-24)
 
 ### What's fixed
