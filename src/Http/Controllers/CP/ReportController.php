@@ -21,10 +21,18 @@ class ReportController extends CpController
         $reports = Report::all();
 
         $columns = [
-            Column::make('site_score')->sortable(false),
-            Column::make('generated')->sortable(false),
-            Column::make('actionable_pages')->sortable(false),
-            Column::make('total_pages_crawled')->sortable(false),
+            Column::make('site_score')
+                ->label(__('seo-pro::messages.site_score'))
+                ->sortable(false),
+            Column::make('generated')
+                ->label(__('seo-pro::messages.generated'))
+                ->sortable(false),
+            Column::make('actionable_pages')
+                ->label(__('seo-pro::messages.actionable_pages'))
+                ->sortable(false),
+            Column::make('total_pages_crawled')
+                ->label(__('seo-pro::messages.total_pages_crawled'))
+                ->sortable(false),
         ];
 
         if ($request->wantsJson()) {
