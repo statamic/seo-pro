@@ -90,7 +90,7 @@ const metaPathPrefix = computed(() => {
 
 <template>
     <div class="flex flex-col md:flex-row md:items-center @max-lg/live-preview:!flex-col @max-lg/live-preview:!items-start gap-2 border border-gray-200 rounded-md p-2 bg-gray-50 dark:bg-gray-900 dark:border-gray-800">
-        <div class="w-32">
+        <div class="w-auto min-w-32">
             <Select
 	            class="w-full"
                 :options="sourceTypeSelectOptions"
