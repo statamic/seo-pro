@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.0.0-beta.6 (2025-12-11)
+
+### What's fixed
+- Fixed dark mode issues in Page Details modal #477 by @duncanmcclean
+- Added min-width on dropdowns #476 by @helloDanuk
+
+
+
 ## 7.0.0-beta.5 (2025-12-08)
 
 ### What's fixed
