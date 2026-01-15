@@ -23,7 +23,7 @@
 
             <footer class="px-4 py-3 dark:bg-dark-700 dark:border-dark-900 rounded-b-lg border-t flex items-center text-sm flex">
                 <a v-if="item.url" :href="item.url" target="_blank" class="font-normal font-mono text-xs text-gray-700 hover:text-blue grow truncate" v-text="item.url" />
-                <a v-if="item.url" :href="item.url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-8" v-text="__('Visit')" />
+                <a v-if="item.url" :href="item.url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-8" v-text="__('seo-pro::messages.visit')" />
                 <a v-if="item.edit_url" :href="item.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-4" v-text="__('Edit')" />
             </footer>
         </div>
