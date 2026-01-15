@@ -14,7 +14,7 @@
                 <div class="card p-0 mt-2">
                     <div class="p-4 border-b dark:border-dark-900">
                         <div class="w-full flex">
-                            <div>
+                            <div class="mr-8">
                                 <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.generated') }}</h2>
                                 <div class="text-lg"><relative-date :date="report.date" /></div>
                             </div>
