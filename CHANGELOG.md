@@ -1,5 +1,15 @@
 # Release Notes
 
+## 7.0.0-beta.7 (2026-01-15)
+
+### What's improved
+
+- Requires Alpha 18 by @duncanmcclean
+- Added translation for "Visit URL" by @duncanmcclean
+- `useArchitecturalBackground` is now imported from Statamic by @duncanmcclean
+
+
+
 ## 7.0.0-beta.6 (2025-12-11)
 
 ### What's fixed
