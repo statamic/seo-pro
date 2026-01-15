@@ -61,7 +61,7 @@ return [
     'never' => 'Nie',
     'organization' => 'Organisation',
     'person' => 'Person',
-    'visit' => 'Besuchen',
+    'visit_url' => 'Besuchen Sie die URL',
 
     'rules' => [
         'pass' => 'Bestanden',
