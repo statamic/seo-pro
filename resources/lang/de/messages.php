@@ -24,7 +24,14 @@ return [
     'back_to_reports' => 'Zurück zu Berichte',
     'first_report' => 'SEO Berichte',
     'report_is_being_generated' => 'Dein Bericht wird gerade erstellt.',
+    'summary' => 'Zusammenfassung',
     'generated' => 'Erstellt',
+    'actionable_pages' => 'Handlungsbedarf',
+    'total_pages_crawled' => 'Geprüfte Seiten',
+    'site_score' => 'Website-Bewertung',
+    // page status
+    // page url
+    // page actionable
     'page_details' => 'Seitendetails',
     'report_no_results_text' => 'Erstelle Berichte, um bei deiner Website nach Verbesserungsmöglichkeiten bei der Suchmaschinenoptimierung zu suchen.',
     'generate_your_first_report' => 'Erstelle deinen ersten Bericht',
@@ -48,12 +55,6 @@ return [
     'monthly' => 'Monatlich',
     'yearly' => 'Jährlich',
     'never' => 'Nie',
-
-    'summary' => 'Zusammenfassung',
-    'site_score' => 'Website-Bewertung',
-    'actionable_pages' => 'Handlungsbedarf',
-    'total_pages_crawled' => 'Geprüfte Seiten',
-    'actionable' => 'Handlungsbedarf',
     'visit' => 'Besuchen',
 
     'rules' => [
