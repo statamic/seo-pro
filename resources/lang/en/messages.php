@@ -48,6 +48,10 @@ return [
     'yearly' => 'Yearly',
     'never' => 'Never',
 
+    'page_status' => 'Status',
+    'page_url' => 'URL',
+    'page_actionable' => 'Actionable',
+
     'summary' => 'Summary',
     'site_score' => 'Site Score',
     'actionable_pages' => 'Actionable Pages',
