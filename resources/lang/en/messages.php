@@ -48,13 +48,6 @@ return [
     'yearly' => 'Yearly',
     'never' => 'Never',
 
-    'summary' => 'Summary',
-    'site_score' => 'Site Score',
-    'actionable_pages' => 'Actionable Pages',
-    'total_pages_crawled' => 'Total Pages Crawled',
-    'actionable' => 'Actionable',
-    'visit' => 'Visit',
-
     'rules' => [
         'pass' => 'Pass',
         'warning' => 'Warning',

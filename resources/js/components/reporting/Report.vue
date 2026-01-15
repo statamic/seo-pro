@@ -10,7 +10,7 @@
         <div v-if="report">
 
             <div v-if="isCachedHeaderReady">
-                <h3 class="little-heading rtl:pr-0 ltr:pl-0 mt-4 mb-2">{{ __('seo-pro::messages.summary') }}</h3>
+                <h3 class="little-heading rtl:pr-0 ltr:pl-0 mt-4 mb-2">{{ __('Summary') }}</h3>
                 <div class="card p-0 mt-2">
                     <div class="p-4 border-b dark:border-dark-900">
                         <div class="w-full flex">
@@ -19,15 +19,15 @@
                                 <div class="text-lg"><relative-date :date="report.date" /></div>
                             </div>
                             <div class="grow text-right mr-8">
-                                <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.actionable_pages') }}</h2>
+                                <h2 class="text-sm text-gray-700">{{ __('Actionable Pages') }}</h2>
                                 <div class="text-lg">{{ report.pages_actionable || 'N/A' }}</div>
                             </div>
                             <div class="text-right mr-8">
-                                <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.total_pages_crawled') }}</h2>
+                                <h2 class="text-sm text-gray-700">{{ __('Total Pages Crawled') }}</h2>
                                 <div class="text-lg">{{ report.pages_crawled }}</div>
                             </div>
                             <div class="text-right">
-                                <h2 class="text-sm text-gray-700">{{ __('seo-pro::messages.site_score') }}</h2>
+                                <h2 class="text-sm text-gray-700">{{ __('Site Score') }}</h2>
                                 <div class="text-lg" :class="{ 'text-red-500': report.score < 70, 'text-orange': report.score < 90, 'text-green-600': report.score >= 90 }">{{ report.score }}%</div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                                     </a>
                                 </template>
                                 <td slot="actions" slot-scope="{ row: page }" class="text-right text-xs p-0 whitespace-no-wrap">
-                                    <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-blue" v-text="__('seo-pro::messages.visit')" />
+                                    <a v-if="page.url" :href="page.url" target="_blank" class="font-normal text-gray-700 hover:text-blue" v-text="__('Visit')" />
                                     <a v-if="page.edit_url" :href="page.edit_url" target="_blank" class="font-normal text-gray-700 hover:text-blue ml-4" v-text="__('Edit')" />
                                 </td>
                             </data-list-table>

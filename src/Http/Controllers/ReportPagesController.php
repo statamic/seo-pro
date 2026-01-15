@@ -27,7 +27,7 @@ class ReportPagesController extends CpController
         $data['columns'] = [
             Column::make('status')->label(__('Status')),
             Column::make('url')->label(__('URL')),
-            Column::make('actionable')->label(__('seo-pro::messages.actionable'))->sortable(false),
+            Column::make('actionable')->label(__('Actionable'))->sortable(false),
         ];
 
         $data['sortColumn'] = $request->input('sortColumn', 'status');
