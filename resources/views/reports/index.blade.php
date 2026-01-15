@@ -11,10 +11,10 @@
     <div class="card p-0 overflow-hidden">
         <table class="data-table">
             <thead>
-                <th>Site Score</th>
-                <th>Generated</th>
-                <th class="text-right">Actionable Pages</th>
-                <th class="text-right">Total Pages Crawled</th>
+                <th>{{ __('seo-pro::messages.site_score') }}</th>
+                <th>{{ __('seo-pro::messages.generated') }}</th>
+                <th class="text-right">{{ __('seo-pro::messages.actionable_pages') }}</th>
+                <th class="text-right">{{ __('seo-pro::messages.total_pages_crawled') }}</th>
                 <th></th>
             </thead>
             <tbody>
@@ -44,7 +44,7 @@
                                     <dropdown-item :text="__('seo-pro::messages.delete_report')" class="warning" @click="$refs.deleter_{{ $report->id() }}.confirm()">
                                         <resource-deleter
                                             ref="deleter_{{ $report->id() }}"
-                                            resource-title="Report"
+                                            :resource-title="__('seo-pro::messages.report')"
                                             route="{{ cp_route('seo-pro.reports.destroy', $report->id()) }}"
                                             redirect="{{ cp_route('seo-pro.reports.index') }}"
                                         ></resource-deleter>
