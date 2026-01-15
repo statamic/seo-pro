@@ -61,6 +61,7 @@ return [
     'never' => 'Never',
     'organization' => 'Organization',
     'person' => 'Person',
+    'visit' => 'Visit',
 
     'rules' => [
         'pass' => 'Pass',

@@ -61,6 +61,7 @@ return [
     'never' => 'Nie',
     'organization' => 'Organisation',
     'person' => 'Person',
+    'visit' => 'Besuchen',
 
     'rules' => [
         'pass' => 'Bestanden',
