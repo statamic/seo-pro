@@ -1,7 +1,7 @@
 <script setup>
 import { Icon, EmptyStateMenu, EmptyStateItem, DocsCallout } from '@statamic/cms/ui';
 import { onMounted, onUnmounted } from 'vue';
-import useArchitecturalBackground from "../../architectural-background";
+import { useArchitecturalBackground } from "@statamic/cms/inertia";
 
 useArchitecturalBackground();
 
