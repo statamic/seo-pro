@@ -29,9 +29,9 @@ return [
     'actionable_pages' => 'Handlungsbedarf',
     'total_pages_crawled' => 'Geprüfte Seiten',
     'site_score' => 'Website-Bewertung',
-    // page status
-    // page url
-    // page actionable
+    'page_status' => 'Status',
+    'page_url' => 'URL',
+    'page_actionable' => 'Handlungsbedarf',
     'page_details' => 'Seitendetails',
     'report_no_results_text' => 'Erstelle Berichte, um bei deiner Website nach Verbesserungsmöglichkeiten bei der Suchmaschinenoptimierung zu suchen.',
     'generate_your_first_report' => 'Erstelle deinen ersten Bericht',
