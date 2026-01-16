@@ -23,7 +23,14 @@ return [
     'back_to_reports' => 'Back to reports',
     'first_report' => 'SEO Reports',
     'report_is_being_generated' => 'Your report is being generated.',
+    'summary' => 'Summary',
     'generated' => 'Generated',
+    'actionable_pages' => 'Actionable Pages',
+    'total_pages_crawled' => 'Total Pages Crawled',
+    'site_score' => 'Site Score',
+    'page_status' => 'Status',
+    'page_url' => 'URL',
+    'page_actionable' => 'Actionable',
     'page_details' => 'Page Details',
     'report_no_results_text' => 'Run reports to look for opportunities to improve your site’s SEO.',
     'generate_your_first_report' => 'Generate your first report',
@@ -47,6 +54,7 @@ return [
     'monthly' => 'Monthly',
     'yearly' => 'Yearly',
     'never' => 'Never',
+    'visit' => 'Visit',
 
     'rules' => [
         'pass' => 'Pass',
