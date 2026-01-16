@@ -49,6 +49,10 @@ class SourceFieldtype extends Fieldtype
 
     public function process($data)
     {
+        if (! is_array($data) || ! isset($data['source'])) {
+            return null;
+        }
+
         if ($data['source'] === 'field') {
             return $data['value'] ? '@seo:'.$data['value'] : null;
         }
