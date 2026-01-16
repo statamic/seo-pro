@@ -49,7 +49,7 @@ class SourceFieldtype extends Fieldtype
 
     public function process($data)
     {
-        if (!is_array($data) || !isset($data['source'])) {
+        if (! is_array($data) || ! isset($data['source'])) {
             return null;
         }
 
