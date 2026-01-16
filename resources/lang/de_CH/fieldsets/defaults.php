@@ -54,6 +54,6 @@ return [
     'bing_verification_instruct' => 'Hol dir deinen Bing-Verifizierungscode in den [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
 
     'google_verification' => 'Google Verifizierungscode',
-    'google_verification_instruct' => 'Hol dir deinen Googler-Verifizierungscode in der [Google Search Console](https://search.google.com/search-console).',
+    'google_verification_instruct' => 'Hol dir deinen Google-Verifizierungscode in der [Google Search Console](https://search.google.com/search-console).',
 
 ];
