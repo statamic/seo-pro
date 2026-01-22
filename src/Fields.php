@@ -347,7 +347,7 @@ class Fields
         } elseif ($placeholder instanceof Asset) {
             return $placeholder->id();
         } elseif ($handle === 'image' && is_string($placeholder) && ! empty($placeholder)) {
-            // For asset fields, resolve path to full asset ID (consistent with core Assets fieldtype)
+            // Resolve string path to asset ID for Vue component's asset lookup
             if (Str::contains($placeholder, '::')) {
                 return $placeholder;
             }
