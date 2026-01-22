@@ -14,7 +14,12 @@
         <div class="flex-1">
             <div v-if="source === 'inherit'" class="text-sm text-grey inherit-placeholder">
                 <template v-if="placeholder !== false">
-                    {{ placeholder }}
+                    <div v-if="isAssetField && placeholderAsset" class="flex items-center">
+                        <img :src="placeholderAsset.thumbnail" class="asset-thumbnail max-h-full max-w-full rounded w-7 h-7 object-cover" />
+                        <span class="ltr:ml-3 rtl:mr-3 text-xs truncate">{{ placeholderAsset.basename }}</span>
+                    </div>
+                    <span v-else-if="isAssetField && placeholder">{{ placeholder }}</span>
+                    <span v-else>{{ placeholder }}</span>
                 </template>
             </div>
 
@@ -73,7 +78,8 @@ export default {
         return {
             autoBindChangeWatcher: false,
             changeWatcherWatchDeep: false,
-            allowedFieldtypes: []
+            allowedFieldtypes: [],
+            placeholderAsset: null
         }
     },
 
@@ -123,12 +129,30 @@ export default {
             return this.config.placeholder;
         },
 
+        isAssetField() {
+            return this.config.allowed_fieldtypes && this.config.allowed_fieldtypes.includes('assets');
+        },
+
     },
 
     mounted() {
         let types = this.config.allowed_fieldtypes || ['text', 'textarea', 'markdown', 'redactor'];
         this.allowedFieldtypes = types.concat(this.config.merge_allowed_fieldtypes || []);
         // this.bindChangeWatcher();
+
+        if (this.isAssetField && this.placeholder) {
+            this.loadPlaceholderAsset();
+        }
+    },
+
+    watch: {
+        placeholder(value) {
+            if (this.isAssetField && value) {
+                this.loadPlaceholderAsset();
+            } else {
+                this.placeholderAsset = null;
+            }
+        }
     },
 
     methods: {
@@ -152,6 +176,14 @@ export default {
 
         customValueChanged(value) {
             this.update({...this.value, value});
+        },
+
+        loadPlaceholderAsset() {
+            this.$axios.post(cp_url('assets-fieldtype'), {
+                assets: [this.placeholder]
+            }).then(response => {
+                this.placeholderAsset = response.data[0] || null;
+            });
         },
 
     },

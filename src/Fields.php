@@ -3,8 +3,10 @@
 namespace Statamic\SeoPro;
 
 use Statamic\Assets\Asset;
+use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Blink;
 use Statamic\Statamic;
+use Statamic\Support\Str;
 
 class Fields
 {
@@ -343,7 +345,15 @@ class Fields
         if (is_array($placeholder)) {
             return collect($placeholder)->implode(', ');
         } elseif ($placeholder instanceof Asset) {
-            return $placeholder->path();
+            return $placeholder->id();
+        } elseif ($handle === 'image' && is_string($placeholder) && ! empty($placeholder)) {
+            // For asset fields, resolve path to full asset ID (consistent with core Assets fieldtype)
+            if (Str::contains($placeholder, '::')) {
+                return $placeholder;
+            }
+            $container = AssetContainer::find(config('statamic.seo-pro.assets.container', 'assets'));
+
+            return optional($container?->asset($placeholder))->id() ?? $placeholder;
         }
 
         return $placeholder;
