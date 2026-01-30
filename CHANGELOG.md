@@ -1,5 +1,15 @@
 # Release Notes
 
+## 7.0.1 (2026-01-30)
+
+### What's fixed
+- Avoid "From Field" dropdown in site defaults #494 by @duncanmcclean
+- Fix disabled SEO fields #493 by @duncanmcclean
+- Display custom collection icon in section default listing #492 by @duncanmcclean
+- Fix field conditions in JSON-LD tab #491 by @duncanmcclean
+
+
+
 ## 7.0.0 (2026-01-28)
 
 ### What's new
