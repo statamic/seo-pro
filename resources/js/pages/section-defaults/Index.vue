@@ -28,7 +28,7 @@ defineProps({
 						<tr v-for="collection in collections" :key="collection.handle">
 							<td>
 								<div class="flex items-center gap-2">
-									<Icon name="collections" class="text-gray-500 me-1" />
+									<Icon :name="collection.icon" class="text-gray-500 me-1" />
 									<Link :href="cp_url(`seo-pro/section-defaults/collections/${collection.handle}/edit`)" v-text="__(collection.title)" />
 								</div>
 							</td>
