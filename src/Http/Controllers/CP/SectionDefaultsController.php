@@ -2,8 +2,8 @@
 
 namespace Statamic\SeoPro\Http\Controllers\CP;
 
-use Statamic\Contracts\Entries\Collection;
 use Inertia\Inertia;
+use Statamic\Contracts\Entries\Collection;
 use Statamic\Facades;
 use Statamic\Http\Controllers\CP\CpController;
 
