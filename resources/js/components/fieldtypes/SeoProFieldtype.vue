@@ -1,18 +1,30 @@
 <script setup>
 import { Fieldtype } from '@statamic/cms';
-import { PublishFieldsProvider as FieldsProvider, PublishFields } from '@statamic/cms/ui';
+import { PublishFieldsProvider as FieldsProvider, PublishFields, injectPublishContext } from '@statamic/cms/ui';
+import { computed } from 'vue';
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
 const { expose, isReadOnly } = Fieldtype.use(emit, props);
 defineExpose(expose);
+
+const { originValues } = injectPublishContext();
+
+const readOnly = computed(() => {
+	// When localizing an entry AND "localizable" is disabled, make the fields read-only.
+	if (originValues !== null && !props.config.localizable) {
+		return true;
+	}
+
+	return isReadOnly.value;
+});
 </script>
 
 <template>
     <div>
 	    <FieldsProvider
 		    :fields="meta.fields"
-		    :read-only="isReadOnly || !config.localizable"
+		    :read-only="readOnly"
 		    :field-path-prefix="`seo`"
 		    :meta-path-prefix="`seo.meta`"
 	    >
