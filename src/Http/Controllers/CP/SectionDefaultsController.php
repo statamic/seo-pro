@@ -2,9 +2,9 @@
 
 namespace Statamic\SeoPro\Http\Controllers\CP;
 
+use Statamic\Contracts\Entries\Collection;
 use Inertia\Inertia;
-use Statamic\Facades\Collection;
-use Statamic\Facades\Taxonomy;
+use Statamic\Facades;
 use Statamic\Http\Controllers\CP\CpController;
 
 class SectionDefaultsController extends CpController
@@ -14,8 +14,15 @@ class SectionDefaultsController extends CpController
         $this->authorize('edit seo section defaults');
 
         return Inertia::render('seo-pro::SectionDefaults/Index', [
-            'collections' => Collection::all()->sortBy('title')->values(),
-            'taxonomies' => Taxonomy::all()->sortBy('title')->values(),
+            'collections' => Facades\Collection::all()
+                ->sortBy('title')
+                ->map(fn (Collection $collection): array => [
+                    'title' => $collection->title(),
+                    'handle' => $collection->handle(),
+                    'icon' => $collection->icon(),
+                ])
+                ->values(),
+            'taxonomies' => Facades\Taxonomy::all()->sortBy('title')->values(),
         ]);
     }
 }
