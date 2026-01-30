@@ -3,7 +3,7 @@ import { Fieldtype } from '@statamic/cms';
 import { Select, Input, PublishField, injectPublishContext, Description } from '@statamic/cms/ui';
 import { computed } from "vue";
 
-const { blueprint } = injectPublishContext();
+const { name: publishContainerName, blueprint } = injectPublishContext();
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
@@ -39,6 +39,8 @@ const fieldConfig = computed(() => Object.assign(props.config.field, { placehold
 const placeholder = computed(() => props.config.placeholder);
 
 const sourceFieldOptions = computed(() => {
+	if (publishContainerName.value === 'site-defaults') return false;
+
 	const allowedFieldtypes = [
 		'text',
 		'textarea',
