@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.0.2 (2026-02-06)
+
+### What's fixed
+- Fix disabled SEO fields (again!) #496 by @duncanmcclean
+
+
+
 ## 7.0.1 (2026-01-30)
 
 ### What's fixed
