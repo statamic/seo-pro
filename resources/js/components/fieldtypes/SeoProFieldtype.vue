@@ -12,7 +12,7 @@ const { originValues } = injectPublishContext();
 
 const readOnly = computed(() => {
 	// When localizing an entry AND "localizable" is disabled, make the fields read-only.
-	if (originValues !== null && !props.config.localizable) {
+	if (originValues?.length > 0 && !props.config.localizable) {
 		return true;
 	}
 
@@ -21,7 +21,7 @@ const readOnly = computed(() => {
 </script>
 
 <template>
-    <div>
+    <div :class="{ 'opacity-50': readOnly }">
 	    <FieldsProvider
 		    :fields="meta.fields"
 		    :read-only="readOnly"
