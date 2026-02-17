@@ -379,7 +379,7 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
-            'json_ld_entity' => 'Person',
+            'json_ld_entity' => 'person',
             'json_ld_person_name' => 'Derice Bannock',
         ]);
 
@@ -398,12 +398,72 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
-    public function it_generates_json_ld_breadcrumbs()
+    public function it_generates_json_ld_data_with_uppercase_entity()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
             'json_ld_entity' => 'Person',
+            'json_ld_person_name' => 'Derice Bannock',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->with([
+                'title' => 'Home',
+            ])
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_generates_json_ld_organization_data()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'description' => 'Bob sled team',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_generates_json_ld_organization_data_with_uppercase_entity()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'description' => 'Bob sled team',
+            'json_ld_entity' => 'Organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'description' => 'Bob sled team',
+            'json_ld_entity' => 'person',
             'json_ld_person_name' => 'Derice Bannock',
             'json_ld_breadcrumbs' => true,
         ]);
