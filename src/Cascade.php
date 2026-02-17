@@ -580,12 +580,12 @@ class Cascade
     {
         $snippets = collect();
 
-        $jsonLdEntity = (string) $this->data->get('json_ld_entity');
+        $jsonLdEntity = strtolower((string) $this->data->get('json_ld_entity'));
         $jsonLdOrganizationName = (string) $this->data->get('json_ld_organization_name');
         $jsonLdOrganizationLogo = $this->data->get('json_ld_organization_logo');
         $jsonLdPersonName = (string) $this->data->get('json_ld_person_name');
 
-        if ($jsonLdEntity === 'Organization' && $jsonLdOrganizationName) {
+        if ($jsonLdEntity === 'organization' && $jsonLdOrganizationName) {
             if ($jsonLdOrganizationLogo && ! $jsonLdOrganizationLogo instanceof Value) {
                 $jsonLdOrganizationLogo = Asset::find($jsonLdOrganizationLogo);
             }
@@ -602,7 +602,7 @@ class Cascade
             ]), JSON_UNESCAPED_SLASHES));
         }
 
-        if ($jsonLdEntity === 'Person' && $jsonLdPersonName) {
+        if ($jsonLdEntity === 'person' && $jsonLdPersonName) {
             $snippets->push(json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'Person',
