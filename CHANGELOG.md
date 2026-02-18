@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.0.3 (2026-02-18)
+
+### What's fixed
+- Fixed JSON-lD entity type comparison #499 by @samalisam-novu
+
+
+
 ## 7.0.2 (2026-02-06)
 
 ### What's fixed
