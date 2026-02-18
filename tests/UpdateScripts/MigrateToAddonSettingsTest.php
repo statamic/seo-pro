@@ -1,13 +1,17 @@
 <?php
 
-namespace Tests;
+namespace Tests\UpdateScripts;
 
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
 use Statamic\SeoPro\UpdateScripts\MigrateToAddonSettings;
+use Statamic\Testing\Concerns\RunsUpdateScripts;
+use Tests\TestCase;
 
 class MigrateToAddonSettingsTest extends TestCase
 {
+    use RunsUpdateScripts;
+    
     #[Test]
     public function it_migrates_site_defaults_to_addon_settings()
     {
@@ -17,7 +21,7 @@ description: 'Just another Statamic site'
 EOT
         );
 
-        $this->runUpdateScript();
+        $this->runUpdateScript(MigrateToAddonSettings::class);
 
         $settings = Addon::get('statamic/seo-pro')->settings();
 
@@ -29,14 +33,5 @@ EOT
         ], $settings->raw());
 
         $this->assertFileDoesNotExist(base_path('content/seo.yaml'));
-    }
-
-    private function runUpdateScript()
-    {
-        $script = new MigrateToAddonSettings('statamic/seo-pro');
-
-        $script->update();
-
-        return $script;
     }
 }
