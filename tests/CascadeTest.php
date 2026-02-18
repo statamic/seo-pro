@@ -379,7 +379,7 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
-            'json_ld_entity' => 'Person',
+            'json_ld_entity' => 'person',
             'json_ld_person_name' => 'Derice Bannock',
         ]);
 
@@ -403,7 +403,7 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
-            'json_ld_entity' => 'Person',
+            'json_ld_entity' => 'person',
             'json_ld_person_name' => 'Derice Bannock',
             'json_ld_breadcrumbs' => true,
         ]);
