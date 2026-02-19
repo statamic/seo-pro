@@ -11,7 +11,7 @@ use Tests\TestCase;
 class MigrateToAddonSettingsTest extends TestCase
 {
     use RunsUpdateScripts;
-    
+
     #[Test]
     public function it_migrates_site_defaults_to_addon_settings()
     {
