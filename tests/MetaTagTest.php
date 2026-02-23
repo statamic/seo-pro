@@ -188,7 +188,7 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<title>Site Name &gt;&gt;&gt; Aboot</title>', false);
+        $response->assertSee('<title>SEO Pro &gt;&gt;&gt; Aboot</title>', false);
     }
 
     #[Test]
@@ -828,7 +828,7 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>Site Name | About Page 2</title>', false);
+        $response->assertSee('<title>SEO Pro | About Page 2</title>', false);
 
         $this
             ->prepareViews('antlers')
