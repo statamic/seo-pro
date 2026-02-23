@@ -70,7 +70,7 @@ class MetaTagTest extends TestCase
 <meta property="og:title" content="Home" />
 <meta property="og:description" content="I see a bad-ass mother." />
 <meta property="og:url" content="http://cool-runnings.com" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="SEO Pro" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
@@ -99,7 +99,7 @@ EOT;
 <meta property="og:title" content="The View" />
 <meta property="og:description" content="A wonderful view!" />
 <meta property="og:url" content="http://cool-runnings.com/the-view" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="SEO Pro" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
@@ -129,7 +129,7 @@ EOT;
 <meta property="og:title" content="The View" />
 <meta property="og:description" content="A wonderful view!" />
 <meta property="og:url" content="http://cool-runnings.com/the-view" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="SEO Pro" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />

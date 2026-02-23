@@ -35,7 +35,7 @@ GQL;
             '<meta property="og:title" content="Les Nectar of the Gods" />',
             '<meta property="og:description" content="The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko&#039;s Modern Life. That would have to wait until 5:30pm for that, and I am impatient.In truth, the day wou..." />',
             '<meta property="og:url" content="http://cool-runnings.com/fr/nectar" />',
-            '<meta property="og:site_name" content="Site Name" />',
+            '<meta property="og:site_name" content="SEO Pro" />',
             '<meta property="og:locale" content="fr_FR" />',
             '<meta property="og:locale:alternate" content="en_US" />',
             '<meta name="twitter:card" content="summary_large_image" />',
