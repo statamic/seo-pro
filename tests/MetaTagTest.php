@@ -64,7 +64,7 @@ class MetaTagTest extends TestCase
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>Home | Site Name</title>
+<title>Home | SEO Pro</title>
 <meta name="description" content="I see a bad-ass mother." />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Home" />
@@ -93,7 +93,7 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>The View | Site Name</title>
+<title>The View | SEO Pro</title>
 <meta name="description" content="A wonderful view!" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The View" />
@@ -123,7 +123,7 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>The View | Site Name</title>
+<title>The View | SEO Pro</title>
 <meta name="description" content="A wonderful view!" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The View" />
@@ -676,7 +676,7 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>404 Page Not Found | Site Name</title>
+<title>404 Page Not Found | SEO Pro</title>
 EOT;
 
         $content = $this->get('/non-existent-page')->content();
@@ -697,7 +697,7 @@ EOT;
 
         $content = $this->get('/custom-get-route')->content();
 
-        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | SEO Pro</title>', $content);
     }
 
     #[Test]
@@ -819,7 +819,7 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>About Page 2 | Site Name</title>', false);
+        $response->assertSee('<title>About Page 2 | SEO Pro</title>', false);
 
         $this
             ->prepareViews('antlers')
@@ -846,7 +846,7 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertDontSee('<title>About Page 2 | Site Name</title>', false);
+        $response->assertDontSee('<title>About Page 2 | SEO Pro</title>', false);
     }
 
     protected function setCustomGlidePresetDimensions($app)

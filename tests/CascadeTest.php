@@ -37,7 +37,7 @@ class CascadeTest extends TestCase
             'description' => 'I see a bad-ass mother.',
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Home | Site Name',
+            'compiled_title' => 'Home | SEO Pro',
             'og_title' => 'Home',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
@@ -206,8 +206,8 @@ class CascadeTest extends TestCase
             'description' => null,
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Site Name',
-            'og_title' => 'Site Name',
+            'compiled_title' => 'SEO Pro',
+            'og_title' => 'SEO Pro',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
             'next_url' => null,
@@ -233,7 +233,7 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('404 Page Not Found', $data['title']);
-        $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
+        $this->assertEquals('404 Page Not Found | SEO Pro', $data['compiled_title']);
     }
 
     #[Test]

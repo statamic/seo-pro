@@ -29,7 +29,7 @@ class GraphQLTest extends LocalizedTestCase
 GQL;
 
         $expectedHtml = collect([
-            '<title>Les Nectar of the Gods | Site Name</title>',
+            '<title>Les Nectar of the Gods | SEO Pro</title>',
             '<meta name="description" content="The day started just like any other. Wake up at 5:30am, brush my teeth, bathe in a tub of warm milk, and trim my toenails while quietly resenting the fact that Flipper was on Nickelodeon at this hour instead of Rocko&#039;s Modern Life. That would have to wait until 5:30pm for that, and I am impatient.In truth, the day wou..." />',
             '<meta property="og:type" content="website" />',
             '<meta property="og:title" content="Les Nectar of the Gods" />',
