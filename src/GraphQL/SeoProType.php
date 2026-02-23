@@ -88,6 +88,27 @@ class SeoProType extends Type
             'twitter_title' => [
                 'type' => GraphQL::string(),
             ],
+            'robots' => [
+                'type' => GraphQL::listOf(GraphQL::string()),
+                'resolve' => function ($meta) {
+                    return collect($meta['robots'])->map(fn ($item) => (string) $item)->all();
+                },
+            ],
+            'robots_indexing' => [
+                'type' => GraphQL::string(),
+            ],
+            'is_default_site' => [
+                'type' => GraphQL::boolean(),
+            ],
+            'current_hreflang' => [
+                'type' => GraphQL::string(),
+            ],
+            'json_ld' => [
+                'type' => GraphQL::listOf(GraphQL::string()),
+                'resolve' => function ($meta) {
+                    return $meta['json_ld']->all();
+                },
+            ],
             'image' => [
                 'type' => GraphQL::type('AssetInterface'),
                 'resolve' => function ($meta) {
