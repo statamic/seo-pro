@@ -30,7 +30,7 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'Site Name',
+            'site_name' => 'SEO Pro',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => 'Home',
@@ -199,7 +199,7 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'Site Name',
+            'site_name' => 'SEO Pro',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => null,
