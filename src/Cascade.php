@@ -14,6 +14,7 @@ use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
+use Statamic\Fieldtypes\Text;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
@@ -91,6 +92,8 @@ class Cascade
 
     public function get()
     {
+        $this->hydrateCascade();
+
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
@@ -469,31 +472,21 @@ class Cascade
             return (string) Antlers::parseUserContent($item, array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
-                ['config' => ViewCascade::config()],
-                $this->hydrateGlobals()
             ));
         } catch (RuntimeException $e) {
             return $item;
         }
     }
 
-    private function hydrateGlobals()
+    private function hydrateCascade()
     {
-        $data = [];
+        $cascade = app(ViewCascade::class);
 
-        foreach ($globals = GlobalSet::all() as $global) {
-            if ($global = $global->in($this->site()->handle())) {
-                $data[$global->handle()] = $global;
-            }
+        // Hydrate if not already hydrated.
+        // Determine if it's already hydrated by seeing if there's an arbitrary value already in there.
+        if (! $cascade->get('now')) {
+            $cascade->hydrate();
         }
-
-        if ($mainGlobal = $globals->get('global')) {
-            foreach ($mainGlobal->toDeferredAugmentedArray() as $key => $value) {
-                $data[$key] = $value;
-            }
-        }
-
-        return $data;
     }
 
     protected function humans()

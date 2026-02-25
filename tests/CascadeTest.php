@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blueprint;
@@ -159,9 +160,10 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
-    public function it_only_hydrates_allowlisted_config_values_when_parsing_antlers()
+    public function it_hydrates_when_parsing_antlers()
     {
         config([
+            'app.name' => 'My Site',
             'app.foo' => 'bar',
             'statamic.system.view_config_allowlist' => ['app.name'],
         ]);
@@ -170,15 +172,11 @@ class CascadeTest extends TestCase
 
         $data = (new Cascade)
             ->withSiteDefaults(SiteDefaults::load()->all())
-            ->with([
-                'title' => '{{ config:app:name }}',
-                'description' => '{{ config:app:foo }}',
-            ])
+            ->with(['title' => '[{{ config:app:name }}] [{{ config:app:foo }}] [{{ site }}]'])
             ->withCurrent($entry)
             ->get();
 
-        $this->assertEquals('Laravel', $data['title']);
-        $this->assertEmpty($data['description']);
+        $this->assertEquals('[My Site] [] [default]', $data['title']);
     }
 
     public static function phpInAntlersProvider()
