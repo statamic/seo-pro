@@ -158,6 +158,31 @@ class CascadeTest extends TestCase
         $this->assertEquals('RED', $data['description']);
     }
 
+    #[Test]
+    public function it_only_hydrates_allowlisted_config_values_when_parsing_antlers()
+    {
+        config([
+            'app.foo' => 'bar',
+            'statamic.system.view_config_allowlist' => ['app.name'],
+        ]);
+
+        $entry = Entry::findByUri('/about')->entry();
+
+        $entry->data(['favourite_colour' => 'Red'])->save();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::load()->all())
+            ->with([
+                'title' => '{{ config:app:name }}',
+                'description' => '{{ config:app:foo }}',
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('Laravel', $data['title']);
+        $this->assertEmpty($data['description']);
+    }
+
     public static function phpInAntlersProvider()
     {
         return [

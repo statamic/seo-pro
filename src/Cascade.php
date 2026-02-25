@@ -19,6 +19,7 @@ use Statamic\Fieldtypes\Text;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\View\Antlers\Language\Exceptions\RuntimeException;
 use Statamic\View\Cascade as ViewCascade;
 
 class Cascade
@@ -466,28 +467,14 @@ class Cascade
 
     protected function parseAntlers($item)
     {
-        // Simplistically prevent php in antlers.
-        if (Str::contains($item, ['{{?', '{{$', '@{'])) {
-            return $item;
-        }
-
-        // Also, the parser has extra runtime protections around `Value` objects
-        // when `antlers: true` is set on a blueprint field. While this may be
-        // improved in future, we'll give custom seo fields same treatment.
         try {
-            $textFieldType = new Text;
-            $textFieldType->setField(new Field('___tmpValue', ['antlers' => true]));
-            $value = new Value($item, '___tmpValue', $textFieldType);
-
-            $viewCascade = array_merge(
+            return (string) Antlers::parseUserContent($item, array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
-                ['___tmpValue' => $value, 'config' => config()->all()],
+                ['config' => ViewCascade::config()],
                 $this->hydrateGlobals()
-            );
-
-            return (string) Antlers::parse('{{ ___tmpValue }}', $viewCascade);
-        } catch (Exception $exception) {
+            ));
+        } catch (RuntimeException $e) {
             return $item;
         }
     }
