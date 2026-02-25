@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro;
 
-use Exception;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
@@ -15,7 +14,6 @@ use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
-use Statamic\Fieldtypes\Text;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
