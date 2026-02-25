@@ -168,8 +168,6 @@ class CascadeTest extends TestCase
 
         $entry = Entry::findByUri('/about')->entry();
 
-        $entry->data(['favourite_colour' => 'Red'])->save();
-
         $data = (new Cascade)
             ->withSiteDefaults(SiteDefaults::load()->all())
             ->with([
