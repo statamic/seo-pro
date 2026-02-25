@@ -846,7 +846,7 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertDontSee('<title>About Page 2 | SEO Pro</title>', false);
+        $response->assertDontSee('<title>About Page 2 | Cool Runnings</title>', false);
     }
 
     protected function setCustomGlidePresetDimensions($app)
