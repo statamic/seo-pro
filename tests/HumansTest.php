@@ -31,7 +31,7 @@ class HumansTest extends TestCase
         $expected = <<<'EOT'
 /* TEAM */
 
-Creator: SEO Pro
+Creator: Cool Runnings
 URL: http://cool-runnings.com
 Description: I see a bad-ass mother.
 

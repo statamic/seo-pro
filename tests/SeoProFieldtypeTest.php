@@ -81,6 +81,6 @@ class SeoProFieldtypeTest extends TestCase
 
         $this->assertEquals('Foo', (string) $augment['title']);
         $this->assertEquals('Bar', (string) $augment['description']);
-        $this->assertEquals('SEO Pro', (string) $augment['site_name']); // Site default
+        $this->assertEquals('Cool Runnings', (string) $augment['site_name']); // Site default
     }
 }

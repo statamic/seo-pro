@@ -30,14 +30,14 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'SEO Pro',
+            'site_name' => 'Cool Runnings',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => 'Home',
             'description' => 'I see a bad-ass mother.',
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Home | SEO Pro',
+            'compiled_title' => 'Home | Cool Runnings',
             'og_title' => 'Home',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
@@ -199,15 +199,15 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'SEO Pro',
+            'site_name' => 'Cool Runnings',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => null,
             'description' => null,
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'SEO Pro',
-            'og_title' => 'SEO Pro',
+            'compiled_title' => 'Cool Runnings',
+            'og_title' => 'Cool Runnings',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
             'next_url' => null,
@@ -233,7 +233,7 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('404 Page Not Found', $data['title']);
-        $this->assertEquals('404 Page Not Found | SEO Pro', $data['compiled_title']);
+        $this->assertEquals('404 Page Not Found | Cool Runnings', $data['compiled_title']);
     }
 
     #[Test]
