@@ -79,7 +79,7 @@ class SiteDefaults
     private static function defaultValues(): array
     {
         return [
-            'site_name' => 'Site Name',
+            'site_name' => '{{ config:app:name }}',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => '@seo:title',

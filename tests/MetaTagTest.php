@@ -64,13 +64,13 @@ class MetaTagTest extends TestCase
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>Home | Site Name</title>
+<title>Home | Cool Runnings</title>
 <meta name="description" content="I see a bad-ass mother." />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Home" />
 <meta property="og:description" content="I see a bad-ass mother." />
 <meta property="og:url" content="http://cool-runnings.com" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="Cool Runnings" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
@@ -93,13 +93,13 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>The View | Site Name</title>
+<title>The View | Cool Runnings</title>
 <meta name="description" content="A wonderful view!" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The View" />
 <meta property="og:description" content="A wonderful view!" />
 <meta property="og:url" content="http://cool-runnings.com/the-view" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="Cool Runnings" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
@@ -123,13 +123,13 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>The View | Site Name</title>
+<title>The View | Cool Runnings</title>
 <meta name="description" content="A wonderful view!" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The View" />
 <meta property="og:description" content="A wonderful view!" />
 <meta property="og:url" content="http://cool-runnings.com/the-view" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="Cool Runnings" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
@@ -188,7 +188,7 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<title>Site Name &gt;&gt;&gt; Aboot</title>', false);
+        $response->assertSee('<title>Cool Runnings &gt;&gt;&gt; Aboot</title>', false);
     }
 
     #[Test]
@@ -676,7 +676,7 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>404 Page Not Found | Site Name</title>
+<title>404 Page Not Found | Cool Runnings</title>
 EOT;
 
         $content = $this->get('/non-existent-page')->content();
@@ -697,7 +697,7 @@ EOT;
 
         $content = $this->get('/custom-get-route')->content();
 
-        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Cool Runnings</title>', $content);
     }
 
     #[Test]
@@ -819,7 +819,7 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>About Page 2 | Site Name</title>', false);
+        $response->assertSee('<title>About Page 2 | Cool Runnings</title>', false);
 
         $this
             ->prepareViews('antlers')
@@ -828,7 +828,7 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>Site Name | About Page 2</title>', false);
+        $response->assertSee('<title>Cool Runnings | About Page 2</title>', false);
 
         $this
             ->prepareViews('antlers')
@@ -846,7 +846,7 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertDontSee('<title>About Page 2 | Site Name</title>', false);
+        $response->assertDontSee('<title>About Page 2 | Cool Runnings</title>', false);
     }
 
     protected function setCustomGlidePresetDimensions($app)
