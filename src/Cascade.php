@@ -469,7 +469,7 @@ class Cascade
     protected function parseAntlers($item)
     {
         try {
-            return (string) Antlers::parseUserContent($item, array_merge(
+            return (string) Antlers::parse($item, array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
             ));
