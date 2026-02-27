@@ -131,6 +131,26 @@ class CascadeTest extends TestCase
         $this->assertEquals('RED', $data['description']);
     }
 
+    #[Test]
+    public function it_hydrates_when_parsing_antlers()
+    {
+        config([
+            'app.name' => 'My Site',
+            'app.foo' => 'bar',
+            'statamic.system.view_config_allowlist' => ['app.name'],
+        ]);
+
+        $entry = Entry::findByUri('/about')->entry();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with(['title' => '[{{ config:app:name }}] [{{ config:app:foo }}] [{{ site }}]'])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('[My Site] [] [default]', $data['title']);
+    }
+
     public static function phpInAntlersProvider()
     {
         return [
