@@ -2,23 +2,21 @@
 
 namespace Statamic\SeoPro;
 
-use Exception;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
-use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
-use Statamic\Fieldtypes\Text;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\View\Antlers\Language\Exceptions\RuntimeException;
 use Statamic\View\Cascade as ViewCascade;
 
 class Cascade
@@ -92,6 +90,8 @@ class Cascade
 
     public function get()
     {
+        $this->hydrateCascade();
+
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
@@ -466,49 +466,25 @@ class Cascade
 
     protected function parseAntlers($item)
     {
-        // Simplistically prevent php in antlers.
-        if (Str::contains($item, ['{{?', '{{$', '@{'])) {
-            return $item;
-        }
-
-        // Also, the parser has extra runtime protections around `Value` objects
-        // when `antlers: true` is set on a blueprint field. While this may be
-        // improved in future, we'll give custom seo fields same treatment.
         try {
-            $textFieldType = new Text;
-            $textFieldType->setField(new Field('___tmpValue', ['antlers' => true]));
-            $value = new Value($item, '___tmpValue', $textFieldType);
-
-            $viewCascade = array_merge(
+            return (string) Antlers::parse($item, array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
-                ['___tmpValue' => $value, 'config' => config()->all()],
-                $this->hydrateGlobals()
-            );
-
-            return (string) Antlers::parse('{{ ___tmpValue }}', $viewCascade);
-        } catch (Exception $exception) {
+            ));
+        } catch (RuntimeException $e) {
             return $item;
         }
     }
 
-    private function hydrateGlobals()
+    private function hydrateCascade()
     {
-        $data = [];
+        $cascade = app(ViewCascade::class);
 
-        foreach ($globals = GlobalSet::all() as $global) {
-            if ($global = $global->in($this->site()->handle())) {
-                $data[$global->handle()] = $global;
-            }
+        // Hydrate if not already hydrated.
+        // Determine if it's already hydrated by seeing if there's an arbitrary value already in there.
+        if (! $cascade->get('now')) {
+            $cascade->hydrate();
         }
-
-        if ($mainGlobal = $globals->get('global')) {
-            foreach ($mainGlobal->toDeferredAugmentedArray() as $key => $value) {
-                $data[$key] = $value;
-            }
-        }
-
-        return $data;
     }
 
     protected function humans()
