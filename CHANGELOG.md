@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.1.1 (2026-02-27)
+
+### What's fixed
+- Antlers parsing and cascade hydration #507 by @jasonvarga
+- Default site name should be APP_NAME #505 by @edalzell
+
+
+
 ## 7.1.0 (2026-02-23)
 
 ### What's improved
