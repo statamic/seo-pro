@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blueprint;
