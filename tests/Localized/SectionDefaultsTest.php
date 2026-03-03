@@ -4,6 +4,8 @@ namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\SectionDefaults\LocalizedSectionDefaults;
 use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 
@@ -226,5 +228,97 @@ class SectionDefaultsTest extends LocalizedTestCase
 
         SectionDefaults::clearCache('collections', 'pages');
         $this->assertFalse(SectionDefaults::isEnabled('collections', 'pages'));
+    }
+
+    // -------------------------------------------------------------------------
+    // inject.seo fallback (legacy storage) — multi-site
+    // -------------------------------------------------------------------------
+
+    #[Test]
+    public function it_falls_back_to_inject_seo_and_assigns_to_default_site()
+    {
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy title']])
+            ->save();
+
+        $defaultHandle = Site::default()->handle();
+
+        $localized = SectionDefaults::in('collections', 'pages', $defaultHandle);
+
+        $this->assertTrue($localized->isEnabled());
+        $this->assertEquals(['title' => 'Legacy title'], $localized->all());
+    }
+
+    #[Test]
+    public function inject_seo_fallback_returns_empty_for_non_default_sites()
+    {
+        // inject.seo has no per-site support — only the default site gets values.
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy title']])
+            ->save();
+
+        $french = SectionDefaults::in('collections', 'pages', 'french');
+
+        // French has no own values from inject.seo fallback.
+        $this->assertEmpty($french->all());
+    }
+
+    #[Test]
+    public function inject_seo_fallback_values_are_inherited_by_child_sites_via_origin()
+    {
+        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+            'default' => null,
+            'french' => 'default',
+            'italian' => 'default',
+            'british' => 'default',
+        ])->save();
+
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy title', 'description' => 'Desc']])
+            ->save();
+
+        $french = SectionDefaults::in('collections', 'pages', 'french');
+
+        // French has origin=default, so values() includes inherited values.
+        $inherited = $french->values();
+        $this->assertEquals('Legacy title', $inherited->get('title'));
+        $this->assertEquals('Desc', $inherited->get('description'));
+    }
+
+    #[Test]
+    public function it_reports_disabled_from_inject_seo_in_multisite()
+    {
+        Collection::find('pages')
+            ->cascade(['seo' => false])
+            ->save();
+
+        $this->assertFalse(SectionDefaults::isEnabled('collections', 'pages'));
+
+        SectionDefaults::clearCache('collections', 'pages');
+
+        $all = SectionDefaults::get('collections', 'pages');
+        foreach ($all as $localized) {
+            $this->assertFalse($localized->isEnabled());
+        }
+    }
+
+    #[Test]
+    public function saving_strips_inject_seo_from_yaml_in_multisite()
+    {
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy']])
+            ->save();
+
+        SectionDefaults::in('collections', 'pages', 'default')->set(['title' => 'Migrated'])->save();
+
+        $collection = Collection::find('pages');
+        $this->assertArrayNotHasKey('seo', $collection->cascade()->all());
+
+        // Value is now under addon settings sites key.
+        $raw = Addon::get('statamic/seo-pro')->settings()->raw();
+        $this->assertEquals(
+            ['title' => 'Migrated'],
+            $raw['section_defaults']['collections']['pages']['sites'][Site::default()->handle()]
+        );
     }
 }

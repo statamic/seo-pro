@@ -6,7 +6,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Collection as CollectionFacade;
 use Statamic\Facades\Site;
+use Statamic\Facades\Taxonomy as TaxonomyFacade;
 
 class SectionDefaults
 {
@@ -72,6 +74,7 @@ class SectionDefaults
         Addon::get('statamic/seo-pro')->settings()->set('section_defaults', $data)->save();
 
         self::clearCache($type, $handle);
+        self::clearInjectSeo($type, $handle);
     }
 
     /**
@@ -113,6 +116,7 @@ class SectionDefaults
         Addon::get('statamic/seo-pro')->settings()->set('section_defaults', $data)->save();
 
         self::clearCache($type, $handle);
+        self::clearInjectSeo($type, $handle);
     }
 
     /**
@@ -131,13 +135,83 @@ class SectionDefaults
         // Use settings()->raw() rather than settings()->get() because Statamic's Antlers
         // resolver converts PHP false to an empty string, losing the disabled state.
         $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'section_defaults', []);
-        $raw = Arr::get($data, "{$type}.{$handle}");
 
-        if ($raw === false) {
+        // If explicitly present in addon settings, use that value.
+        if (Arr::has($data, "{$type}.{$handle}")) {
+            $raw = Arr::get($data, "{$type}.{$handle}");
+
+            if ($raw === false) {
+                return false;
+            }
+
+            return is_array($raw) ? $raw : [];
+        }
+
+        // Fall back to inject.seo from the collection/taxonomy YAML (legacy storage).
+        return self::rawFromInjectSeo($type, $handle);
+    }
+
+    /**
+     * Read section defaults from the legacy inject.seo location in collection/taxonomy YAML.
+     */
+    private static function rawFromInjectSeo(string $type, string $handle): array|false
+    {
+        $item = self::findSectionItem($type, $handle);
+
+        if (! $item) {
+            return [];
+        }
+
+        $injectSeo = Arr::get($item->fileData(), 'inject.seo');
+
+        if ($injectSeo === null) {
+            return [];
+        }
+
+        if ($injectSeo === false) {
             return false;
         }
 
-        return is_array($raw) ? $raw : [];
+        if (! is_array($injectSeo) || empty($injectSeo)) {
+            return [];
+        }
+
+        // inject.seo was always a flat set of values (no per-site support in the old design).
+        // In multi-site mode, treat these as the default site's values so origin inheritance
+        // can propagate them to child sites naturally.
+        if (Site::multiEnabled()) {
+            return ['sites' => [Site::default()->handle() => $injectSeo]];
+        }
+
+        return $injectSeo;
+    }
+
+    /**
+     * Strip inject.seo from the collection/taxonomy YAML, migrating it to addon settings.
+     * Called automatically after saving or disabling via the new API.
+     */
+    private static function clearInjectSeo(string $type, string $handle): void
+    {
+        $item = self::findSectionItem($type, $handle);
+
+        if (! $item) {
+            return;
+        }
+
+        if (! Arr::has($item->fileData(), 'inject.seo')) {
+            return;
+        }
+
+        $cascade = $item->cascade();
+        $cascade->forget('seo');
+        $item->cascade($cascade->all())->save();
+    }
+
+    private static function findSectionItem(string $type, string $handle)
+    {
+        return $type === 'collections'
+            ? CollectionFacade::find($handle)
+            : TaxonomyFacade::find($handle);
     }
 
     private static function cacheKey(string $type, string $handle): string

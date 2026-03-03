@@ -4,8 +4,8 @@ namespace Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
-use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
+use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\SectionDefaults\LocalizedSectionDefaults;
 use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 
@@ -261,5 +261,136 @@ class SectionDefaultsTest extends TestCase
         foreach ($all as $localized) {
             $this->assertFalse($localized->isEnabled());
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // inject.seo fallback (legacy storage)
+    // -------------------------------------------------------------------------
+
+    #[Test]
+    public function it_falls_back_to_inject_seo_when_no_addon_settings_exist()
+    {
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => '@seo:title', 'description' => 'Legacy desc']])
+            ->save();
+
+        $localized = SectionDefaults::in('collections', 'pages', 'default');
+
+        $this->assertTrue($localized->isEnabled());
+        $this->assertEquals(['title' => '@seo:title', 'description' => 'Legacy desc'], $localized->all());
+    }
+
+    #[Test]
+    public function it_reports_section_as_disabled_when_inject_seo_is_false()
+    {
+        Collection::find('pages')
+            ->cascade(['seo' => false])
+            ->save();
+
+        $this->assertFalse(SectionDefaults::isEnabled('collections', 'pages'));
+    }
+
+    #[Test]
+    public function it_prefers_addon_settings_over_inject_seo()
+    {
+        // Set inject.seo on the YAML.
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'From YAML']])
+            ->save();
+
+        // Set a different value in addon settings.
+        Addon::get('statamic/seo-pro')->settings()
+            ->set('section_defaults', ['collections' => ['pages' => ['title' => 'From Settings']]])
+            ->save();
+
+        $localized = SectionDefaults::in('collections', 'pages', 'default');
+
+        $this->assertEquals('From Settings', $localized->all()['title']);
+    }
+
+    #[Test]
+    public function it_strips_inject_seo_from_yaml_when_saving_to_addon_settings()
+    {
+        // Set up legacy inject.seo.
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy']])
+            ->save();
+
+        // Saving via the new API should migrate and strip inject.seo.
+        SectionDefaults::in('collections', 'pages', 'default')->set(['title' => 'Migrated'])->save();
+
+        $collection = Collection::find('pages');
+        $this->assertArrayNotHasKey('seo', $collection->cascade()->all());
+    }
+
+    #[Test]
+    public function it_strips_inject_seo_from_yaml_when_disabling()
+    {
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy']])
+            ->save();
+
+        SectionDefaults::disable('collections', 'pages');
+
+        $collection = Collection::find('pages');
+        $this->assertArrayNotHasKey('seo', $collection->cascade()->all());
+    }
+
+    #[Test]
+    public function after_lazy_migration_subsequent_reads_use_addon_settings()
+    {
+        // Set up legacy inject.seo.
+        Collection::find('pages')
+            ->cascade(['seo' => ['title' => 'Legacy']])
+            ->save();
+
+        // Trigger lazy migration by saving.
+        SectionDefaults::in('collections', 'pages', 'default')->set(['title' => 'Migrated'])->save();
+
+        // Remove inject.seo from the collection manually to confirm it's gone.
+        $collection = Collection::find('pages');
+        $this->assertArrayNotHasKey('seo', $collection->cascade()->all());
+
+        // Subsequent read comes from addon settings.
+        SectionDefaults::clearCache('collections', 'pages');
+        $localized = SectionDefaults::in('collections', 'pages', 'default');
+        $this->assertEquals('Migrated', $localized->all()['title']);
+    }
+
+    #[Test]
+    public function it_falls_back_to_inject_seo_for_taxonomies()
+    {
+        Taxonomy::find('topics')
+            ->cascade(['seo' => ['title' => 'Topics Legacy']])
+            ->save();
+
+        $localized = SectionDefaults::in('taxonomies', 'topics', 'default');
+
+        $this->assertTrue($localized->isEnabled());
+        $this->assertEquals(['title' => 'Topics Legacy'], $localized->all());
+    }
+
+    #[Test]
+    public function it_strips_inject_seo_from_taxonomy_yaml_when_saving()
+    {
+        Taxonomy::find('topics')
+            ->cascade(['seo' => ['title' => 'Legacy']])
+            ->save();
+
+        SectionDefaults::in('taxonomies', 'topics', 'default')->set(['title' => 'Migrated'])->save();
+
+        $taxonomy = Taxonomy::find('topics');
+        $this->assertArrayNotHasKey('seo', $taxonomy->cascade()->all());
+    }
+
+    #[Test]
+    public function it_does_not_modify_yaml_when_inject_seo_is_absent()
+    {
+        // No inject.seo in the fixture — saving should not throw or modify YAML unexpectedly.
+        SectionDefaults::in('collections', 'pages', 'default')->set(['title' => 'New'])->save();
+
+        // Collection YAML should not have gained an inject.seo key.
+        $collection = Collection::find('pages');
+        $this->assertArrayNotHasKey('seo', $collection->cascade()->all());
     }
 }
