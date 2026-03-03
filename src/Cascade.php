@@ -572,9 +572,7 @@ class Cascade
                 'name' => $jsonLdOrganizationName,
                 '@id' => $this->homeUrl().'#organization',
                 'url' => $this->homeUrl(),
-                'logo' => $jsonLdOrganizationLogo
-                    ? Statamic::tag('glide')->src($jsonLdOrganizationLogo)->square(512)->absolute(true)->fetch()
-                    : null,
+                'logo' => $this->jsonLdOrganizationLogoUrl($jsonLdOrganizationLogo),
             ]), JSON_UNESCAPED_SLASHES));
         }
 
@@ -610,6 +608,19 @@ class Cascade
         }
 
         return $snippets;
+    }
+
+    protected function jsonLdOrganizationLogoUrl($logo)
+    {
+        if (! $logo) {
+            return null;
+        }
+
+        if (config('statamic.seo-pro.json_ld.use_glide_for_logo', true)) {
+            return Statamic::tag('glide')->src($logo)->square(512)->absolute(true)->fetch();
+        }
+
+        return $logo->absoluteUrl();
     }
 
     protected function augmentData($data)
