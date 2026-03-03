@@ -418,6 +418,50 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_generates_json_ld_organization_logo_with_glide_by_default()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $organization = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertStringContainsString('/img/asset/', $organization['logo']);
+        $this->assertStringContainsString('w=512', $organization['logo']);
+        $this->assertStringContainsString('h=512', $organization['logo']);
+    }
+
+    #[Test]
+    public function it_generates_json_ld_organization_logo_as_permalink_when_glide_disabled()
+    {
+        config(['statamic.seo-pro.json_ld.use_glide_for_logo' => false]);
+
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $organization = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertEquals('http://cool-runnings.com/assets/img/stetson.jpg', $organization['logo']);
+    }
+
+    #[Test]
     public function it_generates_json_ld_breadcrumbs()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
