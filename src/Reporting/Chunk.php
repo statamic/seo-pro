@@ -79,6 +79,10 @@ class Chunk
             return;
         }
 
+        if ($this->getSectionDefaults($content) === false) {
+            return;
+        }
+
         $data = (new Cascade)
             ->withSiteDefaults(SiteDefaults::in($content->locale())->augmented())
             ->withSectionDefaults($this->getAugmentedSectionDefaults($content))

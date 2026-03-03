@@ -4,8 +4,7 @@ namespace Statamic\SeoPro;
 
 use Illuminate\Support\Facades\Cache;
 use Statamic\Events;
-use Statamic\Facades\Collection;
-use Statamic\Facades\Taxonomy;
+use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 use Statamic\SeoPro\Sitemap\Sitemap;
 use Statamic\Support\Str;
 
@@ -68,13 +67,11 @@ class Subscriber
         $namespace = $event->blueprint->namespace();
 
         if (Str::startsWith($namespace, 'collections.')) {
-            $section = Collection::findByHandle(Str::after($namespace, 'collections.'));
+            return SectionDefaults::isEnabled('collections', Str::after($namespace, 'collections.'));
         } elseif (Str::startsWith($namespace, 'taxonomies.')) {
-            $section = Taxonomy::findByHandle(Str::after($namespace, 'taxonomies.'));
+            return SectionDefaults::isEnabled('taxonomies', Str::after($namespace, 'taxonomies.'));
         } else {
             throw new \Exception('Unknown section type.');
         }
-
-        return $section->cascade('seo') !== false;
     }
 }

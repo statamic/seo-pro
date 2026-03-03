@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Tags;
 
+use Statamic\Facades\Entry;
 use Statamic\Facades\Image;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
@@ -25,6 +26,16 @@ class SeoProTags extends Tags
     public function meta()
     {
         if ($this->context->value('seo') === false) {
+            return;
+        }
+
+        // When the seo field is present in the blueprint, augmentable() returns the entry/term.
+        // When the section is disabled, the seo field is removed from the blueprint, so we
+        // fall back to looking up the entry by ID from the context.
+        $current = optional($this->context->get('seo'))->augmentable()
+            ?? Entry::find($this->context->raw('id'));
+
+        if ($current && $this->getSectionDefaults($current) === false) {
             return;
         }
 
