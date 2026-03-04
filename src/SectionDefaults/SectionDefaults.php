@@ -120,14 +120,20 @@ class SectionDefaults
     }
 
     /**
-     * Get the origin map, reusing site_defaults_sites from addon settings.
+     * Get or set the per-site origin map for section defaults.
      */
-    public static function origins(): Collection
+    public static function origins($origins = null): Collection|bool
     {
-        return Site::all()
-            ->mapWithKeys(fn ($site) => [$site->handle() => null])
-            ->merge(Addon::get('statamic/seo-pro')->settings()->get('site_defaults_sites', []))
-            ->map(fn ($origin) => empty($origin) ? null : $origin);
+        if (func_num_args() === 0) {
+            return Site::all()
+                ->mapWithKeys(fn ($site) => [$site->handle() => null])
+                ->merge(Addon::get('statamic/seo-pro')->settings()->get('section_defaults_sites', []))
+                ->map(fn ($origin) => empty($origin) ? null : $origin);
+        }
+
+        Addon::get('statamic/seo-pro')->settings()->set('section_defaults_sites', $origins)->save();
+
+        return true;
     }
 
     private static function rawForHandle(string $type, string $handle): array|false

@@ -125,9 +125,9 @@ class SectionDefaultsTest extends LocalizedTestCase
     }
 
     #[Test]
-    public function it_resolves_origin_from_site_defaults_sites_config()
+    public function it_resolves_origin_from_section_defaults_sites_config()
     {
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+        Addon::get('statamic/seo-pro')->settings()->set('section_defaults_sites', [
             'default' => null,
             'french' => 'default',
             'italian' => 'default',
@@ -149,7 +149,7 @@ class SectionDefaultsTest extends LocalizedTestCase
     }
 
     #[Test]
-    public function it_has_no_origin_when_site_defaults_sites_config_is_absent()
+    public function it_has_no_origin_when_section_defaults_sites_config_is_absent()
     {
         $localized = SectionDefaults::in('collections', 'pages', 'french');
 
@@ -160,7 +160,7 @@ class SectionDefaultsTest extends LocalizedTestCase
     #[Test]
     public function it_inherits_values_from_origin_via_has_origin_trait()
     {
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+        Addon::get('statamic/seo-pro')->settings()->set('section_defaults_sites', [
             'default' => null,
             'french' => 'default',
             'italian' => 'default',
@@ -187,9 +187,9 @@ class SectionDefaultsTest extends LocalizedTestCase
     }
 
     #[Test]
-    public function origins_returns_map_from_site_defaults_sites()
+    public function origins_returns_map_from_section_defaults_sites()
     {
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+        Addon::get('statamic/seo-pro')->settings()->set('section_defaults_sites', [
             'default' => null,
             'french' => 'default',
         ])->save();
@@ -266,7 +266,7 @@ class SectionDefaultsTest extends LocalizedTestCase
     #[Test]
     public function inject_seo_fallback_values_are_inherited_by_child_sites_via_origin()
     {
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+        Addon::get('statamic/seo-pro')->settings()->set('section_defaults_sites', [
             'default' => null,
             'french' => 'default',
             'italian' => 'default',

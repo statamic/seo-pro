@@ -64,6 +64,9 @@ abstract class BaseSectionDefaultsController extends CpController
             'initialSite' => $site,
             'action' => cp_route("seo-pro.section-defaults.{$sectionType}.update", $handle),
             'title' => $item->title().' SEO',
+            'configureUrl' => Site::multiEnabled()
+                ? cp_route('seo-pro.section-defaults.configure.edit')
+                : null,
         ];
 
         if ($request->wantsJson()) {

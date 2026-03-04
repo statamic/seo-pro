@@ -18,7 +18,7 @@ class SectionDefaultsControllerTest extends LocalizedTestCase
         SectionDefaults::clearCache('taxonomies', 'topics');
 
         // Set up origins so we can test inheritance.
-        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+        Addon::get('statamic/seo-pro')->settings()->set('section_defaults_sites', [
             'default' => null,
             'french' => 'default',
             'italian' => 'default',
@@ -29,6 +29,17 @@ class SectionDefaultsControllerTest extends LocalizedTestCase
     // -------------------------------------------------------------------------
     // Edit (GET) — multi-site
     // -------------------------------------------------------------------------
+
+    #[Test]
+    public function edit_multisite_returns_configure_url()
+    {
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson('/cp/seo-pro/section-defaults/collections/pages/edit');
+
+        $response->assertOk();
+        $this->assertStringContainsString('section-defaults/configure', $response->json('configureUrl'));
+    }
 
     #[Test]
     public function edit_defaults_to_selected_site()

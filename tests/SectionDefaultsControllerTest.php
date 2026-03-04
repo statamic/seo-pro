@@ -4,9 +4,7 @@ namespace Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
-use Statamic\Facades\Collection;
 use Statamic\Facades\Role;
-use Statamic\Facades\Taxonomy;
 use Statamic\Facades\User;
 use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 
@@ -44,6 +42,7 @@ class SectionDefaultsControllerTest extends TestCase
             'initialSite',
             'action',
             'title',
+            'configureUrl',
         ]);
     }
 
@@ -56,6 +55,18 @@ class SectionDefaultsControllerTest extends TestCase
 
         $response->assertOk();
         $this->assertEquals('Pages SEO', $response->json('title'));
+    }
+
+    #[Test]
+    public function edit_single_site_returns_null_configure_url()
+    {
+        // Single-site fixture — no origin configuration needed.
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson('/cp/seo-pro/section-defaults/collections/pages/edit');
+
+        $response->assertOk();
+        $this->assertNull($response->json('configureUrl'));
     }
 
     #[Test]

@@ -13,6 +13,7 @@ return [
     'section_defaults' => 'Section Defaults',
     'section_defaults_description' => 'Override default meta, social, sitemap, and other settings for any particular section.',
     'configure_site_defaults' => 'Configure Site Defaults',
+    'configure_section_defaults' => 'Configure Section Defaults',
     'meta' => 'Meta',
     'opengraph' => 'Open Graph',
     'social' => 'Social',
