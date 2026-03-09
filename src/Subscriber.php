@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro;
 
-use Illuminate\Support\Facades\Cache;
 use Statamic\Events;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Taxonomy;
@@ -20,9 +19,13 @@ class Subscriber
         Events\EntryBlueprintFound::class => 'ensureSeoFields',
         Events\TermBlueprintFound::class => 'ensureSeoFields',
         Events\CollectionSaved::class => 'clearSitemapCache',
+        Events\CollectionDeleted::class => 'clearSitemapCache',
         Events\EntrySaved::class => 'clearSitemapCache',
+        Events\EntryDeleted::class => 'clearSitemapCache',
         Events\TaxonomySaved::class => 'clearSitemapCache',
+        Events\TaxonomyDeleted::class => 'clearSitemapCache',
         Events\TermSaved::class => 'clearSitemapCache',
+        Events\TermDeleted::class => 'clearSitemapCache',
     ];
 
     /**
@@ -54,7 +57,7 @@ class Subscriber
      */
     public function clearSitemapCache()
     {
-        Cache::forget(Sitemap::CACHE_KEY);
+        Sitemap::invalidateCache();
     }
 
     /**
