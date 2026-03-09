@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "statamic/cms": "^6.3",
+        "statamic/cms": "^6.4.1",
         "pixelfear/composer-dist-plugin": "^0.1.6"
     },
     "require-dev": {

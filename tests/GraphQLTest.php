@@ -276,6 +276,154 @@ GQL;
     }
 
     #[Test]
+    public function it_queries_for_entry_seo_robots_and_indexing()
+    {
+        $this->setSeoOnEntry(Data::findByUri('/nectar'), [
+            'robots' => ['noindex', 'nofollow'],
+        ]);
+
+        $query = <<<'GQL'
+{
+    entry(slug: "nectar") {
+        seo {
+            robots
+            robots_indexing
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'seo' => [
+                        'robots' => ['noindex', 'nofollow'],
+                        'robots_indexing' => 'noindex',
+                    ],
+                ],
+            ]]);
+    }
+
+    #[Test]
+    public function it_queries_for_entry_seo_robots_defaults_when_not_set()
+    {
+        $query = <<<'GQL'
+{
+    entry(slug: "nectar") {
+        seo {
+            robots
+            robots_indexing
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'seo' => [
+                        'robots' => [],
+                        'robots_indexing' => 'index',
+                    ],
+                ],
+            ]]);
+    }
+
+    #[Test]
+    public function it_queries_for_entry_seo_hreflang_and_default_site()
+    {
+        $query = <<<'GQL'
+{
+    entry(slug: "nectar") {
+        seo {
+            is_default_site
+            current_hreflang
+        }
+    }
+}
+GQL;
+
+        $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk()
+            ->assertExactJson(['data' => [
+                'entry' => [
+                    'seo' => [
+                        'is_default_site' => true,
+                        'current_hreflang' => 'en',
+                    ],
+                ],
+            ]]);
+    }
+
+    #[Test]
+    public function it_queries_for_entry_seo_json_ld()
+    {
+        $this->setSeoInSiteDefaults([
+            'site_name' => 'Cool Runnings',
+            'priority' => 0.7,
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $query = <<<'GQL'
+{
+    entry(slug: "nectar") {
+        seo {
+            json_ld
+        }
+    }
+}
+GQL;
+
+        $response = $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk();
+
+        $jsonLd = $response->json('data.entry.seo.json_ld');
+
+        $this->assertIsArray($jsonLd);
+        $this->assertNotEmpty($jsonLd);
+
+        $organization = json_decode($jsonLd[0], true);
+        $this->assertEquals('https://schema.org', $organization['@context']);
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertEquals('Cool Runnings Ltd', $organization['name']);
+    }
+
+    #[Test]
+    public function it_queries_for_entry_seo_json_ld_without_empty_schema()
+    {
+        $query = <<<'GQL'
+{
+    entry(slug: "nectar") {
+        seo {
+            json_ld
+        }
+    }
+}
+GQL;
+
+        $response = $this
+            ->withoutExceptionHandling()
+            ->post('/graphql', ['query' => $query])
+            ->assertGqlOk();
+
+        $jsonLd = $response->json('data.entry.seo.json_ld');
+
+        $this->assertIsArray($jsonLd);
+        $this->assertEmpty($jsonLd);
+    }
+
+    #[Test]
     public function it_gracefully_outputs_null_image_when_not_set()
     {
         $query = <<<'GQL'

@@ -30,14 +30,14 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'Site Name',
+            'site_name' => 'Cool Runnings',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => 'Home',
             'description' => 'I see a bad-ass mother.',
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Home | Site Name',
+            'compiled_title' => 'Home | Cool Runnings',
             'og_title' => 'Home',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
@@ -131,6 +131,26 @@ class CascadeTest extends TestCase
         $this->assertEquals('RED', $data['description']);
     }
 
+    #[Test]
+    public function it_hydrates_when_parsing_antlers()
+    {
+        config([
+            'app.name' => 'My Site',
+            'app.foo' => 'bar',
+            'statamic.system.view_config_allowlist' => ['app.name'],
+        ]);
+
+        $entry = Entry::findByUri('/about')->entry();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with(['title' => '[{{ config:app:name }}] [{{ config:app:foo }}] [{{ site }}]'])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('[My Site] [] [default]', $data['title']);
+    }
+
     public static function phpInAntlersProvider()
     {
         return [
@@ -199,15 +219,15 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'Site Name',
+            'site_name' => 'Cool Runnings',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => null,
             'description' => null,
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Site Name',
-            'og_title' => 'Site Name',
+            'compiled_title' => 'Cool Runnings',
+            'og_title' => 'Cool Runnings',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
             'next_url' => null,
@@ -233,7 +253,7 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('404 Page Not Found', $data['title']);
-        $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
+        $this->assertEquals('404 Page Not Found | Cool Runnings', $data['compiled_title']);
     }
 
     #[Test]

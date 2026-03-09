@@ -1,5 +1,24 @@
 # Release Notes
 
+## 7.1.1 (2026-02-27)
+
+### What's fixed
+- Antlers parsing and cascade hydration #507 by @jasonvarga
+- Default site name should be APP_NAME #505 by @edalzell
+
+
+
+## 7.1.0 (2026-02-23)
+
+### What's improved
+- Add spreadsheet to sitemaps #504 by @duncanmcclean
+- Use `RunsUpdateScripts` trait in test #500 by @duncanmcclean
+
+### What's fixed
+- Add missing GraphQL fields #503 by @samalisam-novu
+
+
+
 ## 7.0.3 (2026-02-18)
 
 ### What's fixed
