@@ -1,5 +1,16 @@
 # Release Notes
 
+## 7.2.0 (2026-03-09)
+
+### What's new
+- Supports Laravel 13 [#502](https://github.com/statamic/seo-pro/issues/502) by @duncanmcclean
+
+### What's fixed
+- Fix error when generating JSON-LD breadcrumbs [#513](https://github.com/statamic/seo-pro/issues/513) by @duncanmcclean
+- Fix sitemap cache invalidation [#514](https://github.com/statamic/seo-pro/issues/514) by @duncanmcclean
+
+
+
 ## 7.1.1 (2026-02-27)
 
 ### What's fixed
