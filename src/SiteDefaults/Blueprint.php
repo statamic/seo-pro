@@ -302,6 +302,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
+                                        'default' => '@seo:title',
                                     ],
                                 ],
                                 [
@@ -315,6 +316,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'textarea',
                                         ],
+                                        'default' => '@seo:description',
                                     ],
                                 ],
                             ],
