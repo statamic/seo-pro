@@ -194,7 +194,7 @@ const googleUrlComponents = computed(() => {
 		</Field>
 
 		<Field :label="__('seo-pro::messages.x_twitter_preview')">
-			<a v-if="twitterImageUrl" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
+			<a v-if="twitterImageUrl" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] dark:border-[#2F3336] relative overflow-hidden" :href="url" target="_blank">
 				<img class="size-full" :src="twitterImageUrl" />
 				<div class="absolute bottom-3 left-3 right-3">
 					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded truncate max-w-xl" v-text="twitterTitle" />
