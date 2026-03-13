@@ -73,6 +73,7 @@
 - Dropped support for PHP 8.2 and Laravel 11
 - Site Defaults are now stored using Statamic's [Addon Settings](https://statamic.dev/addons/building-an-addon#settings) feature.
   - SEO Pro will attempt to move the `content/seo.yaml`  file to `resources/addons/seo-pro.yaml` during the upgrade process. It will also update the structure of the YAML file.
+  - If this doesn't happen, you should run the update script manually via `php please updates:run 7.0.0-beta.1 --package=statamic/seo-pro`.
 - Site Defaults can now be localized.
   - When multi-site is enabled, SEO Pro will have configured origins for your non-default sites pointing at the default site to best mirror the previous behavior where all sites used the same defaults.
   - You can update these origins via the "Site Defaults" page in the Control Panel.
