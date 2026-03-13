@@ -187,7 +187,7 @@ const googleUrlComponents = computed(() => {
 				</div>
 				<a v-if="twitterImageUrl" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
 					<div class="size-[92px]">
-						<img class="rounded-[8px] size-full object-cover" :src="twitterImageUrl">
+						<img class="rounded-[8px] size-full" :src="twitterImageUrl">
 					</div>
 				</a>
 			</div>
@@ -195,7 +195,7 @@ const googleUrlComponents = computed(() => {
 
 		<Field :label="__('seo-pro::messages.x_twitter_preview')">
 			<a v-if="twitterImageUrl" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
-				<img class="size-full object-cover" :src="twitterImageUrl" />
+				<img class="size-full" :src="twitterImageUrl" />
 				<div class="absolute bottom-3 left-3 right-3">
 					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded truncate max-w-xl" v-text="twitterTitle" />
 				</div>
@@ -220,7 +220,7 @@ const googleUrlComponents = computed(() => {
 		<Field :label="__('seo-pro::messages.facebook_preview')">
 			<a class="block max-w-[680px] border rounded-lg overflow-hidden" :href="url" target="_blank">
 				<div v-if="facebookImageUrl" class="w-full h-[354px]">
-					<img class="size-full object-cover" :src="facebookImageUrl" />
+					<img class="size-full" :src="facebookImageUrl" />
 				</div>
 				<div class="bg-[#F2F4F7] dark:bg-[#1C1C1D] px-4 py-3">
 					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="domain" />
