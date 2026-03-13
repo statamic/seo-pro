@@ -150,6 +150,7 @@ const switchToLocalization = (localization) => {
 			:sync-field-confirmation-text
 			:track-dirty-state="true"
 			as-config
+			remember-tab
 		/>
 
 		<ConfigureModal
