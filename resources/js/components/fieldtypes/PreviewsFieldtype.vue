@@ -185,9 +185,9 @@ const googleUrlComponents = computed(() => {
 					<a class="block !text-[#1a0dab] dark:!text-[#99c3ff] text-xl mb-1 truncate max-w-xl" :href="url" target="_blank" v-text="title" />
 					<div v-if="description" class="text-[#1f1f1f] dark:text-[#bfbfbf] text-sm line-clamp-2" v-text="description" />
 				</div>
-				<a v-if="twitterImageUrl" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
+				<a v-if="facebookImageUrl" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
 					<div class="size-[92px]">
-						<img class="rounded-[8px] size-full" :src="twitterImageUrl">
+						<img class="rounded-[8px] size-full" :src="facebookImageUrl">
 					</div>
 				</a>
 			</div>
