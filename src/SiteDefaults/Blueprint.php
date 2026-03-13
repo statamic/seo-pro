@@ -246,6 +246,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
+                                        'default' => '@seo:title',
                                     ],
                                 ],
                             ],
