@@ -62,7 +62,7 @@ const resolveSeoValue = (field) => {
 
 				return text;
 			case 'assets':
-				return publishMeta.value[value.value]?.data[0]?.url;
+				return publishMeta.value[value.value]?.data[0]?.id;
 			default:
 				return sourceFieldValue;
 		}
@@ -72,7 +72,7 @@ const resolveSeoValue = (field) => {
 		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
 
 		if (seoField.field?.type === 'assets') {
-			return publishMeta.value.seo.meta[field].fieldMeta.data[0]?.url;
+			return publishMeta.value.seo.meta[field].fieldMeta.data[0]?.id;
 		}
 
 		return value.value;
@@ -108,31 +108,40 @@ const description = computed(() => resolveSeoValue('description'));
 const image = computed(() => resolveSeoValue('image'));
 const twitterTitle = computed(() => resolveSeoValue('twitter_title') || resolveSeoValue('title') || title.value);
 const twitterDescription = computed(() => resolveSeoValue('twitter_description') || resolveSeoValue('description'));
+const twitterImageUrl = ref();
 const facebookTitle = computed(() => resolveSeoValue('og_title') || resolveSeoValue('title') || title.value);
+const facebookImageUrl = ref();
 
 watch(
 	() => props.meta.initialUrl,
 	() => (url.value = props.meta.initialUrl),
 );
 
-const fetchUpdatedUrl = async () => {
+const fetchPreviewData = async () => {
 	$axios
 		.post(props.meta.previewUrl, {
 			id: publishValues.value.id,
+			image: image.value,
 			values: props.meta.routeFields.reduce((acc, handle) => {
 				acc[handle] = publishValues.value[handle];
 				return acc;
 			}, {}),
 		})
-		.then(response => (url.value = response.data.url))
+		.then(response => {
+			url.value = response.data.url;
+			facebookImageUrl.value = response.data.og_image_url;
+			twitterImageUrl.value = response.data.twitter_image_url;
+		})
 		.catch(error => Statamic.$toast.error(__('Something went wrong')));
 };
 
 if (publishValues.value.id) {
+	watch(image, fetchPreviewData, { immediate: true });
+
 	props.meta.routeFields.forEach(field => {
 		watch(
 			() => publishValues.value[field],
-			() => fetchUpdatedUrl(),
+			() => fetchPreviewData(),
 			{ deep: true }
 		);
 	});
@@ -176,17 +185,17 @@ const googleUrlComponents = computed(() => {
 					<a class="block !text-[#1a0dab] dark:!text-[#99c3ff] text-xl mb-1 truncate max-w-xl" :href="url" target="_blank" v-text="title" />
 					<div v-if="description" class="text-[#1f1f1f] dark:text-[#bfbfbf] text-sm line-clamp-2" v-text="description" />
 				</div>
-				<a v-if="image" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
+				<a v-if="facebookImageUrl" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
 					<div class="size-[92px]">
-						<img class="rounded-[8px] size-full object-cover" :src="image">
+						<img class="rounded-[8px] size-full object-conver" :src="facebookImageUrl">
 					</div>
 				</a>
 			</div>
 		</Field>
 
 		<Field :label="__('seo-pro::messages.x_twitter_preview')">
-			<a v-if="image" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
-				<img class="size-full object-cover" :src="image" />
+			<a v-if="twitterImageUrl" class="block max-w-[663px] max-h-[347px] rounded-2xl border border-[#CFD9DE] relative overflow-hidden" :href="url" target="_blank">
+				<img class="size-full" :src="twitterImageUrl" />
 				<div class="absolute bottom-3 left-3 right-3">
 					<div class="bg-[#000000C4] text-white text-[13px] px-2 inline-flex rounded truncate max-w-xl" v-text="twitterTitle" />
 				</div>
@@ -210,8 +219,8 @@ const googleUrlComponents = computed(() => {
 
 		<Field :label="__('seo-pro::messages.facebook_preview')">
 			<a class="block max-w-[680px] border rounded-lg overflow-hidden" :href="url" target="_blank">
-				<div v-if="image" class="w-full h-[354px]">
-					<img class="size-full object-cover" :src="image" />
+				<div v-if="facebookImageUrl" class="w-full h-[354px]">
+					<img class="size-full" :src="facebookImageUrl" />
 				</div>
 				<div class="bg-[#F2F4F7] dark:bg-[#1C1C1D] px-4 py-3">
 					<div class="uppercase text-[#65686C] dark:text-[#B0B3B8] text-[.8125rem] mb-[8px]" v-text="domain" />
