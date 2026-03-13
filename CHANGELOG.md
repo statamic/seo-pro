@@ -1,5 +1,16 @@
 # Release Notes
 
+## 7.3.0 (2026-03-13)
+
+### What's new
+- Transform preview images using Glide [#516](https://github.com/statamic/seo-pro/issues/516) by @duncanmcclean
+
+### What's fixed
+- Remember tab in site defaults publish form [#517](https://github.com/statamic/seo-pro/issues/517) by @duncanmcclean
+- Fix border of twitter preview in dark mode [#518](https://github.com/statamic/seo-pro/issues/518) by @duncanmcclean
+
+
+
 ## 7.2.0 (2026-03-09)
 
 ### What's new
