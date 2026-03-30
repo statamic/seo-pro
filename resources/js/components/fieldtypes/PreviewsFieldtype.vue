@@ -1,7 +1,7 @@
 <script setup>
 import { Fieldtype } from '@statamic/cms';
 import { Field, injectPublishContext } from '@statamic/cms/ui';
-import { computed, ref, watch, getCurrentInstance } from 'vue';
+import { computed, ref, watch, getCurrentInstance, onMounted, onBeforeUnmount } from 'vue';
 import striptags from "striptags";
 
 const instance = getCurrentInstance();
@@ -162,6 +162,15 @@ const googleUrlComponents = computed(() => {
 
 	return [origin, ...pathSegments];
 });
+
+const onAssetSaved = (asset) => {
+	if (image && asset.id === image.value) {
+		Statamic.$callbacks.call('bustAndReloadImageCaches', [twitterImageUrl.value, facebookImageUrl.value]);
+	}
+};
+
+onMounted(() => Statamic.$events.$on('asset.saved', onAssetSaved));
+onBeforeUnmount(() => Statamic.$events.$off('asset.saved', onAssetSaved));
 </script>
 
 <template>
