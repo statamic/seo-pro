@@ -107,8 +107,17 @@ class Cascade
         }
 
         $this->data = $this->data->map(function ($item, $key) {
+            // Skip json_ld_schema. It might need to use resolved SEO values as context.
+            if ($key === 'json_ld_schema') {
+                return $item;
+            }
+
             return $this->parse($key, $item);
         });
+
+        if ($this->data->has('json_ld_schema')) {
+            $this->data->put('json_ld_schema', $this->parseJsonLdSchema($this->data->get('json_ld_schema')));
+        }
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
@@ -482,6 +491,23 @@ class Cascade
             return (string) Antlers::parse($item, array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
+            ));
+        } catch (RuntimeException $e) {
+            return $item;
+        }
+    }
+
+    protected function parseJsonLdSchema($item)
+    {
+        if (! is_string($item) || ! Str::contains($item, '{{')) {
+            return $item;
+        }
+
+        try {
+            return (string) Antlers::parse($item, array_merge(
+                app(ViewCascade::class)->toArray(),
+                $this->current ?? [],
+                ['seo' => $this->data->all()],
             ));
         } catch (RuntimeException $e) {
             return $item;

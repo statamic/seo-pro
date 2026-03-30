@@ -19,12 +19,13 @@ const resolveSeoValue = (field) => {
 
 	if (value.source === 'inherit') {
 		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
+		let placeholder = props.meta.placeholders.value[field];
 
-		if (seoField.field?.type === 'assets' && seoField.placeholder) {
-			return props.meta.assetContainerUrl + '/' + seoField.placeholder;
+		if (seoField.field?.type === 'assets' && placeholder) {
+			return props.meta.assetContainerUrl + '/' + placeholder;
 		}
 
-		return seoField.placeholder;
+		return placeholder;
 	}
 
 	if (value.source === 'field') {
