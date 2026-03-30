@@ -13,13 +13,14 @@ const { expose } = Fieldtype.use(emit, props);
 defineExpose(expose);
 
 const { values: publishValues, meta: publishMeta, blueprint } = injectPublishContext();
+const placeholders = computed(() => props.meta.placeholders ?? {});
 
 const resolveSeoValue = (field) => {
 	let value = publishValues.value.seo[field];
 
 	if (value.source === 'inherit') {
 		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
-		let placeholder = props.meta.placeholders.value[field];
+		let placeholder = placeholders.value[field];
 
 		if (seoField.field?.type === 'assets' && placeholder) {
 			return props.meta.assetContainerUrl + '/' + placeholder;
