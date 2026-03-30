@@ -187,7 +187,7 @@ const googleUrlComponents = computed(() => {
 				</div>
 				<a v-if="facebookImageUrl" class="block shrink-0 !pl-[20px]" :href="url" target="_blank">
 					<div class="size-[92px]">
-						<img class="rounded-[8px] size-full object-conver" :src="facebookImageUrl">
+						<img class="rounded-[8px] size-full object-cover" :src="facebookImageUrl">
 					</div>
 				</a>
 			</div>
