@@ -9,9 +9,12 @@ use Statamic\Facades\Antlers;
 use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Site;
 use Statamic\Fields\Fieldtype;
+use Statamic\SeoPro\Fieldtypes\Concerns\ResolvesPlaceholders;
 
 class SeoProPreviews extends Fieldtype
 {
+    use ResolvesPlaceholders;
+
     public $selectable = false;
 
     public function preload()
@@ -24,6 +27,7 @@ class SeoProPreviews extends Fieldtype
                 ? AssetContainer::find(config('statamic.seo-pro.assets.container'))->url()
                 : null,
             'faviconUrl' => $this->faviconUrl(),
+            'placeholders' => $this->getPlaceholders(),
         ];
     }
 
