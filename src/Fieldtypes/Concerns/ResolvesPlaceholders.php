@@ -47,7 +47,7 @@ trait ResolvesPlaceholders
                     return $value->join("\n");
                 }
 
-                if (is_array($value)) {
+                if (is_array($value) && is_string(array_first($value))) {
                     return implode(', ', $value);
                 }
 
