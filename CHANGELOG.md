@@ -1,5 +1,19 @@
 # Release Notes
 
+## 7.4.0 (2026-03-30)
+
+### What's new
+- Add missing default values to site defaults [#520](https://github.com/statamic/seo-pro/issues/520) by @duncanmcclean
+
+### What's fixed
+- Refactor SEO field placeholders [#523](https://github.com/statamic/seo-pro/issues/523) by @duncanmcclean
+- Fix squished Google preview image [#524](https://github.com/statamic/seo-pro/issues/524) by @duncanmcclean
+- Reload preview images when asset is updated [#525](https://github.com/statamic/seo-pro/issues/525) by @duncanmcclean
+- Previews field shouldn't be localizable [#526](https://github.com/statamic/seo-pro/issues/526) by @duncanmcclean
+- Fix "Array to string conversion" error when resolving placeholders [#527](https://github.com/statamic/seo-pro/issues/527) by @duncanmcclean
+
+
+
 ## 7.3.0 (2026-03-13)
 
 ### What's new
