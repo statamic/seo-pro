@@ -120,6 +120,16 @@ You can even use Antlers to pull data from fields as necessary:
 
 ![JSON-LD Schema field on Section Defaults page](./docs-json-ld-schema.png)
 
+The "Organization Logo" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
+
+```php
+// config/statamic/seo-pro.php
+
+'json_ld' => [
+    'use_glide_for_logo' => false,
+],
+```
+
 ## Reports
 
 You may generate an SEO report that checks all the pages of your site against a number of tests. The tests include mandatory items like title tag uniqueness, or suggested items like URLs being no more than 3 segments. Failing a mandatory item will result in a fail where failing a suggested item will result in a warning.
