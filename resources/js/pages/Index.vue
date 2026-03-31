@@ -21,7 +21,7 @@ defineProps({
 				<Link
 					v-if="canViewReports"
 					:href="cp_url('seo-pro/reports')"
-					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:border-dark-400 dark:hover:bg-dark-575 md:flex lg:w-1/2"
+					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:bg-gray-800 md:flex lg:w-1/2"
 				>
 					<Icon name="chart-monitoring-indicator" class="size-6 text-gray-400 mt-1 mb-2 me-4" />
 					<div class="mb-4 flex-1 md:mb-0 md:me-6">
@@ -33,7 +33,7 @@ defineProps({
 				<Link
 					v-if="canEditSiteDefaults"
 					:href="cp_url('seo-pro/site-defaults/edit')"
-					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:border-dark-400 dark:hover:bg-dark-575 md:flex lg:w-1/2"
+					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:bg-gray-800 md:flex lg:w-1/2"
 				>
 					<Icon name="earth" class="size-6 text-gray-400 mt-1 mb-2 me-4" />
 					<div class="mb-4 flex-1 md:mb-0 md:me-6">
@@ -45,7 +45,7 @@ defineProps({
 				<Link
 					v-if="canEditSectionDefaults"
 					:href="cp_url('seo-pro/section-defaults')"
-					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:border-dark-400 dark:hover:bg-dark-575 md:flex lg:w-1/2"
+					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:bg-gray-800 md:flex lg:w-1/2"
 				>
 					<Icon name="folder" class="size-6 text-gray-400 mt-1 mb-2 me-4" />
 					<div class="mb-4 flex-1 md:mb-0 md:me-6">
