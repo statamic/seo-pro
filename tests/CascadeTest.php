@@ -418,7 +418,7 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
-    public function it_generates_json_ld_organization_logo_with_glide_by_default()
+    public function glide_url_is_returned_for_json_ld_organization_logo()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
@@ -440,7 +440,7 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
-    public function it_generates_json_ld_organization_logo_as_permalink_when_glide_disabled()
+    public function permalink_is_returned_for_json_ld_organization_logo_when_config_is_false()
     {
         config(['statamic.seo-pro.json_ld.use_glide_for_logo' => false]);
 
