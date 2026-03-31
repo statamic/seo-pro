@@ -1,5 +1,15 @@
 # Release Notes
 
+## 7.5.0 (2026-03-31)
+
+### What's new
+- Allow disabling Glide for JSON-LD organization logo [#510](https://github.com/statamic/seo-pro/issues/510) by @samalisam-novu
+
+### What's fixed
+- Fix dark mode hover state on index page [#529](https://github.com/statamic/seo-pro/issues/529) by @duncanmcclean
+
+
+
 ## 7.4.0 (2026-03-30)
 
 ### What's new
