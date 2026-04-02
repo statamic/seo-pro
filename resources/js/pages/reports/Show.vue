@@ -3,7 +3,7 @@ import { Head, usePoll } from '@statamic/cms/inertia';
 import { DateFormatter } from '@statamic/cms';
 import { Header, Button, DocsCallout, Icon, Panel, Card, Description, Listing, Badge, DropdownItem, Heading } from '@statamic/cms/ui';
 import StatusIcon from "../../components/reporting/StatusIcon.vue";
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onBeforeUnmount } from 'vue';
 import PageDetailsModal from "../../components/reporting/PageDetailsModal.vue";
 
 const props = defineProps({
@@ -48,6 +48,8 @@ if (isGenerating.value) {
 		() => isGenerating.value,
 		() => (isGenerating.value ? start() : stop())
 	);
+
+	onBeforeUnmount(stop);
 }
 </script>
 
