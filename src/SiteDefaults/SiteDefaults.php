@@ -13,7 +13,7 @@ class SiteDefaults
     public static function get(): Collection
     {
         return Blink::once('seo-pro::site-defaults', function () {
-            $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+            $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'site_defaults', []);
 
             return Site::all()->map(function ($site) use ($data) {
                 $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : null);
@@ -56,7 +56,7 @@ class SiteDefaults
 
     public static function save(LocalizedSiteDefaults $localized): bool
     {
-        $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+        $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'site_defaults', []);
 
         if (Site::multiEnabled()) {
             $data[$localized->locale()] = $localized->all();
