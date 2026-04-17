@@ -534,20 +534,6 @@ class Cascade
 
     protected function robots()
     {
-        if ($this->data->has('robots')) {
-            $robots = $this->data->get('robots');
-
-            if ($robots instanceof \Statamic\Fields\Value) {
-                $robots = $robots->value();
-            }
-
-            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
-                return collect($robots)->pluck('key')->toArray();
-            }
-
-            return is_array($robots) ? $robots : [];
-        }
-
         $robots = [];
 
         if ($indexing = $this->data->get('robots_indexing')) {
@@ -568,6 +554,24 @@ class Cascade
 
         if ($this->data->get('robots_nosnippet')) {
             $robots[] = 'nosnippet';
+        }
+
+        if (! empty($robots)) {
+            return $robots;
+        }
+
+        if ($this->data->has('robots')) {
+            $robots = $this->data->get('robots');
+
+            if ($robots instanceof \Statamic\Fields\Value) {
+                $robots = $robots->value();
+            }
+
+            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
+                return collect($robots)->pluck('key')->toArray();
+            }
+
+            return is_array($robots) ? $robots : [];
         }
 
         return $robots;
