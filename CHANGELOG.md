@@ -1,5 +1,15 @@
 # Release Notes
 
+## 7.5.1 (2026-04-17)
+
+### What's fixed
+- Stop polling report info when navigating away [#531](https://github.com/statamic/seo-pro/issues/531) by @duncanmcclean
+- Fix site defaults disappearing when using Antlers values [#534](https://github.com/statamic/seo-pro/issues/534) by @joshuablum
+- Stack title and description on small widths in report summary [#537](https://github.com/statamic/seo-pro/issues/537) by @duncanmcclean
+- Fix robots meta ignoring new fields when legacy array exists [#538](https://github.com/statamic/seo-pro/issues/538) by @duncanmcclean
+
+
+
 ## 7.5.0 (2026-03-31)
 
 ### What's new
