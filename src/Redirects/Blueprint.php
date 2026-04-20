@@ -21,6 +21,7 @@ class Blueprint
                                     'field' => [
                                         'type' => 'text',
                                         'display' => __('Source URL'),
+                                        'instructions' => __('seo-pro::messages.redirect_source_url'),
                                         'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
                                         'listable' => true,
                                         'focus' => true,
@@ -31,6 +32,7 @@ class Blueprint
                                     'field' => [
                                         'type' => 'text',
                                         'display' => __('Destination URL'),
+                                        'instructions' => __('seo-pro::messages.redirect_destination_url'),
                                         'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
                                         'listable' => true,
                                     ],
@@ -40,6 +42,7 @@ class Blueprint
                                     'field' => [
                                         'type' => 'select',
                                         'display' => __('Response Code'),
+                                        'instructions' => __('seo-pro::messages.redirect_response_code'),
                                         'options' => [
                                             301 => '301 - Permanent',
                                             302 => '302 - Temporary',
