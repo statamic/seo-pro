@@ -14,6 +14,7 @@ use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Http\Resources\Redirects\Redirects;
 use Statamic\SeoPro\Redirects\Redirect;
+use Statamic\SeoPro\Rules\UniqueRedirectUrl;
 
 class RedirectController extends CpController
 {
@@ -101,10 +102,9 @@ class RedirectController extends CpController
     {
         $this->authorize('store', Redirect::class);
 
-        $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
+        $request->validate(['source_url' => [new UniqueRedirectUrl]]);
 
-        // TODO: ensure urls are formatted correctly. add validation?
-        // todo: validate against two of the same source url
+        $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
         $redirect = Facades\Redirect::make()
             ->sourceUrl($values['source_url'])
@@ -137,7 +137,7 @@ class RedirectController extends CpController
     {
         $this->authorize('update', $redirect);
 
-        // todo: validate against two of the same source url
+        $request->validate(['source_url' => [new UniqueRedirectUrl($redirect->id())]]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 

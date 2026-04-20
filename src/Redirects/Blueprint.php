@@ -21,7 +21,7 @@ class Blueprint
                                     'field' => [
                                         'type' => 'text',
                                         'display' => __('Source URL'),
-                                        'validate' => ['required'],
+                                        'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
                                         'listable' => true,
                                         'focus' => true,
                                     ],
@@ -31,7 +31,7 @@ class Blueprint
                                     'field' => [
                                         'type' => 'text',
                                         'display' => __('Destination URL'),
-                                        'validate' => ['required'],
+                                        'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
                                         'listable' => true,
                                     ],
                                 ],
