@@ -66,6 +66,7 @@ return [
 
     'redirects' => [
         'directory' => base_path('content/seo-pro/redirects'),
+        'preserve_query_string' => false,
     ],
 
 ];

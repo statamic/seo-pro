@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +20,7 @@ use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
 use Statamic\SeoPro\GraphQL\SeoProType;
+use Statamic\SeoPro\Redirects\HandleRedirects;
 use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\SeoPro\Redirects\RedirectRepository;
 use Statamic\SeoPro\Redirects\Stache\RedirectsStore;
@@ -195,20 +195,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function renderNotFoundHttpExceptions()
     {
-        NotFoundHttpException::renderUsing(function (Request $request) {
-            if (Statamic::isCpRoute() || Statamic::isApiRoute()) {
-                return;
-            }
-
-            $redirect = Facades\Redirect::query()
-                ->where('source_url', $request->getRequestUri()) // todo: handle absolute urls, with and without the trailing/leading slash
-                ->where('enabled', true)
-                ->first();
-
-            if ($redirect) {
-                return redirect($redirect->destinationUrl(), $redirect->responseCode());
-            }
-        });
+        NotFoundHttpException::renderUsing(fn ($request) => app(HandleRedirects::class)($request));
 
         return $this;
     }
