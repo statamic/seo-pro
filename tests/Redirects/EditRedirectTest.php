@@ -20,7 +20,7 @@ class EditRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -38,7 +38,7 @@ class EditRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 

@@ -23,7 +23,7 @@ class Redirect
     protected $id;
     protected $sourceUrl;
     protected $destinationUrl;
-    protected $statusCode;
+    protected $responseCode;
     protected $enabled;
 
     public function __construct()
@@ -52,10 +52,10 @@ class Redirect
             ->args(func_get_args());
     }
 
-    public function statusCode($statusCode = null)
+    public function responseCode($responseCode = null)
     {
         return $this
-            ->fluentlyGetOrSet('statusCode')
+            ->fluentlyGetOrSet('responseCode')
             ->args(func_get_args());
     }
 
@@ -119,7 +119,7 @@ class Redirect
             ...$this->data->all(),
             'source_url' => $this->sourceUrl(),
             'destination_url' => $this->destinationUrl(),
-            'status_code' => $this->statusCode(),
+            'response_code' => $this->responseCode(),
             'enabled' => $this->enabled(),
         ]);
     }
@@ -149,7 +149,7 @@ class Redirect
     private function queryableMethods(): array
     {
         return [
-            'id', 'sourceUrl', 'destinationUrl', 'statusCode', 'enabled',
+            'id', 'sourceUrl', 'destinationUrl', 'responseCode', 'enabled',
         ];
     }
 }

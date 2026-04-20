@@ -28,7 +28,7 @@ class RedirectsStore extends BasicStore
             ->id((new GetSlugFromPath)($path))
             ->sourceUrl(Arr::pull($data, 'source_url'))
             ->destinationUrl(Arr::pull($data, 'destination_url'))
-            ->statusCode(Arr::pull($data, 'status_code'))
+            ->responseCode(Arr::pull($data, 'response_code'))
             ->enabled(Arr::pull($data, 'enabled'))
             ->data($data);
     }

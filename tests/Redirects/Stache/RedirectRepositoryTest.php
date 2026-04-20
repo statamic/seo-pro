@@ -30,7 +30,7 @@ class RedirectRepositoryTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -40,7 +40,7 @@ class RedirectRepositoryTest extends TestCase
         $this->assertEquals('abc', $redirect->id());
         $this->assertEquals('https://cool-runnings.com/old-url', $redirect->sourceUrl());
         $this->assertEquals('https://cool-runnings.com/new-url', $redirect->destinationUrl());
-        $this->assertEquals(302, $redirect->statusCode());
+        $this->assertEquals(302, $redirect->responseCode());
         $this->assertTrue($redirect->enabled());
     }
 
@@ -51,7 +51,7 @@ class RedirectRepositoryTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true);
 
         $this->repo->save($redirect);
@@ -62,7 +62,7 @@ class RedirectRepositoryTest extends TestCase
 
         $this->assertEquals('https://cool-runnings.com/old-url', $yaml['source_url']);
         $this->assertEquals('https://cool-runnings.com/new-url', $yaml['destination_url']);
-        $this->assertEquals(302, $yaml['status_code']);
+        $this->assertEquals(302, $yaml['response_code']);
         $this->assertTrue($yaml['enabled']);
     }
 
@@ -73,7 +73,7 @@ class RedirectRepositoryTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true);
 
         $redirect->save();

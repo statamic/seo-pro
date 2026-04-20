@@ -21,7 +21,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 302,
+                'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertOk();
@@ -31,7 +31,7 @@ class StoreRedirectTest extends TestCase
         $this->assertNotNull($redirect);
         $this->assertEquals('https://cool-runnings.com/old-url', $redirect->sourceUrl());
         $this->assertEquals('https://cool-runnings.com/new-url', $redirect->destinationUrl());
-        $this->assertEquals(302, $redirect->statusCode());
+        $this->assertEquals(302, $redirect->responseCode());
         $this->assertTrue($redirect->enabled());
     }
 
@@ -43,7 +43,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertOk();
@@ -63,7 +63,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertRedirect('/cp');
@@ -81,7 +81,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => '',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('source_url');
@@ -95,24 +95,24 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => '',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('destination_url');
     }
 
     #[Test]
-    public function status_code_is_required()
+    public function response_code_is_required()
     {
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => '',
+                'response_code' => '',
                 'enabled' => true,
             ])
-            ->assertSessionHasErrors('status_code');
+            ->assertSessionHasErrors('response_code');
     }
 
     #[Test]
@@ -123,7 +123,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => '/old-url',
                 'destination_url' => '/blog/post/2026',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertOk();
@@ -143,7 +143,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'not a valid url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('source_url');
@@ -157,7 +157,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'not a valid url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('destination_url');
@@ -170,7 +170,7 @@ class StoreRedirectTest extends TestCase
             ->id('existing')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(301)
+            ->responseCode(301)
             ->enabled(true)
             ->save();
 
@@ -179,7 +179,7 @@ class StoreRedirectTest extends TestCase
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/another-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('source_url');

@@ -33,7 +33,7 @@ class ListedRedirect extends JsonResource
             'id' => $redirect->id(),
             'source_url' => $redirect->sourceUrl(),
             'destination_url' => $redirect->destinationUrl(),
-            'status_code' => [$redirect->statusCode()],
+            'response_code' => [$redirect->responseCode()],
             'status' => $redirect->status(),
             'edit_url' => $redirect->editUrl(),
             'delete_url' => $redirect->deleteUrl(),

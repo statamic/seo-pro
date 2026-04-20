@@ -36,10 +36,10 @@ class Blueprint
                                     ],
                                 ],
                                 [
-                                    'handle' => 'status_code',
+                                    'handle' => 'response_code',
                                     'field' => [
                                         'type' => 'select',
-                                        'display' => __('Status Code'),
+                                        'display' => __('Response Code'),
                                         'options' => [
                                             301 => '301 - Permanent',
                                             302 => '302 - Temporary',

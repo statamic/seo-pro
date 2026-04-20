@@ -206,7 +206,7 @@ class ServiceProvider extends AddonServiceProvider
                 ->first();
 
             if ($redirect) {
-                return redirect($redirect->destinationUrl(), $redirect->statusCode());
+                return redirect($redirect->destinationUrl(), $redirect->responseCode());
             }
         });
 

@@ -109,7 +109,7 @@ class RedirectController extends CpController
         $redirect = Facades\Redirect::make()
             ->sourceUrl($values['source_url'])
             ->destinationUrl($values['destination_url'])
-            ->statusCode($values['status_code'])
+            ->responseCode($values['response_code'])
             ->enabled($values['enabled']);
 
         $redirect->save();
@@ -127,7 +127,7 @@ class RedirectController extends CpController
             ->values($redirect->data()->merge([
                 'source_url' => $redirect->sourceUrl(),
                 'destination_url' => $redirect->destinationUrl(),
-                'status_code' => $redirect->statusCode(),
+                'response_code' => $redirect->responseCode(),
                 'enabled' => $redirect->enabled(),
             ])->all())
             ->submittingTo($redirect->updateUrl());
@@ -144,7 +144,7 @@ class RedirectController extends CpController
         $redirect
             ->sourceUrl($values['source_url'])
             ->destinationUrl($values['destination_url'])
-            ->statusCode($values['status_code'])
+            ->responseCode($values['response_code'])
             ->enabled($values['enabled']);
 
         $redirect->save();

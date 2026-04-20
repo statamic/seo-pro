@@ -20,7 +20,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -29,7 +29,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/updated-old-url',
                 'destination_url' => 'https://cool-runnings.com/updated-new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => false,
             ])
             ->assertOk();
@@ -38,7 +38,7 @@ class UpdateRedirectTest extends TestCase
 
         $this->assertEquals('https://cool-runnings.com/updated-old-url', $redirect->sourceUrl());
         $this->assertEquals('https://cool-runnings.com/updated-new-url', $redirect->destinationUrl());
-        $this->assertEquals(301, $redirect->statusCode());
+        $this->assertEquals(301, $redirect->responseCode());
         $this->assertFalse($redirect->enabled());
     }
 
@@ -49,7 +49,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -60,7 +60,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/updated-old-url',
                 'destination_url' => 'https://cool-runnings.com/updated-new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => false,
             ])
             ->assertRedirect('/cp');
@@ -77,7 +77,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -86,7 +86,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => '',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 302,
+                'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('source_url');
@@ -99,7 +99,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -108,20 +108,20 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => '',
-                'status_code' => 302,
+                'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('destination_url');
     }
 
     #[Test]
-    public function status_code_is_required_when_updating()
+    public function response_code_is_required_when_updating()
     {
         Facades\Redirect::make()
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -130,10 +130,10 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => '',
+                'response_code' => '',
                 'enabled' => true,
             ])
-            ->assertSessionHasErrors('status_code');
+            ->assertSessionHasErrors('response_code');
     }
 
     #[Test]
@@ -143,7 +143,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -152,7 +152,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'not a valid url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 302,
+                'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('source_url');
@@ -165,7 +165,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -174,7 +174,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'not a valid url',
-                'status_code' => 302,
+                'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('destination_url');
@@ -187,7 +187,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -195,7 +195,7 @@ class UpdateRedirectTest extends TestCase
             ->id('def')
             ->sourceUrl('https://cool-runnings.com/another-old-url')
             ->destinationUrl('https://cool-runnings.com/another-new-url')
-            ->statusCode(301)
+            ->responseCode(301)
             ->enabled(true)
             ->save();
 
@@ -204,7 +204,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/another-old-url',
                 'destination_url' => 'https://cool-runnings.com/new-url',
-                'status_code' => 302,
+                'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertSessionHasErrors('source_url');
@@ -217,7 +217,7 @@ class UpdateRedirectTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true)
             ->save();
 
@@ -226,7 +226,7 @@ class UpdateRedirectTest extends TestCase
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source_url' => 'https://cool-runnings.com/old-url',
                 'destination_url' => 'https://cool-runnings.com/updated-new-url',
-                'status_code' => 301,
+                'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertOk();

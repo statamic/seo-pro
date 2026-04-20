@@ -30,14 +30,14 @@ class RedirectsStoreTest extends TestCase
     {
         $item = $this->store->makeItemFromFile(
             $this->directory.'/abc.yaml',
-            "source_url: 'https://cool-runnings.com/old-url'\ndestination_url: 'https://cool-runnings.com/new-url'\nstatus_code: 302\nenabled: true",
+            "source_url: 'https://cool-runnings.com/old-url'\ndestination_url: 'https://cool-runnings.com/new-url'\nresponse_code: 302\nenabled: true",
         );
 
         $this->assertInstanceOf(Redirect::class, $item);
         $this->assertEquals('abc', $item->id());
         $this->assertEquals('https://cool-runnings.com/old-url', $item->sourceUrl());
         $this->assertEquals('https://cool-runnings.com/new-url', $item->destinationUrl());
-        $this->assertEquals(302, $item->statusCode());
+        $this->assertEquals(302, $item->responseCode());
         $this->assertTrue($item->enabled());
     }
 
@@ -52,7 +52,7 @@ class RedirectsStoreTest extends TestCase
         $this->assertInstanceOf(Redirect::class, $item);
         $this->assertEquals('https://cool-runnings.com/old-url', $item->sourceUrl());
         $this->assertNull($item->destinationUrl());
-        $this->assertEquals(301, $item->statusCode());
+        $this->assertEquals(301, $item->responseCode());
         $this->assertTrue($item->enabled());
     }
 
@@ -63,7 +63,7 @@ class RedirectsStoreTest extends TestCase
             ->id('abc')
             ->sourceUrl('https://cool-runnings.com/old-url')
             ->destinationUrl('https://cool-runnings.com/new-url')
-            ->statusCode(302)
+            ->responseCode(302)
             ->enabled(true);
 
         $this->store->save($redirect);
