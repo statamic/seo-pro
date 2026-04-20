@@ -1,4 +1,5 @@
 import Index from './pages/Index.vue';
+import RedirectsIndex from './pages/redirects/Index.vue';
 import ReportsIndex from './pages/reports/Index.vue';
 import ReportsEmpty from './pages/reports/Empty.vue';
 import ReportsShow from './pages/reports/Show.vue';
@@ -11,6 +12,7 @@ import SeoProWidget from "./components/widgets/SeoProWidget.vue";
 
 Statamic.booting(() => {
     Statamic.$inertia.register('seo-pro::Index', Index);
+    Statamic.$inertia.register('seo-pro::Redirects/Index', RedirectsIndex);
     Statamic.$inertia.register('seo-pro::Reports/Index', ReportsIndex);
     Statamic.$inertia.register('seo-pro::Reports/Empty', ReportsEmpty);
     Statamic.$inertia.register('seo-pro::Reports/Show', ReportsShow);

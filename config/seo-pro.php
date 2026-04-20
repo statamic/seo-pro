@@ -64,4 +64,8 @@ return [
         ],
     ],
 
+    'redirects' => [
+        'directory' => base_path('content/seo-pro/redirects'),
+    ],
+
 ];

@@ -2,19 +2,32 @@
 
 namespace Statamic\SeoPro;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Statamic\Console\Commands\Multisite;
+use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Addon;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\File;
+use Statamic\Facades\Git;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\Events\RedirectSaved;
+use Statamic\SeoPro\GraphQL\AlternateLocaleType;
+use Statamic\SeoPro\GraphQL\SeoProType;
+use Statamic\SeoPro\Redirects\Redirect;
+use Statamic\SeoPro\Redirects\RedirectRepository;
+use Statamic\SeoPro\Redirects\Stache\RedirectsStore;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
+use Statamic\Stache\Stache;
+use Statamic\Statamic;
+use Statamic\Support\Str;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -29,6 +42,10 @@ class ServiceProvider extends AddonServiceProvider
         'hotFile' => __DIR__.'/../resources/dist/hot',
     ];
 
+    protected $policies = [
+        Redirect::class => Policies\RedirectPolicy::class,
+    ];
+
     protected $config = false;
 
     public function bootAddon()
@@ -41,6 +58,10 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
+            ->bootStache()
+            ->renderNotFoundHttpExceptions()
+            ->bootRouteBindings()
+            ->bootGit()
             ->bootAddonCommands()
             ->bootAddonGraphQL()
             ->bootMultisiteCommandHook();
@@ -80,6 +101,18 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonPermissions()
     {
         Permission::group('seo_pro', 'SEO Pro', function () {
+            Permission::register('view seo redirects', function ($permission) {
+                $permission
+                    ->label(__('seo-pro::messages.view_redirects'))
+                    ->children([
+                        Permission::make('edit seo redirects')
+                            ->label(__('seo-pro::messages.edit_redirects'))
+                            ->children([
+                                Permission::make('create seo redirects')->label(__('seo-pro::messages.create_redirects')),
+                                Permission::make('delete seo redirects')->label(__('seo-pro::messages.delete_redirects')),
+                            ]),
+                    ]);
+            });
             Permission::register('view seo reports', function ($permission) {
                 $permission->children([
                     Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
@@ -102,6 +135,7 @@ class ServiceProvider extends AddonServiceProvider
                     ->children(function () use ($nav) {
                         return [
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
+                            $nav->item(__('seo-pro::messages.redirects'))->route('seo-pro.redirects.index')->can('view seo redirects'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
                         ];
@@ -135,6 +169,90 @@ class ServiceProvider extends AddonServiceProvider
         Image::registerCustomManipulationPresets($presets->filter()->all());
 
         return $this;
+    }
+
+    protected function bootStache()
+    {
+        $this->registerSerializableClasses([
+            Redirect::class,
+        ]);
+
+        $this->app['stache']->registerStores([
+            (new RedirectsStore)->directory(config('statamic.seo-pro.redirects.directory')),
+        ]);
+
+        $this->app->bind(Redirects\Stache\RedirectQueryBuilder::class, function () {
+            return new Redirects\Stache\RedirectQueryBuilder($this->app->make(Stache::class)->store('redirects'));
+        });
+
+        Statamic::repository(
+            RedirectRepository::class,
+            Redirects\Stache\RedirectRepository::class,
+        );
+
+        return $this;
+    }
+
+    protected function renderNotFoundHttpExceptions()
+    {
+        NotFoundHttpException::renderUsing(function (Request $request) {
+            if (Statamic::isCpRoute() || Statamic::isApiRoute()) {
+                return;
+            }
+
+            $redirect = Facades\Redirect::query()
+                ->where('source_url', $request->getRequestUri()) // todo: handle absolute urls, with and without the trailing/leading slash
+                ->where('enabled', true)
+                ->first();
+
+            if ($redirect) {
+                return redirect($redirect->destinationUrl(), $redirect->statusCode());
+            }
+        });
+
+        return $this;
+    }
+
+    protected function bootRouteBindings()
+    {
+        Route::bind('redirect', function ($id, $route = null) {
+            if (! $route || (! $this->isCpRoute($route) && ! $this->isFrontendBindingEnabled())) {
+                return $id;
+            }
+
+            $field = $route->bindingFieldFor('redirect') ?? 'id';
+
+            return $field == 'id'
+                ? Facades\Redirect::find($id)
+                : Facades\Redirect::query()->where($field, $id)->first();
+        });
+
+        return $this;
+    }
+
+    protected function bootGit()
+    {
+        if (config('statamic.git.enabled')) {
+            Git::listen(RedirectSaved::class);
+        }
+
+        return $this;
+    }
+
+    private function isCpRoute(\Illuminate\Routing\Route $route): bool
+    {
+        $cp = Str::ensureRight(config('statamic.cp.route'), '/');
+
+        if ($cp === '/') {
+            return true;
+        }
+
+        return Str::startsWith($route->uri(), $cp);
+    }
+
+    private function isFrontendBindingEnabled(): bool
+    {
+        return config('statamic.routes.bindings', false);
     }
 
     protected function bootAddonCommands()
@@ -196,6 +314,7 @@ class ServiceProvider extends AddonServiceProvider
         $user = User::current();
 
         return $user->can('view seo reports')
+            || $user->can('view seo redirects')
             || $user->can('edit seo site defaults')
             || $user->can('edit seo section defaults');
     }

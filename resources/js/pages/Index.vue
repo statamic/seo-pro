@@ -5,6 +5,7 @@ import { Header, CardPanel, Heading, Subheading, DocsCallout, Icon } from '@stat
 defineProps({
 	icon: String,
 	canViewReports: Boolean,
+	canViewRedirects: Boolean,
 	canEditSiteDefaults: Boolean,
 	canEditSectionDefaults: Boolean,
 });
@@ -27,6 +28,18 @@ defineProps({
 					<div class="mb-4 flex-1 md:mb-0 md:me-6">
 						<Heading size="lg" :text="__('seo-pro::messages.reports')" />
 						<Subheading v-text="__('seo-pro::messages.seo_reports_description')" />
+					</div>
+				</Link>
+
+				<Link
+					v-if="canViewRedirects"
+					:href="cp_url('seo-pro/redirects')"
+					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:bg-gray-800 md:flex lg:w-1/2"
+				>
+					<Icon name="moved" class="size-6 text-gray-400 mt-1 mb-2 me-4" />
+					<div class="mb-4 flex-1 md:mb-0 md:me-6">
+						<Heading size="lg" :text="__('seo-pro::messages.redirects')" />
+						<Subheading v-text="__('seo-pro::messages.redirects_description')" />
 					</div>
 				</Link>
 

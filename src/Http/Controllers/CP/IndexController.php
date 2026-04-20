@@ -12,6 +12,7 @@ class IndexController
         return Inertia::render('seo-pro::Index', [
             'icon' => File::get(__DIR__.'/../../../../resources/svg/nav-icon.svg'),
             'canViewReports' => auth()->user()->can('view seo reports'),
+            'canViewRedirects' => auth()->user()->can('view seo redirects'),
             'canEditSiteDefaults' => auth()->user()->can('edit seo site defaults'),
             'canEditSectionDefaults' => auth()->user()->can('edit seo section defaults'),
         ]);

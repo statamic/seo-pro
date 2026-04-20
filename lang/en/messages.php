@@ -3,6 +3,13 @@
 return [
 
     'humans_txt' => 'Humans.txt',
+    'redirects' => 'Redirects',
+    'redirects_description' => 'Manage URL redirects to preserve legacy URLs and improve SEO.',
+    'create_redirect' => 'Create Redirect',
+    'view_redirects' => 'View Redirects',
+    'edit_redirects' => 'Edit Redirects',
+    'create_redirects' => 'Create Redirects',
+    'delete_redirects' => 'Delete Redirects',
     'reports' => 'Reports',
     'report' => 'Report',
     'seo_reports' => 'SEO Reports',
