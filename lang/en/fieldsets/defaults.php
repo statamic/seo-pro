@@ -36,6 +36,11 @@ return [
     'json_ld_person_name' => 'Person Name',
     'json_ld_person_name_instruct' => 'The full name of the person this site represents.',
 
+    'json_ld_custom_section' => 'Custom Schema',
+    'json_ld_custom_section_instruct' => 'Add custom JSON-LD schema that will be included on every page across your site.',
+    'json_ld_schema' => 'Schema',
+    'json_ld_schema_instruct' => 'Paste your custom schema objects here (`LocalBusiness`, `SoftwareApplication`, etc). You can use Antlers to output data from the item. Will be wrapped in the appropriate script tag.',
+
     'json_ld_breadcrumbs_section' => 'Breadcrumbs',
     'json_ld_breadcrumbs' => 'Breadcrumbs',
     'json_ld_breadcrumbs_instruct' => 'Enable breadcrumb structured data to show this page\'s location in your site hierarchy in search results. [Learn more](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb)',
