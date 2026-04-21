@@ -166,7 +166,7 @@ class Fields
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
-                            'inherit' => $this->isContent,
+                            'inherit' => true,
                             'localizable' => true,
                             'full_width_setting' => true,
                             'field' => [
