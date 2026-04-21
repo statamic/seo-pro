@@ -18,12 +18,12 @@ use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro\Events\RedirectSaved;
-use Statamic\SeoPro\GraphQL\AlternateLocaleType;
-use Statamic\SeoPro\GraphQL\SeoProType;
 use Statamic\SeoPro\Redirects\HandleRedirects;
 use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\SeoPro\Redirects\RedirectRepository;
 use Statamic\SeoPro\Redirects\Stache\RedirectsStore;
+use Statamic\SeoPro\Reporting\Page;
+use Statamic\SeoPro\Reporting\Report;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Stache\Stache;
 use Statamic\Statamic;
@@ -47,6 +47,15 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $config = false;
+
+    public function register()
+    {
+        $this->registerSerializableClasses([
+            Page::class,
+            Report::class,
+            Redirect::class,
+        ]);
+    }
 
     public function bootAddon()
     {
@@ -173,10 +182,6 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootStache()
     {
-        $this->registerSerializableClasses([
-            Redirect::class,
-        ]);
-
         $this->app['stache']->registerStores([
             (new RedirectsStore)->directory(config('statamic.seo-pro.redirects.directory')),
         ]);
