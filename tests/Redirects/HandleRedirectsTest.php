@@ -168,4 +168,131 @@ class HandleRedirectsTest extends TestCase
 
         Queue::assertNotPushed(RecordRedirectHit::class);
     }
+
+    #[Test]
+    public function it_redirects_matching_wildcard_urls()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/blog/*')
+            ->destinationUrl('/articles/$1')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/blog/hello-world')
+            ->assertRedirect('/articles/hello-world')
+            ->assertStatus(301);
+    }
+
+    #[Test]
+    public function it_redirects_with_multiple_wildcards()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/blog/*/posts/*')
+            ->destinationUrl('/articles/$1/entries/$2')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/blog/2026/posts/hello-world')
+            ->assertRedirect('/articles/2026/entries/hello-world');
+    }
+
+    #[Test]
+    public function it_prefers_exact_match_over_wildcard()
+    {
+        Facades\Redirect::make()
+            ->id('wildcard')
+            ->sourceUrl('/blog/*')
+            ->destinationUrl('/articles/$1')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        Facades\Redirect::make()
+            ->id('exact')
+            ->sourceUrl('/blog/specific-post')
+            ->destinationUrl('/exact-destination')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/blog/specific-post')
+            ->assertRedirect('/exact-destination');
+    }
+
+    #[Test]
+    public function it_does_not_redirect_inactive_wildcard_redirects()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/blog/*')
+            ->destinationUrl('/articles/$1')
+
+            ->responseCode(301)
+            ->enabled(false)
+            ->save();
+
+        $this->get('/blog/hello-world')->assertNotFound();
+    }
+
+    #[Test]
+    public function it_preserves_query_string_on_wildcard_redirects()
+    {
+        config(['statamic.seo-pro.redirects.preserve_query_string' => true]);
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/blog/*')
+            ->destinationUrl('/articles/$1')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/blog/hello-world?ref=twitter')
+            ->assertRedirect('/articles/hello-world?ref=twitter');
+    }
+
+    #[Test]
+    public function it_dispatches_hit_job_for_wildcard_redirects()
+    {
+        Queue::fake();
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/blog/*')
+            ->destinationUrl('/articles/$1')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/blog/hello-world')->assertRedirect('/articles/hello-world');
+
+        Queue::assertPushed(RecordRedirectHit::class, function ($job) {
+            return $job->redirectId === 'abc';
+        });
+    }
+
+    #[Test]
+    public function it_does_not_match_wildcard_when_pattern_does_not_match()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/blog/*')
+            ->destinationUrl('/articles/$1')
+
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/articles/hello-world')->assertNotFound();
+    }
 }

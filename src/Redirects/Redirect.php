@@ -68,6 +68,11 @@ class Redirect
             ->args(func_get_args());
     }
 
+    public function usesWildcard(): bool
+    {
+        return str_contains($this->sourceUrl() ?? '', '*');
+    }
+
     public function hits($hits = null)
     {
         return $this
