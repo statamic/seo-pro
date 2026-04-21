@@ -86,8 +86,15 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-url?foo=bar&baz=qux')
-            ->assertRedirect('/new-url?foo=bar&baz=qux');
+        $response = $this->get('/old-url?foo=bar&baz=qux');
+        $response->assertStatus(301);
+
+        $location = $response->headers->get('Location');
+        $query = parse_url($location, PHP_URL_QUERY);
+        parse_str($query, $params);
+
+        $this->assertEquals('/new-url', parse_url($location, PHP_URL_PATH));
+        $this->assertEquals(['foo' => 'bar', 'baz' => 'qux'], $params);
     }
 
     #[Test]
