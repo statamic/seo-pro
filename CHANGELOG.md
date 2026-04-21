@@ -1,5 +1,15 @@
 # Release Notes
 
+## 7.6.0 (2026-04-21)
+
+### What's new
+- Support custom JSON-LD schema in site defaults [#540](https://github.com/statamic/seo-pro/issues/540) by @duncanmcclean
+
+### What's fixed
+- Use `adaptiveWidth` prop in site selector [#539](https://github.com/statamic/seo-pro/issues/539) by @duncanmcclean
+
+
+
 ## 7.5.1 (2026-04-17)
 
 ### What's fixed
