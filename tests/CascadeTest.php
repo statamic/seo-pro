@@ -418,6 +418,29 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_generates_json_ld_data_with_custom_schema_from_site_defaults()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_schema' => '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->with([
+                'title' => 'Home',
+            ])
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+            '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
     public function glide_url_is_returned_for_json_ld_organization_logo()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
