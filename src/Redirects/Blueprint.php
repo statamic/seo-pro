@@ -15,6 +15,7 @@ class Blueprint
                     'display' => __('General'),
                     'sections' => [
                         [
+                            'display' => __('Redirect'),
                             'fields' => [
                                 [
                                     'handle' => 'source_url',
@@ -44,8 +45,11 @@ class Blueprint
                                         'display' => __('Response Code'),
                                         'instructions' => __('seo-pro::messages.redirect_response_code'),
                                         'options' => [
-                                            301 => '301 - Permanent',
-                                            302 => '302 - Temporary',
+                                            301 => '301 - Moved Permanently',
+                                            302 => '302 - Found',
+                                            307 => '307 - Temporary Redirect',
+                                            308 => '308 - Permanent Redirect',
+                                            410 => '410 - Gone',
                                         ],
                                         'default' => 301,
                                         'clearable' => false,
