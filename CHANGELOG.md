@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.6.1 (2026-04-21)
+
+### What's fixed
+- Fix serializable class errors [#542](https://github.com/statamic/seo-pro/issues/542) by @duncanmcclean
+
+
+
 ## 7.6.0 (2026-04-21)
 
 ### What's new
