@@ -137,7 +137,7 @@ class Redirect
             'destination_url' => $this->destinationUrl(),
             'response_code' => $this->responseCode(),
             'enabled' => $this->enabled(),
-            'hits' => $this->hits(),
+            'hits' => $this->hits() ?: null,
             'last_hit_at' => $this->lastHitAt(),
         ]);
     }
