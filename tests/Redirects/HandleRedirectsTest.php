@@ -1,6 +1,6 @@
 <?php
 
-namespace Redirects;
+namespace Tests\Redirects;
 
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;

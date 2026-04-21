@@ -1,6 +1,6 @@
 <?php
 
-namespace Redirects\Stache;
+namespace Tests\Redirects\Stache;
 
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\SeoPro\Facades\Redirect;
