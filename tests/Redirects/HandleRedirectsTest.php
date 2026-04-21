@@ -2,8 +2,10 @@
 
 namespace Redirects;
 
+use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\SeoPro\Facades;
+use Statamic\SeoPro\Redirects\RecordRedirectHit;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -135,5 +137,35 @@ class HandleRedirectsTest extends TestCase
 
         $this->get('/old-url')
             ->assertRedirect('https://example.com/new-url');
+    }
+
+    #[Test]
+    public function it_dispatches_a_job_to_record_the_hit()
+    {
+        Queue::fake();
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/old-url')
+            ->destinationUrl('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/old-url')->assertRedirect('/new-url');
+
+        Queue::assertPushed(RecordRedirectHit::class, function ($job) {
+            return $job->redirectId === 'abc';
+        });
+    }
+
+    #[Test]
+    public function it_does_not_dispatch_a_job_when_no_redirect_matches()
+    {
+        Queue::fake();
+
+        $this->get('/nonexistent-url')->assertNotFound();
+
+        Queue::assertNotPushed(RecordRedirectHit::class);
     }
 }

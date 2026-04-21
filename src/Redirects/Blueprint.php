@@ -54,6 +54,28 @@ class Blueprint
                                         'listable' => true,
                                     ],
                                 ],
+                                [
+                                    'handle' => 'hits',
+                                    'field' => [
+                                        'type' => 'integer',
+                                        'display' => __('Hits'),
+                                        'default' => 0,
+                                        'listable' => true,
+                                        'read_only' => true,
+                                        'visibility' => 'hidden',
+                                    ],
+                                ],
+                                [
+                                    'handle' => 'last_hit_at',
+                                    'field' => [
+                                        'type' => 'date',
+                                        'display' => __('Last Hit At'),
+                                        'time_enabled' => true,
+                                        'listable' => true,
+                                        'read_only' => true,
+                                        'visibility' => 'hidden',
+                                    ],
+                                ],
                             ],
                         ],
                     ],

@@ -30,6 +30,8 @@ class HandleRedirects
             $destinationUrl .= $separator.$request->getQueryString();
         }
 
+        RecordRedirectHit::dispatch($redirect->id());
+
         return redirect($destinationUrl, $redirect->responseCode());
     }
 }

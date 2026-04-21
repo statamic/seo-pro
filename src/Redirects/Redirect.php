@@ -25,6 +25,8 @@ class Redirect
     protected $destinationUrl;
     protected $responseCode;
     protected $enabled;
+    protected $hits = 0;
+    protected $lastHitAt;
 
     public function __construct()
     {
@@ -63,6 +65,20 @@ class Redirect
     {
         return $this
             ->fluentlyGetOrSet('enabled')
+            ->args(func_get_args());
+    }
+
+    public function hits($hits = null)
+    {
+        return $this
+            ->fluentlyGetOrSet('hits')
+            ->args(func_get_args());
+    }
+
+    public function lastHitAt($lastHitAt = null)
+    {
+        return $this
+            ->fluentlyGetOrSet('lastHitAt')
             ->args(func_get_args());
     }
 
@@ -121,6 +137,8 @@ class Redirect
             'destination_url' => $this->destinationUrl(),
             'response_code' => $this->responseCode(),
             'enabled' => $this->enabled(),
+            'hits' => $this->hits(),
+            'last_hit_at' => $this->lastHitAt(),
         ]);
     }
 
@@ -149,7 +167,7 @@ class Redirect
     private function queryableMethods(): array
     {
         return [
-            'id', 'sourceUrl', 'destinationUrl', 'responseCode', 'enabled',
+            'id', 'sourceUrl', 'destinationUrl', 'responseCode', 'enabled', 'hits', 'lastHitAt',
         ];
     }
 }

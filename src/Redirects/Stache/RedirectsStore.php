@@ -12,7 +12,7 @@ use Statamic\Support\Arr;
 class RedirectsStore extends BasicStore
 {
     protected $storeIndexes = [
-        'id', 'source_url', 'enabled',
+        'id', 'source_url', 'enabled', 'hits',
     ];
 
     public function key()
@@ -30,6 +30,8 @@ class RedirectsStore extends BasicStore
             ->destinationUrl(Arr::pull($data, 'destination_url'))
             ->responseCode(Arr::pull($data, 'response_code'))
             ->enabled(Arr::pull($data, 'enabled'))
+            ->hits(Arr::pull($data, 'hits') ?? 0)
+            ->lastHitAt(Arr::pull($data, 'last_hit_at'))
             ->data($data);
     }
 }
