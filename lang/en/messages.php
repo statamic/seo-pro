@@ -13,6 +13,7 @@ return [
     'redirect_source' => 'Enter the URL you want to redirect from. Use `*` as a wildcard to match any characters (e.g. `/blog/2026/*`).',
     'redirect_destination' => 'Enter the destination URL. For wildcard redirects, use `$1`, `$2`, etc. to reference captured segments (e.g. `/articles/$1`).',
     'redirect_response_code' => 'Select the HTTP response code you want to use for this redirect.',
+    'redirect_description' => 'An optional note for internal use. This will not be shown to users.',
     'reports' => 'Reports',
     'report' => 'Report',
     'seo_reports' => 'SEO Reports',
