@@ -3,6 +3,7 @@
 namespace Tests\Redirects;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Role;
 use Statamic\Facades\User;
 use Statamic\SeoPro\Facades;
@@ -16,6 +17,8 @@ class EditRedirectTest extends TestCase
     #[Test]
     public function can_edit_redirect()
     {
+        Collection::make('pages')->save();
+
         Facades\Redirect::make()
             ->id('abc')
             ->source('https://cool-runnings.com/old-url')
@@ -28,7 +31,7 @@ class EditRedirectTest extends TestCase
             ->actingAs(User::make()->makeSuper()->save())
             ->get(cp_route('seo-pro.redirects.edit', 'abc'))
             ->assertOk()
-            ->assertSee('https://cool-runnings.com/old-url');
+            ->assertSee('cool-runnings.com\/old-url', escape: false);
     }
 
     #[Test]

@@ -3,6 +3,7 @@
 namespace Tests\Redirects;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Role;
 use Statamic\Facades\User;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -15,6 +16,8 @@ class CreateRedirectTest extends TestCase
     #[Test]
     public function can_create_redirect()
     {
+        Collection::make('pages')->save();
+
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->get(cp_route('seo-pro.redirects.create'))
