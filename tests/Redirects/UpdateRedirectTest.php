@@ -159,28 +159,6 @@ class UpdateRedirectTest extends TestCase
     }
 
     #[Test]
-    public function destination_url_must_be_a_valid_url_or_path_when_updating()
-    {
-        Facades\Redirect::make()
-            ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
-            ->responseCode(302)
-            ->enabled(true)
-            ->save();
-
-        $this
-            ->actingAs(User::make()->makeSuper()->save())
-            ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source_url' => 'https://cool-runnings.com/old-url',
-                'destination_url' => 'not a valid url',
-                'response_code' => 302,
-                'enabled' => true,
-            ])
-            ->assertSessionHasErrors('destination_url');
-    }
-
-    #[Test]
     public function source_url_must_be_unique_when_updating()
     {
         Facades\Redirect::make()

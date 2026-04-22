@@ -3,8 +3,10 @@
 namespace Statamic\SeoPro\Redirects;
 
 use Illuminate\Http\Request;
+use Statamic\Facades\Data;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
 use Statamic\Statamic;
+use Statamic\Support\Str;
 
 class HandleRedirects
 {
@@ -26,6 +28,10 @@ class HandleRedirects
         $destinationUrl = $redirect->usesWildcard()
             ? WildcardUrlMatcher::resolveDestination($redirect->destinationUrl(), $captures)
             : $redirect->destinationUrl();
+
+        if (Str::startsWith($destinationUrl, 'entry::') && $data = Data::find($destinationUrl)) {
+            $destinationUrl = $data->absoluteUrl();
+        }
 
         if ($request->getQueryString() && config('statamic.seo-pro.redirects.preserve_query_string')) {
             $separator = str_contains($destinationUrl, '?') ? '&' : '?';

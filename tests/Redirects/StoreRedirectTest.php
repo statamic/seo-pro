@@ -150,20 +150,6 @@ class StoreRedirectTest extends TestCase
     }
 
     #[Test]
-    public function destination_url_must_be_a_valid_url_or_path()
-    {
-        $this
-            ->actingAs(User::make()->makeSuper()->save())
-            ->post(cp_route('seo-pro.redirects.store'), [
-                'source_url' => 'https://cool-runnings.com/old-url',
-                'destination_url' => 'not a valid url',
-                'response_code' => 301,
-                'enabled' => true,
-            ])
-            ->assertSessionHasErrors('destination_url');
-    }
-
-    #[Test]
     public function source_url_must_be_unique()
     {
         Facades\Redirect::make()

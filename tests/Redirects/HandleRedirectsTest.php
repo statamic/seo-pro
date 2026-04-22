@@ -4,6 +4,8 @@ namespace Tests\Redirects;
 
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\RecordRedirectHit;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -301,5 +303,30 @@ class HandleRedirectsTest extends TestCase
             ->save();
 
         $this->get('/articles/hello-world')->assertNotFound();
+    }
+
+    #[Test]
+    public function it_redirects_to_an_entry()
+    {
+        $collection = tap(Collection::make('posts')->routes('/posts/{slug}'))->save();
+
+        $entry = tap(Entry::make()
+            ->id('post-1')
+            ->collection($collection)
+            ->slug('hello-world')
+            ->data(['title' => 'Hello World'])
+        )->save();
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->sourceUrl('/old-post')
+            ->destinationUrl('entry::post-1')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/old-post')
+            ->assertRedirect($entry->absoluteUrl())
+            ->assertStatus(301);
     }
 }

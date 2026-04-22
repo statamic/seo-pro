@@ -31,10 +31,10 @@ class Blueprint
                                 [
                                     'handle' => 'destination_url',
                                     'field' => [
-                                        'type' => 'text',
+                                        'type' => 'link',
                                         'display' => __('Destination URL'),
                                         'instructions' => __('seo-pro::messages.redirect_destination_url'),
-                                        'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
+                                        'validate' => ['required'],
                                         'listable' => true,
                                     ],
                                 ],
