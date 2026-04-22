@@ -441,6 +441,20 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_parses_antlers_in_json_ld_schema_values()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_schema' => new \Statamic\Fields\Value('{"@context":"https://schema.org","@type":"WebPage","name":"{{ title }}"}'),
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertEquals('{"@context":"https://schema.org","@type":"WebPage","name":"Home"}', $data['json_ld']->all());
+    }
+
+    #[Test]
     public function glide_url_is_returned_for_json_ld_organization_logo()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
