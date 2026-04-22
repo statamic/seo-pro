@@ -67,6 +67,87 @@ class RedirectRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_generates_id_from_source_when_saving_without_id()
+    {
+        $redirect = Facades\Redirect::make()
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertEquals('old-url', $redirect->id());
+    }
+
+    #[Test]
+    public function it_appends_suffix_when_generated_id_already_exists()
+    {
+        Facades\Redirect::make()
+            ->id('old-url')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $redirect = Facades\Redirect::make()
+            ->source('/old-url')
+            ->destination('/other-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertEquals('old-url-1', $redirect->id());
+    }
+
+    #[Test]
+    public function it_increments_suffix_when_multiple_duplicates_exist()
+    {
+        Facades\Redirect::make()
+            ->id('old-url')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        Facades\Redirect::make()
+            ->id('old-url-1')
+            ->source('/old-url')
+            ->destination('/other-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $redirect = Facades\Redirect::make()
+            ->source('/old-url')
+            ->destination('/another-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertEquals('old-url-2', $redirect->id());
+    }
+
+    #[Test]
+    public function it_does_not_change_existing_id_when_saving()
+    {
+        $redirect = Facades\Redirect::make()
+            ->id('my-custom-id')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertEquals('my-custom-id', $redirect->id());
+    }
+
+    #[Test]
     public function can_delete_redirect()
     {
         $redirect = Facades\Redirect::make()
