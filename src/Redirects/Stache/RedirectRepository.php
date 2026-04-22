@@ -44,7 +44,7 @@ class RedirectRepository implements RepositoryContract
     public function save(Redirect $redirect): void
     {
         if (! $redirect->id()) {
-            $redirect->id(Str::slug($redirect->sourceUrl()).'-'.Str::random(5));
+            $redirect->id(Str::slug($redirect->source()).'-'.Str::random(5));
         }
 
         $this->store->save($redirect);

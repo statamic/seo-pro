@@ -20,8 +20,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -36,8 +36,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -52,8 +52,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(false)
             ->save();
@@ -66,8 +66,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -82,8 +82,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -106,8 +106,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -123,8 +123,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url?existing=param')
+            ->source('/old-url')
+            ->destination('/new-url?existing=param')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -138,8 +138,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('https://example.com/new-url')
+            ->source('/old-url')
+            ->destination('https://example.com/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -155,8 +155,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -183,8 +183,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/blog/*')
-            ->destinationUrl('/articles/$1')
+            ->source('/blog/*')
+            ->destination('/articles/$1')
 
             ->responseCode(301)
             ->enabled(true)
@@ -200,8 +200,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/blog/*/posts/*')
-            ->destinationUrl('/articles/$1/entries/$2')
+            ->source('/blog/*/posts/*')
+            ->destination('/articles/$1/entries/$2')
 
             ->responseCode(301)
             ->enabled(true)
@@ -216,8 +216,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('wildcard')
-            ->sourceUrl('/blog/*')
-            ->destinationUrl('/articles/$1')
+            ->source('/blog/*')
+            ->destination('/articles/$1')
 
             ->responseCode(301)
             ->enabled(true)
@@ -225,8 +225,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('exact')
-            ->sourceUrl('/blog/specific-post')
-            ->destinationUrl('/exact-destination')
+            ->source('/blog/specific-post')
+            ->destination('/exact-destination')
 
             ->responseCode(301)
             ->enabled(true)
@@ -241,8 +241,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/blog/*')
-            ->destinationUrl('/articles/$1')
+            ->source('/blog/*')
+            ->destination('/articles/$1')
 
             ->responseCode(301)
             ->enabled(false)
@@ -258,8 +258,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/blog/*')
-            ->destinationUrl('/articles/$1')
+            ->source('/blog/*')
+            ->destination('/articles/$1')
 
             ->responseCode(301)
             ->enabled(true)
@@ -276,8 +276,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/blog/*')
-            ->destinationUrl('/articles/$1')
+            ->source('/blog/*')
+            ->destination('/articles/$1')
 
             ->responseCode(301)
             ->enabled(true)
@@ -295,8 +295,8 @@ class HandleRedirectsTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/blog/*')
-            ->destinationUrl('/articles/$1')
+            ->source('/blog/*')
+            ->destination('/articles/$1')
 
             ->responseCode(301)
             ->enabled(true)
@@ -319,8 +319,8 @@ class HandleRedirectsTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-post')
-            ->destinationUrl('entry::post-1')
+            ->source('/old-post')
+            ->destination('entry::post-1')
             ->responseCode(301)
             ->enabled(true)
             ->save();

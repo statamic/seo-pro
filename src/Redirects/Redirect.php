@@ -21,8 +21,8 @@ class Redirect
     use ContainsData, ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
 
     protected $id;
-    protected $sourceUrl;
-    protected $destinationUrl;
+    protected $source;
+    protected $destination;
     protected $responseCode;
     protected $enabled;
     protected $hits = 0;
@@ -40,17 +40,17 @@ class Redirect
             ->args(func_get_args());
     }
 
-    public function sourceUrl($sourceUrl = null)
+    public function source($source = null)
     {
         return $this
-            ->fluentlyGetOrSet('sourceUrl')
+            ->fluentlyGetOrSet('source')
             ->args(func_get_args());
     }
 
-    public function destinationUrl($destinationUrl = null)
+    public function destination($destination = null)
     {
         return $this
-            ->fluentlyGetOrSet('destinationUrl')
+            ->fluentlyGetOrSet('destination')
             ->args(func_get_args());
     }
 
@@ -70,7 +70,7 @@ class Redirect
 
     public function usesWildcard(): bool
     {
-        return str_contains($this->sourceUrl() ?? '', '*');
+        return str_contains($this->source() ?? '', '*');
     }
 
     public function hits($hits = null)
@@ -138,8 +138,8 @@ class Redirect
     {
         return Arr::removeNullValues([
             ...$this->data->all(),
-            'source_url' => $this->sourceUrl(),
-            'destination_url' => $this->destinationUrl(),
+            'source' => $this->source(),
+            'destination' => $this->destination(),
             'response_code' => $this->responseCode(),
             'enabled' => $this->enabled(),
             'hits' => $this->hits() ?: null,
@@ -172,7 +172,7 @@ class Redirect
     private function queryableMethods(): array
     {
         return [
-            'id', 'sourceUrl', 'destinationUrl', 'responseCode', 'enabled', 'hits', 'lastHitAt',
+            'id', 'source', 'destination', 'responseCode', 'enabled', 'hits', 'lastHitAt',
         ];
     }
 }

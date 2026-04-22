@@ -14,11 +14,11 @@ class RedirectQueryBuilderTest extends TestCase
     #[Test]
     public function can_query_columns()
     {
-        Redirect::make()->id('abc')->sourceUrl('https://cool-runnings.com/old-url')->destinationUrl('https://cool-runnings.com/new-url')->save();
-        Redirect::make()->id('def')->sourceUrl('https://cool-runnings.com/old-url-2')->destinationUrl('https://cool-runnings.com/new-url-2')->save();
-        Redirect::make()->id('ghi')->sourceUrl('https://cool-runnings.com/old-url-3')->destinationUrl('https://cool-runnings.com/new-url-3')->save();
+        Redirect::make()->id('abc')->source('https://cool-runnings.com/old-url')->destination('https://cool-runnings.com/new-url')->save();
+        Redirect::make()->id('def')->source('https://cool-runnings.com/old-url-2')->destination('https://cool-runnings.com/new-url-2')->save();
+        Redirect::make()->id('ghi')->source('https://cool-runnings.com/old-url-3')->destination('https://cool-runnings.com/new-url-3')->save();
 
-        $query = Redirect::query()->where('source_url', 'https://cool-runnings.com/old-url-2');
+        $query = Redirect::query()->where('source', 'https://cool-runnings.com/old-url-2');
 
         $this->assertCount(1, $query->get());
         $this->assertEquals('def', $query->first()->id());

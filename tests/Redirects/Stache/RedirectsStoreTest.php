@@ -30,13 +30,13 @@ class RedirectsStoreTest extends TestCase
     {
         $item = $this->store->makeItemFromFile(
             $this->directory.'/abc.yaml',
-            "source_url: 'https://cool-runnings.com/old-url'\ndestination_url: 'https://cool-runnings.com/new-url'\nresponse_code: 302\nenabled: true",
+            "source: 'https://cool-runnings.com/old-url'\ndestination: 'https://cool-runnings.com/new-url'\nresponse_code: 302\nenabled: true",
         );
 
         $this->assertInstanceOf(Redirect::class, $item);
         $this->assertEquals('abc', $item->id());
-        $this->assertEquals('https://cool-runnings.com/old-url', $item->sourceUrl());
-        $this->assertEquals('https://cool-runnings.com/new-url', $item->destinationUrl());
+        $this->assertEquals('https://cool-runnings.com/old-url', $item->source());
+        $this->assertEquals('https://cool-runnings.com/new-url', $item->destination());
         $this->assertEquals(302, $item->responseCode());
         $this->assertTrue($item->enabled());
     }
@@ -46,12 +46,12 @@ class RedirectsStoreTest extends TestCase
     {
         $item = $this->store->makeItemFromFile(
             $this->directory.'/abc.yaml',
-            "source_url: 'https://cool-runnings.com/old-url'",
+            "source: 'https://cool-runnings.com/old-url'",
         );
 
         $this->assertInstanceOf(Redirect::class, $item);
-        $this->assertEquals('https://cool-runnings.com/old-url', $item->sourceUrl());
-        $this->assertNull($item->destinationUrl());
+        $this->assertEquals('https://cool-runnings.com/old-url', $item->source());
+        $this->assertNull($item->destination());
         $this->assertEquals(301, $item->responseCode());
         $this->assertTrue($item->enabled());
     }
@@ -61,8 +61,8 @@ class RedirectsStoreTest extends TestCase
     {
         $redirect = Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true);
 

@@ -28,8 +28,8 @@ class RedirectRepositoryTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -38,8 +38,8 @@ class RedirectRepositoryTest extends TestCase
 
         $this->assertInstanceOf(Redirect::class, $redirect);
         $this->assertEquals('abc', $redirect->id());
-        $this->assertEquals('https://cool-runnings.com/old-url', $redirect->sourceUrl());
-        $this->assertEquals('https://cool-runnings.com/new-url', $redirect->destinationUrl());
+        $this->assertEquals('https://cool-runnings.com/old-url', $redirect->source());
+        $this->assertEquals('https://cool-runnings.com/new-url', $redirect->destination());
         $this->assertEquals(302, $redirect->responseCode());
         $this->assertTrue($redirect->enabled());
     }
@@ -49,8 +49,8 @@ class RedirectRepositoryTest extends TestCase
     {
         $redirect = Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true);
 
@@ -60,8 +60,8 @@ class RedirectRepositoryTest extends TestCase
 
         $yaml = YAML::file($redirect->path())->parse();
 
-        $this->assertEquals('https://cool-runnings.com/old-url', $yaml['source_url']);
-        $this->assertEquals('https://cool-runnings.com/new-url', $yaml['destination_url']);
+        $this->assertEquals('https://cool-runnings.com/old-url', $yaml['source']);
+        $this->assertEquals('https://cool-runnings.com/new-url', $yaml['destination']);
         $this->assertEquals(302, $yaml['response_code']);
         $this->assertTrue($yaml['enabled']);
     }
@@ -71,8 +71,8 @@ class RedirectRepositoryTest extends TestCase
     {
         $redirect = Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true);
 

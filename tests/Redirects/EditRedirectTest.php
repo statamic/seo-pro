@@ -18,8 +18,8 @@ class EditRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -36,8 +36,8 @@ class EditRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();

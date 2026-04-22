@@ -25,28 +25,28 @@ class HandleRedirects
             return;
         }
 
-        $destinationUrl = $redirect->usesWildcard()
-            ? WildcardUrlMatcher::resolveDestination($redirect->destinationUrl(), $captures)
-            : $redirect->destinationUrl();
+        $destination = $redirect->usesWildcard()
+            ? WildcardUrlMatcher::resolveDestination($redirect->destination(), $captures)
+            : $redirect->destination();
 
-        if (Str::startsWith($destinationUrl, 'entry::') && $data = Data::find($destinationUrl)) {
-            $destinationUrl = $data->absoluteUrl();
+        if (Str::startsWith($destination, 'entry::') && $data = Data::find($destination)) {
+            $destination = $data->absoluteUrl();
         }
 
         if ($request->getQueryString() && config('statamic.seo-pro.redirects.preserve_query_string')) {
-            $separator = str_contains($destinationUrl, '?') ? '&' : '?';
-            $destinationUrl .= $separator.$request->getQueryString();
+            $separator = str_contains($destination, '?') ? '&' : '?';
+            $destination .= $separator.$request->getQueryString();
         }
 
         RecordRedirectHit::dispatch($redirect->id());
 
-        return redirect($destinationUrl, $redirect->responseCode());
+        return redirect($destination, $redirect->responseCode());
     }
 
     private function findExactMatch(string $path): ?Redirect
     {
         return RedirectFacade::query()
-            ->where('source_url', $path)
+            ->where('source', $path)
             ->where('enabled', true)
             ->first();
     }
@@ -59,7 +59,7 @@ class HandleRedirects
             ->filter->usesWildcard();
 
         foreach ($wildcardRedirects as $redirect) {
-            $matched = WildcardUrlMatcher::match($redirect->sourceUrl(), $path);
+            $matched = WildcardUrlMatcher::match($redirect->source(), $path);
 
             if ($matched !== null) {
                 $captures = $matched;

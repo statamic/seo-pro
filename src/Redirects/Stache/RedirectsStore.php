@@ -12,7 +12,7 @@ use Statamic\Support\Arr;
 class RedirectsStore extends BasicStore
 {
     protected $storeIndexes = [
-        'id', 'source_url', 'enabled', 'hits',
+        'id', 'source', 'enabled', 'hits',
     ];
 
     public function key()
@@ -26,8 +26,8 @@ class RedirectsStore extends BasicStore
 
         return Facades\Redirect::make()
             ->id((new GetSlugFromPath)($path))
-            ->sourceUrl(Arr::pull($data, 'source_url'))
-            ->destinationUrl(Arr::pull($data, 'destination_url'))
+            ->source(Arr::pull($data, 'source'))
+            ->destination(Arr::pull($data, 'destination'))
             ->responseCode(Arr::pull($data, 'response_code'))
             ->enabled(Arr::pull($data, 'enabled'))
             ->hits(Arr::pull($data, 'hits') ?? 0)

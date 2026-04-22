@@ -31,8 +31,8 @@ class ListedRedirect extends JsonResource
 
         return [
             'id' => $redirect->id(),
-            'source_url' => $redirect->sourceUrl(),
-            'destination_url' => $redirect->destinationUrl(),
+            'source' => $redirect->source(),
+            'destination' => $redirect->destination(),
             'response_code' => [$redirect->responseCode()],
             'hits' => $redirect->hits(),
             'last_hit_at' => $redirect->lastHitAt(),

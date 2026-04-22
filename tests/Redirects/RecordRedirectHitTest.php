@@ -18,8 +18,8 @@ class RecordRedirectHitTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -42,8 +42,8 @@ class RecordRedirectHitTest extends TestCase
 
         Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('/old-url')
-            ->destinationUrl('/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();

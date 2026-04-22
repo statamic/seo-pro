@@ -25,8 +25,8 @@ class RedirectTest extends TestCase
 
         $redirect = Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true);
 
@@ -38,8 +38,8 @@ class RedirectTest extends TestCase
         $this->assertStringContainsString('content/seo-pro/redirects/abc.yaml', $redirect->path());
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'YAML'
-source_url: 'https://cool-runnings.com/old-url'
-destination_url: 'https://cool-runnings.com/new-url'
+source: 'https://cool-runnings.com/old-url'
+destination: 'https://cool-runnings.com/new-url'
 response_code: 302
 enabled: true
 
@@ -56,8 +56,8 @@ YAML, file_get_contents($redirect->path()));
 
         $redirect = Facades\Redirect::make()
             ->id('abc')
-            ->sourceUrl('https://cool-runnings.com/old-url')
-            ->destinationUrl('https://cool-runnings.com/new-url')
+            ->source('https://cool-runnings.com/old-url')
+            ->destination('https://cool-runnings.com/new-url')
             ->responseCode(302)
             ->enabled(true);
 

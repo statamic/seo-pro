@@ -18,22 +18,22 @@ class Blueprint
                             'display' => __('Redirect'),
                             'fields' => [
                                 [
-                                    'handle' => 'source_url',
+                                    'handle' => 'source',
                                     'field' => [
                                         'type' => 'text',
-                                        'display' => __('Source URL'),
-                                        'instructions' => __('seo-pro::messages.redirect_source_url'),
+                                        'display' => __('Source'),
+                                        'instructions' => __('seo-pro::messages.redirect_source'),
                                         'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
                                         'listable' => true,
                                         'focus' => true,
                                     ],
                                 ],
                                 [
-                                    'handle' => 'destination_url',
+                                    'handle' => 'destination',
                                     'field' => [
                                         'type' => 'link',
-                                        'display' => __('Destination URL'),
-                                        'instructions' => __('seo-pro::messages.redirect_destination_url'),
+                                        'display' => __('Destination'),
+                                        'instructions' => __('seo-pro::messages.redirect_destination'),
                                         'validate' => ['required'],
                                         'listable' => true,
                                     ],

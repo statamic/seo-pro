@@ -33,7 +33,7 @@ class RedirectController extends CpController
             $sortDirection = request('order', 'asc');
 
             if (! $sortField && ! request('search')) {
-                $sortField = 'source_url';
+                $sortField = 'source';
                 $sortDirection = 'desc';
             }
 
@@ -81,8 +81,8 @@ class RedirectController extends CpController
 
         if ($search = request('search')) {
             $query
-                ->where('source_url', 'LIKE', '%'.$search.'%')
-                ->orWhere('destination_url', 'LIKE', '%'.$search.'%');
+                ->where('source', 'LIKE', '%'.$search.'%')
+                ->orWhere('destination', 'LIKE', '%'.$search.'%');
         }
 
         return $query;
@@ -102,13 +102,13 @@ class RedirectController extends CpController
     {
         $this->authorize('store', Redirect::class);
 
-        $request->validate(['source_url' => [new UniqueRedirectUrl]]);
+        $request->validate(['source' => [new UniqueRedirectUrl]]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
         $redirect = Facades\Redirect::make()
-            ->sourceUrl($values['source_url'])
-            ->destinationUrl($values['destination_url'])
+            ->source($values['source'])
+            ->destination($values['destination'])
             ->responseCode($values['response_code'])
             ->enabled($values['enabled']);
 
@@ -123,10 +123,10 @@ class RedirectController extends CpController
 
         return PublishForm::make(Facades\Redirect::blueprint())
             ->icon('moved')
-            ->title($redirect->sourceUrl())
+            ->title($redirect->source())
             ->values($redirect->data()->merge([
-                'source_url' => $redirect->sourceUrl(),
-                'destination_url' => $redirect->destinationUrl(),
+                'source' => $redirect->source(),
+                'destination' => $redirect->destination(),
                 'response_code' => $redirect->responseCode(),
                 'enabled' => $redirect->enabled(),
             ])->all())
@@ -137,13 +137,13 @@ class RedirectController extends CpController
     {
         $this->authorize('update', $redirect);
 
-        $request->validate(['source_url' => [new UniqueRedirectUrl($redirect->id())]]);
+        $request->validate(['source' => [new UniqueRedirectUrl($redirect->id())]]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
         $redirect
-            ->sourceUrl($values['source_url'])
-            ->destinationUrl($values['destination_url'])
+            ->source($values['source'])
+            ->destination($values['destination'])
             ->responseCode($values['response_code'])
             ->enabled($values['enabled']);
 

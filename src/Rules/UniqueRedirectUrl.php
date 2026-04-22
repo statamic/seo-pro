@@ -19,7 +19,7 @@ class UniqueRedirectUrl implements ValidationRule
             return;
         }
 
-        $existing = Redirect::query()->where('source_url', $value)->first();
+        $existing = Redirect::query()->where('source', $value)->first();
 
         if (! $existing) {
             return;
