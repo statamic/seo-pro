@@ -41,10 +41,10 @@ function requestComplete({ items: newItems, parameters }) {
 		push-query
 		@request-completed="requestComplete"
 	>
-		<template #cell-source_url="{ row: redirect, isColumnVisible }">
+		<template #cell-source="{ row: redirect, isColumnVisible }">
 			<Link class="title-index-field" :href="redirect.edit_url">
 				<StatusIndicator v-if="!isColumnVisible('status')" :status="redirect.status" />
-				<span v-text="redirect.source_url" />
+				<span v-text="redirect.source" />
 			</Link>
 
 			<resource-deleter

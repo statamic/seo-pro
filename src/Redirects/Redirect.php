@@ -167,6 +167,14 @@ class Redirect
         if (in_array($method = Str::camel($field), $this->queryableMethods())) {
             return $this->{$method}();
         }
+
+        $value = $this->get($field);
+
+        if (! $field = $this->blueprint()->field($field)) {
+            return $value;
+        }
+
+        return $field->fieldtype()->toQueryableValue($value);
     }
 
     private function queryableMethods(): array
