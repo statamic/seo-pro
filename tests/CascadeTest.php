@@ -451,7 +451,7 @@ class CascadeTest extends TestCase
             ->with($siteDefaults->all())
             ->get();
 
-        $this->assertEquals('{"@context":"https://schema.org","@type":"WebPage","name":"Home"}', $data['json_ld']->all());
+        $this->assertEquals('{"@context":"https://schema.org","@type":"WebPage","name":"Home"}', $data['json_ld']->last());
     }
 
     #[Test]
