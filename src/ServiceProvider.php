@@ -76,8 +76,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
-            ->bootStache()
-            ->renderNotFoundHttpExceptions()
+            ->bootRedirects()
             ->bootRouteBindings()
             ->bootGit()
             ->bootAddonScheduledCommands()
@@ -191,7 +190,7 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootStache()
+    protected function bootRedirects()
     {
         $this->app['stache']->registerStores([
             (new ErrorsStore)->directory(config('statamic.seo-pro.redirects.errors.directory')),
@@ -209,17 +208,18 @@ class ServiceProvider extends AddonServiceProvider
         Statamic::repository(ErrorRepository::class, Redirects\Stache\ErrorRepository::class);
         Statamic::repository(RedirectRepository::class, Redirects\Stache\RedirectRepository::class);
 
-        return $this;
-    }
+        if (config('statamic.seo-pro.redirects.driver') === 'database') {
+            $this->app['stache']->exclude('redirects');
 
-    protected function renderNotFoundHttpExceptions()
-    {
+            Statamic::repository(RedirectRepository::class, Redirects\Eloquent\RedirectRepository::class);
+        }
+
         NotFoundHttpException::renderUsing(fn ($request) => app(HandleRedirects::class)($request));
 
         return $this;
     }
 
-    protected function bootRouteBindings()
+    protected function bootRouteBindings(): static
     {
         Route::bind('error', function ($id, $route = null) {
             if (! $route || (! $this->isCpRoute($route) && ! $this->isFrontendBindingEnabled())) {

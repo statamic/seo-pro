@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Redirects\Stache;
 
+use Illuminate\Support\Collection;
 use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Redirects\RedirectBlueprint as RedirectBlueprint;
@@ -22,12 +23,12 @@ class RedirectRepository implements RepositoryContract
         $this->store = $stache->store('redirects');
     }
 
-    public function all()
+    public function all(): Collection
     {
         return $this->query()->get();
     }
 
-    public function query()
+    public function query(): RedirectQueryBuilder
     {
         return app(RedirectQueryBuilder::class);
     }
@@ -63,14 +64,14 @@ class RedirectRepository implements RepositoryContract
         $this->store->save($redirect);
     }
 
-    public function blueprint(): Blueprint
-    {
-        return (new RedirectBlueprint)();
-    }
-
     public function delete(Redirect $redirect): void
     {
         $this->store->delete($redirect);
+    }
+
+    public function blueprint(): Blueprint
+    {
+        return (new RedirectBlueprint)();
     }
 
     public static function bindings(): array

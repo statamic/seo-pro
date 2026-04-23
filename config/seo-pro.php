@@ -65,6 +65,8 @@ return [
     ],
 
     'redirects' => [
+//        'driver' => 'file',
+        'driver' => 'database',
         'directory' => base_path('content/seo-pro/redirects'),
         'preserve_query_string' => true,
         'default_response_code' => 301,

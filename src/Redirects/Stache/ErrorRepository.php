@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Redirects\Stache;
 
+use Illuminate\Support\Collection;
 use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Redirects\Error;
@@ -22,12 +23,12 @@ class ErrorRepository implements RepositoryContract
         $this->store = $stache->store('errors');
     }
 
-    public function all()
+    public function all(): Collection
     {
         return $this->query()->get();
     }
 
-    public function query()
+    public function query(): ErrorQueryBuilder
     {
         return app(ErrorQueryBuilder::class);
     }
@@ -63,14 +64,14 @@ class ErrorRepository implements RepositoryContract
         $this->store->save($error);
     }
 
-    public function blueprint(): Blueprint
-    {
-        return (new ErrorBlueprint)();
-    }
-
     public function delete(Error $error): void
     {
         $this->store->delete($error);
+    }
+
+    public function blueprint(): Blueprint
+    {
+        return (new ErrorBlueprint)();
     }
 
     public static function bindings(): array

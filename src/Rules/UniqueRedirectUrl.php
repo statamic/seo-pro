@@ -9,7 +9,7 @@ use Statamic\SeoPro\Facades\Redirect;
 class UniqueRedirectUrl implements ValidationRule
 {
     public function __construct(
-        private ?string $except = null,
+        private $except = null,
         private ?string $site = null,
     ) {}
 
