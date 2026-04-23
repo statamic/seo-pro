@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.6.2 (2026-04-23)
+
+### What's fixed
+- Fix Antlers parsing for JSON-LD (site defaults) [#544](https://github.com/statamic/seo-pro/issues/544) by @joshuablum
+
+
+
 ## 7.6.1 (2026-04-21)
 
 ### What's fixed
