@@ -73,6 +73,11 @@ return [
             'collections' => ['*'],
             'taxonomies' => ['*'],
         ],
+        'errors' => [
+            'enabled' => env('SEO_PRO_TRACK_ERRORS', false),
+            'directory' => storage_path('statamic/seopro/errors'),
+            'purge_after_days' => 30,
+        ],
     ],
 
 ];

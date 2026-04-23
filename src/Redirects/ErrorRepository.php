@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro\Redirects;
 
-interface RedirectRepository
+interface ErrorRepository
 {
     //
 }

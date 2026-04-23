@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Redirects;
 use Statamic\Facades\Blueprint as BlueprintFacade;
 use Statamic\Fields\Blueprint as FieldsBlueprint;
 
-class Blueprint
+class RedirectBlueprint
 {
     public function __invoke(): FieldsBlueprint
     {

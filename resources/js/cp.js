@@ -1,4 +1,5 @@
 import Index from './pages/Index.vue';
+import ErrorsIndex from './pages/errors/Index.vue';
 import RedirectsIndex from './pages/redirects/Index.vue';
 import ReportsIndex from './pages/reports/Index.vue';
 import ReportsEmpty from './pages/reports/Empty.vue';
@@ -9,9 +10,11 @@ import SeoProFieldtype from './components/fieldtypes/SeoProFieldtype.vue';
 import PreviewsFieldtype from "./components/fieldtypes/PreviewsFieldtype.vue";
 import SourceFieldtype from './components/fieldtypes/SourceFieldtype.vue';
 import SeoProWidget from "./components/widgets/SeoProWidget.vue";
+import RecentErrorsWidget from "./components/widgets/RecentErrorsWidget.vue";
 
 Statamic.booting(() => {
     Statamic.$inertia.register('seo-pro::Index', Index);
+    Statamic.$inertia.register('seo-pro::Errors/Index', ErrorsIndex);
     Statamic.$inertia.register('seo-pro::Redirects/Index', RedirectsIndex);
     Statamic.$inertia.register('seo-pro::Reports/Index', ReportsIndex);
     Statamic.$inertia.register('seo-pro::Reports/Empty', ReportsEmpty);
@@ -24,4 +27,5 @@ Statamic.booting(() => {
     Statamic.$components.register('seo_pro_source-fieldtype', SourceFieldtype);
 
     Statamic.$components.register('seo-pro-widget', SeoProWidget);
+    Statamic.$components.register('seo-pro-recent-errors-widget', RecentErrorsWidget);
 });

@@ -5,6 +5,7 @@ return [
     'humans_txt' => 'Humans.txt',
     'redirects' => 'Redirects',
     'redirects_description' => 'Manage URL redirects to preserve legacy URLs and improve SEO.',
+    'errors' => 'Errors',
     'create_redirect' => 'Create Redirect',
     'view_redirects' => 'View Redirects',
     'edit_redirects' => 'Edit Redirects',

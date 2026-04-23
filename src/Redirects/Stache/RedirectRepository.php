@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\Redirects\Stache;
 
 use Statamic\Fields\Blueprint;
-use Statamic\SeoPro\Redirects\Blueprint as RedirectBlueprint;
+use Statamic\SeoPro\Redirects\RedirectBlueprint as RedirectBlueprint;
 use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\SeoPro\Redirects\RedirectQueryBuilder;
 use Statamic\SeoPro\Redirects\RedirectRepository as RepositoryContract;

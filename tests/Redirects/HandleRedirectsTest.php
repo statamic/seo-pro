@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Facades;
+use Statamic\SeoPro\Redirects\RecordError;
 use Statamic\SeoPro\Redirects\RecordRedirectHit;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
@@ -169,13 +170,59 @@ class HandleRedirectsTest extends TestCase
     }
 
     #[Test]
-    public function it_does_not_dispatch_a_job_when_no_redirect_matches()
+    public function it_does_not_dispatch_a_redirect_hit_job_when_no_redirect_matches()
     {
         Queue::fake();
 
         $this->get('/nonexistent-url')->assertNotFound();
 
         Queue::assertNotPushed(RecordRedirectHit::class);
+    }
+
+    #[Test]
+    public function it_dispatches_a_record_error_job_when_no_redirect_matches()
+    {
+        Queue::fake();
+
+        config(['statamic.seo-pro.redirects.errors.enabled' => true]);
+
+        $this->get('/nonexistent-url')->assertNotFound();
+
+        Queue::assertPushed(RecordError::class, function ($job) {
+            return $job->url === '/nonexistent-url';
+        });
+    }
+
+    #[Test]
+    public function it_does_not_dispatch_a_record_error_job_when_errors_are_disabled()
+    {
+        Queue::fake();
+
+        config(['statamic.seo-pro.redirects.errors.enabled' => false]);
+
+        $this->get('/nonexistent-url')->assertNotFound();
+
+        Queue::assertNotPushed(RecordError::class);
+    }
+
+    #[Test]
+    public function it_does_not_dispatch_a_record_error_job_when_redirect_matches()
+    {
+        Queue::fake();
+
+        config(['statamic.seo-pro.redirects.errors.enabled' => true]);
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/old-url')->assertRedirect('/new-url');
+
+        Queue::assertNotPushed(RecordError::class);
     }
 
     #[Test]

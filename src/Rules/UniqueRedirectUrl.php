@@ -10,8 +10,7 @@ class UniqueRedirectUrl implements ValidationRule
 {
     public function __construct(
         private ?string $except = null,
-    ) {
-    }
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

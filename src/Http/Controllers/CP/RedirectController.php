@@ -94,6 +94,9 @@ class RedirectController extends CpController
 
         return PublishForm::make(Facades\Redirect::blueprint())
             ->icon('moved')
+            ->values([
+                'source' => $request->input('source'),
+            ])
             ->title(__('seo-pro::messages.create_redirect'))
             ->submittingTo(cp_route('seo-pro.redirects.store'), 'POST');
     }

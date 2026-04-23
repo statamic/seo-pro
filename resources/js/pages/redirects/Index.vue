@@ -34,7 +34,7 @@ function requestComplete({ items: newItems, parameters }) {
 		:url="cp_url(`seo-pro/redirects`)"
 		:columns
 		:allow-presets="false"
-		sort-column="source_url"
+		sort-column="source"
 		sort-direction="asc"
 		preferences-prefix="seo-pro.redirects"
 		:filters

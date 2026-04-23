@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Redirects;
 
 use Illuminate\Http\Request;
 use Statamic\Facades\Data;
+use Statamic\SeoPro\Facades\Error;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
 use Statamic\Statamic;
 use Statamic\Support\Str;
@@ -22,6 +23,10 @@ class HandleRedirects
         $redirect = $this->findExactMatch($path) ?? $this->findWildcardMatch($path, $captures);
 
         if (! $redirect) {
+            if (config('statamic.seo-pro.redirects.errors.enabled')) {
+                RecordError::dispatch($path);
+            }
+
             return;
         }
 

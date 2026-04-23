@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Http\Resources\Redirects;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Statamic\Facades\User;
 
-class ListedRedirect extends JsonResource
+class ListedError extends JsonResource
 {
     protected $blueprint;
 
@@ -31,20 +31,16 @@ class ListedRedirect extends JsonResource
 
         return [
             'id' => $redirect->id(),
-            'status' => $redirect->status(),
 
             $this->merge($this->values([
-                'source' => $redirect->source(),
-                'destination' => $redirect->destination(),
-                'response_code' => $redirect->responseCode(),
+                'url' => $redirect->url(),
                 'hits' => $redirect->hits(),
                 'last_hit_at' => $redirect->lastHitAt(),
             ])),
 
-            'edit_url' => $redirect->editUrl(),
-            'delete_url' => $redirect->deleteUrl(),
-            'editable' => User::current()->can('edit', $redirect),
-            'deletable' => User::current()->can('delete', $redirect),
+            'create_redirect_url' => cp_route('seo-pro.redirects.create', [
+                'source' => $redirect->url(),
+            ]),
         ];
     }
 
