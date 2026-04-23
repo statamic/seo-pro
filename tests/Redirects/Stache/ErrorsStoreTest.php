@@ -45,7 +45,7 @@ class ErrorsStoreTest extends TestCase
     {
         $item = $this->store->makeItemFromFile(
             $this->directory.'/abc.yaml',
-            "url: /broken-link",
+            'url: /broken-link',
         );
 
         $this->assertInstanceOf(Error::class, $item);

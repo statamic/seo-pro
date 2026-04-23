@@ -12,9 +12,9 @@ use Statamic\Facades\Stache;
 use Statamic\SeoPro\Events\ErrorCreated;
 use Statamic\SeoPro\Events\ErrorDeleted;
 use Statamic\SeoPro\Events\ErrorSaved;
+use Statamic\SeoPro\Facades\Error as ErrorFacade;
 use Statamic\Support\Arr;
 use Statamic\Support\Traits\FluentlyGetsAndSets;
-use Statamic\SeoPro\Facades\Error as ErrorFacade;
 
 class Error
 {

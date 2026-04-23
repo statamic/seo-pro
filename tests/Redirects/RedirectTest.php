@@ -8,7 +8,6 @@ use Statamic\SeoPro\Events\RedirectCreated;
 use Statamic\SeoPro\Events\RedirectDeleted;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\Facades;
-use Statamic\SeoPro\Redirects\Error;
 use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;

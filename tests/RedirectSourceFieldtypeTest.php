@@ -3,7 +3,6 @@
 namespace Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use Statamic\Facades\Site;
 use Statamic\Fields\Field;
 use Statamic\SeoPro\Fieldtypes\RedirectSourceFieldtype;
 

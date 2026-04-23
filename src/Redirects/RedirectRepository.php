@@ -2,8 +2,8 @@
 
 namespace Statamic\SeoPro\Redirects;
 
-use Statamic\Fields\Blueprint;
 use Illuminate\Support\Collection;
+use Statamic\Fields\Blueprint;
 
 interface RedirectRepository
 {

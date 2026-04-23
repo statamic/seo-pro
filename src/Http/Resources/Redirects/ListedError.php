@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\Http\Resources\Redirects;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Statamic\Facades\User;
 
 class ListedError extends JsonResource
 {

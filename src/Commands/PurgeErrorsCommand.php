@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Commands;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\SeoPro\Facades\Error;
-use Statamic\SeoPro\Reporting\Report;
+
 use function Laravel\Prompts\spin;
 
 class PurgeErrorsCommand extends Command

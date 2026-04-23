@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Redirects\Stache;
 
+use SplFileInfo;
 use Statamic\Entries\GetSlugFromPath;
 use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
@@ -10,7 +11,6 @@ use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\Stache\Stores\BasicStore;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use SplFileInfo;
 
 class RedirectsStore extends BasicStore
 {

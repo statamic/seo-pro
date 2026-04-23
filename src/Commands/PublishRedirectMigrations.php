@@ -5,8 +5,8 @@ namespace Statamic\SeoPro\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
-use Statamic\Console\RunsInPlease;
 use Illuminate\Support\Facades\File;
+use Statamic\Console\RunsInPlease;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
 use Statamic\SeoPro\Redirects\Eloquent\RedirectModel;
 use Statamic\SeoPro\Redirects\Redirect;
@@ -14,6 +14,7 @@ use Statamic\SeoPro\Redirects\RedirectRepository;
 use Statamic\SeoPro\Redirects\Stache\RedirectRepository as StacheRedirectRepository;
 use Statamic\Statamic;
 use Statamic\Support\Str;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\progress;
 
