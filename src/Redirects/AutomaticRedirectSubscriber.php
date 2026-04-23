@@ -73,9 +73,14 @@ class AutomaticRedirectSubscriber
     {
         $entry = $event->entry;
         $originalUrl = Cache::pull("seo-pro::original-url::{$entry->id()}");
+
+        if (! $originalUrl || ! $entry->urlWithoutRedirect()) {
+            return;
+        }
+
         $newUrl = $this->siteRelativePath($entry->urlWithoutRedirect(), $entry->site());
 
-        if (! $originalUrl || ! $newUrl || $originalUrl === $newUrl) {
+        if ($originalUrl === $newUrl) {
             return;
         }
 
