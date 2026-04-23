@@ -189,7 +189,7 @@ class HandleRedirectsTest extends TestCase
         $this->get('/nonexistent-url')->assertNotFound();
 
         Queue::assertPushed(RecordError::class, function ($job) {
-            return $job->url === '/nonexistent-url';
+            return $job->url === '/nonexistent-url' && $job->site === 'default';
         });
     }
 

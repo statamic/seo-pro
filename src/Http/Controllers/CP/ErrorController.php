@@ -2,28 +2,30 @@
 
 namespace Statamic\SeoPro\Http\Controllers\CP;
 
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Statamic\CP\Column;
-use Statamic\CP\PublishForm;
 use Statamic\Facades\Scope;
+use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\OrderBy;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Http\Resources\Redirects\Errors;
-use Statamic\SeoPro\Http\Resources\Redirects\Redirects;
 use Statamic\SeoPro\Redirects\Error;
 
 class ErrorController extends CpController
 {
+    use QueriesFilters;
+
     public function index(FilteredRequest $request)
     {
         $this->authorize('index', Error::class);
 
         if ($request->wantsJson()) {
             $query = $this->indexQuery();
+
+            $activeFilterBadges = $this->queryFilters($query, $request->filters);
 
             $sortField = OrderBy::column(request('sort'));
             $sortDirection = request('order', 'asc');
@@ -41,7 +43,10 @@ class ErrorController extends CpController
 
             return (new Errors($errors))
                 ->blueprint(Facades\Error::blueprint())
-                ->columnPreferenceKey('seo-pro.errors.columns');
+                ->columnPreferenceKey('seo-pro.errors.columns')
+                ->additional(['meta' => [
+                    'activeFilterBadges' => $activeFilterBadges,
+                ]]);
         }
 
         $blueprint = Facades\Error::blueprint();
@@ -62,12 +67,17 @@ class ErrorController extends CpController
         return Inertia::render('seo-pro::Errors/Index', [
             'blueprint' => $blueprint,
             'columns' => $columns,
+            'filters' => Scope::filters('errors'),
         ]);
     }
 
     protected function indexQuery()
     {
         $query = Facades\Error::query();
+
+        if (Site::multiEnabled()) {
+            $query->whereIn('site', Site::authorized()->map->handle()->all());
+        }
 
         if ($search = request('search')) {
             $query->where('url', 'LIKE', '%'.$search.'%');

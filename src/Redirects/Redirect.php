@@ -7,11 +7,13 @@ use Statamic\Data\ContainsData;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
+use Statamic\Facades\Site;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Events\RedirectCreated;
 use Statamic\SeoPro\Events\RedirectDeleted;
 use Statamic\SeoPro\Events\RedirectSaved;
+use Statamic\SeoPro\Facades\Error;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
 use Statamic\Support\Arr;
 use Statamic\Support\Traits\FluentlyGetsAndSets;
@@ -21,6 +23,7 @@ class Redirect
     use ContainsData, ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
 
     protected $id;
+    protected $site;
     protected $source;
     protected $destination;
     protected $responseCode;
@@ -37,6 +40,14 @@ class Redirect
     {
         return $this
             ->fluentlyGetOrSet('id')
+            ->args(func_get_args());
+    }
+
+    public function site($site = null)
+    {
+        return $this
+            ->fluentlyGetOrSet('site')
+            ->getter(fn ($site) => $site ?? Site::default()->handle())
             ->args(func_get_args());
     }
 
@@ -105,6 +116,12 @@ class Redirect
 
         if ($isNew) {
             RedirectCreated::dispatch($this);
+
+            Error::query()
+                ->where('url', $this->source())
+                ->where('site', $this->site())
+                ->get()
+                ->each->delete();
         }
 
         RedirectSaved::dispatch($this);
@@ -128,10 +145,13 @@ class Redirect
 
     public function buildPath(): string
     {
-        return vsprintf('%s/%s.yaml', [
-            rtrim(Stache::store('redirects')->directory(), '/'),
-            $this->id(),
-        ]);
+        $directory = rtrim(Stache::store('redirects')->directory(), '/');
+
+        if (Site::multiEnabled()) {
+            return $directory.'/'.$this->site().'/'.$this->id().'.yaml';
+        }
+
+        return $directory.'/'.$this->id().'.yaml';
     }
 
     public function fileData(): array
@@ -180,7 +200,7 @@ class Redirect
     private function queryableMethods(): array
     {
         return [
-            'id', 'source', 'destination', 'responseCode', 'enabled', 'hits', 'lastHitAt',
+            'id', 'site', 'source', 'destination', 'responseCode', 'enabled', 'hits', 'lastHitAt',
         ];
     }
 }

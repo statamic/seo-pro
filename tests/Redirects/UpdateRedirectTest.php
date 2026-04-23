@@ -18,8 +18,8 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -27,8 +27,8 @@ class UpdateRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source' => 'https://cool-runnings.com/updated-old-url',
-                'destination' => 'https://cool-runnings.com/updated-new-url',
+                'source' => '/updated-old-url',
+                'destination' => '/updated-new-url',
                 'response_code' => 301,
                 'enabled' => false,
             ])
@@ -36,8 +36,8 @@ class UpdateRedirectTest extends TestCase
 
         $redirect = Facades\Redirect::find('abc');
 
-        $this->assertEquals('https://cool-runnings.com/updated-old-url', $redirect->source());
-        $this->assertEquals('https://cool-runnings.com/updated-new-url', $redirect->destination());
+        $this->assertEquals('/updated-old-url', $redirect->source());
+        $this->assertEquals('/updated-new-url', $redirect->destination());
         $this->assertEquals(301, $redirect->responseCode());
         $this->assertFalse($redirect->enabled());
     }
@@ -47,8 +47,8 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -58,8 +58,8 @@ class UpdateRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->assignRole('test')->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source' => 'https://cool-runnings.com/updated-old-url',
-                'destination' => 'https://cool-runnings.com/updated-new-url',
+                'source' => '/updated-old-url',
+                'destination' => '/updated-new-url',
                 'response_code' => 301,
                 'enabled' => false,
             ])
@@ -67,7 +67,7 @@ class UpdateRedirectTest extends TestCase
 
         $redirect = Facades\Redirect::find('abc');
 
-        $this->assertEquals('https://cool-runnings.com/old-url', $redirect->source());
+        $this->assertEquals('/old-url', $redirect->source());
     }
 
     #[Test]
@@ -75,8 +75,8 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -85,7 +85,7 @@ class UpdateRedirectTest extends TestCase
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source' => '',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'destination' => '/new-url',
                 'response_code' => 302,
                 'enabled' => true,
             ])
@@ -97,8 +97,8 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -106,7 +106,7 @@ class UpdateRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source' => 'https://cool-runnings.com/old-url',
+                'source' => '/old-url',
                 'destination' => '',
                 'response_code' => 302,
                 'enabled' => true,
@@ -119,8 +119,8 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -128,8 +128,8 @@ class UpdateRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'source' => '/old-url',
+                'destination' => '/new-url',
                 'response_code' => '',
                 'enabled' => true,
             ])
@@ -137,12 +137,12 @@ class UpdateRedirectTest extends TestCase
     }
 
     #[Test]
-    public function source_must_be_a_valid_url_or_path_when_updating()
+    public function source_must_be_a_valid_path_when_updating()
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -151,7 +151,7 @@ class UpdateRedirectTest extends TestCase
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
                 'source' => 'not a valid url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'destination' => '/new-url',
                 'response_code' => 302,
                 'enabled' => true,
             ])
@@ -163,16 +163,16 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
 
         Facades\Redirect::make()
             ->id('def')
-            ->source('https://cool-runnings.com/another-old-url')
-            ->destination('https://cool-runnings.com/another-new-url')
+            ->source('/another-old-url')
+            ->destination('/another-new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -180,8 +180,8 @@ class UpdateRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source' => 'https://cool-runnings.com/another-old-url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'source' => '/another-old-url',
+                'destination' => '/new-url',
                 'response_code' => 302,
                 'enabled' => true,
             ])
@@ -193,8 +193,8 @@ class UpdateRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(302)
             ->enabled(true)
             ->save();
@@ -202,8 +202,8 @@ class UpdateRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/updated-new-url',
+                'source' => '/old-url',
+                'destination' => '/updated-new-url',
                 'response_code' => 301,
                 'enabled' => true,
             ])
@@ -211,7 +211,7 @@ class UpdateRedirectTest extends TestCase
 
         $redirect = Facades\Redirect::find('abc');
 
-        $this->assertEquals('https://cool-runnings.com/old-url', $redirect->source());
-        $this->assertEquals('https://cool-runnings.com/updated-new-url', $redirect->destination());
+        $this->assertEquals('/old-url', $redirect->source());
+        $this->assertEquals('/updated-new-url', $redirect->destination());
     }
 }

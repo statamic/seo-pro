@@ -14,15 +14,20 @@ class RecordError implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
-    public function __construct(public string $url) {}
+    public function __construct(public string $url, public string $site) {}
 
     public function handle(): void
     {
-        Cache::lock("error:{$this->url}", 10)->block(5, function () {
-            $error = Error::query()->where('url', $this->url)->first();
+        Cache::lock("error:{$this->site}:{$this->url}", 10)->block(5, function () {
+            $error = Error::query()
+                ->where('url', $this->url)
+                ->where('site', $this->site)
+                ->first();
 
             if (! $error) {
-                $error = Error::make()->url($this->url);
+                $error = Error::make()
+                    ->url($this->url)
+                    ->site($this->site);
             }
 
             $error

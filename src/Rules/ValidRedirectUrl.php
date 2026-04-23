@@ -17,10 +17,6 @@ class ValidRedirectUrl implements ValidationRule
             return;
         }
 
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            return;
-        }
-
         $fail(__('seo-pro::validation.redirect_url'));
     }
 }

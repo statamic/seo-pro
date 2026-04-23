@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Redirects\Stache;
 
+use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Redirects\RedirectBlueprint as RedirectBlueprint;
 use Statamic\SeoPro\Redirects\Redirect;
@@ -43,12 +44,16 @@ class RedirectRepository implements RepositoryContract
 
     public function save(Redirect $redirect): void
     {
+        if (! $redirect->site()) {
+            $redirect->site(Site::default()->handle());
+        }
+
         if (! $redirect->id()) {
             $slug = Str::slug($redirect->source());
             $id = $slug;
             $suffix = 1;
 
-            while ($this->find($id)) {
+            while ($this->query()->where('id', $id)->where('site', $redirect->site())->first()) {
                 $id = $slug.'-'.$suffix++;
             }
 

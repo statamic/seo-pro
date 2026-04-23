@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Redirects\Stache;
 
+use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Redirects\Error;
 use Statamic\SeoPro\Redirects\ErrorBlueprint;
@@ -43,12 +44,16 @@ class ErrorRepository implements RepositoryContract
 
     public function save(Error $error): void
     {
+        if (! $error->site()) {
+            $error->site(Site::default()->handle());
+        }
+
         if (! $error->id()) {
             $slug = Str::slug($error->url());
             $id = $slug;
             $suffix = 1;
 
-            while ($this->find($id)) {
+            while ($this->query()->where('id', $id)->where('site', $error->site())->first()) {
                 $id = $slug.'-'.$suffix++;
             }
 

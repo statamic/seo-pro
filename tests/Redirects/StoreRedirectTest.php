@@ -19,18 +19,18 @@ class StoreRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'source' => '/old-url',
+                'destination' => '/new-url',
                 'response_code' => 302,
                 'enabled' => true,
             ])
             ->assertOk();
 
-        $redirect = Facades\Redirect::query()->where('source', 'https://cool-runnings.com/old-url')->first();
+        $redirect = Facades\Redirect::query()->where('source', '/old-url')->first();
 
         $this->assertNotNull($redirect);
-        $this->assertEquals('https://cool-runnings.com/old-url', $redirect->source());
-        $this->assertEquals('https://cool-runnings.com/new-url', $redirect->destination());
+        $this->assertEquals('/old-url', $redirect->source());
+        $this->assertEquals('/new-url', $redirect->destination());
         $this->assertEquals(302, $redirect->responseCode());
         $this->assertTrue($redirect->enabled());
     }
@@ -41,14 +41,14 @@ class StoreRedirectTest extends TestCase
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'source' => '/old-url',
+                'destination' => '/new-url',
                 'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertOk();
 
-        $redirect = Facades\Redirect::query()->where('source', 'https://cool-runnings.com/old-url')->first();
+        $redirect = Facades\Redirect::query()->where('source', '/old-url')->first();
 
         $response->assertJson(['redirect' => $redirect->editUrl()]);
     }
@@ -61,15 +61,15 @@ class StoreRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->assignRole('test')->save())
             ->post(cp_route('seo-pro.redirects.store'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'source' => '/old-url',
+                'destination' => '/new-url',
                 'response_code' => 301,
                 'enabled' => true,
             ])
             ->assertRedirect('/cp');
 
         $this->assertNull(
-            Facades\Redirect::query()->where('source', 'https://cool-runnings.com/old-url')->first()
+            Facades\Redirect::query()->where('source', '/old-url')->first()
         );
     }
 
@@ -80,7 +80,7 @@ class StoreRedirectTest extends TestCase
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source' => '',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'destination' => '/new-url',
                 'response_code' => 301,
                 'enabled' => true,
             ])
@@ -93,7 +93,7 @@ class StoreRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
-                'source' => 'https://cool-runnings.com/old-url',
+                'source' => '/old-url',
                 'destination' => '',
                 'response_code' => 301,
                 'enabled' => true,
@@ -107,8 +107,8 @@ class StoreRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'source' => '/old-url',
+                'destination' => '/new-url',
                 'response_code' => '',
                 'enabled' => true,
             ])
@@ -136,13 +136,13 @@ class StoreRedirectTest extends TestCase
     }
 
     #[Test]
-    public function source_must_be_a_valid_url_or_path()
+    public function source_must_be_a_valid_path()
     {
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
                 'source' => 'not a valid url',
-                'destination' => 'https://cool-runnings.com/new-url',
+                'destination' => '/new-url',
                 'response_code' => 301,
                 'enabled' => true,
             ])
@@ -154,8 +154,8 @@ class StoreRedirectTest extends TestCase
     {
         Facades\Redirect::make()
             ->id('existing')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
+            ->source('/old-url')
+            ->destination('/new-url')
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -163,8 +163,8 @@ class StoreRedirectTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->post(cp_route('seo-pro.redirects.store'), [
-                'source' => 'https://cool-runnings.com/old-url',
-                'destination' => 'https://cool-runnings.com/another-url',
+                'source' => '/old-url',
+                'destination' => '/another-url',
                 'response_code' => 301,
                 'enabled' => true,
             ])

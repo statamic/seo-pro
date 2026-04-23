@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Redirects;
 
 use Illuminate\Http\Request;
 use Statamic\Facades\Data;
-use Statamic\SeoPro\Facades\Error;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
 use Statamic\Statamic;
 use Statamic\Support\Str;
@@ -18,13 +18,13 @@ class HandleRedirects
         }
 
         $captures = [];
-        $path = $request->getPathInfo();
-
-        $redirect = $this->findExactMatch($path) ?? $this->findWildcardMatch($path, $captures);
+        $site = Site::findByUrl($request->getUri()) ?? Site::default();
+        $path = $this->siteRelativePath($request->getPathInfo(), $site);
+        $redirect = $this->findExactMatch($path, $site->handle()) ?? $this->findWildcardMatch($path, $site->handle(), $captures);
 
         if (! $redirect) {
             if (config('statamic.seo-pro.redirects.errors.enabled')) {
-                RecordError::dispatch($path);
+                RecordError::dispatch($path, $site->handle());
             }
 
             return;
@@ -48,17 +48,19 @@ class HandleRedirects
         return redirect($destination, $redirect->responseCode());
     }
 
-    private function findExactMatch(string $path): ?Redirect
+    private function findExactMatch(string $path, string $siteHandle): ?Redirect
     {
         return RedirectFacade::query()
             ->where('source', $path)
+            ->where('site', $siteHandle)
             ->where('enabled', true)
             ->first();
     }
 
-    private function findWildcardMatch(string $path, array &$captures): ?Redirect
+    private function findWildcardMatch(string $path, string $siteHandle, array &$captures): ?Redirect
     {
         $wildcardRedirects = RedirectFacade::query()
+            ->where('site', $siteHandle)
             ->where('enabled', true)
             ->get()
             ->filter->usesWildcard();
@@ -74,5 +76,16 @@ class HandleRedirects
         }
 
         return null;
+    }
+
+    private function siteRelativePath(string $requestPath, \Statamic\Sites\Site $site): string
+    {
+        $sitePrefix = rtrim(parse_url($site->url(), PHP_URL_PATH) ?? '', '/');
+
+        if ($sitePrefix && Str::startsWith($requestPath, $sitePrefix)) {
+            $requestPath = Str::removeLeft($requestPath, $sitePrefix);
+        }
+
+        return $requestPath ?: '/';
     }
 }

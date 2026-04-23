@@ -10,6 +10,7 @@ class UniqueRedirectUrl implements ValidationRule
 {
     public function __construct(
         private ?string $except = null,
+        private ?string $site = null,
     ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -18,7 +19,10 @@ class UniqueRedirectUrl implements ValidationRule
             return;
         }
 
-        $existing = Redirect::query()->where('source', $value)->first();
+        $existing = Redirect::query()
+            ->where('source', $value)
+            ->when($this->site, fn ($query) => $query->where('site', $this->site))
+            ->first();
 
         if (! $existing) {
             return;

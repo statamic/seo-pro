@@ -16,6 +16,7 @@ import {
 const props = defineProps({
 	columns: { type: Array, default: () => [] },
 	errorsUrl: { type: String },
+	filters: { type: Array, default: () => [] },
 	initialPerPage: { type: Number, default: 5 },
 	showTableHeader: { type: Boolean, default: false },
 });
@@ -41,6 +42,7 @@ function formatDate(value) {
 		:show-pagination-totals="false"
 		:show-pagination-page-links="false"
 		:show-pagination-per-page-selector="false"
+		:filters
 	>
 		<template #initializing>
 			<Widget v-bind="widgetProps">

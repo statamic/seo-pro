@@ -200,6 +200,14 @@ Redirects are stored as YAML files in `content/seo-pro/redirects` by default. Yo
 ],
 ```
 
+### Multi-Site
+
+Redirects and errors are scoped to individual sites. Each redirect belongs to a single site, and the source URL is stored relative to the site root. For example, a redirect with the source `/about` on the French site will only match requests to `example.com/fr/about` (or `example.fr/about`, depending on your site configuration).
+
+When using the Control Panel, redirects and errors are filtered to the currently selected site. The site can be changed using the site filter in the listing.
+
+When you enable multi-site on an existing install via `php please multisite`, SEO Pro will automatically move your existing redirect and error files into subdirectories for the default site.
+
 ### Automatic Redirects
 
 SEO Pro can automatically create redirects when an entry or term's slug changes. This prevents broken links when content is reorganized.
@@ -235,6 +243,8 @@ You may change the default response code in the config:
     'default_response_code' => 301,
 ],
 ```
+
+In a multi-site setup, when an entry's slug changes, redirects are also created for any localizations that share the same slug change, each pointing to the localized version of the content.
 
 Self-referencing redirects (where the source and destination are the same URL) are automatically cleaned up.
 

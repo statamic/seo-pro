@@ -7,6 +7,7 @@ use Statamic\Data\ContainsData;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
+use Statamic\Facades\Site;
 use Statamic\Facades\Stache;
 use Statamic\SeoPro\Events\ErrorCreated;
 use Statamic\SeoPro\Events\ErrorDeleted;
@@ -20,6 +21,7 @@ class Error
     use ContainsData, ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
 
     protected $id;
+    protected $site;
     protected $url;
     protected $hits = 0;
     protected $lastHitAt;
@@ -33,6 +35,14 @@ class Error
     {
         return $this
             ->fluentlyGetOrSet('id')
+            ->args(func_get_args());
+    }
+
+    public function site($site = null)
+    {
+        return $this
+            ->fluentlyGetOrSet('site')
+            ->getter(fn ($site) => $site ?? Site::default()->handle())
             ->args(func_get_args());
     }
 
@@ -88,10 +98,13 @@ class Error
 
     public function buildPath(): string
     {
-        return vsprintf('%s/%s.yaml', [
-            rtrim(Stache::store('errors')->directory(), '/'),
-            $this->id(),
-        ]);
+        $directory = rtrim(Stache::store('errors')->directory(), '/');
+
+        if (Site::multiEnabled()) {
+            return $directory.'/'.$this->site().'/'.$this->id().'.yaml';
+        }
+
+        return $directory.'/'.$this->id().'.yaml';
     }
 
     public function fileData(): array
@@ -122,7 +135,7 @@ class Error
     private function queryableMethods(): array
     {
         return [
-            'id', 'url', 'hits', 'lastHitAt',
+            'id', 'site', 'url', 'hits', 'lastHitAt',
         ];
     }
 }

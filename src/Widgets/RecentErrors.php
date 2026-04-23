@@ -2,11 +2,9 @@
 
 namespace Statamic\SeoPro\Widgets;
 
-use Illuminate\Support\Facades\File;
-use Statamic\CP\Column;
+use Statamic\Facades\Scope;
 use Statamic\Facades\User;
 use Statamic\SeoPro\Facades\Error;
-use Statamic\SeoPro\Reporting\Report;
 use Statamic\Widgets\VueComponent;
 use Statamic\Widgets\Widget;
 
@@ -30,6 +28,7 @@ class RecentErrors extends Widget
         return VueComponent::render('seo-pro-recent-errors-widget', [
             'columns' => $columns,
             'errorsUrl' => cp_route('seo-pro.errors.index'),
+            'filters' => Scope::filters('errors'),
             'showTableHeader' => $this->config('show_table_header', false),
             'initialPerPage' => $this->config('limit', 5),
         ]);

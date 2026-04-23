@@ -322,9 +322,29 @@ class ServiceProvider extends AddonServiceProvider
             ]);
 
             $settings->save();
+
+            $this->moveFilesIntoSiteSubdirectory(config('statamic.seo-pro.redirects.directory'));
+            $this->moveFilesIntoSiteSubdirectory(config('statamic.seo-pro.redirects.errors.directory'));
         });
 
         return $this;
+    }
+
+    private function moveFilesIntoSiteSubdirectory(string $directory): void
+    {
+        if (! $directory || ! File::exists($directory)) {
+            return;
+        }
+
+        $siteHandle = Site::default()->handle();
+        $targetDirectory = $directory.'/'.$siteHandle;
+
+        collect(File::getFiles($directory))
+            ->filter(fn (string $path): bool => str_ends_with($path, '.yaml'))
+            ->each(function (string $path) use ($targetDirectory): void {
+                $filename = pathinfo($path, PATHINFO_BASENAME);
+                File::move($path, $targetDirectory.'/'.$filename);
+            });
     }
 
     private function userHasSeoPermissions()

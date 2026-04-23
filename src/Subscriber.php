@@ -5,8 +5,6 @@ namespace Statamic\SeoPro;
 use Statamic\Events;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Taxonomy;
-use Statamic\SeoPro\Events\RedirectCreated;
-use Statamic\SeoPro\Facades\Error;
 use Statamic\SeoPro\Sitemap\Sitemap;
 use Statamic\Support\Str;
 
@@ -28,7 +26,6 @@ class Subscriber
         Events\TaxonomyDeleted::class => 'clearSitemapCache',
         Events\TermSaved::class => 'clearSitemapCache',
         Events\TermDeleted::class => 'clearSitemapCache',
-        RedirectCreated::class => 'deleteMatchingErrors',
     ];
 
     /**
@@ -61,17 +58,6 @@ class Subscriber
     public function clearSitemapCache()
     {
         Sitemap::invalidateCache();
-    }
-
-    /**
-     * Delete errors matching a newly created redirect's source URL.
-     */
-    public function deleteMatchingErrors(RedirectCreated $event)
-    {
-        Error::query()
-            ->where('url', $event->redirect->source())
-            ->get()
-            ->each->delete();
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Redirects;
 
 use Statamic\Facades\Blueprint as BlueprintFacade;
 use Statamic\Fields\Blueprint as FieldsBlueprint;
+use Statamic\SeoPro\Rules\ValidRedirectUrl;
 
 class RedirectBlueprint
 {
@@ -23,7 +24,7 @@ class RedirectBlueprint
                                         'type' => 'redirect_source',
                                         'display' => __('Source'),
                                         'instructions' => __('seo-pro::messages.redirect_source'),
-                                        'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
+                                        'validate' => ['required', new ValidRedirectUrl],
                                         'listable' => true,
                                         'focus' => true,
                                     ],

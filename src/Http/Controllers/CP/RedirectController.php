@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Statamic\CP\Column;
 use Statamic\CP\PublishForm;
 use Statamic\Facades\Scope;
+use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\OrderBy;
@@ -79,6 +80,10 @@ class RedirectController extends CpController
     {
         $query = Facades\Redirect::query();
 
+        if (Site::multiEnabled()) {
+            $query->whereIn('site', Site::authorized()->map->handle()->all());
+        }
+
         if ($search = request('search')) {
             $query
                 ->where('source', 'LIKE', '%'.$search.'%')
@@ -105,11 +110,14 @@ class RedirectController extends CpController
     {
         $this->authorize('store', Redirect::class);
 
-        $request->validate(['source' => [new UniqueRedirectUrl]]);
+        $siteHandle = Site::selected()->handle();
+
+        $request->validate(['source' => [new UniqueRedirectUrl(site: $siteHandle)]]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
         $redirect = Facades\Redirect::make()
+            ->site($siteHandle)
             ->source($values['source'])
             ->destination($values['destination'])
             ->responseCode($values['response_code'])
@@ -140,7 +148,7 @@ class RedirectController extends CpController
     {
         $this->authorize('update', $redirect);
 
-        $request->validate(['source' => [new UniqueRedirectUrl($redirect->id())]]);
+        $request->validate(['source' => [new UniqueRedirectUrl($redirect->id(), $redirect->site())]]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 

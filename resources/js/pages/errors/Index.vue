@@ -6,6 +6,7 @@ import { ref } from 'vue';
 defineProps({
 	blueprint: Object,
 	columns: Array,
+	filters: Array,
 });
 
 const items = ref(null);
@@ -30,6 +31,7 @@ function requestComplete({ items: newItems, parameters }) {
 		:columns
 		:allow-presets="false"
 		:allow-customizing-columns="false"
+		:filters
 		sort-column="last_hit_at"
 		sort-direction="desc"
 		preferences-prefix="seo-pro.errors"

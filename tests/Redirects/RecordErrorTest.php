@@ -20,12 +20,13 @@ class RecordErrorTest extends TestCase
 
         $this->assertNull(Facades\Error::query()->where('url', '/missing-page')->first());
 
-        (new RecordError('/missing-page'))->handle();
+        (new RecordError('/missing-page', 'default'))->handle();
 
         $error = Facades\Error::query()->where('url', '/missing-page')->first();
 
         $this->assertNotNull($error);
         $this->assertEquals('/missing-page', $error->url());
+        $this->assertEquals('default', $error->site());
         $this->assertEquals(1, $error->hits());
         $this->assertEquals('2026-04-21 12:00:00', $error->lastHitAt());
     }
@@ -40,7 +41,7 @@ class RecordErrorTest extends TestCase
             ->lastHitAt('2026-04-20 10:00:00')
             ->save();
 
-        (new RecordError('/missing-page'))->handle();
+        (new RecordError('/missing-page', 'default'))->handle();
 
         $this->assertEquals(4, Facades\Error::find('abc')->hits());
     }
@@ -57,7 +58,7 @@ class RecordErrorTest extends TestCase
             ->lastHitAt('2026-04-20 10:00:00')
             ->save();
 
-        (new RecordError('/missing-page'))->handle();
+        (new RecordError('/missing-page', 'default'))->handle();
 
         $this->assertEquals('2026-04-21 14:30:00', Facades\Error::find('abc')->lastHitAt());
     }

@@ -8,7 +8,10 @@ use Statamic\Events\EntrySaving;
 use Statamic\Events\TermSaved;
 use Statamic\Events\TermSaving;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
+use Statamic\Sites\Site as SiteInstance;
+use Statamic\Support\Str;
 
 class AutomaticRedirectSubscriber
 {
@@ -59,38 +62,30 @@ class AutomaticRedirectSubscriber
             return;
         }
 
-        Cache::put("seo-pro::original-url::{$entry->id()}", $originalUrl, 30);
+        Cache::put(
+            key: "seo-pro::original-url::{$entry->id()}",
+            value: $this->siteRelativePath($originalUrl, $entry->site()),
+            ttl: 30
+        );
     }
 
     public function handleEntrySaved(EntrySaved $event): void
     {
         $entry = $event->entry;
         $originalUrl = Cache::pull("seo-pro::original-url::{$entry->id()}");
+        $newUrl = $this->siteRelativePath($entry->urlWithoutRedirect(), $entry->site());
 
-        if (! $originalUrl) {
+        if (! $originalUrl || ! $newUrl || $originalUrl === $newUrl) {
             return;
         }
 
-        $newUrl = $entry->urlWithoutRedirect();
+        $this->createOrUpdateRedirect($originalUrl, $entry->reference(), $entry->locale());
 
-        if (! $newUrl || $originalUrl === $newUrl) {
-            return;
-        }
+        $selfReferencing = RedirectFacade::query()
+            ->where('source', $newUrl)
+            ->where('site', $entry->locale())
+            ->first();
 
-        $existing = RedirectFacade::query()->where('source', $originalUrl)->first();
-
-        if ($existing) {
-            $existing->destination($entry->reference())->save();
-        } else {
-            RedirectFacade::make()
-                ->source($originalUrl)
-                ->destination($entry->reference())
-                ->responseCode(config('statamic.seo-pro.redirects.default_response_code', 301))
-                ->enabled(true)
-                ->save();
-        }
-
-        $selfReferencing = RedirectFacade::query()->where('source', $entry->urlWithoutRedirect())->first();
         $selfReferencing?->delete();
     }
 
@@ -120,46 +115,114 @@ class AutomaticRedirectSubscriber
             return;
         }
 
-        Cache::put("seo-pro::original-url::term::{$term->taxonomyHandle()}::{$newSlug}", $originalUrl, 30);
+        $site = Site::get($term->defaultLocale());
+        $originalUrl = $this->siteRelativePath($originalUrl, $site);
+
+        Cache::put("seo-pro::original-url::term::{$term->taxonomyHandle()}::{$newSlug}", [
+            'url' => $originalUrl,
+            'slug' => $originalSlug,
+        ], 30);
     }
 
     public function handleTermSaved(TermSaved $event): void
     {
         $term = $event->term;
-        $originalUrl = Cache::pull("seo-pro::original-url::term::{$term->taxonomyHandle()}::{$term->slug()}");
+        $cached = Cache::pull("seo-pro::original-url::term::{$term->taxonomyHandle()}::{$term->slug()}");
 
-        if (! $originalUrl) {
+        if (! $cached) {
             return;
         }
 
-        $newUrl = $term->in($term->defaultLocale())->urlWithoutRedirect();
+        $originalUrl = $cached['url'];
+        $originalSlug = $cached['slug'];
+        $siteHandle = $term->defaultLocale();
+        $site = Site::get($siteHandle);
+
+        $newUrl = $this->siteRelativePath(
+            $term->in($siteHandle)->urlWithoutRedirect(),
+            $site,
+        );
 
         if (! $newUrl || $originalUrl === $newUrl) {
             return;
         }
 
-        RedirectFacade::query()->get()
+        RedirectFacade::query()->where('site', $siteHandle)->get()
             ->filter(fn (Redirect $redirect) => $redirect->destination() === $originalUrl)
             ->each(fn (Redirect $redirect) => $redirect->destination($newUrl)->save());
 
-        $existing = RedirectFacade::query()->where('source', $originalUrl)->first();
+        $this->createOrUpdateRedirect($originalUrl, $newUrl, $siteHandle);
 
-        if ($existing) {
-            $existing->destination($newUrl)->save();
-        } else {
-            RedirectFacade::make()
-                ->source($originalUrl)
-                ->destination($newUrl)
-                ->responseCode(config('statamic.seo-pro.redirects.default_response_code', 301))
-                ->enabled(true)
-                ->save();
-        }
-
-        $selfReferencing = RedirectFacade::query()->where('source', $newUrl)->first();
+        $selfReferencing = RedirectFacade::query()
+            ->where('source', $newUrl)
+            ->where('site', $siteHandle)
+            ->first();
 
         if ($selfReferencing && $selfReferencing->destination() === $newUrl) {
             $selfReferencing->delete();
         }
+
+        $this->createRedirectsForTermLocalizations($term, $originalSlug);
+    }
+
+    private function createOrUpdateRedirect(string $source, string $destination, string $siteHandle): void
+    {
+        $existing = RedirectFacade::query()
+            ->where('source', $source)
+            ->where('site', $siteHandle)
+            ->first();
+
+        if ($existing) {
+            $existing->destination($destination)->save();
+        } else {
+            RedirectFacade::make()
+                ->source($source)
+                ->destination($destination)
+                ->site($siteHandle)
+                ->responseCode(config('statamic.seo-pro.redirects.default_response_code', 301))
+                ->enabled(true)
+                ->save();
+        }
+    }
+
+    private function createRedirectsForTermLocalizations($term, string $originalSlug): void
+    {
+        $term->taxonomy()->sites()
+            ->reject(fn ($siteHandle) => $siteHandle === $term->defaultLocale())
+            ->each(function ($siteHandle) use ($term, $originalSlug) {
+                $localized = $term->in($siteHandle);
+
+                if (! $localized || ! $localized->urlWithoutRedirect()) {
+                    return;
+                }
+
+                $site = Site::get($siteHandle);
+
+                $localized->slug($originalSlug);
+                $originalUrl = $this->siteRelativePath($localized->urlWithoutRedirect(), $site);
+                $localized->slug($term->slug());
+
+                $newUrl = $this->siteRelativePath($localized->urlWithoutRedirect(), $site);
+
+                if (! $originalUrl || $originalUrl === $newUrl) {
+                    return;
+                }
+
+                $this->createOrUpdateRedirect($originalUrl, $newUrl, $siteHandle);
+            });
+    }
+
+    private function siteRelativePath(string $absoluteUrl, SiteInstance $site): string
+    {
+        $sitePrefix = rtrim(parse_url($site->url(), PHP_URL_PATH) ?? '', '/');
+
+        $path = parse_url($absoluteUrl, PHP_URL_PATH) ?? $absoluteUrl;
+
+        if ($sitePrefix && Str::startsWith($path, $sitePrefix)) {
+            $path = Str::removeLeft($path, $sitePrefix);
+        }
+
+        return $path ?: '/';
     }
 
     private function shouldHandleEntry($entry): bool
