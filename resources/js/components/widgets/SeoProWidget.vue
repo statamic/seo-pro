@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-	<Widget :title="__('SEO Pro')" :icon>
+	<Widget :title="__('SEO Pro')" :href="reportsUrl" :icon>
 		<template #actions>
 			<Button :href="reportsUrl" size="sm" :text="__('seo-pro::messages.reports')" />
 		</template>
