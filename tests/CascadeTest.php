@@ -9,6 +9,7 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
+use Statamic\Fields\Value;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
@@ -444,7 +445,7 @@ class CascadeTest extends TestCase
     public function it_parses_antlers_in_json_ld_schema_values()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
-            'json_ld_schema' => new \Statamic\Fields\Value('{"@context":"https://schema.org","@type":"WebPage","name":"{{ title }}"}'),
+            'json_ld_schema' => new Value('{"@context":"https://schema.org","@type":"WebPage","name":"{{ title }}"}'),
         ]);
 
         $data = (new Cascade)
