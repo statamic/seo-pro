@@ -64,7 +64,7 @@ class RedirectBlueprint
                                         'type' => 'textarea',
                                         'display' => __('Description'),
                                         'instructions' => __('seo-pro::messages.redirect_description'),
-                                        'listable' => false,
+                                        'listable' => 'hidden',
                                     ],
                                 ],
                                 [
