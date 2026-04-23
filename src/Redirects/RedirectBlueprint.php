@@ -20,7 +20,7 @@ class RedirectBlueprint
                                 [
                                     'handle' => 'source',
                                     'field' => [
-                                        'type' => 'text',
+                                        'type' => 'redirect_source',
                                         'display' => __('Source'),
                                         'instructions' => __('seo-pro::messages.redirect_source'),
                                         'validate' => ['required', 'new \Statamic\SeoPro\Rules\ValidRedirectUrl'],
