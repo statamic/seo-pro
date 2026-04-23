@@ -6,6 +6,7 @@ return [
     'redirects' => 'Redirects',
     'redirects_description' => 'Manage URL redirects to preserve legacy URLs and improve SEO.',
     'errors' => 'Errors',
+    'errors_description' => 'View 404 errors across your site. Create redirects for the important ones.',
     'create_redirect' => 'Create Redirect',
     'view_redirects' => 'View Redirects',
     'edit_redirects' => 'Edit Redirects',

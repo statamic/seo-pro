@@ -157,6 +157,139 @@ You may add a reports widget to your dashboard to get a quick insight into your 
 ],
 ```
 
+## Redirects
+
+SEO Pro includes a redirect manager that lets you define URL redirects, automatically create redirects when slugs change, and track 404 errors.
+
+### Managing Redirects
+
+Head to `Tools > SEO Pro > Redirects` to create and manage redirects. Each redirect has a source URL, a destination URL, and a response code (301 or 302). Redirects can also be enabled or disabled.
+
+![Redirects listing](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-redirects.png)
+
+#### Wildcards
+
+You can use wildcards in your source URLs. Each `*` captures a segment, and you can reference them in the destination with `$1`, `$2`, etc:
+
+- Source: `/blog/*` → Destination: `/articles/$1`
+- Source: `/blog/*/posts/*` → Destination: `/articles/$1/entries/$2`
+
+Exact matches always take priority over wildcard matches.
+
+#### Query Strings
+
+By default, query strings from the original URL are retained when redirecting. You may disable this behaviour in your config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'preserve_query_string' => false,
+],
+```
+
+#### Storage
+
+Redirects are stored as YAML files in `content/seo-pro/redirects` by default. You can change this directory in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'directory' => base_path('content/seo-pro/redirects'),
+],
+```
+
+### Automatic Redirects
+
+SEO Pro can automatically create redirects when an entry or term's slug changes. This prevents broken links when content is reorganized.
+
+To enable automatic redirects, set the `SEO_PRO_AUTOMATIC_REDIRECTS` environment variable to `true`:
+
+```env
+SEO_PRO_AUTOMATIC_REDIRECTS=true
+```
+
+By default, automatic redirects apply to all collections and taxonomies. You may limit this to specific collections or taxonomies in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'automatic_redirects' => [
+        'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', false),
+        'collections' => ['pages', 'posts'],
+        'taxonomies' => ['tags'],
+    ],
+],
+```
+
+When an entry's slug changes, a redirect is created from the old URL to the new one, using the default response code (301 by default). If a redirect already exists for the old URL, its destination is updated rather than creating a duplicate.
+
+You may change the default response code in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'default_response_code' => 301,
+],
+```
+
+Self-referencing redirects (where the source and destination are the same URL) are automatically cleaned up.
+
+### Error Tracking
+
+SEO Pro can track 404 errors, giving you visibility into broken links on your site. When a request doesn't match a redirect, the URL is recorded as an error.
+
+To enable error tracking, set the `SEO_PRO_TRACK_ERRORS` environment variable:
+
+```env
+SEO_PRO_TRACK_ERRORS=true
+```
+
+Errors can be viewed at `Tools > SEO Pro > Errors`. From there, you can see each error's URL, hit count, and last hit time. Each error also has a link to quickly create a redirect for that URL.
+
+When a redirect is created, any errors matching the redirect's source URL are automatically deleted.
+
+#### Purging Old Errors
+
+It's easy to accumulate lots of errors over time. To keep things tidy, SEO Pro will automatically purge errors older than 30 days.
+
+You may customize the purge threshold in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'purge_after_days' => 30,
+    ],
+],
+```
+
+You may also run the command manually:
+
+```
+php please seo-pro:purge-errors
+```
+
+#### Widget
+
+You can add a recent errors widget to your dashboard to see the latest 404s at a glance:
+
+```php
+// config/statamic/cp.php
+
+'widgets' => [
+    [
+        'type' => 'recent_errors',
+        'width' => 50,
+        'limit' => 5,
+    ],
+],
+```
+
 ## Advanced Configuration
 
 ### Publishing Config
