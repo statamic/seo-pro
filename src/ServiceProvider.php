@@ -18,6 +18,7 @@ use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\Commands\PublishErrorMigrations;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
@@ -212,6 +213,12 @@ class ServiceProvider extends AddonServiceProvider
             $this->app['stache']->exclude('redirects');
 
             Statamic::repository(RedirectRepository::class, Redirects\Eloquent\RedirectRepository::class);
+        }
+
+        if (config('statamic.seo-pro.redirects.errors.driver') === 'database') {
+            $this->app['stache']->exclude('errors');
+
+            Statamic::repository(ErrorRepository::class, Redirects\Eloquent\ErrorRepository::class);
         }
 
         NotFoundHttpException::renderUsing(fn ($request) => app(HandleRedirects::class)($request));

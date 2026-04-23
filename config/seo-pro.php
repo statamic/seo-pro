@@ -65,17 +65,19 @@ return [
     ],
 
     'redirects' => [
-//        'driver' => 'file',
-        'driver' => 'database',
+        'driver' => 'file',
         'directory' => base_path('content/seo-pro/redirects'),
         'preserve_query_string' => true,
         'default_response_code' => 301,
+
         'automatic_redirects' => [
             'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', true),
             'collections' => ['*'],
             'taxonomies' => ['*'],
         ],
+
         'errors' => [
+            'driver' => 'file',
             'enabled' => env('SEO_PRO_TRACK_ERRORS', false),
             'directory' => storage_path('statamic/seopro/errors'),
             'purge_after_days' => 30,
