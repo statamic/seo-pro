@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro;
 
+use Illuminate\Events\Dispatcher;
 use Statamic\Events;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Taxonomy;
@@ -31,7 +32,7 @@ class Subscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param  \Illuminate\Events\Dispatcher  $events
+     * @param  Dispatcher  $events
      */
     public function subscribe($events)
     {

@@ -935,6 +935,6 @@ class FakeSsgPaginator extends StatamicLengthAwarePaginator
 {
     public function url($page)
     {
-        return \Statamic\Facades\URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
+        return URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
     }
 }

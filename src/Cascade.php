@@ -567,7 +567,7 @@ class Cascade
         if ($this->data->has('robots')) {
             $robots = $this->data->get('robots');
 
-            if ($robots instanceof \Statamic\Fields\Value) {
+            if ($robots instanceof Value) {
                 $robots = $robots->value();
             }
 

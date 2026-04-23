@@ -14,6 +14,8 @@ use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\GraphQL\AlternateLocaleType;
+use Statamic\SeoPro\GraphQL\SeoProType;
 use Statamic\SeoPro\Reporting\Page;
 use Statamic\SeoPro\Reporting\Report;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
@@ -158,8 +160,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonGraphQL()
     {
-        GraphQL::addType(\Statamic\SeoPro\GraphQL\SeoProType::class);
-        GraphQL::addType(\Statamic\SeoPro\GraphQL\AlternateLocaleType::class);
+        GraphQL::addType(SeoProType::class);
+        GraphQL::addType(AlternateLocaleType::class);
 
         $seoField = function () {
             return [
