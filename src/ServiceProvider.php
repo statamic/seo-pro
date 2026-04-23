@@ -30,6 +30,8 @@ use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\SeoPro\Redirects\RedirectRepository;
 use Statamic\SeoPro\Redirects\Stache\ErrorsStore;
 use Statamic\SeoPro\Redirects\Stache\RedirectsStore;
+use Statamic\SeoPro\GraphQL\AlternateLocaleType;
+use Statamic\SeoPro\GraphQL\SeoProType;
 use Statamic\SeoPro\Reporting\Page;
 use Statamic\SeoPro\Reporting\Report;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
@@ -291,8 +293,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonGraphQL()
     {
-        GraphQL::addType(\Statamic\SeoPro\GraphQL\SeoProType::class);
-        GraphQL::addType(\Statamic\SeoPro\GraphQL\AlternateLocaleType::class);
+        GraphQL::addType(SeoProType::class);
+        GraphQL::addType(AlternateLocaleType::class);
 
         $seoField = function () {
             return [

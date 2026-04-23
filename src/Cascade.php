@@ -499,6 +499,10 @@ class Cascade
 
     protected function parseJsonLdSchema($item)
     {
+        if ($item instanceof Value) {
+            $item = $item->raw();
+        }
+
         if (! is_string($item) || ! Str::contains($item, '{{')) {
             return $item;
         }
@@ -563,7 +567,7 @@ class Cascade
         if ($this->data->has('robots')) {
             $robots = $this->data->get('robots');
 
-            if ($robots instanceof \Statamic\Fields\Value) {
+            if ($robots instanceof Value) {
                 $robots = $robots->value();
             }
 

@@ -5,6 +5,10 @@ namespace Statamic\SeoPro\Fieldtypes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Statamic\Contracts\Entries\Collection;
+use Statamic\Contracts\Entries\Entry;
+use Statamic\Contracts\Taxonomies\Taxonomy;
+use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Site;
@@ -36,9 +40,9 @@ class SeoProPreviews extends Fieldtype
         $item = $this->field->parent();
 
         $route = match (true) {
-            $item instanceof \Statamic\Contracts\Entries\Entry => $item->route(),
-            $item instanceof \Statamic\Contracts\Entries\Collection => $item->route(Site::selected()->handle()),
-            $item instanceof \Statamic\Contracts\Taxonomies\Taxonomy, $item instanceof \Statamic\Contracts\Taxonomies\Term => '{{ slug }}',
+            $item instanceof Entry => $item->route(),
+            $item instanceof Collection => $item->route(Site::selected()->handle()),
+            $item instanceof Taxonomy, $item instanceof Term => '{{ slug }}',
             default => '',
         };
 

@@ -2,6 +2,8 @@
 
 namespace Statamic\SeoPro\Fieldtypes\Concerns;
 
+use Illuminate\Support\Collection;
+use Statamic\Assets\Asset;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blink;
@@ -39,11 +41,11 @@ trait ResolvesPlaceholders
                 ->get();
 
             return collect($cascade)->map(function ($value) {
-                if ($value instanceof \Statamic\Assets\Asset) {
+                if ($value instanceof Asset) {
                     return $value->path();
                 }
 
-                if ($value instanceof \Illuminate\Support\Collection) {
+                if ($value instanceof Collection) {
                     return $value->join("\n");
                 }
 
