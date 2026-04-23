@@ -12,7 +12,7 @@ defineProps({
 <template>
 	<Widget :title="__('SEO Pro')" :href="reportsUrl" :icon>
 		<template #actions>
-			<Button :href="reportsUrl" size="sm" :text="__('seo-pro::messages.reports')" />
+			<Button :href="reportsUrl" size="sm" :text="__('seo-pro::messages.view_reports')" />
 		</template>
 
 		<div v-if="report" class="flex flex-col items-center justify-center gap-4" style="min-height: 159px">
