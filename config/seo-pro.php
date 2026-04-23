@@ -77,8 +77,8 @@ return [
         ],
 
         'errors' => [
-            'driver' => 'file',
             'enabled' => env('SEO_PRO_TRACK_ERRORS', false),
+            'driver' => 'file',
             'directory' => storage_path('statamic/seopro/errors'),
             'purge_after_days' => 30,
         ],

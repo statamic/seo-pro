@@ -190,15 +190,28 @@ By default, query strings from the original URL are retained when redirecting. Y
 
 #### Storage
 
-Redirects are stored as YAML files in `content/seo-pro/redirects` by default. You can change this directory in the config:
+By default, redirects are stored as YAML files in the `content/seo-pro/redirects` directory. You can change this in the config:
 
 ```php
 // config/statamic/seo-pro.php
 
 'redirects' => [
+    'driver' => 'file',
     'directory' => base_path('content/seo-pro/redirects'),
 ],
 ```
+
+Alternatively, you may store redirects in the database by changing the driver:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'driver' => 'database',
+],
+```
+
+Then run `php please seo-pro:database-redirects` to publish the migration and import existing redirects.
 
 ### Multi-Site
 
@@ -283,6 +296,38 @@ You may also run the command manually:
 ```
 php please seo-pro:purge-errors
 ```
+
+#### Storage
+
+By default, errors are stored in the `storage/statamic/seopro/errors` directory. You can change this in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+   'errors' => [
+      'driver' => 'file',
+      'directory' => storage_path('statamic/seopro/errors'),
+   ],
+],
+```
+
+Alternatively, you may store redirects in the database by changing the driver:
+
+
+Errors can be stored in the database independently of redirects:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'driver' => 'database',
+    ],
+],
+```
+
+Then run `php please seo-pro:database-errors` to publish the migration and import existing errors.
 
 #### Widget
 
