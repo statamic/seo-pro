@@ -66,7 +66,11 @@ class RedirectController extends CpController
             ->rejectUnlisted()
             ->values();
 
-        // TODO: Empty state?
+        if (Facades\Redirect::query()->count() === 0) {
+            return Inertia::render('seo-pro::Redirects/Empty', [
+                'createUrl' => cp_route('seo-pro.redirects.create'),
+            ]);
+        }
 
         return Inertia::render('seo-pro::Redirects/Index', [
             'blueprint' => $blueprint,
