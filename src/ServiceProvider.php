@@ -21,8 +21,6 @@ use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
-use Statamic\SeoPro\GraphQL\AlternateLocaleType;
-use Statamic\SeoPro\GraphQL\SeoProType;
 use Statamic\SeoPro\GraphQL\SeoProType;
 use Statamic\SeoPro\Redirects\Error;
 use Statamic\SeoPro\Redirects\ErrorRepository;
