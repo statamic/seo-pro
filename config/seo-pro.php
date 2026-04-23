@@ -67,6 +67,12 @@ return [
     'redirects' => [
         'directory' => base_path('content/seo-pro/redirects'),
         'preserve_query_string' => false,
+        'default_response_code' => 301,
+        'automatic_redirects' => [
+            'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', false),
+            'collections' => ['*'],
+            'taxonomies' => ['*'],
+        ],
     ],
 
 ];

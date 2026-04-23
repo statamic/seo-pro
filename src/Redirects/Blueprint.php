@@ -51,7 +51,7 @@ class Blueprint
                                             308 => '308 - Permanent Redirect',
                                             410 => '410 - Gone',
                                         ],
-                                        'default' => 301,
+                                        'default' => config('statamic.seo-pro.redirects.default_response_code', 301),
                                         'clearable' => false,
                                         'max_items' => 1,
                                         'validate' => ['required'],
