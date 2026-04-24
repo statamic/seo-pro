@@ -329,28 +329,40 @@ class ServiceProvider extends AddonServiceProvider
 
             $settings->save();
 
-            $this->moveFilesIntoSiteSubdirectory(config('statamic.seo-pro.redirects.directory'));
-            $this->moveFilesIntoSiteSubdirectory(config('statamic.seo-pro.redirects.errors.directory'));
+            if (config('statamic.seo-pro.redirects.driver') === 'file') {
+                $this->components->task(
+                    description: 'Updating redirects',
+                    task: function () {
+                        $base = app(Stache::class)->store('redirects')->directory();
+
+                        File::makeDirectory("{$base}/{$this->siteHandle}");
+
+                        File::getFiles($base)->each(function ($file) use ($base) {
+                            $filename = pathinfo($file, PATHINFO_BASENAME);
+                            File::move($file, "{$base}/{$this->siteHandle}/{$filename}");
+                        });
+                    }
+                );
+            }
+
+            if (config('statamic.seo-pro.redirects.errors.driver') === 'file') {
+                $this->components->task(
+                    description: 'Updating errors',
+                    task: function () {
+                        $base = app(Stache::class)->store('errors')->directory();
+
+                        File::makeDirectory("{$base}/{$this->siteHandle}");
+
+                        File::getFiles($base)->each(function ($file) use ($base) {
+                            $filename = pathinfo($file, PATHINFO_BASENAME);
+                            File::move($file, "{$base}/{$this->siteHandle}/{$filename}");
+                        });
+                    }
+                );
+            }
         });
 
         return $this;
-    }
-
-    private function moveFilesIntoSiteSubdirectory(string $directory): void
-    {
-        if (! $directory || ! File::exists($directory)) {
-            return;
-        }
-
-        $siteHandle = Site::default()->handle();
-        $targetDirectory = $directory.'/'.$siteHandle;
-
-        collect(File::getFiles($directory))
-            ->filter(fn (string $path): bool => str_ends_with($path, '.yaml'))
-            ->each(function (string $path) use ($targetDirectory): void {
-                $filename = pathinfo($path, PATHINFO_BASENAME);
-                File::move($path, $targetDirectory.'/'.$filename);
-            });
     }
 
     private function userHasSeoPermissions()
