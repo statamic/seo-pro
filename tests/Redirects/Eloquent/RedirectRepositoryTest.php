@@ -70,7 +70,7 @@ class RedirectRepositoryTest extends TestCase
         $this->repo->save($redirect);
 
         $this->assertNotNull($redirect->id());
-        $this->assertDatabaseHas('redirects', [
+        $this->assertDatabaseHas('seo_pro_redirects', [
             'source' => '/old-url',
             'destination' => '/new-url',
             'response_code' => 302,
@@ -89,11 +89,11 @@ class RedirectRepositoryTest extends TestCase
 
         $this->repo->save($redirect);
 
-        $this->assertDatabaseHas('redirects', ['id' => $redirect->id()]);
+        $this->assertDatabaseHas('seo_pro_redirects', ['id' => $redirect->id()]);
 
         $this->repo->delete($redirect);
 
-        $this->assertDatabaseMissing('redirects', ['id' => $redirect->id()]);
+        $this->assertDatabaseMissing('seo_pro_redirects', ['id' => $redirect->id()]);
     }
 
     #[Test]
@@ -107,7 +107,7 @@ class RedirectRepositoryTest extends TestCase
 
         $this->repo->save($redirect);
 
-        $this->assertDatabaseHas('redirects', [
+        $this->assertDatabaseHas('seo_pro_redirects', [
             'id' => $redirect->id(),
             'site' => 'default',
         ]);

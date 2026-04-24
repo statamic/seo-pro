@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RedirectModel extends Model
 {
-    protected $table = 'redirects';
+    protected $table = 'seo_pro_redirects';
 
     protected $guarded = [];
 

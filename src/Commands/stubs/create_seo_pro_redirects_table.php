@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('redirects', function (Blueprint $table) {
+        Schema::create('seo_pro_redirects', function (Blueprint $table) {
             $table->id();
             $table->string('site');
             $table->string('source');
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('response_code');
             $table->boolean('enabled');
             $table->integer('hits');
-            $table->dateTime('last_hit_at')->nullable();
+            $table->dateTime('last_hit_at')->nullable()->index();
             $table->json('data');
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('redirects');
+        Schema::dropIfExists('seo_pro_redirects');
     }
 };

@@ -65,7 +65,7 @@ class ErrorRepositoryTest extends TestCase
         $this->repo->save($error);
 
         $this->assertNotNull($error->id());
-        $this->assertDatabaseHas('errors', [
+        $this->assertDatabaseHas('seo_pro_errors', [
             'url' => '/missing-page',
             'hits' => 3,
         ]);
@@ -81,11 +81,11 @@ class ErrorRepositoryTest extends TestCase
 
         $this->repo->save($error);
 
-        $this->assertDatabaseHas('errors', ['id' => $error->id()]);
+        $this->assertDatabaseHas('seo_pro_errors', ['id' => $error->id()]);
 
         $this->repo->delete($error);
 
-        $this->assertDatabaseMissing('errors', ['id' => $error->id()]);
+        $this->assertDatabaseMissing('seo_pro_errors', ['id' => $error->id()]);
     }
 
     #[Test]
@@ -98,7 +98,7 @@ class ErrorRepositoryTest extends TestCase
 
         $this->repo->save($error);
 
-        $this->assertDatabaseHas('errors', [
+        $this->assertDatabaseHas('seo_pro_errors', [
             'id' => $error->id(),
             'site' => 'default',
         ]);

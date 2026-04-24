@@ -51,7 +51,7 @@ class PublishRedirectMigrations extends Command
 
     private function publishMigration(): self
     {
-        $name = 'create_redirects_table.php';
+        $name = 'create_seo_pro_redirects_table.php';
 
         $existingMigration = collect(File::allFiles(database_path('migrations')))
             ->map->getFilename()

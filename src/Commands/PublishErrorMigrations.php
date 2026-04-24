@@ -36,7 +36,7 @@ class PublishErrorMigrations extends Command
 
     private function publishMigration(): self
     {
-        $name = 'create_errors_table.php';
+        $name = 'create_seo_pro_errors_table.php';
 
         $existingMigration = collect(File::allFiles(database_path('migrations')))
             ->map->getFilename()

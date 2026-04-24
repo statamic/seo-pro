@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('errors', function (Blueprint $table) {
+        Schema::create('seo_pro_errors', function (Blueprint $table) {
             $table->id();
             $table->string('site');
             $table->string('url');
             $table->integer('hits');
-            $table->dateTime('last_hit_at')->nullable();
+            $table->dateTime('last_hit_at')->nullable()->index();
             $table->json('data');
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('errors');
+        Schema::dropIfExists('seo_pro_errors');
     }
 };

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ErrorModel extends Model
 {
-    protected $table = 'errors';
+    protected $table = 'seo_pro_errors';
 
     protected $guarded = [];
 
