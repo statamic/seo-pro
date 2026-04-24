@@ -89,9 +89,10 @@ class RedirectController extends CpController
         }
 
         if ($search = request('search')) {
-            $query
-                ->where('source', 'LIKE', '%'.$search.'%')
-                ->orWhere('destination', 'LIKE', '%'.$search.'%');
+            $query->where(function ($q) use ($search) {
+                $q->where('source', 'LIKE', '%'.$search.'%')
+                    ->orWhere('destination', 'LIKE', '%'.$search.'%');
+            });
         }
 
         return $query;
