@@ -26,19 +26,19 @@ class ListedError extends JsonResource
 
     public function toArray($request)
     {
-        $redirect = $this->resource;
+        $error = $this->resource;
 
         return [
-            'id' => $redirect->id(),
+            'id' => $error->id(),
 
             $this->merge($this->values([
-                'url' => $redirect->url(),
-                'hits' => $redirect->hits(),
-                'last_hit_at' => $redirect->lastHitAt(),
+                'url' => $error->url(),
+                'hits' => $error->hits(),
+                'last_hit_at' => $error->lastHitAt(),
             ])),
 
             'create_redirect_url' => cp_route('seo-pro.redirects.create', [
-                'source' => $redirect->url(),
+                'source' => $error->url(),
             ]),
         ];
     }
