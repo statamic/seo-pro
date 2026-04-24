@@ -15,7 +15,7 @@ use Statamic\Support\Str;
 class ErrorsStore extends BasicStore
 {
     protected $storeIndexes = [
-        'id', 'site', 'url', 'hits',
+        'id', 'site', 'url', 'hits', 'last_hit_at',
     ];
 
     public function key()
