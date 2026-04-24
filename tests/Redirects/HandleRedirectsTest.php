@@ -27,7 +27,8 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-url')
+        $this
+            ->get('/old-url')
             ->assertRedirect('/new-url')
             ->assertStatus(301);
     }
@@ -43,7 +44,8 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-url')
+        $this
+            ->get('/old-url')
             ->assertRedirect('/new-url')
             ->assertStatus(302);
     }
@@ -130,7 +132,8 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-url?foo=bar')
+        $this
+            ->get('/old-url?foo=bar')
             ->assertRedirect('/new-url?existing=param&foo=bar');
     }
 
@@ -145,7 +148,8 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-url')
+        $this
+            ->get('/old-url')
             ->assertRedirect('https://example.com/new-url');
     }
 
@@ -164,9 +168,7 @@ class HandleRedirectsTest extends TestCase
 
         $this->get('/old-url')->assertRedirect('/new-url');
 
-        Queue::assertPushed(RecordRedirectHit::class, function ($job) {
-            return $job->redirectId === 'abc';
-        });
+        Queue::assertPushed(RecordRedirectHit::class, fn ($job) => $job->redirectId === 'abc');
     }
 
     #[Test]
@@ -188,9 +190,7 @@ class HandleRedirectsTest extends TestCase
 
         $this->get('/nonexistent-url')->assertNotFound();
 
-        Queue::assertPushed(RecordError::class, function ($job) {
-            return $job->url === '/nonexistent-url' && $job->site === 'default';
-        });
+        Queue::assertPushed(RecordError::class, fn ($job) => $job->url === '/nonexistent-url' && $job->site === 'default');
     }
 
     #[Test]
@@ -220,7 +220,9 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-url')->assertRedirect('/new-url');
+        $this
+            ->get('/old-url')
+            ->assertRedirect('/new-url');
 
         Queue::assertNotPushed(RecordError::class);
     }
@@ -232,12 +234,12 @@ class HandleRedirectsTest extends TestCase
             ->id('abc')
             ->source('/blog/*')
             ->destination('/articles/$1')
-
             ->responseCode(301)
             ->enabled(true)
             ->save();
 
-        $this->get('/blog/hello-world')
+        $this
+            ->get('/blog/hello-world')
             ->assertRedirect('/articles/hello-world')
             ->assertStatus(301);
     }
@@ -249,12 +251,12 @@ class HandleRedirectsTest extends TestCase
             ->id('abc')
             ->source('/blog/*/posts/*')
             ->destination('/articles/$1/entries/$2')
-
             ->responseCode(301)
             ->enabled(true)
             ->save();
 
-        $this->get('/blog/2026/posts/hello-world')
+        $this
+            ->get('/blog/2026/posts/hello-world')
             ->assertRedirect('/articles/2026/entries/hello-world');
     }
 
@@ -265,7 +267,6 @@ class HandleRedirectsTest extends TestCase
             ->id('wildcard')
             ->source('/blog/*')
             ->destination('/articles/$1')
-
             ->responseCode(301)
             ->enabled(true)
             ->save();
@@ -274,12 +275,12 @@ class HandleRedirectsTest extends TestCase
             ->id('exact')
             ->source('/blog/specific-post')
             ->destination('/exact-destination')
-
             ->responseCode(301)
             ->enabled(true)
             ->save();
 
-        $this->get('/blog/specific-post')
+        $this
+            ->get('/blog/specific-post')
             ->assertRedirect('/exact-destination');
     }
 
@@ -290,12 +291,13 @@ class HandleRedirectsTest extends TestCase
             ->id('abc')
             ->source('/blog/*')
             ->destination('/articles/$1')
-
             ->responseCode(301)
             ->enabled(false)
             ->save();
 
-        $this->get('/blog/hello-world')->assertNotFound();
+        $this
+            ->get('/blog/hello-world')
+            ->assertNotFound();
     }
 
     #[Test]
@@ -307,12 +309,12 @@ class HandleRedirectsTest extends TestCase
             ->id('abc')
             ->source('/blog/*')
             ->destination('/articles/$1')
-
             ->responseCode(301)
             ->enabled(true)
             ->save();
 
-        $this->get('/blog/hello-world?ref=twitter')
+        $this
+            ->get('/blog/hello-world?ref=twitter')
             ->assertRedirect('/articles/hello-world?ref=twitter');
     }
 
@@ -330,11 +332,11 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/blog/hello-world')->assertRedirect('/articles/hello-world');
+        $this
+            ->get('/blog/hello-world')
+            ->assertRedirect('/articles/hello-world');
 
-        Queue::assertPushed(RecordRedirectHit::class, function ($job) {
-            return $job->redirectId === 'abc';
-        });
+        Queue::assertPushed(RecordRedirectHit::class, fn ($job) => $job->redirectId === 'abc');
     }
 
     #[Test]
@@ -344,12 +346,13 @@ class HandleRedirectsTest extends TestCase
             ->id('abc')
             ->source('/blog/*')
             ->destination('/articles/$1')
-
             ->responseCode(301)
             ->enabled(true)
             ->save();
 
-        $this->get('/articles/hello-world')->assertNotFound();
+        $this
+            ->get('/articles/hello-world')
+            ->assertNotFound();
     }
 
     #[Test]
@@ -372,7 +375,8 @@ class HandleRedirectsTest extends TestCase
             ->enabled(true)
             ->save();
 
-        $this->get('/old-post')
+        $this
+            ->get('/old-post')
             ->assertRedirect($entry->absoluteUrl())
             ->assertStatus(301);
     }
