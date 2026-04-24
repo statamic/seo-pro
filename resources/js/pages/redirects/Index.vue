@@ -49,6 +49,7 @@ function requestComplete({ items: newItems, parameters }) {
 			</Link>
 
 			<resource-deleter
+				v-if="redirect.deletable"
 				:ref="`deleter_${redirect.id}`"
 				:resource="redirect"
 				@deleted="$refs.listing.refresh()"
@@ -58,8 +59,9 @@ function requestComplete({ items: newItems, parameters }) {
 			<StatusIndicator :status="redirect.status" show-label :show-dot="false" />
 		</template>
 		<template #prepended-row-actions="{ row: redirect }">
-			<DropdownItem :text="__('Edit')" :href="redirect.edit_url" icon="edit" />
+			<DropdownItem v-if="redirect.editable" :text="__('Edit')" :href="redirect.edit_url" icon="edit" />
 			<DropdownItem
+				v-if="redirect.deletable"
 				:text="__('Delete')"
 				icon="trash"
 				variant="destructive"
