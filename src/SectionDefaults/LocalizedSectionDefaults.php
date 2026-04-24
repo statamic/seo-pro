@@ -79,11 +79,13 @@ class LocalizedSectionDefaults
         return $this;
     }
 
-    public function save(): void
+    public function save(): bool
     {
-        SectionDefaults::save($this);
+        $save = SectionDefaults::save($this);
 
         SectionDefaultsSaved::dispatch($this);
+
+        return $save;
     }
 
     public function origin(): ?LocalizedSectionDefaults
@@ -126,7 +128,7 @@ class LocalizedSectionDefaults
 
     public function editUrl(): string
     {
-        return $this->cpUrl('update');
+        return $this->cpUrl('edit');
     }
 
     public function updateUrl(): string

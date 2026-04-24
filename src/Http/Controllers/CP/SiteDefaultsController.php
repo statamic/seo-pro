@@ -5,6 +5,7 @@ namespace Statamic\SeoPro\Http\Controllers\CP;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Statamic\Facades\Site;
+use Statamic\Support\Arr;
 use Statamic\Fields\Blueprint;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\SiteDefaults\LocalizedSiteDefaults;
@@ -75,7 +76,7 @@ class SiteDefaultsController extends CpController
             $values = $values->only($request->input('_localized'));
         }
 
-        $siteDefaults->set($values->filter()->all());
+        $siteDefaults->set(Arr::removeNullValues($values->all()));
 
         $save = $siteDefaults->save();
 

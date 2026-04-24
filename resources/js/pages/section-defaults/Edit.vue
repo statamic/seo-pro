@@ -152,12 +152,13 @@ const switchToLocalization = (localization) => {
 			:sync-field-confirmation-text
 			:track-dirty-state="true"
 			as-config
+			remember-tab
 		/>
 
 		<ConfigureModal
 			v-if="configureModalOpen"
 			:route="configureUrl"
-      @saved="() => router.reload()"
+			@saved="() => router.reload()"
 			@closed="configureModalOpen = false"
 		/>
 

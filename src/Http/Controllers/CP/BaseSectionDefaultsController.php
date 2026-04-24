@@ -94,7 +94,7 @@ abstract class BaseSectionDefaultsController extends CpController
             $values = $values->only($request->input('_localized'));
         }
 
-        $this->saveSectionDefaults(
+        $save = $this->saveSectionDefaults(
             type: $sectionType,
             handle: $handle,
             site: $site,
@@ -105,6 +105,8 @@ abstract class BaseSectionDefaultsController extends CpController
         if ($values->get('enabled') === false) {
             $this->removeChildSeo($this->getSectionItem($handle));
         }
+
+        return ['saved' => $save];
     }
 
     protected function blueprint()
@@ -118,18 +120,19 @@ abstract class BaseSectionDefaultsController extends CpController
         ]);
     }
 
-    protected function saveSectionDefaults(string $type, string $handle, string $site, array $values, LocalizedSectionDefaults $localized): void
+    protected function saveSectionDefaults(string $type, string $handle, string $site, array $values, LocalizedSectionDefaults $localized): bool
     {
         $values = collect($values);
 
         if ($values->get('enabled') === false) {
             SectionDefaults::disable($type, $handle);
 
-            return;
+            return true;
         }
 
         $localized->set($values->except('enabled')->all());
-        $localized->save();
+
+        return $localized->save();
     }
 
     private function extractFromFields(LocalizedSectionDefaults $defaults, \Statamic\Fields\Blueprint $blueprint): array

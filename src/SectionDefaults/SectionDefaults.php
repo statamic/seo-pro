@@ -67,7 +67,7 @@ class SectionDefaults
      */
     public static function disable(string $type, string $handle): void
     {
-        $data = Addon::get('statamic/seo-pro')->settings()->get('section_defaults', []);
+        $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'section_defaults', []);
 
         Arr::set($data, "{$type}.{$handle}", false);
 
@@ -80,9 +80,9 @@ class SectionDefaults
     /**
      * Save a LocalizedSectionDefaults instance to addon settings.
      */
-    public static function save(LocalizedSectionDefaults $localized): void
+    public static function save(LocalizedSectionDefaults $localized): bool
     {
-        $data = Addon::get('statamic/seo-pro')->settings()->get('section_defaults', []);
+        $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'section_defaults', []);
         $type = $localized->type();
         $handle = $localized->handle();
         $locale = $localized->locale();
@@ -117,6 +117,8 @@ class SectionDefaults
 
         self::clearCache($type, $handle);
         self::clearInjectSeo($type, $handle);
+
+        return true;
     }
 
     /**
