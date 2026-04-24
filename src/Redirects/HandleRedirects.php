@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Statamic\Facades\Data;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Facades\Redirect as RedirectFacade;
+use Statamic\Sites\Site as SiteInstance;
 use Statamic\Statamic;
 use Statamic\Support\Str;
 
@@ -17,35 +18,38 @@ class HandleRedirects
             return;
         }
 
-        $captures = [];
         $site = Site::findByUrl($request->getUri()) ?? Site::default();
-        $path = $this->siteRelativePath($request->getPathInfo(), $site);
-        $redirect = $this->findExactMatch($path, $site->handle()) ?? $this->findWildcardMatch($path, $site->handle(), $captures);
+        $path = $this->stripSitePrefix($request->getPathInfo(), $site);
 
-        if (! $redirect) {
-            if (config('statamic.seo-pro.redirects.errors.enabled')) {
-                RecordError::dispatch($path, $site->handle());
-            }
+        if (! $redirect = $this->findRedirect($path, $site->handle())) {
+            $this->recordError($path, $site->handle());
 
             return;
         }
 
-        $destination = $redirect->usesWildcard()
-            ? WildcardUrlMatcher::resolveDestination($redirect->destination(), $captures)
-            : $redirect->destination();
-
-        if (Str::startsWith($destination, 'entry::') && $data = Data::find($destination)) {
-            $destination = $data->absoluteUrl();
-        }
-
-        if ($request->getQueryString() && config('statamic.seo-pro.redirects.preserve_query_string')) {
-            $separator = str_contains($destination, '?') ? '&' : '?';
-            $destination .= $separator.$request->getQueryString();
-        }
-
         RecordRedirectHit::dispatch($redirect->id());
 
-        return redirect($destination, $redirect->responseCode());
+        return redirect(
+            $this->resolveDestination($redirect, $path, $request),
+            $redirect->responseCode(),
+        );
+    }
+
+    private function stripSitePrefix(string $requestPath, SiteInstance $site): string
+    {
+        $sitePrefix = rtrim(parse_url($site->url(), PHP_URL_PATH) ?? '', '/');
+
+        if ($sitePrefix && Str::startsWith($requestPath, $sitePrefix)) {
+            $requestPath = Str::removeLeft($requestPath, $sitePrefix);
+        }
+
+        return $requestPath ?: '/';
+    }
+
+    private function findRedirect(string $path, string $siteHandle): ?Redirect
+    {
+        return $this->findExactMatch($path, $siteHandle)
+            ?? $this->findWildcardMatch($path, $siteHandle);
     }
 
     private function findExactMatch(string $path, string $siteHandle): ?Redirect
@@ -57,35 +61,41 @@ class HandleRedirects
             ->first();
     }
 
-    private function findWildcardMatch(string $path, string $siteHandle, array &$captures): ?Redirect
+    private function findWildcardMatch(string $path, string $siteHandle): ?Redirect
     {
-        $wildcardRedirects = RedirectFacade::query()
+        return RedirectFacade::query()
             ->where('site', $siteHandle)
             ->where('enabled', true)
             ->get()
-            ->filter->usesWildcard();
-
-        foreach ($wildcardRedirects as $redirect) {
-            $matched = WildcardUrlMatcher::match($redirect->source(), $path);
-
-            if ($matched !== null) {
-                $captures = $matched;
-
-                return $redirect;
-            }
-        }
-
-        return null;
+            ->filter->usesWildcard()
+            ->first(fn (Redirect $redirect) => WildcardUrlMatcher::match($redirect->source(), $path) !== null);
     }
 
-    private function siteRelativePath(string $requestPath, \Statamic\Sites\Site $site): string
+    private function recordError(string $path, string $siteHandle): void
     {
-        $sitePrefix = rtrim(parse_url($site->url(), PHP_URL_PATH) ?? '', '/');
+        if (config('statamic.seo-pro.redirects.errors.enabled')) {
+            RecordError::dispatch($path, $siteHandle);
+        }
+    }
 
-        if ($sitePrefix && Str::startsWith($requestPath, $sitePrefix)) {
-            $requestPath = Str::removeLeft($requestPath, $sitePrefix);
+    private function resolveDestination(Redirect $redirect, string $path, Request $request): string
+    {
+        $destination = $redirect->destination();
+
+        if ($redirect->usesWildcard()) {
+            $captures = WildcardUrlMatcher::match($redirect->source(), $path);
+            $destination = WildcardUrlMatcher::resolveDestination($destination, $captures);
         }
 
-        return $requestPath ?: '/';
+        if (Str::startsWith($destination, 'entry::') && $data = Data::find($destination)) {
+            $destination = $data->absoluteUrl();
+        }
+
+        if ($request->getQueryString() && config('statamic.seo-pro.redirects.preserve_query_string')) {
+            $separator = str_contains($destination, '?') ? '&' : '?';
+            $destination .= $separator.$request->getQueryString();
+        }
+
+        return $destination;
     }
 }
