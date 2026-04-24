@@ -11,7 +11,7 @@ use Statamic\SeoPro\Facades\Redirect;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
-class AutomaticRedirectTest extends TestCase
+class AutomaticRedirectsTest extends TestCase
 {
     use PreventsSavingStacheItemsToDisk;
 
