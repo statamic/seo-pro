@@ -19,6 +19,8 @@ return new class extends Migration
             $table->dateTime('last_hit_at')->nullable()->index();
             $table->json('data');
             $table->timestamps();
+
+            $table->index(['site', 'url']);
         });
     }
 
