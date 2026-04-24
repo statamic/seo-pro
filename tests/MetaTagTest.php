@@ -641,6 +641,28 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
+    public function it_uses_robots_indexing_and_following_over_legacy_robots_array($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        // Site defaults have the legacy robots array (eg. from a v5 migration)
+        $this->setSeoInSiteDefaults([
+            'robots' => ['index', 'follow'],
+        ]);
+
+        // Entry explicitly sets the new robots_indexing/robots_following fields
+        $this->setSeoOnEntry(Entry::findByUri('/about'), [
+            'robots_indexing' => 'noindex',
+            'robots_following' => 'nofollow',
+        ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="robots" content="noindex, nofollow" />', false);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_custom_humans_url($viewType)
     {
         Config::set('statamic.seo-pro.humans.url', 'aliens.md');
@@ -913,6 +935,6 @@ class FakeSsgPaginator extends StatamicLengthAwarePaginator
 {
     public function url($page)
     {
-        return \Statamic\Facades\URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
+        return URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
     }
 }

@@ -77,7 +77,7 @@ class Blueprint
                 'type' => 'seo_pro_previews',
                 'listable' => false,
                 'display' => 'SEO Previews',
-                'localizable' => true,
+                'localizable' => false,
                 'hide_display' => true,
                 'unless' => ['seo.enabled' => 'equals false'],
             ],

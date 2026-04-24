@@ -107,8 +107,17 @@ class Cascade
         }
 
         $this->data = $this->data->map(function ($item, $key) {
+            // Skip json_ld_schema. It might need to use resolved SEO values as context.
+            if ($key === 'json_ld_schema') {
+                return $item;
+            }
+
             return $this->parse($key, $item);
         });
+
+        if ($this->data->has('json_ld_schema')) {
+            $this->data->put('json_ld_schema', $this->parseJsonLdSchema($this->data->get('json_ld_schema')));
+        }
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
@@ -488,6 +497,27 @@ class Cascade
         }
     }
 
+    protected function parseJsonLdSchema($item)
+    {
+        if ($item instanceof Value) {
+            $item = $item->raw();
+        }
+
+        if (! is_string($item) || ! Str::contains($item, '{{')) {
+            return $item;
+        }
+
+        try {
+            return (string) Antlers::parse($item, array_merge(
+                app(ViewCascade::class)->toArray(),
+                $this->current ?? [],
+                ['seo' => $this->data->all()],
+            ));
+        } catch (RuntimeException $e) {
+            return $item;
+        }
+    }
+
     private function hydrateCascade()
     {
         $cascade = app(ViewCascade::class);
@@ -508,20 +538,6 @@ class Cascade
 
     protected function robots()
     {
-        if ($this->data->has('robots')) {
-            $robots = $this->data->get('robots');
-
-            if ($robots instanceof \Statamic\Fields\Value) {
-                $robots = $robots->value();
-            }
-
-            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
-                return collect($robots)->pluck('key')->toArray();
-            }
-
-            return is_array($robots) ? $robots : [];
-        }
-
         $robots = [];
 
         if ($indexing = $this->data->get('robots_indexing')) {
@@ -542,6 +558,24 @@ class Cascade
 
         if ($this->data->get('robots_nosnippet')) {
             $robots[] = 'nosnippet';
+        }
+
+        if (! empty($robots)) {
+            return $robots;
+        }
+
+        if ($this->data->has('robots')) {
+            $robots = $this->data->get('robots');
+
+            if ($robots instanceof Value) {
+                $robots = $robots->value();
+            }
+
+            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
+                return collect($robots)->pluck('key')->toArray();
+            }
+
+            return is_array($robots) ? $robots : [];
         }
 
         return $robots;
@@ -572,9 +606,7 @@ class Cascade
                 'name' => $jsonLdOrganizationName,
                 '@id' => $this->homeUrl().'#organization',
                 'url' => $this->homeUrl(),
-                'logo' => $jsonLdOrganizationLogo
-                    ? Statamic::tag('glide')->src($jsonLdOrganizationLogo)->square(512)->absolute(true)->fetch()
-                    : null,
+                'logo' => $this->jsonLdOrganizationLogoUrl($jsonLdOrganizationLogo),
             ]), JSON_UNESCAPED_SLASHES));
         }
 
@@ -598,7 +630,7 @@ class Cascade
                     return [
                         '@type' => 'ListItem',
                         'position' => $index,
-                        'name' => $crumb->title,
+                        'name' => $crumb->get('title'),
                         'item' => $crumb->absoluteUrl(),
                     ];
                 })->all(),
@@ -610,6 +642,19 @@ class Cascade
         }
 
         return $snippets;
+    }
+
+    protected function jsonLdOrganizationLogoUrl($logo)
+    {
+        if (! $logo) {
+            return null;
+        }
+
+        if (config('statamic.seo-pro.json_ld.use_glide_for_logo', true)) {
+            return Statamic::tag('glide')->src($logo)->square(512)->absolute(true)->fetch();
+        }
+
+        return $logo->absoluteUrl();
     }
 
     protected function augmentData($data)

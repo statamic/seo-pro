@@ -5,10 +5,13 @@ namespace Tests;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\ExpectationFailedException;
+use SebastianBergmann\Comparator\ComparisonFailure;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\SectionDefaults\SectionDefaults;
+use Statamic\SeoPro\ServiceProvider;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Testing\AddonTestCase;
 
@@ -16,7 +19,7 @@ abstract class TestCase extends AddonTestCase
 {
     protected $siteFixturePath = __DIR__.'/Fixtures/site';
     protected $files;
-    protected string $addonServiceProvider = \Statamic\SeoPro\ServiceProvider::class;
+    protected string $addonServiceProvider = ServiceProvider::class;
 
     protected function setUp(): void
     {
@@ -158,9 +161,9 @@ abstract class TestCase extends AddonTestCase
             $json = $this->json();
 
             if (isset($json['errors'])) {
-                throw new \PHPUnit\Framework\ExpectationFailedException(
+                throw new ExpectationFailedException(
                     'GraphQL response contained errors',
-                    new \SebastianBergmann\Comparator\ComparisonFailure('', '', '', json_encode($json, JSON_PRETTY_PRINT))
+                    new ComparisonFailure('', '', '', json_encode($json, JSON_PRETTY_PRINT))
                 );
             }
 

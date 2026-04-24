@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Sitemap;
 
 use Illuminate\Support\Collection as IlluminateCollection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Statamic\Contracts\Entries\Entry;
@@ -25,6 +26,24 @@ class Sitemap
     use GetsSectionDefaults, Hookable;
 
     const CACHE_KEY = 'seo-pro.sitemap';
+
+    public static function invalidateCache(): void
+    {
+        foreach (Cache::get(self::CACHE_KEY.'.keys', []) as $key) {
+            Cache::forget($key);
+        }
+
+        Cache::forget(self::CACHE_KEY.'.keys');
+    }
+
+    public static function trackCacheKey(string $key): void
+    {
+        $keys = Cache::get(self::CACHE_KEY.'.keys', []);
+
+        if (! in_array($key, $keys)) {
+            Cache::forever(self::CACHE_KEY.'.keys', [...$keys, $key]);
+        }
+    }
 
     public function pages(): array
     {

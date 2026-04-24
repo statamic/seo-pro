@@ -1,5 +1,85 @@
 # Release Notes
 
+## 7.6.2 (2026-04-23)
+
+### What's fixed
+- Fix Antlers parsing for JSON-LD (site defaults) [#544](https://github.com/statamic/seo-pro/issues/544) by @joshuablum
+
+
+
+## 7.6.1 (2026-04-21)
+
+### What's fixed
+- Fix serializable class errors [#542](https://github.com/statamic/seo-pro/issues/542) by @duncanmcclean
+
+
+
+## 7.6.0 (2026-04-21)
+
+### What's new
+- Support custom JSON-LD schema in site defaults [#540](https://github.com/statamic/seo-pro/issues/540) by @duncanmcclean
+
+### What's fixed
+- Use `adaptiveWidth` prop in site selector [#539](https://github.com/statamic/seo-pro/issues/539) by @duncanmcclean
+
+
+
+## 7.5.1 (2026-04-17)
+
+### What's fixed
+- Stop polling report info when navigating away [#531](https://github.com/statamic/seo-pro/issues/531) by @duncanmcclean
+- Fix site defaults disappearing when using Antlers values [#534](https://github.com/statamic/seo-pro/issues/534) by @joshuablum
+- Stack title and description on small widths in report summary [#537](https://github.com/statamic/seo-pro/issues/537) by @duncanmcclean
+- Fix robots meta ignoring new fields when legacy array exists [#538](https://github.com/statamic/seo-pro/issues/538) by @duncanmcclean
+
+
+
+## 7.5.0 (2026-03-31)
+
+### What's new
+- Allow disabling Glide for JSON-LD organization logo [#510](https://github.com/statamic/seo-pro/issues/510) by @samalisam-novu
+
+### What's fixed
+- Fix dark mode hover state on index page [#529](https://github.com/statamic/seo-pro/issues/529) by @duncanmcclean
+
+
+
+## 7.4.0 (2026-03-30)
+
+### What's new
+- Add missing default values to site defaults [#520](https://github.com/statamic/seo-pro/issues/520) by @duncanmcclean
+
+### What's fixed
+- Refactor SEO field placeholders [#523](https://github.com/statamic/seo-pro/issues/523) by @duncanmcclean
+- Fix squished Google preview image [#524](https://github.com/statamic/seo-pro/issues/524) by @duncanmcclean
+- Reload preview images when asset is updated [#525](https://github.com/statamic/seo-pro/issues/525) by @duncanmcclean
+- Previews field shouldn't be localizable [#526](https://github.com/statamic/seo-pro/issues/526) by @duncanmcclean
+- Fix "Array to string conversion" error when resolving placeholders [#527](https://github.com/statamic/seo-pro/issues/527) by @duncanmcclean
+
+
+
+## 7.3.0 (2026-03-13)
+
+### What's new
+- Transform preview images using Glide [#516](https://github.com/statamic/seo-pro/issues/516) by @duncanmcclean
+
+### What's fixed
+- Remember tab in site defaults publish form [#517](https://github.com/statamic/seo-pro/issues/517) by @duncanmcclean
+- Fix border of twitter preview in dark mode [#518](https://github.com/statamic/seo-pro/issues/518) by @duncanmcclean
+
+
+
+## 7.2.0 (2026-03-09)
+
+### What's new
+- Supports Laravel 13 [#502](https://github.com/statamic/seo-pro/issues/502) by @duncanmcclean
+
+### What's fixed
+- Fix error when generating JSON-LD breadcrumbs [#513](https://github.com/statamic/seo-pro/issues/513) by @duncanmcclean
+- Fix sitemap cache invalidation [#514](https://github.com/statamic/seo-pro/issues/514) by @duncanmcclean
+
+
+
 ## 7.1.1 (2026-02-27)
 
 ### What's fixed
@@ -62,6 +142,7 @@
 - Dropped support for PHP 8.2 and Laravel 11
 - Site Defaults are now stored using Statamic's [Addon Settings](https://statamic.dev/addons/building-an-addon#settings) feature.
   - SEO Pro will attempt to move the `content/seo.yaml`  file to `resources/addons/seo-pro.yaml` during the upgrade process. It will also update the structure of the YAML file.
+  - If this doesn't happen, you should run the update script manually via `php please updates:run 7.0.0-beta.1 --package=statamic/seo-pro`.
 - Site Defaults can now be localized.
   - When multi-site is enabled, SEO Pro will have configured origins for your non-default sites pointing at the default site to best mirror the previous behavior where all sites used the same defaults.
   - You can update these origins via the "Site Defaults" page in the Control Panel.

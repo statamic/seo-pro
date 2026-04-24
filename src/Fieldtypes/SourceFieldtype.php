@@ -2,13 +2,17 @@
 
 namespace Statamic\SeoPro\Fieldtypes;
 
+use Illuminate\Support\Arr;
 use Statamic\Fields\Field;
 use Statamic\Fields\Fieldtype;
+use Statamic\SeoPro\Fieldtypes\Concerns\ResolvesPlaceholders;
 use Statamic\SeoPro\Fieldtypes\Rules\SourceFieldRule;
 use Statamic\Support\Str;
 
 class SourceFieldtype extends Fieldtype
 {
+    use ResolvesPlaceholders;
+
     public static $handle = 'seo_pro_source';
 
     public $selectable = false;
@@ -76,10 +80,13 @@ class SourceFieldtype extends Fieldtype
 
     public function preload()
     {
+        $placeholder = Arr::get($this->getPlaceholders(), $this->field->handle());
+
         if (! $sourceField = $this->sourceField()) {
             return [
                 'fieldMeta' => null,
                 'defaultValue' => null,
+                'placeholder' => $placeholder,
             ];
         }
 
@@ -91,6 +98,7 @@ class SourceFieldtype extends Fieldtype
             'fieldMeta' => $sourceField->setValue($value)->preProcess()->meta(),
             'defaultFieldMeta' => $sourceField->setValue(null)->preProcess()->meta(),
             'defaultValue' => $sourceField->setValue(null)->preProcess()->value(),
+            'placeholder' => $placeholder,
         ];
     }
 

@@ -112,13 +112,23 @@ description: "{{ content | strip_tags | truncate(250, '...') }}"
 
 You may configure data for the Organization/Person objects, as well as enable breadcrumb data from your Site Defaults:
 
-![JSON-LD Tab on Site Defaults page](./docs-site-defaults-json-ld.png)
+![JSON-LD Tab on Site Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-site-defaults-json-ld.png)
 
 You can then configure JSON-LD objects for your content via section defaults, which can be overridden on a per-entry/term basis.
 
 You can even use Antlers to pull data from fields as necessary:
 
-![JSON-LD Schema field on Section Defaults page](./docs-json-ld-schema.png)
+![JSON-LD Schema field on Section Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-json-ld-schema.png)
+
+The "Organization Logo" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
+
+```php
+// config/statamic/seo-pro.php
+
+'json_ld' => [
+    'use_glide_for_logo' => false,
+],
+```
 
 ## Reports
 

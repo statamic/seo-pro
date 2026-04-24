@@ -45,6 +45,10 @@ return [
         'excluded_sites' => [],
     ],
 
+    'json_ld' => [
+        'use_glide_for_logo' => true,
+    ],
+
     'reports' => [
         'keep_recent' => 'all',
         'queue_chunk_size' => 1000,

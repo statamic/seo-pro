@@ -9,6 +9,7 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
+use Statamic\Fields\Value;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
@@ -415,6 +416,87 @@ class CascadeTest extends TestCase
             '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
             '{"@context":"https://schema.org","@type":"WebPage","name":"Home"}',
         ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_generates_json_ld_data_with_custom_schema_from_site_defaults()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_schema' => '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->with([
+                'title' => 'Home',
+            ])
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+            '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_parses_antlers_in_json_ld_schema_values()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_schema' => new Value('{"@context":"https://schema.org","@type":"WebPage","name":"{{ title }}"}'),
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertEquals('{"@context":"https://schema.org","@type":"WebPage","name":"Home"}', $data['json_ld']->last());
+    }
+
+    #[Test]
+    public function glide_url_is_returned_for_json_ld_organization_logo()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $organization = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertStringContainsString('/img/asset/', $organization['logo']);
+        $this->assertStringContainsString('w=512', $organization['logo']);
+        $this->assertStringContainsString('h=512', $organization['logo']);
+    }
+
+    #[Test]
+    public function permalink_is_returned_for_json_ld_organization_logo_when_config_is_false()
+    {
+        config(['statamic.seo-pro.json_ld.use_glide_for_logo' => false]);
+
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $organization = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertEquals('http://cool-runnings.com/assets/img/stetson.jpg', $organization['logo']);
     }
 
     #[Test]

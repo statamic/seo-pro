@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\SiteDefaults;
 
+use Statamic\SeoPro\Fieldtypes\Rules\ValidJsonLd;
 use Statamic\SeoPro\HasAssetField;
 
 class Blueprint
@@ -148,6 +149,29 @@ class Blueprint
                             ],
                         ],
                         [
+                            'display' => __('seo-pro::fieldsets/defaults.json_ld_custom_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.json_ld_custom_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'json_ld_schema',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_schema'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.json_ld_schema_instruct'),
+                                        'type' => 'code',
+                                        'mode' => 'javascript',
+                                        'mode_selectable' => false,
+                                        'show_mode_label' => false,
+                                        'localizable' => true,
+                                        'full_width_setting' => true,
+                                        'fullscreen' => false,
+                                        'validate' => [
+                                            new ValidJsonLd,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
                             'display' => __('seo-pro::fieldsets/defaults.json_ld_breadcrumbs_section'),
                             'fields' => [
                                 [
@@ -246,6 +270,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
+                                        'default' => '@seo:title',
                                     ],
                                 ],
                             ],
@@ -301,6 +326,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
+                                        'default' => '@seo:title',
                                     ],
                                 ],
                                 [
@@ -314,6 +340,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'textarea',
                                         ],
+                                        'default' => '@seo:description',
                                     ],
                                 ],
                             ],

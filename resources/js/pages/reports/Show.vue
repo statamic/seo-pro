@@ -3,7 +3,7 @@ import { Head, usePoll } from '@statamic/cms/inertia';
 import { DateFormatter } from '@statamic/cms';
 import { Header, Button, DocsCallout, Icon, Panel, Card, Description, Listing, Badge, DropdownItem, Heading } from '@statamic/cms/ui';
 import StatusIcon from "../../components/reporting/StatusIcon.vue";
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onBeforeUnmount } from 'vue';
 import PageDetailsModal from "../../components/reporting/PageDetailsModal.vue";
 
 const props = defineProps({
@@ -48,6 +48,8 @@ if (isGenerating.value) {
 		() => isGenerating.value,
 		() => (isGenerating.value ? start() : stop())
 	);
+
+	onBeforeUnmount(stop);
 }
 </script>
 
@@ -90,9 +92,13 @@ if (isGenerating.value) {
 							<td class="w-8 text-center text-pretty">
 								<StatusIcon :status="item.status" />
 							</td>
-							<td class="!pl-0">{{ item.description }}</td>
-							<td class="text-right text-pretty">
-								<Description :text="item.comment" />
+							<td class="!pl-0">
+								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+									<span>{{ item.description }}</span>
+									<span v-if="item.comment" class="text-gray-700 dark:text-dark-175 sm:text-right text-pretty">
+										<Description :text="item.comment" />
+									</span>
+								</div>
 							</td>
 						</tr>
 					</tbody>

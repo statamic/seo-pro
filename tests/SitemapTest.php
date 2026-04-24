@@ -4,6 +4,7 @@ namespace Tests;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection as IlluminateCollection;
+use Illuminate\Support\Facades\Cache;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -564,6 +565,42 @@ class SitemapTest extends TestCase
                 '</url>',
                 '</urlset>',
             ], escape: false);
+    }
+
+    #[Test]
+    public function it_invalidates_sitemap_cache_when_entry_is_saved()
+    {
+        $this->get('/sitemap.xml')->assertOk();
+
+        $this->assertNotEmpty(Cache::get(Sitemap::CACHE_KEY.'.keys'));
+
+        Entry::findByUri('/about')->entry()->save();
+
+        $this->assertNull(Cache::get(Sitemap::CACHE_KEY.'.keys'));
+    }
+
+    #[Test]
+    public function it_invalidates_sitemap_cache_when_entry_is_deleted()
+    {
+        $this->get('/sitemap.xml')->assertOk();
+
+        $this->assertNotEmpty(Cache::get(Sitemap::CACHE_KEY.'.keys'));
+
+        Entry::findByUri('/about')->entry()->delete();
+
+        $this->assertNull(Cache::get(Sitemap::CACHE_KEY.'.keys'));
+    }
+
+    #[Test]
+    public function it_invalidates_sitemap_cache_when_collection_is_saved()
+    {
+        $this->get('/sitemap.xml')->assertOk();
+
+        $this->assertNotEmpty(Cache::get(Sitemap::CACHE_KEY.'.keys'));
+
+        Collection::find('pages')->save();
+
+        $this->assertNull(Cache::get(Sitemap::CACHE_KEY.'.keys'));
     }
 }
 

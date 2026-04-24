@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro;
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Events\Dispatcher;
 use Statamic\Events;
 use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 use Statamic\SeoPro\Sitemap\Sitemap;
@@ -19,15 +19,19 @@ class Subscriber
         Events\EntryBlueprintFound::class => 'ensureSeoFields',
         Events\TermBlueprintFound::class => 'ensureSeoFields',
         Events\CollectionSaved::class => 'clearSitemapCache',
+        Events\CollectionDeleted::class => 'clearSitemapCache',
         Events\EntrySaved::class => 'clearSitemapCache',
+        Events\EntryDeleted::class => 'clearSitemapCache',
         Events\TaxonomySaved::class => 'clearSitemapCache',
+        Events\TaxonomyDeleted::class => 'clearSitemapCache',
         Events\TermSaved::class => 'clearSitemapCache',
+        Events\TermDeleted::class => 'clearSitemapCache',
     ];
 
     /**
      * Register the listeners for the subscriber.
      *
-     * @param  \Illuminate\Events\Dispatcher  $events
+     * @param  Dispatcher  $events
      */
     public function subscribe($events)
     {
@@ -53,7 +57,7 @@ class Subscriber
      */
     public function clearSitemapCache()
     {
-        Cache::forget(Sitemap::CACHE_KEY);
+        Sitemap::invalidateCache();
     }
 
     /**
