@@ -71,7 +71,7 @@ return [
         'default_response_code' => 301,
 
         'automatic_redirects' => [
-            'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', true),
+            'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', false),
             'collections' => ['*'],
             'taxonomies' => ['*'],
         ],
