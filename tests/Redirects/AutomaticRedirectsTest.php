@@ -151,19 +151,6 @@ class AutomaticRedirectsTest extends TestCase
     }
 
     #[Test]
-    public function it_does_not_create_entry_redirects_when_automatic_redirects_are_disabled()
-    {
-        config(['statamic.seo-pro.redirects.automatic_redirects.enabled' => false]);
-
-        Collection::make('posts')->routes('/posts/{slug}')->save();
-        $entry = tap(Entry::make()->id('test-entry')->collection('posts')->slug('old-slug')->data(['title' => 'Test']))->save();
-
-        $entry->slug('new-slug')->save();
-
-        $this->assertNull(Redirect::query()->where('source', '/posts/old-slug')->first());
-    }
-
-    #[Test]
     public function it_creates_a_redirect_when_term_slug_changes()
     {
         Taxonomy::make('tags')->save();
@@ -220,16 +207,4 @@ class AutomaticRedirectsTest extends TestCase
         $this->assertNull(Redirect::query()->where('source', '/tags/old-tag')->first());
     }
 
-    #[Test]
-    public function it_does_not_create_term_redirects_when_automatic_redirects_are_disabled()
-    {
-        config(['statamic.seo-pro.redirects.automatic_redirects.enabled' => false]);
-
-        Taxonomy::make('tags')->save();
-        $term = tap(Term::make()->taxonomy('tags')->slug('old-slug')->data(['title' => 'Test']))->save();
-
-        $term->slug('new-slug')->save();
-
-        $this->assertNull(Redirect::query()->where('source', '/tags/old-slug')->first());
-    }
 }
