@@ -167,7 +167,10 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonSubscriber()
     {
         Event::subscribe(Subscriber::class);
-        Event::subscribe(Redirects\AutomaticRedirectSubscriber::class);
+
+        if (config('statamic.seo-pro.redirects.automatic_redirects.enabled')) {
+            Event::subscribe(Redirects\AutomaticRedirectSubscriber::class);
+        }
 
         return $this;
     }
