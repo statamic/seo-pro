@@ -282,7 +282,7 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonScheduledCommands()
     {
         if (config('statamic.seo-pro.redirects.errors.enabled')) {
-            $this->app->make(Schedule::class)->job(PurgeErrorsCommand::class)->daily();
+            $this->app->make(Schedule::class)->command(PurgeErrorsCommand::class)->daily();
         }
 
         return $this;
