@@ -312,9 +312,6 @@ By default, errors are stored in the `storage/statamic/seopro/errors` directory.
 ],
 ```
 
-Alternatively, you may store redirects in the database by changing the driver:
-
-
 Errors can be stored in the database independently of redirects:
 
 ```php
