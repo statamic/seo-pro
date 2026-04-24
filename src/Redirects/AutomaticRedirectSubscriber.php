@@ -31,7 +31,10 @@ class AutomaticRedirectSubscriber
 
     public function handleEntrySaving(EntrySaving $event): void
     {
-        if (! $this->shouldHandleEntry($entry = $event->entry)) {
+        if (
+            ! config('statamic.seo-pro.redirects.automatic_redirects.enabled')
+            || ! $this->shouldHandleEntry($entry = $event->entry)
+        ) {
             return;
         }
 
@@ -87,7 +90,10 @@ class AutomaticRedirectSubscriber
 
     public function handleTermSaving(TermSaving $event): void
     {
-        if (! $this->shouldHandleTerm($term = $event->term)) {
+        if (
+            ! config('statamic.seo-pro.redirects.automatic_redirects.enabled')
+            || ! $this->shouldHandleTerm($term = $event->term)
+        ) {
             return;
         }
 
