@@ -74,7 +74,6 @@ trait GetsSectionDefaults
             ->augment()
             ->values()
             ->only(array_keys($seo))
-            ->all()
         );
     }
 
