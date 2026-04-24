@@ -254,15 +254,6 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootGit()
-    {
-        if (config('statamic.git.enabled')) {
-            Git::listen(RedirectSaved::class);
-        }
-
-        return $this;
-    }
-
     private function isCpRoute(\Illuminate\Routing\Route $route): bool
     {
         $cp = Str::ensureRight(config('statamic.cp.route'), '/');
@@ -277,6 +268,15 @@ class ServiceProvider extends AddonServiceProvider
     private function isFrontendBindingEnabled(): bool
     {
         return config('statamic.routes.bindings', false);
+    }
+
+    protected function bootGit()
+    {
+        if (config('statamic.git.enabled')) {
+            Git::listen(RedirectSaved::class);
+        }
+
+        return $this;
     }
 
     protected function bootAddonScheduledCommands()
