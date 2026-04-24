@@ -24,11 +24,7 @@ class UniqueRedirectUrl implements ValidationRule
             ->when($this->site, fn ($query) => $query->where('site', $this->site))
             ->first();
 
-        if (! $existing) {
-            return;
-        }
-
-        if ($this->except && $this->except === $existing->id()) {
+        if (! $existing || ($this->except && $this->except === $existing->id())) {
             return;
         }
 
