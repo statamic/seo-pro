@@ -140,11 +140,12 @@ class RedirectController extends CpController
 
     public function edit(Request $request, Redirect $redirect)
     {
-        $this->authorize('edit', $redirect);
+        $this->authorize('view', $redirect);
 
         return PublishForm::make(Facades\Redirect::blueprint())
             ->icon('moved')
             ->title($redirect->source())
+            ->readOnly($request->user()->cant('edit', $redirect))
             ->values($redirect->data()->merge([
                 'source' => $redirect->source(),
                 'destination' => $redirect->destination(),

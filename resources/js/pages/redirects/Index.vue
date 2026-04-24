@@ -43,10 +43,14 @@ function requestComplete({ items: newItems, parameters }) {
 		@request-completed="requestComplete"
 	>
 		<template #cell-source="{ row: redirect, isColumnVisible }">
-			<Link class="title-index-field" :href="redirect.edit_url">
+			<Link v-if="redirect.editable" class="title-index-field" :href="redirect.edit_url">
 				<StatusIndicator v-if="!isColumnVisible('status')" :status="redirect.status" />
 				<span v-text="redirect.source" />
 			</Link>
+			<span v-else class="title-index-field">
+				<StatusIndicator v-if="!isColumnVisible('status')" :status="redirect.status" />
+				<span v-text="redirect.source" />
+			</span>
 
 			<resource-deleter
 				v-if="redirect.deletable"
