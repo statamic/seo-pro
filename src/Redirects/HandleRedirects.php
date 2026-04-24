@@ -29,10 +29,6 @@ class HandleRedirects
 
         RecordRedirectHit::dispatch($redirect->id());
 
-        if ($redirect->responseCode() === 410) {
-            abort(410);
-        }
-
         return redirect(
             $this->resolveDestination($redirect, $path, $request),
             $redirect->responseCode(),
