@@ -70,8 +70,8 @@ class HandleRedirects
         return RedirectFacade::query()
             ->where('site', $siteHandle)
             ->where('enabled', true)
+            ->where('source', 'LIKE', '%*%')
             ->get()
-            ->filter->usesWildcard()
             ->first(fn (Redirect $redirect) => WildcardUrlMatcher::match($redirect->source(), $path) !== null);
     }
 
