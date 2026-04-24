@@ -27,12 +27,9 @@ class WildcardUrlMatcherTest extends TestCase
     }
 
     #[Test]
-    public function it_matches_wildcards_across_slashes()
+    public function it_does_not_match_wildcards_across_slashes()
     {
-        $captures = WildcardUrlMatcher::match('/blog/*', '/blog/2026/01/my-post');
-
-        $this->assertNotNull($captures);
-        $this->assertEquals(['2026/01/my-post'], $captures);
+        $this->assertNull(WildcardUrlMatcher::match('/blog/*', '/blog/2026/01/my-post'));
     }
 
     #[Test]

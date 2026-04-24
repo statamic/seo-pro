@@ -34,6 +34,6 @@ class WildcardUrlMatcher
         $segments = explode('*', $pattern);
         $segments = array_map(fn ($segment) => preg_quote($segment, '#'), $segments);
 
-        return '#^'.implode('(.+)', $segments).'$#';
+        return '#^'.implode('([^/]+)', $segments).'$#';
     }
 }
