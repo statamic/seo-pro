@@ -35,7 +35,7 @@ class RedirectBlueprint
                                         'type' => 'link',
                                         'display' => __('Destination'),
                                         'instructions' => __('seo-pro::messages.redirect_destination'),
-                                        'validate' => ['required'],
+                                        'validate' => ['required_unless:response_code,410'],
                                         'listable' => true,
                                     ],
                                 ],
