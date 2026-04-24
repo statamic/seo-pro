@@ -8,6 +8,7 @@ use Statamic\CP\Column;
 use Statamic\CP\PublishForm;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\OrderBy;
@@ -76,6 +77,7 @@ class RedirectController extends CpController
             'blueprint' => $blueprint,
             'columns' => $columns,
             'filters' => Scope::filters('redirects'),
+            'canCreate' => User::current()->can('create', Redirect::class),
             'createUrl' => cp_route('seo-pro.redirects.create'),
         ]);
     }

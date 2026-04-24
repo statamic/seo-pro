@@ -8,6 +8,7 @@ defineProps({
 	blueprint: Object,
 	columns: Array,
 	filters: Array,
+	canCreate: Boolean,
 	createUrl: String,
 });
 
@@ -26,7 +27,7 @@ function requestComplete({ items: newItems, parameters }) {
 	<Head :title="__('seo-pro::messages.redirects')" />
 
 	<Header :title="__('seo-pro::messages.redirects')" icon="moved">
-		<Button :href="createUrl" :text="__('seo-pro::messages.create_redirect')" variant="primary" />
+		<Button v-if="canCreate" :href="createUrl" :text="__('seo-pro::messages.create_redirect')" variant="primary" />
 	</Header>
 
 	<Listing
