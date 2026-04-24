@@ -206,5 +206,4 @@ class AutomaticRedirectsTest extends TestCase
         $term->slug('new-tag')->save();
         $this->assertNull(Redirect::query()->where('source', '/tags/old-tag')->first());
     }
-
 }
