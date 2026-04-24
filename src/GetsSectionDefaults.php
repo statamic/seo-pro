@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro;
 
+use Statamic\Contracts\Entries\Collection;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Blink;
@@ -95,7 +96,7 @@ trait GetsSectionDefaults
 
     protected function getSectionType($parent): string
     {
-        return $parent instanceof \Statamic\Contracts\Entries\Collection
+        return $parent instanceof Collection
             ? 'collections'
             : 'taxonomies';
     }

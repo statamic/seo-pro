@@ -105,7 +105,7 @@ abstract class TestCase extends AddonTestCase
 
     protected function setSeoOnCollection($collection, $seo)
     {
-        $locale = \Statamic\Facades\Site::default()->handle();
+        $locale = Site::default()->handle();
         $localized = SectionDefaults::in('collections', $collection->handle(), $locale);
 
         if ($seo === false) {

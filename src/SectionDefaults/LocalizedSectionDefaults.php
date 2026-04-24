@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\SectionDefaults;
 
 use Illuminate\Support\Collection;
 use Statamic\Data\HasOrigin;
+use Statamic\Facades\Blueprint;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Events\SectionDefaultsSaved;
 use Statamic\SeoPro\Fields;
@@ -111,7 +112,7 @@ class LocalizedSectionDefaults
 
     public function augmented(): array
     {
-        $blueprint = \Statamic\Facades\Blueprint::make()
+        $blueprint = Blueprint::make()
             ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]]);
 
         return $blueprint
