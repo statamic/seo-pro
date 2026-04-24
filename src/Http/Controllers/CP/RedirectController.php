@@ -89,8 +89,9 @@ class RedirectController extends CpController
         }
 
         if ($search = request('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('source', 'LIKE', '%'.$search.'%')
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->where('source', 'LIKE', '%'.$search.'%')
                     ->orWhere('destination', 'LIKE', '%'.$search.'%');
             });
         }
@@ -117,7 +118,9 @@ class RedirectController extends CpController
 
         $siteHandle = Site::selected()->handle();
 
-        $request->validate(['source' => [new UniqueRedirectUrl(site: $siteHandle)]]);
+        $request->validate([
+            'source' => [new UniqueRedirectUrl(site: $siteHandle)],
+        ]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
@@ -153,7 +156,9 @@ class RedirectController extends CpController
     {
         $this->authorize('update', $redirect);
 
-        $request->validate(['source' => [new UniqueRedirectUrl($redirect->id(), $redirect->site())]]);
+        $request->validate([
+            'source' => [new UniqueRedirectUrl($redirect->id(), $redirect->site())],
+        ]);
 
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
