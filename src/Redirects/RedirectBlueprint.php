@@ -47,9 +47,7 @@ class RedirectBlueprint
                                         'instructions' => __('seo-pro::messages.redirect_response_code'),
                                         'options' => [
                                             301 => '301 - Moved Permanently',
-                                            302 => '302 - Found',
-                                            307 => '307 - Temporary Redirect',
-                                            308 => '308 - Permanent Redirect',
+                                            302 => '302 - Moved Temporarily',
                                         ],
                                         'default' => config('statamic.seo-pro.redirects.default_response_code', 301),
                                         'clearable' => false,
