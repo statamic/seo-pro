@@ -105,13 +105,16 @@ class RedirectController extends CpController
     {
         $this->authorize('create', Redirect::class);
 
-        return PublishForm::make(Facades\Redirect::blueprint())
-            ->icon('moved')
-            ->values([
-                'source' => $request->input('source'),
-            ])
-            ->title(__('seo-pro::messages.create_redirect'))
-            ->submittingTo(cp_route('seo-pro.redirects.store'), 'POST');
+        $blueprint = Facades\Redirect::blueprint();
+
+        $fields = $blueprint->fields()->preProcess();
+
+        return Inertia::render('seo-pro::Redirects/Create', [
+            'blueprint' => $blueprint->toPublishArray(),
+            'values' => $fields->values(),
+            'meta' => $fields->meta(),
+            'submitUrl' => cp_route('seo-pro.redirects.store'),
+        ]);
     }
 
     public function store(Request $request)
@@ -142,17 +145,26 @@ class RedirectController extends CpController
     {
         $this->authorize('view', $redirect);
 
-        return PublishForm::make(Facades\Redirect::blueprint())
-            ->icon('moved')
-            ->title($redirect->source())
-            ->readOnly($request->user()->cant('edit', $redirect))
-            ->values($redirect->data()->merge([
+        $blueprint = Facades\Redirect::blueprint();
+
+        $fields = $blueprint
+            ->fields()
+            ->addValues($redirect->data()->merge([
                 'source' => $redirect->source(),
                 'destination' => $redirect->destination(),
                 'response_code' => $redirect->responseCode(),
                 'enabled' => $redirect->enabled(),
             ])->all())
-            ->submittingTo($redirect->updateUrl());
+            ->preProcess();
+
+        return Inertia::render('seo-pro::Redirects/Edit', [
+            'title' => $redirect->source(),
+            'blueprint' => $blueprint->toPublishArray(),
+            'values' => $fields->values(),
+            'meta' => $fields->meta(),
+            'submitUrl' => $redirect->updateUrl(),
+            'readOnly' => $request->user()->cant('edit', $redirect),
+        ]);
     }
 
     public function update(Request $request, Redirect $redirect)
