@@ -1,7 +1,7 @@
 <script setup>
 import { PublishContainer, PublishTabs, Header, Button, Panel, Heading, Switch } from '@statamic/cms/ui';
 import { nanoid as uniqid } from 'nanoid';
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { onMounted, onUnmounted, ref, useTemplateRef, computed } from 'vue';
 import { Pipeline, Request } from '@statamic/cms/save-pipeline';
 
 const emit = defineEmits(['saved']);
@@ -37,6 +37,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	isCreating: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const containerName = Statamic.$slug.separatedBy('_').create(props.title);
@@ -45,6 +49,7 @@ const values = ref(props.initialValues);
 const meta = ref(props.initialMeta);
 const errors = ref({});
 const saving = ref(false);
+const isDirty = computed(() => Statamic.$dirty.has(containerName));
 
 function save() {
 	new Pipeline()
@@ -69,12 +74,23 @@ onMounted(() => {
 
 onUnmounted(() => saveKeyBinding.destroy());
 
+const testRedirect = () => {
+	let wildcardIndex = 0;
+	let url = props.initialValues.source;
 
+	url = url.replace(/\*/g, () => {
+		wildcardIndex++;
+		return `wildcard${wildcardIndex}`;
+	});
+
+	window.open(url, '_blank');
+};
 </script>
 
 <template>
 	<Header :title="title" icon="moved">
-		<Button v-if="!readOnly" variant="primary" :text="__('Save')" @click="save" :disabled="saving" />
+		<Button v-if="!isCreating" :text="__('Test Redirect')" :disabled="isDirty" @click="testRedirect" />
+		<Button v-if="!readOnly" variant="primary" :text="__('Save')" :disabled="saving" @click="save" />
 	</Header>
 	<PublishContainer
 		ref="container"

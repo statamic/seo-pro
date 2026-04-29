@@ -24,6 +24,7 @@ const saved = (response) => {
 		:initial-meta="meta"
 		:submit-url
 		submit-method="post"
+		:is-creating="true"
 		@saved="saved"
 	/>
 </template>
