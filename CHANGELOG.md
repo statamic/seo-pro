@@ -1,5 +1,16 @@
 # Release Notes
 
+## 7.7.0 (2026-04-29)
+
+### What's new
+- Redirects & Error Tracking [#545](https://github.com/statamic/seo-pro/issues/545) by @duncanmcclean
+
+### What's fixed
+- Update Laravel Pint [#546](https://github.com/statamic/seo-pro/issues/546) by @duncanmcclean
+- Widget header tweaks [#547](https://github.com/statamic/seo-pro/issues/547) by @duncanmcclean
+
+
+
 ## 7.6.2 (2026-04-23)
 
 ### What's fixed
