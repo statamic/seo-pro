@@ -64,4 +64,22 @@ return [
         ],
     ],
 
+    'redirects' => [
+        'driver' => 'file',
+        'directory' => base_path('content/seo-pro/redirects'),
+        'preserve_query_string' => true,
+        'default_response_code' => 301,
+        'automatic_redirects' => [
+            'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', false),
+            'collections' => ['*'],
+            'taxonomies' => ['*'],
+        ],
+        'errors' => [
+            'enabled' => env('SEO_PRO_TRACK_ERRORS', false),
+            'driver' => 'file',
+            'directory' => storage_path('statamic/seopro/errors'),
+            'purge_after_days' => 30,
+        ],
+    ],
+
 ];

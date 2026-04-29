@@ -2,23 +2,39 @@
 
 namespace Statamic\SeoPro;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Statamic\Console\Commands\Multisite;
+use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Addon;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\File;
+use Statamic\Facades\Git;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\Commands\PurgeErrorsCommand;
+use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
 use Statamic\SeoPro\GraphQL\SeoProType;
+use Statamic\SeoPro\Redirects\Error;
+use Statamic\SeoPro\Redirects\ErrorRepository;
+use Statamic\SeoPro\Redirects\HandleRedirects;
+use Statamic\SeoPro\Redirects\Redirect;
+use Statamic\SeoPro\Redirects\RedirectRepository;
+use Statamic\SeoPro\Redirects\Stache\ErrorsStore;
+use Statamic\SeoPro\Redirects\Stache\RedirectsStore;
 use Statamic\SeoPro\Reporting\Page;
 use Statamic\SeoPro\Reporting\Report;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
+use Statamic\Stache\Stache;
+use Statamic\Statamic;
+use Statamic\Support\Str;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -33,12 +49,19 @@ class ServiceProvider extends AddonServiceProvider
         'hotFile' => __DIR__.'/../resources/dist/hot',
     ];
 
+    protected $policies = [
+        Error::class => Policies\ErrorPolicy::class,
+        Redirect::class => Policies\RedirectPolicy::class,
+    ];
+
     protected $config = false;
 
     public function register()
     {
         $this->registerSerializableClasses([
+            Error::class,
             Page::class,
+            Redirect::class,
             Report::class,
         ]);
     }
@@ -53,7 +76,10 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonNav()
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
-            ->bootAddonCommands()
+            ->bootRedirects()
+            ->bootRouteBindings()
+            ->bootGit()
+            ->bootAddonScheduledCommands()
             ->bootAddonGraphQL()
             ->bootMultisiteCommandHook();
     }
@@ -92,6 +118,18 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonPermissions()
     {
         Permission::group('seo_pro', 'SEO Pro', function () {
+            Permission::register('view seo redirects', function ($permission) {
+                $permission
+                    ->label(__('seo-pro::messages.view_redirects'))
+                    ->children([
+                        Permission::make('edit seo redirects')
+                            ->label(__('seo-pro::messages.edit_redirects'))
+                            ->children([
+                                Permission::make('create seo redirects')->label(__('seo-pro::messages.create_redirects')),
+                                Permission::make('delete seo redirects')->label(__('seo-pro::messages.delete_redirects')),
+                            ]),
+                    ]);
+            });
             Permission::register('view seo reports', function ($permission) {
                 $permission->children([
                     Permission::make('delete seo reports')->label(__('seo-pro::messages.delete_reports')),
@@ -114,6 +152,8 @@ class ServiceProvider extends AddonServiceProvider
                     ->children(function () use ($nav) {
                         return [
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
+                            $nav->item(__('seo-pro::messages.redirects'))->route('seo-pro.redirects.index')->can('view seo redirects'),
+                            $nav->item(__('seo-pro::messages.errors'))->route('seo-pro.errors.index')->can('view seo redirects'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
                         ];
@@ -127,6 +167,10 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootAddonSubscriber()
     {
         Event::subscribe(Subscriber::class);
+
+        if (config('statamic.seo-pro.redirects.automatic_redirects.enabled')) {
+            Event::subscribe(Redirects\AutomaticRedirectSubscriber::class);
+        }
 
         return $this;
     }
@@ -149,11 +193,100 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootAddonCommands()
+    protected function bootRedirects()
     {
-        $this->commands([
-            Commands\GenerateReportCommand::class,
+        $this->app['stache']->registerStores([
+            (new ErrorsStore)->directory(config('statamic.seo-pro.redirects.errors.directory')),
+            (new RedirectsStore)->directory(config('statamic.seo-pro.redirects.directory')),
         ]);
+
+        $this->app->bind(Redirects\Stache\ErrorQueryBuilder::class, function () {
+            return new Redirects\Stache\ErrorQueryBuilder($this->app->make(Stache::class)->store('errors'));
+        });
+
+        $this->app->bind(Redirects\Stache\RedirectQueryBuilder::class, function () {
+            return new Redirects\Stache\RedirectQueryBuilder($this->app->make(Stache::class)->store('redirects'));
+        });
+
+        Statamic::repository(ErrorRepository::class, Redirects\Stache\ErrorRepository::class);
+        Statamic::repository(RedirectRepository::class, Redirects\Stache\RedirectRepository::class);
+
+        if (config('statamic.seo-pro.redirects.driver') === 'database') {
+            $this->app['stache']->exclude('redirects');
+
+            Statamic::repository(RedirectRepository::class, Redirects\Eloquent\RedirectRepository::class);
+        }
+
+        if (config('statamic.seo-pro.redirects.errors.driver') === 'database') {
+            $this->app['stache']->exclude('errors');
+
+            Statamic::repository(ErrorRepository::class, Redirects\Eloquent\ErrorRepository::class);
+        }
+
+        NotFoundHttpException::renderUsing(fn ($request) => app(HandleRedirects::class)($request));
+
+        return $this;
+    }
+
+    protected function bootRouteBindings(): static
+    {
+        Route::bind('error', function ($id, $route = null) {
+            if (! $route || (! $this->isCpRoute($route) && ! $this->isFrontendBindingEnabled())) {
+                return $id;
+            }
+
+            $field = $route->bindingFieldFor('error') ?? 'id';
+
+            return $field == 'id'
+                ? Facades\Error::find($id)
+                : Facades\Error::query()->where($field, $id)->first();
+        });
+
+        Route::bind('redirect', function ($id, $route = null) {
+            if (! $route || (! $this->isCpRoute($route) && ! $this->isFrontendBindingEnabled())) {
+                return $id;
+            }
+
+            $field = $route->bindingFieldFor('redirect') ?? 'id';
+
+            return $field == 'id'
+                ? Facades\Redirect::find($id)
+                : Facades\Redirect::query()->where($field, $id)->first();
+        });
+
+        return $this;
+    }
+
+    private function isCpRoute(\Illuminate\Routing\Route $route): bool
+    {
+        $cp = Str::ensureRight(config('statamic.cp.route'), '/');
+
+        if ($cp === '/') {
+            return true;
+        }
+
+        return Str::startsWith($route->uri(), $cp);
+    }
+
+    private function isFrontendBindingEnabled(): bool
+    {
+        return config('statamic.routes.bindings', false);
+    }
+
+    protected function bootGit()
+    {
+        if (config('statamic.git.enabled')) {
+            Git::listen(RedirectSaved::class);
+        }
+
+        return $this;
+    }
+
+    protected function bootAddonScheduledCommands()
+    {
+        if (config('statamic.seo-pro.redirects.errors.enabled')) {
+            $this->app->make(Schedule::class)->command(PurgeErrorsCommand::class)->daily();
+        }
 
         return $this;
     }
@@ -198,6 +331,38 @@ class ServiceProvider extends AddonServiceProvider
             ]);
 
             $settings->save();
+
+            if (config('statamic.seo-pro.redirects.driver') === 'file') {
+                $this->components->task(
+                    description: 'Updating redirects',
+                    task: function () {
+                        $base = app(Stache::class)->store('redirects')->directory();
+
+                        File::makeDirectory("{$base}/{$this->siteHandle}");
+
+                        File::getFiles($base)->each(function ($file) use ($base) {
+                            $filename = pathinfo($file, PATHINFO_BASENAME);
+                            File::move($file, "{$base}/{$this->siteHandle}/{$filename}");
+                        });
+                    }
+                );
+            }
+
+            if (config('statamic.seo-pro.redirects.errors.driver') === 'file') {
+                $this->components->task(
+                    description: 'Updating errors',
+                    task: function () {
+                        $base = app(Stache::class)->store('errors')->directory();
+
+                        File::makeDirectory("{$base}/{$this->siteHandle}");
+
+                        File::getFiles($base)->each(function ($file) use ($base) {
+                            $filename = pathinfo($file, PATHINFO_BASENAME);
+                            File::move($file, "{$base}/{$this->siteHandle}/{$filename}");
+                        });
+                    }
+                );
+            }
         });
 
         return $this;
@@ -208,6 +373,7 @@ class ServiceProvider extends AddonServiceProvider
         $user = User::current();
 
         return $user->can('view seo reports')
+            || $user->can('view seo redirects')
             || $user->can('edit seo site defaults')
             || $user->can('edit seo section defaults');
     }
