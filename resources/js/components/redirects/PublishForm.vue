@@ -1,9 +1,8 @@
 <script setup>
-import { PublishContainer, PublishTabs, Header, Button } from '@statamic/cms/ui';
+import { PublishContainer, PublishTabs, Header, Button, Panel, Heading, Switch } from '@statamic/cms/ui';
 import { nanoid as uniqid } from 'nanoid';
 import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import { Pipeline, Request } from '@statamic/cms/save-pipeline';
-import { router } from '@statamic/cms/inertia';
 
 const emit = defineEmits(['saved']);
 
@@ -69,6 +68,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => saveKeyBinding.destroy());
+
+
 </script>
 
 <template>
@@ -84,6 +85,17 @@ onUnmounted(() => saveKeyBinding.destroy());
 		:read-only
 		v-model="values"
 	>
-		<PublishTabs />
+		<PublishTabs>
+			<template #actions>
+				<Panel class="flex justify-between px-5! py-3! dark:bg-gray-800!">
+					<Heading :text="__('Enabled')" />
+					<Switch
+						:model-value="values.enabled"
+						:disabled="readOnly"
+						@update:model-value="container.setFieldValue('enabled', $event)"
+					/>
+				</Panel>
+			</template>
+		</PublishTabs>
 	</PublishContainer>
 </template>

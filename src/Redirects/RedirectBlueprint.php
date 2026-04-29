@@ -102,6 +102,7 @@ class RedirectBlueprint
                                         'display' => __('Enabled'),
                                         'default' => true,
                                         'listable' => false,
+                                        'visibility' => 'hidden',
                                     ],
                                 ],
                             ],
