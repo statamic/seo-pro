@@ -43,6 +43,34 @@ class UpdateRedirectTest extends TestCase
     }
 
     #[Test]
+    public function it_saves_redirect_description_when_updating()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(302)
+            ->enabled(true)
+            ->data(['description' => 'Original description.'])
+            ->save();
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
+                'source' => '/old-url',
+                'destination' => '/new-url',
+                'response_code' => 302,
+                'enabled' => true,
+                'description' => 'Updated description.',
+            ])
+            ->assertOk();
+
+        $redirect = Facades\Redirect::find('abc');
+
+        $this->assertEquals('Updated description.', $redirect->get('description'));
+    }
+
+    #[Test]
     public function cant_update_redirect_without_permission()
     {
         Facades\Redirect::make()

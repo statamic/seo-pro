@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Statamic\CP\Column;
 use Statamic\CP\PublishForm;
@@ -134,7 +135,8 @@ class RedirectController extends CpController
             ->source($values['source'])
             ->destination($values['destination'])
             ->responseCode($values['response_code'])
-            ->enabled($values['enabled']);
+            ->enabled($values['enabled'])
+            ->data($this->redirectData($values));
 
         $redirect->save();
 
@@ -181,9 +183,22 @@ class RedirectController extends CpController
             ->source($values['source'])
             ->destination($values['destination'])
             ->responseCode($values['response_code'])
-            ->enabled($values['enabled']);
+            ->enabled($values['enabled'])
+            ->data($this->redirectData($values));
 
         $redirect->save();
+    }
+
+    private function redirectData(array $values): array
+    {
+        return Arr::except($values, [
+            'source',
+            'destination',
+            'response_code',
+            'enabled',
+            'hits',
+            'last_hit_at',
+        ]);
     }
 
     public function destroy(Request $request, Redirect $redirect)
