@@ -36,8 +36,7 @@ class ExportRedirectsTest extends TestCase
             ->actingAs(User::make()->makeSuper()->save())
             ->get(cp_route('seo-pro.redirects.export'))
             ->assertOk()
-            ->assertHeader('content-type', 'text/csv; charset=utf-8')
-            ->assertHeader('content-disposition', 'attachment; filename=redirects.csv');
+            ->assertDownload('redirects.csv');
 
         $csv = $this->parseCsv($response->getFile()->getContent());
 
