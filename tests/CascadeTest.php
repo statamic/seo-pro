@@ -6,6 +6,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
@@ -214,6 +215,8 @@ class CascadeTest extends TestCase
     public function it_generates_seo_cascade_without_exception_when_no_home_entry_exists()
     {
         Entry::findByUri('/')->delete();
+
+        Collection::findByHandle('pages')->structure()->in('default')->tree([])->save();
 
         $data = (new Cascade)
             ->withSiteDefaults(SiteDefaults::in('default')->all())
