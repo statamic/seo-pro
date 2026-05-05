@@ -35,7 +35,7 @@ return [
     'X (Twitter) Preview' => 'X-Vorschau (ehemals Twitter)',
     'Facebook Preview' => 'Facebook-Vorschau',
     'generate_report' => 'Bericht erstellen',
-    'view_report' => 'Bericht ansehen',
+    'view_report' => 'Bericht anzeigen',
     'delete_report' => 'Bericht löschen',
     'report_deleted' => 'Bericht gelöscht',
     'back_to_reports' => 'Zurück zu den Berichten',
