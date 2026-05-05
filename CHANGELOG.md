@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.8.1 (2026-05-05)
+
+### What's fixed
+- German translations [#552](https://github.com/statamic/seo-pro/issues/552) by @helloDanuk
+
+
+
 ## 7.8.0 (2026-05-05)
 
 ### What's new
