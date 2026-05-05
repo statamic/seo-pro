@@ -1,5 +1,17 @@
 # Release Notes
 
+## 7.8.0 (2026-05-05)
+
+### What's new
+- Ability to import & export redirects [#555](https://github.com/statamic/seo-pro/issues/555) by @duncanmcclean
+
+### What's fixed
+- Upgrade to Vite 8 [#548](https://github.com/statamic/seo-pro/issues/548) by @duncanmcclean
+- Fix redirect description persistence [#550](https://github.com/statamic/seo-pro/issues/550) by @eminos
+- Fix untranslatable strings from Redirects & Error Tracking [#554](https://github.com/statamic/seo-pro/issues/554) by @duncanmcclean
+
+
+
 ## 7.7.0 (2026-04-29)
 
 ### What's new

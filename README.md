@@ -1,6 +1,6 @@
 # SEO Pro
 
-> SEO Pro is an all-in-one site reporting, metadata wrangling, Open Graph managing, Twitter card making, sitemap generating, turnkey addon.
+> SEO Pro is the all-in-one SEO toolkit for Statamic: meta tags, Open Graph, structured data, sitemaps, redirects, 404 tracking, and reporting that grades your whole site. One addon. No template gymnastics.
 
 ## SEO Pro is a Commercial Addon.
 
