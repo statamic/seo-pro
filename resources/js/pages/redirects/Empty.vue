@@ -21,8 +21,8 @@ defineProps({
 		<EmptyStateItem
 			:href="createUrl"
 			icon="moved"
-			:heading="__('Create a Redirect')"
-			:description="__('Get started by creating your first redirect.')"
+			:heading="__('seo-pro::messages.create_a_redirect')"
+			:description="__('seo-pro::messages.create_a_redirect_description')"
 		/>
 	</EmptyStateMenu>
 

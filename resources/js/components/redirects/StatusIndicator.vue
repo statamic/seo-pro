@@ -22,8 +22,8 @@ const statusClass = computed(() => {
 
 const label = computed(() => {
 	const labels = {
-		active: __('Active'),
-		inactive: __('Inactive'),
+		active: __('seo-pro::messages.active'),
+		inactive: __('seo-pro::messages.inactive'),
 	};
 	return labels[props.status];
 });
