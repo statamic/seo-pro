@@ -81,6 +81,7 @@ return [
     'recent_errors' => 'Recent Errors',
     'no_errors_reported' => 'No errors have been reported.',
     'view_all' => 'View All',
+    'create_redirect' => 'Create Redirect',
     'create_a_redirect' => 'Create a Redirect',
     'create_a_redirect_description' => 'Get started by creating your first redirect.',
     'redirect' => 'Redirect',
