@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers\CP;
+namespace Statamic\SeoPro\Http\Controllers\CP\Redirects;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
