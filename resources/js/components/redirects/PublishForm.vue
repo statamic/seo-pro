@@ -89,7 +89,7 @@ const testRedirect = () => {
 
 <template>
 	<Header :title="title" icon="moved">
-		<Button v-if="!isCreating" :text="__('Test Redirect')" :disabled="isDirty" @click="testRedirect" />
+		<Button v-if="!isCreating" :text="__('seo-pro::messages.test_redirect')" :disabled="isDirty" @click="testRedirect" />
 		<Button v-if="!readOnly" variant="primary" :text="__('Save')" :disabled="saving" @click="save" />
 	</Header>
 	<PublishContainer
@@ -104,7 +104,7 @@ const testRedirect = () => {
 		<PublishTabs>
 			<template #actions>
 				<Panel class="flex justify-between px-5! py-3! dark:bg-gray-800!">
-					<Heading :text="__('Enabled')" />
+					<Heading :text="__('seo-pro::messages.enabled')" />
 					<Switch
 						:model-value="values.enabled"
 						:disabled="readOnly"

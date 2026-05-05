@@ -170,4 +170,23 @@ class StoreRedirectTest extends TestCase
             ])
             ->assertSessionHasErrors('source');
     }
+
+    #[Test]
+    public function can_store_redirect_with_description()
+    {
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->post(cp_route('seo-pro.redirects.store'), [
+                'source' => '/old-url',
+                'destination' => '/new-url',
+                'response_code' => 301,
+                'enabled' => true,
+                'description' => 'Keep this redirect for the old campaign.',
+            ])
+            ->assertOk();
+
+        $redirect = Facades\Redirect::query()->where('source', '/old-url')->first();
+
+        $this->assertEquals('Keep this redirect for the old campaign.', $redirect->get('description'));
+    }
 }

@@ -15,7 +15,7 @@ class ErrorBlueprint
                     'display' => __('General'),
                     'sections' => [
                         [
-                            'display' => __('Redirect'),
+                            'display' => __('seo-pro::messages.redirect'),
                             'fields' => [
                                 [
                                     'handle' => 'url',
@@ -29,7 +29,7 @@ class ErrorBlueprint
                                     'handle' => 'hits',
                                     'field' => [
                                         'type' => 'integer',
-                                        'display' => __('Hits'),
+                                        'display' => __('seo-pro::messages.hits'),
                                         'default' => 0,
                                         'listable' => true,
                                     ],
@@ -38,7 +38,7 @@ class ErrorBlueprint
                                     'handle' => 'last_hit_at',
                                     'field' => [
                                         'type' => 'date',
-                                        'display' => __('Last Hit At'),
+                                        'display' => __('seo-pro::messages.last_hit_at'),
                                         'time_enabled' => true,
                                         'listable' => true,
                                     ],

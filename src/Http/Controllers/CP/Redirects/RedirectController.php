@@ -1,8 +1,9 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers\CP;
+namespace Statamic\SeoPro\Http\Controllers\CP\Redirects;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Statamic\CP\Column;
 use Statamic\CP\PublishForm;
@@ -131,10 +132,11 @@ class RedirectController extends CpController
 
         $redirect = Facades\Redirect::make()
             ->site($siteHandle)
-            ->source($values['source'])
-            ->destination($values['destination'])
-            ->responseCode($values['response_code'])
-            ->enabled($values['enabled']);
+            ->source(Arr::pull($values, 'source'))
+            ->destination(Arr::pull($values, 'destination'))
+            ->responseCode(Arr::pull($values, 'response_code'))
+            ->enabled(Arr::pull($values, 'enabled'))
+            ->data($values);
 
         $redirect->save();
 
@@ -178,10 +180,11 @@ class RedirectController extends CpController
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
         $redirect
-            ->source($values['source'])
-            ->destination($values['destination'])
-            ->responseCode($values['response_code'])
-            ->enabled($values['enabled']);
+            ->source(Arr::pull($values, 'source'))
+            ->destination(Arr::pull($values, 'destination'))
+            ->responseCode(Arr::pull($values, 'response_code'))
+            ->enabled(Arr::pull($values, 'enabled'))
+            ->data($values);
 
         $redirect->save();
     }

@@ -15,10 +15,10 @@ const saved = (response) => {
 </script>
 
 <template>
-	<Head :title="__('Create Redirect')" />
+	<Head :title="__('seo-pro::messages.create_redirect')" />
 
 	<RedirectPublishForm
-		:title="__('Create Redirect')"
+		:title="__('seo-pro::messages.create_redirect')"
 		:blueprint
 		:initial-values="values"
 		:initial-meta="meta"
