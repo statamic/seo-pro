@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.8.2 (2026-05-05)
+
+### What's fixed
+- Fix GenerateReportCommand not found when generating reports [#557](https://github.com/statamic/seo-pro/issues/557) by @duncanmcclean
+
+
+
 ## 7.8.1 (2026-05-05)
 
 ### What's fixed
