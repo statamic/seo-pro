@@ -92,6 +92,13 @@ return [
     'hits' => 'Hits',
     'last_hit_at' => 'Last Hit At',
     'visit_url' => 'Visit URL',
+    'export' => 'Export',
+    'import' => 'Import',
+    'import_export' => 'Import/Export',
+    'import_redirects' => 'Import Redirects',
+    'import_redirects_instructions' => 'Please upload a CSV file containing the redirects you want to import. The CSV file should have a header row, with the following columns:',
+    'import_redirects_instructions_2' => 'Unless specified, new redirects will be enabled by default. If a redirect already exists with the same source URL, it will be updated.',
+    'redirects_imported' => ':created redirect(s) created, :updated redirect(s) updated.',
 
     'rules' => [
         'pass' => 'Pass',

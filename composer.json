@@ -29,7 +29,8 @@
     },
     "require": {
         "statamic/cms": "^6.10",
-        "pixelfear/composer-dist-plugin": "^0.1.6"
+        "pixelfear/composer-dist-plugin": "^0.1.6",
+        "spatie/simple-excel": "^3.9"
     },
     "require-dev": {
         "orchestra/testbench": "^10.0 || ^11.0",
