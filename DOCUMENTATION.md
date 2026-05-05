@@ -167,6 +167,16 @@ Head to `Tools > SEO Pro > Redirects` to create and manage redirects. Each redir
 
 ![Redirects listing](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-redirects.png)
 
+#### Importing & Exporting
+
+You can import and export redirects as CSV files. Click the "Import/Export" dropdown on the Redirects listing page to access these options.
+
+**Exporting** will download a CSV file containing all redirects for your authorized sites, with the following columns: `source`, `destination`, `response_code`, `enabled`, and `description`.
+
+**Importing** accepts a CSV file with a header row. The `source` and `destination` columns are required. The `response_code`, `enabled`, and `description` columns are optional — if omitted, new redirects will use the default response code and be enabled by default.
+
+If a redirect already exists with the same source URL (on the selected site), it will be updated rather than duplicated. When updating, only the columns present in the CSV will be changed — omitted columns will retain their existing values.
+
 #### Wildcards
 
 You can use wildcards in your source URLs. Each `*` captures a segment, and you can reference them in the destination with `$1`, `$2`, etc:
