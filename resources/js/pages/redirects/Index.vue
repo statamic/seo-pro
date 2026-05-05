@@ -1,8 +1,9 @@
 <script setup>
 import { Head, Link } from '@statamic/cms/inertia';
-import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cms/ui';
+import { Header, Button, Listing, DropdownItem, DocsCallout, Dropdown, DropdownMenu } from '@statamic/cms/ui';
 import StatusIndicator from "../../components/redirects/StatusIndicator.vue";
-import { ref } from 'vue';
+import ImportRedirectsModal from "../../components/redirects/ImportRedirectsModal.vue";
+import { ref, useTemplateRef } from 'vue';
 
 defineProps({
 	blueprint: Object,
@@ -15,6 +16,8 @@ defineProps({
 const items = ref(null);
 const page = ref(null);
 const perPage = ref(null);
+const showImportModal = ref(false);
+const listing = useTemplateRef('listing');
 
 function requestComplete({ items: newItems, parameters }) {
 	items.value = newItems;
@@ -27,6 +30,15 @@ function requestComplete({ items: newItems, parameters }) {
 	<Head :title="__('seo-pro::messages.redirects')" />
 
 	<Header :title="__('seo-pro::messages.redirects')" icon="moved">
+		<Dropdown>
+			<template #trigger>
+				<Button :text="__('seo-pro::messages.import_export')" />
+			</template>
+			<DropdownMenu>
+				<DropdownItem :text="__('seo-pro::messages.export')" icon="download" :href="cp_url('seo-pro/redirects/export')" target="_blank" />
+				<DropdownItem :text="__('seo-pro::messages.import')" icon="upload" @click="showImportModal = true" />
+			</DropdownMenu>
+		</Dropdown>
 		<Button v-if="canCreate" :href="createUrl" :text="__('seo-pro::messages.create_redirect')" variant="primary" />
 	</Header>
 
@@ -56,7 +68,7 @@ function requestComplete({ items: newItems, parameters }) {
 				v-if="redirect.deletable"
 				:ref="`deleter_${redirect.id}`"
 				:resource="redirect"
-				@deleted="$refs.listing.refresh()"
+				@deleted="listing.refresh()"
 			/>
 		</template>
 		<template #cell-status="{ row: redirect }">
@@ -75,4 +87,10 @@ function requestComplete({ items: newItems, parameters }) {
 	</Listing>
 
 	<DocsCallout :topic="__('seo-pro::messages.redirects')" url="https://statamic.com/addons/statamic/seo-pro/docs" />
+
+	<ImportRedirectsModal
+		v-if="showImportModal"
+		@closed="showImportModal = false"
+		@imported="listing.refresh()"
+	/>
 </template>
