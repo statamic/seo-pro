@@ -22,7 +22,7 @@ const props = defineProps({
 });
 
 const widgetProps = computed(() => ({
-	title: __('Recent Errors'),
+	title: __('seo-pro::messages.recent_errors'),
 	icon: 'warning-diamond',
 	href: props.errorsUrl,
 }));
@@ -54,7 +54,7 @@ function formatDate(value) {
 		<template #default="{ items }">
 			<Widget v-bind="widgetProps">
 				<Description v-if="!items.length" class="flex-1 flex items-center justify-center">
-					{{ __('No errors have been reported.') }}
+					{{ __('seo-pro::messages.no_errors_reported') }}
 				</Description>
 				<div class="px-4 py-3">
 					<table class="w-full widget-table">
@@ -75,7 +75,7 @@ function formatDate(value) {
 				<template #actions>
 					<Pagination />
 					<Button :href="errorsUrl" size="sm">
-						{{ __('View All') }}
+						{{ __('seo-pro::messages.view_all') }}
 					</Button>
 				</template>
 			</Widget>

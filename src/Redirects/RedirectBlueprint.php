@@ -16,13 +16,13 @@ class RedirectBlueprint
                     'display' => __('General'),
                     'sections' => [
                         [
-                            'display' => __('Redirect'),
+                            'display' => __('seo-pro::messages.redirect'),
                             'fields' => [
                                 [
                                     'handle' => 'source',
                                     'field' => [
                                         'type' => 'redirect_source',
-                                        'display' => __('Source'),
+                                        'display' => __('seo-pro::messages.source'),
                                         'instructions' => __('seo-pro::messages.redirect_source'),
                                         'validate' => ['required', new ValidRedirectUrl],
                                         'listable' => true,
@@ -33,7 +33,7 @@ class RedirectBlueprint
                                     'handle' => 'destination',
                                     'field' => [
                                         'type' => 'link',
-                                        'display' => __('Destination'),
+                                        'display' => __('seo-pro::messages.destination'),
                                         'instructions' => __('seo-pro::messages.redirect_destination'),
                                         'validate' => ['required'],
                                         'listable' => true,
@@ -43,7 +43,7 @@ class RedirectBlueprint
                                     'handle' => 'response_code',
                                     'field' => [
                                         'type' => 'select',
-                                        'display' => __('Response Code'),
+                                        'display' => __('seo-pro::messages.response_code'),
                                         'instructions' => __('seo-pro::messages.redirect_response_code'),
                                         'options' => [
                                             301 => '301 - Moved Permanently',
@@ -60,7 +60,7 @@ class RedirectBlueprint
                                     'handle' => 'description',
                                     'field' => [
                                         'type' => 'textarea',
-                                        'display' => __('Description'),
+                                        'display' => __('seo-pro::messages.description'),
                                         'instructions' => __('seo-pro::messages.redirect_description'),
                                         'listable' => 'hidden',
                                     ],
@@ -69,7 +69,7 @@ class RedirectBlueprint
                                     'handle' => 'hits',
                                     'field' => [
                                         'type' => 'integer',
-                                        'display' => __('Hits'),
+                                        'display' => __('seo-pro::messages.hits'),
                                         'default' => 0,
                                         'listable' => true,
                                         'read_only' => true,
@@ -80,7 +80,7 @@ class RedirectBlueprint
                                     'handle' => 'last_hit_at',
                                     'field' => [
                                         'type' => 'date',
-                                        'display' => __('Last Hit At'),
+                                        'display' => __('seo-pro::messages.last_hit_at'),
                                         'time_enabled' => true,
                                         'listable' => true,
                                         'read_only' => true,
@@ -99,7 +99,7 @@ class RedirectBlueprint
                                     'handle' => 'enabled',
                                     'field' => [
                                         'type' => 'toggle',
-                                        'display' => __('Enabled'),
+                                        'display' => __('seo-pro::messages.enabled'),
                                         'default' => true,
                                         'listable' => false,
                                         'visibility' => 'hidden',

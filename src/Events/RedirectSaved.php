@@ -12,6 +12,6 @@ class RedirectSaved extends Event implements ProvidesCommitMessage
 
     public function commitMessage(): string
     {
-        return __('Redirect saved', [], config('statamic.git.locale'));
+        return __('seo-pro::messages.redirect_saved', [], config('statamic.git.locale'));
     }
 }
