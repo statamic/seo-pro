@@ -59,8 +59,8 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
-        // Statamic discovers commands automatically, but when running in the console.
-        // We need to register this manually to call it in a web request.
+        // Statamic discovers commands automatically, but only when running in the console.
+        // To call this in a web request, we need to register it manually.
         $this->commands([GenerateReportCommand::class]);
 
         $this->registerSerializableClasses([
