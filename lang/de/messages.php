@@ -98,7 +98,7 @@ return [
     'import_export' => 'Import/Export',
     'import_redirects' => 'Weiterleitungen importieren',
     'import_redirects_instructions' => 'Lade eine CSV-Datei mit den zu importierenden Weiterleitungen hoch. Die Datei muss eine Kopfzeile mit folgenden Spalten enthalten:',
-    'import_redirects_instructions_2' => 'Neue Weiterleitungen sind standardmässig aktiviert. Existiert bereits eine Weiterleitung mit derselben Quell-URL, wird sie aktualisiert.',
+    'import_redirects_instructions_2' => 'Neue Weiterleitungen sind standardmäßig aktiviert. Existiert bereits eine Weiterleitung mit derselben Quell-URL, wird sie aktualisiert.',
     'redirects_imported' => ':created Weiterleitung(en) erstellt, :updated Weiterleitung(en) aktualisiert.',
 
     'rules' => [
