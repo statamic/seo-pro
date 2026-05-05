@@ -18,6 +18,7 @@ use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\Commands\GenerateReportCommand;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
@@ -58,6 +59,10 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
+        // Statamic discovers commands automatically, but only when running in the console.
+        // To call this in a web request, we need to register it manually.
+        $this->commands([GenerateReportCommand::class]);
+
         $this->registerSerializableClasses([
             Error::class,
             Page::class,
