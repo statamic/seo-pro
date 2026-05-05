@@ -214,4 +214,32 @@ class UpdateRedirectTest extends TestCase
         $this->assertEquals('/old-url', $redirect->source());
         $this->assertEquals('/updated-new-url', $redirect->destination());
     }
+
+    #[Test]
+    public function can_update_redirect_with_description()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(302)
+            ->enabled(true)
+            ->data(['description' => 'Original description.'])
+            ->save();
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->patch(cp_route('seo-pro.redirects.update', 'abc'), [
+                'source' => '/old-url',
+                'destination' => '/new-url',
+                'response_code' => 302,
+                'enabled' => true,
+                'description' => 'Updated description.',
+            ])
+            ->assertOk();
+
+        $redirect = Facades\Redirect::find('abc');
+
+        $this->assertEquals('Updated description.', $redirect->get('description'));
+    }
 }
