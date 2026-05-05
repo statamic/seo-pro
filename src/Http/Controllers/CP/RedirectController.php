@@ -132,11 +132,11 @@ class RedirectController extends CpController
 
         $redirect = Facades\Redirect::make()
             ->site($siteHandle)
-            ->source($values['source'])
-            ->destination($values['destination'])
-            ->responseCode($values['response_code'])
-            ->enabled($values['enabled'])
-            ->data($this->redirectData($values));
+            ->source(Arr::pull($values, 'source'))
+            ->destination(Arr::pull($values, 'destination'))
+            ->responseCode(Arr::pull($values, 'response_code'))
+            ->enabled(Arr::pull($values, 'enabled'))
+            ->data($values);
 
         $redirect->save();
 
@@ -180,25 +180,13 @@ class RedirectController extends CpController
         $values = PublishForm::make(Facades\Redirect::blueprint())->submit($request->all());
 
         $redirect
-            ->source($values['source'])
-            ->destination($values['destination'])
-            ->responseCode($values['response_code'])
-            ->enabled($values['enabled'])
-            ->data($this->redirectData($values));
+            ->source(Arr::pull($values, 'source'))
+            ->destination(Arr::pull($values, 'destination'))
+            ->responseCode(Arr::pull($values, 'response_code'))
+            ->enabled(Arr::pull($values, 'enabled'))
+            ->data($values);
 
         $redirect->save();
-    }
-
-    private function redirectData(array $values): array
-    {
-        return Arr::except($values, [
-            'source',
-            'destination',
-            'response_code',
-            'enabled',
-            'hits',
-            'last_hit_at',
-        ]);
     }
 
     public function destroy(Request $request, Redirect $redirect)
