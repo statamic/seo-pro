@@ -214,9 +214,7 @@ class CascadeTest extends TestCase
     #[Test]
     public function it_generates_seo_cascade_without_exception_when_no_home_entry_exists()
     {
-        Entry::findByUri('/')->delete();
-
-        Collection::findByHandle('pages')->structure()->in('default')->tree([])->save();
+        Collection::findByHandle('pages')->queryEntries()->get()->each->delete();
 
         $data = (new Cascade)
             ->withSiteDefaults(SiteDefaults::in('default')->all())
