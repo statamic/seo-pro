@@ -81,6 +81,21 @@ class RedirectRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_generates_a_hashed_id_when_source_cannot_be_slugged()
+    {
+        $redirect = Facades\Redirect::make()
+            ->source('/)')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertEquals('redirect-'.substr(sha1('/)'), 0, 10), $redirect->id());
+        $this->assertStringContainsString('redirects/'.$redirect->id().'.yaml', $redirect->path());
+    }
+
+    #[Test]
     public function it_appends_suffix_when_generated_id_already_exists()
     {
         Facades\Redirect::make()
