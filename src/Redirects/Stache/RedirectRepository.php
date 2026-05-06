@@ -74,7 +74,7 @@ class RedirectRepository implements RepositoryContract
             return $slug;
         }
 
-        return 'redirect-'.substr(sha1($source), 0, 10);
+        return $this->stache->generateId();
     }
 
     public function blueprint(): Blueprint

@@ -74,7 +74,7 @@ class ErrorRepository implements RepositoryContract
             return $slug;
         }
 
-        return 'error-'.substr(sha1($url), 0, 10);
+        return $this->stache->generateId();
     }
 
     public function blueprint(): Blueprint

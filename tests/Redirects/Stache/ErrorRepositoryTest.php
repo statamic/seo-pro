@@ -7,6 +7,7 @@ use Statamic\Facades\YAML;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\Error;
 use Statamic\SeoPro\Redirects\Stache\ErrorRepository;
+use Statamic\Support\Str;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -76,7 +77,7 @@ class ErrorRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function it_generates_a_hashed_id_when_url_cannot_be_slugged()
+    public function it_generates_a_uuid_id_when_url_cannot_be_slugged()
     {
         $error = Facades\Error::make()
             ->url('/)')
@@ -85,7 +86,7 @@ class ErrorRepositoryTest extends TestCase
 
         $this->repo->save($error);
 
-        $this->assertEquals('error-'.substr(sha1('/)'), 0, 10), $error->id());
+        $this->assertTrue(Str::isUuid($error->id()));
         $this->assertStringContainsString('errors/'.$error->id().'.yaml', $error->path());
     }
 
