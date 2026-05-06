@@ -7,6 +7,7 @@ use Statamic\Facades\YAML;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\Error;
 use Statamic\SeoPro\Redirects\Stache\ErrorRepository;
+use Statamic\Support\Str;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -73,6 +74,20 @@ class ErrorRepositoryTest extends TestCase
         $this->repo->save($error);
 
         $this->assertEquals('broken-link', $error->id());
+    }
+
+    #[Test]
+    public function it_generates_a_uuid_id_when_url_cannot_be_slugged()
+    {
+        $error = Facades\Error::make()
+            ->url('/)')
+            ->hits(1)
+            ->lastHitAt('2026-04-21 12:00:00');
+
+        $this->repo->save($error);
+
+        $this->assertTrue(Str::isUuid($error->id()));
+        $this->assertStringContainsString('errors/'.$error->id().'.yaml', $error->path());
     }
 
     #[Test]

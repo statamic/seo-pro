@@ -7,6 +7,7 @@ use Statamic\Facades\YAML;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\SeoPro\Redirects\Stache\RedirectRepository;
+use Statamic\Support\Str;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -78,6 +79,21 @@ class RedirectRepositoryTest extends TestCase
         $this->repo->save($redirect);
 
         $this->assertEquals('old-url', $redirect->id());
+    }
+
+    #[Test]
+    public function it_generates_a_uuid_id_when_source_cannot_be_slugged()
+    {
+        $redirect = Facades\Redirect::make()
+            ->source('/)')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertTrue(Str::isUuid($redirect->id()));
+        $this->assertStringContainsString('redirects/'.$redirect->id().'.yaml', $redirect->path());
     }
 
     #[Test]

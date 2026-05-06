@@ -50,8 +50,7 @@ class RedirectRepository implements RepositoryContract
         }
 
         if (! $redirect->id()) {
-            $slug = Str::slug($redirect->source());
-            $id = $slug;
+            $id = $slug = $this->generateId($redirect->source());
             $suffix = 1;
 
             while ($this->query()->where('id', $id)->where('site', $redirect->site())->first()) {
@@ -67,6 +66,15 @@ class RedirectRepository implements RepositoryContract
     public function delete(Redirect $redirect): void
     {
         $this->store->delete($redirect);
+    }
+
+    private function generateId(string $source): string
+    {
+        if ($slug = Str::slug($source)) {
+            return $slug;
+        }
+
+        return $this->stache->generateId();
     }
 
     public function blueprint(): Blueprint
