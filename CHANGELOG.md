@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.8.3 (2026-05-06)
+
+### What's fixed
+- Fix empty IDs for redirects & tracked 404 errors [#559](https://github.com/statamic/seo-pro/issues/559) by @eminos
+
+
+
 ## 7.8.2 (2026-05-05)
 
 ### What's fixed
