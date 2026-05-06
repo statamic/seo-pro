@@ -68,7 +68,7 @@ class ErrorRepository implements RepositoryContract
         $this->store->delete($error);
     }
 
-    protected function generateId(string $url): string
+    private function generateId(string $url): string
     {
         if ($slug = Str::slug($url)) {
             return $slug;
