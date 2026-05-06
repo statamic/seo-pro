@@ -76,6 +76,20 @@ class ErrorRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_generates_a_hashed_id_when_url_cannot_be_slugged()
+    {
+        $error = Facades\Error::make()
+            ->url('/)')
+            ->hits(1)
+            ->lastHitAt('2026-04-21 12:00:00');
+
+        $this->repo->save($error);
+
+        $this->assertEquals('error-'.substr(sha1('/)'), 0, 10), $error->id());
+        $this->assertStringContainsString('errors/'.$error->id().'.yaml', $error->path());
+    }
+
+    #[Test]
     public function it_appends_suffix_when_generated_id_already_exists()
     {
         Facades\Error::make()

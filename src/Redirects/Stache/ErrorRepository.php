@@ -50,8 +50,7 @@ class ErrorRepository implements RepositoryContract
         }
 
         if (! $error->id()) {
-            $slug = Str::slug($error->url());
-            $id = $slug;
+            $id = $slug = $this->generateId($error->url());
             $suffix = 1;
 
             while ($this->query()->where('id', $id)->where('site', $error->site())->first()) {
@@ -67,6 +66,15 @@ class ErrorRepository implements RepositoryContract
     public function delete(Error $error): void
     {
         $this->store->delete($error);
+    }
+
+    protected function generateId(string $url): string
+    {
+        if ($slug = Str::slug($url)) {
+            return $slug;
+        }
+
+        return 'error-'.substr(sha1($url), 0, 10);
     }
 
     public function blueprint(): Blueprint
