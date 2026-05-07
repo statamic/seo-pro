@@ -21,7 +21,7 @@ class RedirectsStoreTest extends TestCase
     {
         parent::setUp();
 
-        $this->store = app('stache')->store('redirects');
+        $this->store = app('stache')->store('seo_pro_redirects');
         $this->directory = config('statamic.seo-pro.redirects.directory');
     }
 

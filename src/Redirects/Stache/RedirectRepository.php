@@ -20,7 +20,7 @@ class RedirectRepository implements RepositoryContract
     public function __construct(Stache $stache)
     {
         $this->stache = $stache;
-        $this->store = $stache->store('redirects');
+        $this->store = $stache->store('seo_pro_redirects');
     }
 
     public function all(): Collection

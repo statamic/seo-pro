@@ -145,7 +145,7 @@ class Redirect
 
     public function buildPath(): string
     {
-        $directory = rtrim(Stache::store('redirects')->directory(), '/');
+        $directory = rtrim(Stache::store('seo_pro_redirects')->directory(), '/');
 
         if (Site::multiEnabled()) {
             return $directory.'/'.$this->site().'/'.$this->id().'.yaml';

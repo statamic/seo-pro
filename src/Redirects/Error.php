@@ -98,7 +98,7 @@ class Error
 
     public function buildPath(): string
     {
-        $directory = rtrim(Stache::store('errors')->directory(), '/');
+        $directory = rtrim(Stache::store('seo_pro_errors')->directory(), '/');
 
         if (Site::multiEnabled()) {
             return $directory.'/'.$this->site().'/'.$this->id().'.yaml';

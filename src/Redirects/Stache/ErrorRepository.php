@@ -20,7 +20,7 @@ class ErrorRepository implements RepositoryContract
     public function __construct(Stache $stache)
     {
         $this->stache = $stache;
-        $this->store = $stache->store('errors');
+        $this->store = $stache->store('seo_pro_errors');
     }
 
     public function all(): Collection
