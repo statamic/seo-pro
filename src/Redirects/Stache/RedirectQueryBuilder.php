@@ -30,7 +30,7 @@ class RedirectQueryBuilder extends Builder implements QueryBuilder
     protected function getKeysWithWhere($where)
     {
         $items = app('stache')
-            ->store('redirects')
+            ->store('seo_pro_redirects')
             ->index($where['column'])->items();
 
         $method = 'filterWhere'.$where['type'];

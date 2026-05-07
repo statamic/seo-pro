@@ -20,7 +20,7 @@ class ErrorsStore extends BasicStore
 
     public function key()
     {
-        return 'errors';
+        return 'seo_pro_errors';
     }
 
     public function makeItemFromFile($path, $contents): Error

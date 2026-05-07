@@ -30,7 +30,7 @@ class ErrorQueryBuilder extends Builder implements QueryBuilder
     protected function getKeysWithWhere($where)
     {
         $items = app('stache')
-            ->store('errors')
+            ->store('seo_pro_errors')
             ->index($where['column'])->items();
 
         $method = 'filterWhere'.$where['type'];

@@ -20,7 +20,7 @@ class RedirectsStore extends BasicStore
 
     public function key()
     {
-        return 'redirects';
+        return 'seo_pro_redirects';
     }
 
     public function makeItemFromFile($path, $contents): Redirect

@@ -21,7 +21,7 @@ class ErrorsStoreTest extends TestCase
     {
         parent::setUp();
 
-        $this->store = app('stache')->store('errors');
+        $this->store = app('stache')->store('seo_pro_errors');
         $this->directory = config('statamic.seo-pro.redirects.errors.directory');
     }
 

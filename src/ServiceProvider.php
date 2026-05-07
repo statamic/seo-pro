@@ -206,24 +206,24 @@ class ServiceProvider extends AddonServiceProvider
         ]);
 
         $this->app->bind(Redirects\Stache\ErrorQueryBuilder::class, function () {
-            return new Redirects\Stache\ErrorQueryBuilder($this->app->make(Stache::class)->store('errors'));
+            return new Redirects\Stache\ErrorQueryBuilder($this->app->make(Stache::class)->store('seo_pro_errors'));
         });
 
         $this->app->bind(Redirects\Stache\RedirectQueryBuilder::class, function () {
-            return new Redirects\Stache\RedirectQueryBuilder($this->app->make(Stache::class)->store('redirects'));
+            return new Redirects\Stache\RedirectQueryBuilder($this->app->make(Stache::class)->store('seo_pro_redirects'));
         });
 
         Statamic::repository(ErrorRepository::class, Redirects\Stache\ErrorRepository::class);
         Statamic::repository(RedirectRepository::class, Redirects\Stache\RedirectRepository::class);
 
         if (config('statamic.seo-pro.redirects.driver') === 'database') {
-            $this->app['stache']->exclude('redirects');
+            $this->app['stache']->exclude('seo_pro_redirects');
 
             Statamic::repository(RedirectRepository::class, Redirects\Eloquent\RedirectRepository::class);
         }
 
         if (config('statamic.seo-pro.redirects.errors.driver') === 'database') {
-            $this->app['stache']->exclude('errors');
+            $this->app['stache']->exclude('seo_pro_errors');
 
             Statamic::repository(ErrorRepository::class, Redirects\Eloquent\ErrorRepository::class);
         }
@@ -341,7 +341,7 @@ class ServiceProvider extends AddonServiceProvider
                 $this->components->task(
                     description: 'Updating redirects',
                     task: function () {
-                        $base = app(Stache::class)->store('redirects')->directory();
+                        $base = app(Stache::class)->store('seo_pro_redirects')->directory();
 
                         File::makeDirectory("{$base}/{$this->siteHandle}");
 
@@ -357,7 +357,7 @@ class ServiceProvider extends AddonServiceProvider
                 $this->components->task(
                     description: 'Updating errors',
                     task: function () {
-                        $base = app(Stache::class)->store('errors')->directory();
+                        $base = app(Stache::class)->store('seo_pro_errors')->directory();
 
                         File::makeDirectory("{$base}/{$this->siteHandle}");
 
