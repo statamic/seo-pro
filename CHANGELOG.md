@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.8.5 (2026-05-07)
+
+### What's fixed
+- Add prefix to Stache store keys [#562](https://github.com/statamic/seo-pro/issues/562) by @duncanmcclean
+
+
+
 ## 7.8.4 (2026-05-07)
 
 ### What's fixed
