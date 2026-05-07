@@ -11,6 +11,8 @@ class Site extends Filter
 {
     protected $pinned = true;
 
+    protected static $handle = 'seo_pro_site';
+
     public static function title()
     {
         return __('Site');
