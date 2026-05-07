@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.8.4 (2026-05-07)
+
+### What's fixed
+- Prevent SEO Pro's site filter from overriding the one in core [#561](https://github.com/statamic/seo-pro/issues/561) by @duncanmcclean
+
+
+
 ## 7.8.3 (2026-05-06)
 
 ### What's fixed
