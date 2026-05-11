@@ -378,6 +378,21 @@ You may also override the default `meta.antlers.html` view, though it is not pub
 
 A `sitemap.xml` route is automatically generated for you.
 
+When using multi-site, SEO Pro creates unique sitemaps for each _domain_. If you use multi-site with one domain, a _single_ sitemap gets created and the [`hreflang` attribute](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) is getting added to the XML making it easier for search engines to discover localizations of content across your sites. 
+
+Probably easier to understand with an example:
+
+- Site A: `https://example.com`
+- Site B: `https://example.com/de-de`
+- Site C: `https://example.fr`
+
+This structure will result in the following sitemaps being created:
+
+- `https://example.com/sitemap.xml` includes pages from Site A & Site B with the `hreflang` attribute added to them
+- `https://example.fr/sitemap.xml` includes pages from Site C
+
+This follows recommendations and best practices provided by Google and other search engines. It prevents sitemaps linking to pages from other domains which is considered a "no no".
+
 If you disable SEO on the section or item level, the relevant section/item will automatically be discluded from the sitemap.
 
 If you wish to completely disable the sitemap, change it's URL, or customize it's cache expiry, you can [publish the SEO Pro config](#advanced-configuration) and modify these settings within `config/statamic/seo-pro.php`.
