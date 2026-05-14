@@ -42,7 +42,7 @@ trait ResolvesPlaceholders
 
             return collect($cascade)->map(function ($value) {
                 if ($value instanceof Asset) {
-                    return $value->path();
+                    return $value->id();
                 }
 
                 if ($value instanceof Collection) {
