@@ -1,5 +1,18 @@
 # Release Notes
 
+## 7.9.0 (2026-05-15)
+
+### What's new
+- Add config to disable redirect hits tracking [#571](https://github.com/statamic/seo-pro/issues/571) by @duncanmcclean
+
+### What's fixed
+- Document multi-site sitemap behavior [#563](https://github.com/statamic/seo-pro/issues/563) by @joshuablum
+- Fix broken SEO preview images [#570](https://github.com/statamic/seo-pro/issues/570) by @joshuablum
+- Fix empty sitemap URLs when site inherits defaults from parent [#572](https://github.com/statamic/seo-pro/issues/572) by @duncanmcclean
+- Bump the github-actions group with 3 updates [#569](https://github.com/statamic/seo-pro/issues/569) by @dependabot
+
+
+
 ## 7.8.5 (2026-05-07)
 
 ### What's fixed
