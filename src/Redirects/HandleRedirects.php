@@ -27,7 +27,9 @@ class HandleRedirects
             return;
         }
 
-        RecordRedirectHit::dispatch($redirect->id());
+        if (config('statamic.seo-pro.redirects.track_hits', true)) {
+            RecordRedirectHit::dispatch($redirect->id());
+        }
 
         return redirect(
             $this->resolveDestination($redirect, $path, $request),

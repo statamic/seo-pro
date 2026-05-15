@@ -182,6 +182,26 @@ class HandleRedirectsTest extends TestCase
     }
 
     #[Test]
+    public function it_does_not_dispatch_a_redirect_hit_job_when_tracking_is_disabled()
+    {
+        Queue::fake();
+
+        config(['statamic.seo-pro.redirects.track_hits' => false]);
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get('/old-url')->assertRedirect('/new-url');
+
+        Queue::assertNotPushed(RecordRedirectHit::class);
+    }
+
+    #[Test]
     public function it_dispatches_a_record_error_job_when_no_redirect_matches()
     {
         Queue::fake();
