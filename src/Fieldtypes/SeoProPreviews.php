@@ -10,7 +10,6 @@ use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Taxonomies\Taxonomy;
 use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Facades\Antlers;
-use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Site;
 use Statamic\Fields\Fieldtype;
 use Statamic\SeoPro\Fieldtypes\Concerns\ResolvesPlaceholders;
@@ -27,9 +26,6 @@ class SeoProPreviews extends Fieldtype
             'initialUrl' => $this->field->parent()?->absoluteUrl(),
             'routeFields' => Antlers::identifiers($this->getRouteString()),
             'previewUrl' => cp_route('seo-pro.preview'),
-            'assetContainerUrl' => config('statamic.seo-pro.assets.container')
-                ? AssetContainer::find(config('statamic.seo-pro.assets.container'))->url()
-                : null,
             'faviconUrl' => $this->faviconUrl(),
             'placeholders' => $this->getPlaceholders(),
         ];

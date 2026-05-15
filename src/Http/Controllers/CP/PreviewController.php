@@ -38,7 +38,9 @@ class PreviewController extends CpController
 
     private function transformImage(string $preset, string $assetId): ?string
     {
-        $asset = Asset::find($assetId);
+        if (! $asset = Asset::find($assetId)) {
+            return null;
+        }
 
         if (array_key_exists($preset, Image::customManipulationPresets())) {
             $glide = Statamic::tag('glide:generate')

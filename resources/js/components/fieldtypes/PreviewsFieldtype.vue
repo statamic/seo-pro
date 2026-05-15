@@ -19,14 +19,7 @@ const resolveSeoValue = (field) => {
 	let value = publishValues.value.seo[field];
 
 	if (value.source === 'inherit') {
-		let seoField = publishMeta.value.seo.fields.find(f => f.handle === field);
-		let placeholder = placeholders.value[field];
-
-		if (seoField.field?.type === 'assets' && placeholder) {
-			return props.meta.assetContainerUrl + '/' + placeholder;
-		}
-
-		return placeholder;
+		return placeholders.value[field];
 	}
 
 	if (value.source === 'field') {
