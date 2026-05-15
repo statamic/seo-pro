@@ -223,6 +223,20 @@ Alternatively, you may store redirects in the database by changing the driver:
 
 Then run `php please seo-pro:database-redirects` to publish the migration and import existing redirects.
 
+#### Hit Tracking
+
+Out of the box, SEO Pro tracks the number of hits and the timestamp of the last hit for each redirect. If you store redirects in flat files, this can lead to frequent file changes creating noise in version control.
+
+You may disable hit tracking in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'track_hits' => false,
+],
+```
+
 ### Multi-Site
 
 Redirects and errors are scoped to individual sites. Each redirect belongs to a single site, and the source URL is stored relative to the site root. For example, a redirect with the source `/about` on the French site will only match requests to `example.com/fr/about` (or `example.fr/about`, depending on your site configuration).
