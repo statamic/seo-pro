@@ -248,7 +248,7 @@ class Sitemap
 
     protected function getSiteDefaults(string $site): array
     {
-        return Blink::once("seo-pro.site-defaults.{$site}", fn () => SiteDefaults::in($site)->all());
+        return Blink::once("seo-pro.site-defaults.{$site}", fn () => SiteDefaults::in($site)->values()->all());
     }
 
     protected function hrefLangs($content): array

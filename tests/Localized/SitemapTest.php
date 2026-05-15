@@ -4,6 +4,8 @@ namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Addon;
+use Statamic\Facades\Blink;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
@@ -139,6 +141,46 @@ class SitemapTest extends LocalizedTestCase
             ->getContent();
 
         $this->assertCount(15, $this->getPagesFromSitemapXml($content));
+    }
+
+    #[Test]
+    /**
+     * https://github.com/statamic/seo-pro/pull/572
+     */
+    public function it_outputs_sitemap_with_loc_when_child_site_inherits_from_parent()
+    {
+        Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', [
+            'default' => null,
+            'french' => null,
+            'italian' => null,
+            'british' => 'default',
+        ])->save();
+
+        SiteDefaults::in('default')
+            ->set('canonical_url', '@seo:permalink')
+            ->set('change_frequency', 'monthly')
+            ->set('priority', 0.5)
+            ->save();
+
+        Blink::forget('seo-pro::site-defaults');
+
+        $content = $this
+            ->get('http://cool-runnings.com/sitemap.xml')
+            ->assertOk()
+            ->getContent();
+
+        $pages = $this->getPagesFromSitemapXml($content);
+
+        foreach ($pages as $page) {
+            $this->assertNotEmpty($page['loc'], 'All pages should have a non-empty <loc> element');
+            $this->assertStringStartsWith('http://cool-runnings.com', $page['loc']);
+        }
+
+        $britishLocs = collect($pages)->pluck('loc')->filter(fn ($loc) => str_contains($loc, '/en-gb'));
+        $this->assertNotEmpty($britishLocs, 'British site entries should be in the sitemap');
+        foreach ($britishLocs as $loc) {
+            $this->assertStringStartsWith('http://cool-runnings.com/en-gb', $loc);
+        }
     }
 
     protected function getPagesFromSitemapXml($content)
