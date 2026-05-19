@@ -18,12 +18,12 @@ class RedirectsStore extends BasicStore
         'id', 'site', 'source', 'enabled', 'hits',
     ];
 
-    public function key()
+    public function key(): string
     {
         return 'seo_pro_redirects';
     }
 
-    public function getItemKey($item)
+    public function getItemKey($item): string
     {
         if (Site::multiEnabled()) {
             return $item->site().'::'.$item->id();
@@ -62,7 +62,7 @@ class RedirectsStore extends BasicStore
         return $site;
     }
 
-    public function getItemFilter(SplFileInfo $file)
+    public function getItemFilter(SplFileInfo $file): bool
     {
         return $file->getExtension() === 'yaml';
     }
