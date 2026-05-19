@@ -108,7 +108,12 @@ class RedirectController extends CpController
 
         $blueprint = Facades\Redirect::blueprint();
 
-        $fields = $blueprint->fields()->preProcess();
+        $fields = $blueprint
+            ->fields()
+            ->addValues(array_filter([
+                'source' => $request->query('source'),
+            ]))
+            ->preProcess();
 
         return Inertia::render('seo-pro::Redirects/Create', [
             'blueprint' => $blueprint->toPublishArray(),
