@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.9.1 (2026-05-19)
+
+### What's fixed
+- Ensure source is pre-filled when creating redirect from error [#575](https://github.com/statamic/seo-pro/issues/575) by @duncanmcclean
+- Fix duplicate Stache IDs for errors/redirects on multi-site installs [#576](https://github.com/statamic/seo-pro/issues/576) by @duncanmcclean
+
+
+
 ## 7.9.0 (2026-05-15)
 
 ### What's new
