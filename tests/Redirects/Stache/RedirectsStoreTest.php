@@ -95,6 +95,7 @@ class RedirectsStoreTest extends TestCase
     public function it_returns_composite_key_for_multisite()
     {
         config(['statamic.system.multisite' => true]);
+
         Site::setSites([
             'en' => ['url' => 'http://test.com/', 'locale' => 'en_US'],
             'fr' => ['url' => 'http://test.com/fr/', 'locale' => 'fr_FR'],
@@ -111,6 +112,7 @@ class RedirectsStoreTest extends TestCase
     public function it_extracts_site_from_multisite_path()
     {
         config(['statamic.system.multisite' => true]);
+
         Site::setSites([
             'en' => ['url' => 'http://test.com/', 'locale' => 'en_US'],
             'fr' => ['url' => 'http://test.com/fr/', 'locale' => 'fr_FR'],
