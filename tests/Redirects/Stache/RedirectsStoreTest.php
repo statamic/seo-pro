@@ -3,6 +3,7 @@
 namespace Tests\Redirects\Stache;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\Redirect;
 use Statamic\Stache\Stores\Store;
@@ -74,5 +75,55 @@ class RedirectsStoreTest extends TestCase
         $this->assertStringEqualsFile($path, $redirect->fileContents());
         @unlink($path);
         $this->assertFileDoesNotExist($path);
+    }
+
+    #[Test]
+    public function it_returns_id_as_item_key_for_single_site()
+    {
+        $redirect = Facades\Redirect::make()
+            ->id('abc')
+            ->site('en')
+            ->source('/old-url')
+            ->destination('/new-url');
+
+        $key = $this->store->getItemKey($redirect);
+
+        $this->assertEquals('abc', $key);
+    }
+
+    #[Test]
+    public function it_returns_composite_key_for_multisite()
+    {
+        config(['statamic.system.multisite' => true]);
+
+        Site::setSites([
+            'en' => ['url' => 'http://test.com/', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.com/fr/', 'locale' => 'fr_FR'],
+        ]);
+
+        $redirectEn = Facades\Redirect::make()->id('abc')->site('en')->source('/old');
+        $redirectFr = Facades\Redirect::make()->id('abc')->site('fr')->source('/old');
+
+        $this->assertEquals('en::abc', $this->store->getItemKey($redirectEn));
+        $this->assertEquals('fr::abc', $this->store->getItemKey($redirectFr));
+    }
+
+    #[Test]
+    public function it_extracts_site_from_multisite_path()
+    {
+        config(['statamic.system.multisite' => true]);
+
+        Site::setSites([
+            'en' => ['url' => 'http://test.com/', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.com/fr/', 'locale' => 'fr_FR'],
+        ]);
+
+        $item = $this->store->makeItemFromFile(
+            $this->store->directory().'fr/abc.yaml',
+            "source: /old-url\ndestination: /new-url",
+        );
+
+        $this->assertEquals('abc', $item->id());
+        $this->assertEquals('fr', $item->site());
     }
 }

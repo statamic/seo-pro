@@ -18,9 +18,18 @@ class ErrorsStore extends BasicStore
         'id', 'site', 'url', 'hits', 'last_hit_at',
     ];
 
-    public function key()
+    public function key(): string
     {
         return 'seo_pro_errors';
+    }
+
+    public function getItemKey($item): string
+    {
+        if (Site::multiEnabled()) {
+            return $item->site().'::'.$item->id();
+        }
+
+        return $item->id();
     }
 
     public function makeItemFromFile($path, $contents): Error
@@ -50,7 +59,7 @@ class ErrorsStore extends BasicStore
         return $site;
     }
 
-    public function getItemFilter(SplFileInfo $file)
+    public function getItemFilter(SplFileInfo $file): bool
     {
         return $file->getExtension() === 'yaml';
     }
