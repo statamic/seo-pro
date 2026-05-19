@@ -23,6 +23,15 @@ class ErrorsStore extends BasicStore
         return 'seo_pro_errors';
     }
 
+    public function getItemKey($item)
+    {
+        if (Site::multiEnabled()) {
+            return $item->site().'::'.$item->id();
+        }
+
+        return $item->id();
+    }
+
     public function makeItemFromFile($path, $contents): Error
     {
         $data = YAML::file($path)->parse($contents);

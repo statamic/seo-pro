@@ -3,6 +3,7 @@
 namespace Tests\Redirects\Stache;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\Error;
 use Statamic\Stache\Stores\Store;
@@ -71,5 +72,49 @@ class ErrorsStoreTest extends TestCase
         $this->assertStringEqualsFile($path, $error->fileContents());
         @unlink($path);
         $this->assertFileDoesNotExist($path);
+    }
+
+    #[Test]
+    public function it_returns_id_as_item_key_for_single_site()
+    {
+        $error = Facades\Error::make()->id('abc')->site('en')->url('/broken-link');
+
+        $key = $this->store->getItemKey($error);
+
+        $this->assertEquals('abc', $key);
+    }
+
+    #[Test]
+    public function it_returns_composite_key_for_multisite()
+    {
+        config(['statamic.system.multisite' => true]);
+        Site::setSites([
+            'en' => ['url' => 'http://test.com/', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.com/fr/', 'locale' => 'fr_FR'],
+        ]);
+
+        $errorEn = Facades\Error::make()->id('abc')->site('en')->url('/broken-link');
+        $errorFr = Facades\Error::make()->id('abc')->site('fr')->url('/broken-link');
+
+        $this->assertEquals('en::abc', $this->store->getItemKey($errorEn));
+        $this->assertEquals('fr::abc', $this->store->getItemKey($errorFr));
+    }
+
+    #[Test]
+    public function it_extracts_site_from_multisite_path()
+    {
+        config(['statamic.system.multisite' => true]);
+        Site::setSites([
+            'en' => ['url' => 'http://test.com/', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.com/fr/', 'locale' => 'fr_FR'],
+        ]);
+
+        $item = $this->store->makeItemFromFile(
+            $this->store->directory().'fr/abc.yaml',
+            "url: /broken-link\nhits: 5",
+        );
+
+        $this->assertEquals('abc', $item->id());
+        $this->assertEquals('fr', $item->site());
     }
 }
