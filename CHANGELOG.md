@@ -1,5 +1,14 @@
 # Release Notes
 
+## 7.9.2 (2026-05-26)
+
+### What's fixed
+- Fix breadcrumb schema positions to start at 1 instead of 0 [#581](https://github.com/statamic/seo-pro/issues/581) by @duncanmcclean
+- Fix missing horizontal padding in SEO Pro widget [#582](https://github.com/statamic/seo-pro/issues/582) by @duncanmcclean
+- Fix entry-level robots settings being overridden by site defaults [#583](https://github.com/statamic/seo-pro/issues/583) by @duncanmcclean
+
+
+
 ## 7.9.1 (2026-05-19)
 
 ### What's fixed
