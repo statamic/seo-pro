@@ -519,7 +519,7 @@ class CascadeTest extends TestCase
 
         $this->assertEquals([
             '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
-            '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":0,"name":"Home","item":"http://cool-runnings.com"},{"@type":"ListItem","position":1,"name":"\'Dance Like No One is Watching\' Is Bad Advice","item":"http://cool-runnings.com/dance"}]}',
+            '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://cool-runnings.com"},{"@type":"ListItem","position":2,"name":"\'Dance Like No One is Watching\' Is Bad Advice","item":"http://cool-runnings.com/dance"}]}',
         ], $data['json_ld']->all());
     }
 }
