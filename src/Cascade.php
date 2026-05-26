@@ -538,9 +538,6 @@ class Cascade
 
     protected function robots()
     {
-        // If entry has legacy robots array but not new robots_indexing/robots_following,
-        // the entry's legacy setting should take precedence over site defaults.
-        // We can deduce what came from the entry by checking what's NOT in site/section defaults.
         $entryHasLegacyRobots = $this->data->has('robots')
             && ! isset($this->siteDefaults['robots'])
             && ! isset($this->sectionDefaults['robots']);
@@ -555,12 +552,10 @@ class Cascade
             && ! isset($this->sectionDefaults['robots_following'])
         );
 
-        // Use legacy robots array when entry explicitly sets it but doesn't use new fields.
         if ($entryHasLegacyRobots && ! $entryHasNewRobotsFields) {
             return $this->getLegacyRobots();
         }
 
-        // Use new individual fields.
         $robots = [];
 
         if ($indexing = $this->data->get('robots_indexing')) {
@@ -587,7 +582,6 @@ class Cascade
             return $robots;
         }
 
-        // Fallback to legacy robots array from site/section defaults.
         return $this->getLegacyRobots();
     }
 
