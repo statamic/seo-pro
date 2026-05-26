@@ -25,6 +25,7 @@ class Cascade
     protected $data;
     protected $siteDefaults;
     protected $sectionDefaults;
+    protected $entrySeo;
     protected $current;
     protected $explicitUrl;
     protected $model;
@@ -67,6 +68,13 @@ class Cascade
         $this->sectionDefaults = $data;
 
         return $this;
+    }
+
+    public function withEntrySeo($data)
+    {
+        $this->entrySeo = $data;
+
+        return $this->with($data);
     }
 
     public function withCurrent($data)
@@ -538,6 +546,19 @@ class Cascade
 
     protected function robots()
     {
+        // If entry has legacy robots array but not new robots_indexing/robots_following,
+        // the entry's legacy setting should take precedence over site defaults.
+        $entryHasNewRobotsFields = isset($this->entrySeo['robots_indexing'])
+            || isset($this->entrySeo['robots_following']);
+
+        $entryHasLegacyRobots = isset($this->entrySeo['robots']);
+
+        // Use legacy robots array when entry explicitly sets it but doesn't use new fields.
+        if ($entryHasLegacyRobots && ! $entryHasNewRobotsFields) {
+            return $this->getLegacyRobots();
+        }
+
+        // Use new individual fields.
         $robots = [];
 
         if ($indexing = $this->data->get('robots_indexing')) {
@@ -564,21 +585,27 @@ class Cascade
             return $robots;
         }
 
-        if ($this->data->has('robots')) {
-            $robots = $this->data->get('robots');
+        // Fallback to legacy robots array from site/section defaults.
+        return $this->getLegacyRobots();
+    }
 
-            if ($robots instanceof Value) {
-                $robots = $robots->value();
-            }
-
-            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
-                return collect($robots)->pluck('key')->toArray();
-            }
-
-            return is_array($robots) ? $robots : [];
+    protected function getLegacyRobots()
+    {
+        if (! $this->data->has('robots')) {
+            return [];
         }
 
-        return $robots;
+        $robots = $this->data->get('robots');
+
+        if ($robots instanceof Value) {
+            $robots = $robots->value();
+        }
+
+        if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
+            return collect($robots)->pluck('key')->toArray();
+        }
+
+        return is_array($robots) ? $robots : [];
     }
 
     protected function robotsIndexing()
