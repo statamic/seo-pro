@@ -585,7 +585,7 @@ class Cascade
         return $this->getLegacyRobots();
     }
 
-    protected function getLegacyRobots()
+    protected function getLegacyRobots(): array
     {
         if (! $this->data->has('robots')) {
             return [];
