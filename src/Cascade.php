@@ -538,6 +538,24 @@ class Cascade
 
     protected function robots()
     {
+        $entryHasLegacyRobots = $this->data->has('robots')
+            && ! isset($this->siteDefaults['robots'])
+            && ! isset($this->sectionDefaults['robots']);
+
+        $entryHasNewRobotsFields = (
+            $this->data->has('robots_indexing')
+            && ! isset($this->siteDefaults['robots_indexing'])
+            && ! isset($this->sectionDefaults['robots_indexing'])
+        ) || (
+            $this->data->has('robots_following')
+            && ! isset($this->siteDefaults['robots_following'])
+            && ! isset($this->sectionDefaults['robots_following'])
+        );
+
+        if ($entryHasLegacyRobots && ! $entryHasNewRobotsFields) {
+            return $this->getLegacyRobots();
+        }
+
         $robots = [];
 
         if ($indexing = $this->data->get('robots_indexing')) {
@@ -564,21 +582,26 @@ class Cascade
             return $robots;
         }
 
-        if ($this->data->has('robots')) {
-            $robots = $this->data->get('robots');
+        return $this->getLegacyRobots();
+    }
 
-            if ($robots instanceof Value) {
-                $robots = $robots->value();
-            }
-
-            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
-                return collect($robots)->pluck('key')->toArray();
-            }
-
-            return is_array($robots) ? $robots : [];
+    protected function getLegacyRobots(): array
+    {
+        if (! $this->data->has('robots')) {
+            return [];
         }
 
-        return $robots;
+        $robots = $this->data->get('robots');
+
+        if ($robots instanceof Value) {
+            $robots = $robots->value();
+        }
+
+        if (is_array($robots) && isset($robots[0]['key'])) {
+            return collect($robots)->pluck('key')->toArray();
+        }
+
+        return is_array($robots) ? $robots : [];
     }
 
     protected function robotsIndexing()

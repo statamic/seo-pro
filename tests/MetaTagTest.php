@@ -663,6 +663,28 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
+    public function it_uses_legacy_robots_array_when_entry_sets_it_but_not_new_fields($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        // Site defaults have the new robots_indexing/robots_following fields
+        $this->setSeoInSiteDefaults([
+            'robots_indexing' => 'index',
+            'robots_following' => 'follow',
+        ]);
+
+        // Entry explicitly sets the legacy robots array but not new fields
+        $this->setSeoOnEntry(Entry::findByUri('/about'), [
+            'robots' => ['noindex'],
+        ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="robots" content="noindex" />', false);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_custom_humans_url($viewType)
     {
         Config::set('statamic.seo-pro.humans.url', 'aliens.md');
