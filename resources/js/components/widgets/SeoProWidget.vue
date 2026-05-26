@@ -15,7 +15,7 @@ defineProps({
 			<Button :href="reportsUrl" size="sm" :text="__('seo-pro::messages.view_reports')" />
 		</template>
 
-		<div v-if="report" class="flex flex-col items-center justify-center gap-4" style="min-height: 159px">
+		<div v-if="report" class="flex flex-col items-center justify-center gap-4 px-4" style="min-height: 159px">
 			<h2
 				class="!text-4xl leading-tight font-light"
 				:class="{
@@ -29,7 +29,7 @@ defineProps({
 			<Description :text="__('seo-pro::messages.latest_report_score')" />
 		</div>
 
-		<div v-else class="flex flex-col items-center justify-center gap-4" style="min-height: 159px">
+		<div v-else class="flex flex-col items-center justify-center gap-4 px-4" style="min-height: 159px">
 			<Description :text="__('seo-pro::messages.report_no_results_text')" />
 			<Button :href="createUrl" variant="primary" :text="__('seo-pro::messages.generate_your_first_report')" />
 		</div>
