@@ -629,7 +629,7 @@ class Cascade
                 'itemListElement' => $breadcrumbs->map(function ($crumb, $index) {
                     return [
                         '@type' => 'ListItem',
-                        'position' => $index,
+                        'position' => $index + 1,
                         'name' => $crumb->get('title'),
                         'item' => $crumb->absoluteUrl(),
                     ];
