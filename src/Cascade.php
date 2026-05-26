@@ -25,7 +25,6 @@ class Cascade
     protected $data;
     protected $siteDefaults;
     protected $sectionDefaults;
-    protected $entrySeo;
     protected $current;
     protected $explicitUrl;
     protected $model;
@@ -68,13 +67,6 @@ class Cascade
         $this->sectionDefaults = $data;
 
         return $this;
-    }
-
-    public function withEntrySeo($data)
-    {
-        $this->entrySeo = $data;
-
-        return $this->with($data);
     }
 
     public function withCurrent($data)
@@ -548,10 +540,20 @@ class Cascade
     {
         // If entry has legacy robots array but not new robots_indexing/robots_following,
         // the entry's legacy setting should take precedence over site defaults.
-        $entryHasNewRobotsFields = isset($this->entrySeo['robots_indexing'])
-            || isset($this->entrySeo['robots_following']);
+        // We can deduce what came from the entry by checking what's NOT in site/section defaults.
+        $entryHasLegacyRobots = $this->data->has('robots')
+            && ! isset($this->siteDefaults['robots'])
+            && ! isset($this->sectionDefaults['robots']);
 
-        $entryHasLegacyRobots = isset($this->entrySeo['robots']);
+        $entryHasNewRobotsFields = (
+            $this->data->has('robots_indexing')
+            && ! isset($this->siteDefaults['robots_indexing'])
+            && ! isset($this->sectionDefaults['robots_indexing'])
+        ) || (
+            $this->data->has('robots_following')
+            && ! isset($this->siteDefaults['robots_following'])
+            && ! isset($this->sectionDefaults['robots_following'])
+        );
 
         // Use legacy robots array when entry explicitly sets it but doesn't use new fields.
         if ($entryHasLegacyRobots && ! $entryHasNewRobotsFields) {

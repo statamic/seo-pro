@@ -43,7 +43,7 @@ class SeoProTags extends Tags
         $metaData = (new Cascade)
             ->withSiteDefaults(SiteDefaults::in($current?->locale() ?? Site::current()->handle())->augmented())
             ->withSectionDefaults($this->getAugmentedSectionDefaults($current))
-            ->withEntrySeo($this->context->value('seo'))
+            ->with($this->context->value('seo'))
             ->with($current ? [] : $this->context->except('template_content'))
             ->withCurrent($current)
             ->get();

@@ -138,7 +138,7 @@ class SeoProFieldtype extends Fieldtype
             return (new Cascade)
                 ->withSiteDefaults(SiteDefaults::in($content->locale())->augmented())
                 ->withSectionDefaults($this->getAugmentedSectionDefaults($content))
-                ->withEntrySeo($augmented)
+                ->with($augmented)
                 ->withCurrent($content)
                 ->get();
         }

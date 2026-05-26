@@ -308,7 +308,7 @@ class ServiceProvider extends AddonServiceProvider
                     return (new Cascade)
                         ->withSiteDefaults(SiteDefaults::in($item->locale())->augmented())
                         ->withSectionDefaults($this->getAugmentedSectionDefaults($item))
-                        ->withEntrySeo($item->seo)
+                        ->with($item->seo)
                         ->withCurrent($item)
                         ->get();
                 },
