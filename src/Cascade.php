@@ -597,7 +597,7 @@ class Cascade
             $robots = $robots->value();
         }
 
-        if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
+        if (is_array($robots) && isset($robots[0]['key'])) {
             return collect($robots)->pluck('key')->toArray();
         }
 
