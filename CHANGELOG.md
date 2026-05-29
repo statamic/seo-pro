@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.9.3 (2026-05-29)
+
+### What's fixed
+- Fix policy compatibility with Eloquent user repository [#585](https://github.com/statamic/seo-pro/issues/585) by @duncanmcclean
+
+
+
 ## 7.9.2 (2026-05-26)
 
 ### What's fixed
