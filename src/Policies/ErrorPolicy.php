@@ -17,6 +17,6 @@ class ErrorPolicy
 
     public function index($user): bool
     {
-        return $user->hasPermission('view seo redirects');
+        return User::fromUser($user)->hasPermission('view seo redirects');
     }
 }

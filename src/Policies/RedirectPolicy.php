@@ -23,31 +23,31 @@ class RedirectPolicy
 
     public function view($user): bool
     {
-        return $user->hasPermission('view seo redirects');
+        return User::fromUser($user)->hasPermission('view seo redirects');
     }
 
     public function create($user): bool
     {
-        return $user->hasPermission('create seo redirects');
+        return User::fromUser($user)->hasPermission('create seo redirects');
     }
 
     public function store($user): bool
     {
-        return $user->hasPermission('create seo redirects');
+        return User::fromUser($user)->hasPermission('create seo redirects');
     }
 
     public function edit($user, Redirect $redirect): bool
     {
-        return $user->hasPermission('edit seo redirects');
+        return User::fromUser($user)->hasPermission('edit seo redirects');
     }
 
     public function update($user, Redirect $redirect): bool
     {
-        return $user->hasPermission('edit seo redirects');
+        return User::fromUser($user)->hasPermission('edit seo redirects');
     }
 
     public function delete($user, Redirect $redirect): bool
     {
-        return $user->hasPermission('delete seo redirects');
+        return User::fromUser($user)->hasPermission('delete seo redirects');
     }
 }
