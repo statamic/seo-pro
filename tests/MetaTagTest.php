@@ -19,6 +19,7 @@ use Statamic\Facades\Entry;
 use Statamic\Facades\URL;
 use Statamic\Query\ItemQueryBuilder;
 use Statamic\Query\OrderedQueryBuilder;
+use Statamic\SeoPro\Tags\SeoProTags;
 use Statamic\Statamic;
 
 class MetaTagTest extends TestCase
@@ -891,6 +892,66 @@ EOT);
 
         $response = $this->get('/about');
         $response->assertDontSee('<title>About Page 2 | Cool Runnings</title>', false);
+    }
+
+    #[Test]
+    public function it_applies_meta_data_hook_to_rendered_output()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['compiled_title'] = 'Hooked Title';
+
+            return $next($metaData);
+        });
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>Hooked Title</title>', false);
+    }
+
+    #[Test]
+    public function it_applies_multiple_meta_data_hooks_in_sequence()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['compiled_title'] = 'First';
+
+            return $next($metaData);
+        });
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['compiled_title'] .= ' Second';
+
+            return $next($metaData);
+        });
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>First Second</title>', false);
+    }
+
+    #[Test]
+    public function it_makes_hook_added_keys_available_in_meta_data_tag()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['custom_key'] = 'hook_value';
+
+            return $next($metaData);
+        });
+
+        $this->files->put(resource_path('views-seo-pro/layout.antlers.html'), <<<'EOT'
+{{ seo_pro:meta_data }}
+    <span>{{ custom_key }}</span>
+{{ /seo_pro:meta_data }}
+EOT);
+
+        $content = $this->get('/about')->content();
+        $this->assertStringContainsStringIgnoringLineEndings('<span>hook_value</span>', $content);
     }
 
     protected function setCustomGlidePresetDimensions($app)
