@@ -1,16 +1,22 @@
 name: Create Release
 
-on:
+on: # zizmor: ignore[concurrency-limits]
   push:
     tags:
       - 'v*'
 
+permissions: {}
+
 jobs:
-  build:
+  build: # zizmor: ignore[anonymous-definition]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # create GitHub release and upload assets
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Install Composer Dependencies
         run: composer install
@@ -31,22 +37,15 @@ jobs:
           version: ${{ github.ref }}
 
       - name: Create release
-        id: create_release
-        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.changelog.outputs.version }}
-          release_name: ${{ steps.changelog.outputs.version }}
-          body: ${{ steps.changelog.outputs.text }}
-          prerelease: ${{ contains(github.ref, '-beta') }}
-
-      - name: Upload dist zip to release
-        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./resources/dist.tar.gz
-          asset_name: dist.tar.gz
-          asset_content_type: application/tar+gz
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.changelog.outputs.version }}
+          RELEASE_NOTES: ${{ steps.changelog.outputs.text }}
+        run: |
+          PRERELEASE=""
+          if [[ "$RELEASE_VERSION" == *-beta* ]]; then PRERELEASE="--prerelease"; fi
+          gh release create "$RELEASE_VERSION" \
+            --title "$RELEASE_VERSION" \
+            --notes "$RELEASE_NOTES" \
+            $PRERELEASE \
+            ./resources/dist.tar.gz
