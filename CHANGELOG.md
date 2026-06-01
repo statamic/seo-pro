@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.10.0 (2026-06-01)
+
+### What's new
+- Add `meta-data` hook to modify metadata output [#587](https://github.com/statamic/seo-pro/issues/587) by @marcorieser
+- Make `og:type` configurable [#589](https://github.com/statamic/seo-pro/issues/589) by @duncanmcclean
+
+
+
 ## 7.9.3 (2026-05-29)
 
 ### What's fixed
