@@ -22,7 +22,10 @@ class ImportRedirectsController extends CpController
             'file' => ['required', 'array', 'min:1'],
         ]);
 
-        $path = Storage::disk('local')->path("statamic/file-uploads/{$request->file[0]}");
+        $disk = config('statamic.system.file_uploads.disk', 'local');
+        $uploadPath = config('statamic.system.file_uploads.path', 'statamic/file-uploads');
+
+        $path = Storage::disk($disk)->path("{$uploadPath}/{$request->file[0]}");
 
         $reader = SimpleExcelReader::create($path);
         $headers = collect($reader->getHeaders())->map(fn (string $header): string => (string) Str::of($header)->lower()->snake());
@@ -89,7 +92,7 @@ class ImportRedirectsController extends CpController
             }
         });
 
-        Storage::disk('local')->delete("statamic/file-uploads/{$request->file[0]}");
+        Storage::disk($disk)->delete("{$uploadPath}/{$request->file[0]}");
 
         return response()->json([
             'created' => $created,
