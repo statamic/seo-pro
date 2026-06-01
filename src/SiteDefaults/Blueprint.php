@@ -260,6 +260,16 @@ class Blueprint
                         [
                             'fields' => [
                                 [
+                                    'handle' => 'og_type',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.og_type'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.og_type_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                        'default' => 'website',
+                                    ],
+                                ],
+                                [
                                     'handle' => 'og_title',
                                     'field' => [
                                         'display' => __('seo-pro::fieldsets/defaults.og_title'),

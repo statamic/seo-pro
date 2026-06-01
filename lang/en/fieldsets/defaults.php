@@ -69,6 +69,9 @@ return [
     'image' => 'Image',
     'image_instruct' => 'Choose a default image field to represent each URL when shared on social networks.',
 
+    'og_type' => 'Open Graph Type',
+    'og_type_instruct' => 'The type of content (eg. website, article). [Learn more](https://ogp.me/#types)',
+
     'og_title' => 'Open Graph Title',
     'og_title_instruct' => 'Choose the field for your Open Graph titles.',
 

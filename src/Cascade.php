@@ -121,6 +121,7 @@ class Cascade
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
+            'og_type' => $this->data->get('og_type') ?: 'website',
             'og_title' => $this->ogTitle(),
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),

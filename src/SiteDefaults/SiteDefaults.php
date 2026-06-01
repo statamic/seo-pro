@@ -85,6 +85,7 @@ class SiteDefaults
             'title' => '@seo:title',
             'description' => '@seo:content',
             'canonical_url' => '@seo:permalink',
+            'og_type' => 'website',
             'priority' => 0.5,
             'change_frequency' => 'monthly',
         ];
