@@ -51,6 +51,8 @@ class SeoProTags extends Tags
         $metaData['is_twitter_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_twitter');
         $metaData['is_og_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_og');
 
+        $metaData = $this->runHooks('meta-data', $metaData);
+
         return $this->aliasedResult($metaData);
     }
 
