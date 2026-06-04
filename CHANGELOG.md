@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.10.1 (2026-06-04)
+
+### What's fixed
+- Fix breadcrumb JSON-LD null names for localized entries [#592](https://github.com/statamic/seo-pro/issues/592) by @duncanmcclean
+
+
+
 ## 7.10.0 (2026-06-01)
 
 ### What's new
