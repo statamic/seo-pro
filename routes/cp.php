@@ -18,7 +18,10 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
     Route::patch('site-defaults/configure', [Controllers\CP\ConfigureSiteDefaultsController::class, 'update'])->name('site-defaults.configure.update');
 
     Route::get('section-defaults', [Controllers\CP\SectionDefaultsController::class, 'index'])->name('section-defaults.index');
+    Route::get('section-defaults/configure', [Controllers\CP\ConfigureSectionDefaultsController::class, 'edit'])->name('section-defaults.configure.edit');
+    Route::patch('section-defaults/configure', [Controllers\CP\ConfigureSectionDefaultsController::class, 'update'])->name('section-defaults.configure.update');
     Route::get('section-defaults/collections/{seo_pro_collection}/edit', [Controllers\CP\CollectionDefaultsController::class, 'edit'])->name('section-defaults.collections.edit');
+
     Route::patch('section-defaults/collections/{seo_pro_collection}', [Controllers\CP\CollectionDefaultsController::class, 'update'])->name('section-defaults.collections.update');
     Route::get('section-defaults/taxonomies/{seo_pro_taxonomy}/edit', [Controllers\CP\TaxonomyDefaultsController::class, 'edit'])->name('section-defaults.taxonomies.edit');
     Route::patch('section-defaults/taxonomies/{seo_pro_taxonomy}', [Controllers\CP\TaxonomyDefaultsController::class, 'update'])->name('section-defaults.taxonomies.update');

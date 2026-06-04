@@ -16,6 +16,7 @@ use Statamic\Facades\Site as SiteFacade;
 use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
+use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Sites\Site;
 use Statamic\Support\Traits\Hookable;
@@ -156,7 +157,7 @@ class Sitemap
     {
         $collections = Collection::all()
             ->map(function ($collection) {
-                return $collection->cascade('seo') !== false
+                return SectionDefaults::isEnabled('collections', $collection->handle())
                     ? $collection->handle()
                     : false;
             })
@@ -200,7 +201,7 @@ class Sitemap
     {
         return Taxonomy::all()
             ->flatMap(function ($taxonomy) {
-                return $taxonomy->cascade('seo') !== false
+                return SectionDefaults::isEnabled('taxonomies', $taxonomy->handle())
                     ? $taxonomy
                         ->queryTerms()
                         ->when($this->sites()->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites()->map->handle()->all()))
@@ -218,12 +219,12 @@ class Sitemap
     {
         return Collection::all()
             ->flatMap(function ($collection) {
-                return $collection->cascade('seo') !== false
+                return SectionDefaults::isEnabled('collections', $collection->handle())
                     ? $collection->taxonomies()->map->collection($collection)
                     : collect();
             })
             ->flatMap(function ($taxonomy) {
-                return $taxonomy->cascade('seo') !== false
+                return SectionDefaults::isEnabled('taxonomies', $taxonomy->handle())
                     ? $taxonomy
                         ->queryTerms()
                         ->when($this->sites()->isNotEmpty(), fn (Builder $query) => $query->whereIn('site', $this->sites()->map->handle()->all()))

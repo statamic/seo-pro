@@ -3,12 +3,15 @@
 namespace Statamic\SeoPro\Http\Controllers\CP;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Statamic\Contracts\Entries\Collection;
 use Statamic\Contracts\Taxonomies\Taxonomy;
-use Statamic\CP\PublishForm;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Fields;
+use Statamic\SeoPro\SectionDefaults\LocalizedSectionDefaults;
+use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 use Statamic\Support\Arr;
 
 abstract class BaseSectionDefaultsController extends CpController
@@ -17,38 +20,93 @@ abstract class BaseSectionDefaultsController extends CpController
 
     abstract protected function getSectionItem($handle);
 
-    public function edit($handle)
+    public function edit(Request $request, $handle)
     {
         $this->authorize('edit seo section defaults');
 
         $sectionType = static::$sectionType;
+        $site = $request->site ?? Site::selected()->handle();
 
         $item = $this->getSectionItem($handle);
 
-        $seo = Arr::get($item->fileData(), 'inject.seo', []);
+        $localized = SectionDefaults::in($sectionType, $handle, $site);
 
-        if ($seo === false) {
-            $seo = ['enabled' => false];
+        $blueprint = $this->blueprint();
+
+        [$values, $meta] = $this->extractFromFields($localized, $blueprint);
+
+        if ($hasOrigin = $localized->hasOrigin()) {
+            [$originValues, $originMeta] = $this->extractFromFields($localized->origin(), $blueprint);
         }
 
-        return PublishForm::make($this->blueprint())
-            ->asConfig()
-            ->icon('folder')
-            ->title($item->title().' SEO')
-            ->values($seo)
-            ->submittingTo(cp_route("seo-pro.section-defaults.{$sectionType}.update", $item));
+        $viewData = [
+            'blueprint' => $blueprint->toPublishArray(),
+            'initialReference' => $localized->reference(),
+            'initialValues' => $values,
+            'initialMeta' => $meta,
+            'initialEnabled' => $localized->isEnabled(),
+            'initialLocalizations' => SectionDefaults::get($sectionType, $handle)->map(function (LocalizedSectionDefaults $loc) use ($localized, $sectionType, $handle): array {
+                return [
+                    'handle' => $loc->locale(),
+                    'name' => $loc->site()->name(),
+                    'active' => $loc->locale() === $localized->locale(),
+                    'origin' => ! $loc->hasOrigin(),
+                    'url' => cp_route("seo-pro.section-defaults.{$sectionType}.edit", array_filter([
+                        $handle,
+                        'site' => Site::multiEnabled() ? $loc->locale() : null,
+                    ])),
+                ];
+            })->values()->all(),
+            'initialLocalizedFields' => $localized->defaults()->keys()->all(),
+            'initialHasOrigin' => $hasOrigin,
+            'initialOriginValues' => $originValues ?? null,
+            'initialOriginMeta' => $originMeta ?? null,
+            'initialSite' => $site,
+            'action' => cp_route("seo-pro.section-defaults.{$sectionType}.update", $handle),
+            'title' => $item->title().' SEO',
+            'configureUrl' => Site::multiEnabled()
+                ? cp_route('seo-pro.section-defaults.configure.edit')
+                : null,
+        ];
+
+        if ($request->wantsJson()) {
+            return $viewData;
+        }
+
+        return Inertia::render('seo-pro::SectionDefaults/Edit', $viewData);
     }
 
     public function update($handle, Request $request)
     {
         $this->authorize('edit seo section defaults');
 
-        $values = PublishForm::make($this->blueprint())->submit($request->all());
+        $sectionType = static::$sectionType;
+        $site = $request->site ?? Site::selected()->handle();
 
-        $this->saveSectionItem(
-            item: $this->getSectionItem($handle),
-            values: Arr::removeNullValues($values)
+        $localized = SectionDefaults::in($sectionType, $handle, $site);
+        $blueprint = $this->blueprint();
+
+        $fields = $blueprint->fields()->addValues($request->all());
+        $fields->validate();
+        $values = collect($fields->process()->values());
+
+        if ($localized->hasOrigin()) {
+            $values = $values->only($request->input('_localized'));
+        }
+
+        $save = $this->saveSectionDefaults(
+            type: $sectionType,
+            handle: $handle,
+            site: $site,
+            values: Arr::removeNullValues($values->all()),
+            localized: $localized,
         );
+
+        if ($values->get('enabled') === false) {
+            $this->removeChildSeo($this->getSectionItem($handle));
+        }
+
+        return ['saved' => $save];
     }
 
     protected function blueprint()
@@ -62,25 +120,41 @@ abstract class BaseSectionDefaultsController extends CpController
         ]);
     }
 
-    protected function saveSectionItem($item, $values)
+    protected function saveSectionDefaults(string $type, string $handle, string $site, array $values, LocalizedSectionDefaults $localized): bool
     {
         $values = collect($values);
 
-        $cascade = $item->cascade();
+        if ($values->get('enabled') === false) {
+            SectionDefaults::disable($type, $handle);
 
-        if ($disabled = $values->get('enabled') === false) {
-            $cascade->put('seo', false);
-        } elseif ($values->except('enabled')->isEmpty()) {
-            $cascade->forget('seo');
-        } else {
-            $cascade->put('seo', $values->except('enabled')->all());
+            return true;
         }
 
-        $item->cascade($cascade->all())->save();
+        $localized->set($values->except('enabled')->all());
 
-        if ($disabled) {
-            $this->removeChildSeo($item);
+        return $localized->save();
+    }
+
+    private function extractFromFields(LocalizedSectionDefaults $defaults, \Statamic\Fields\Blueprint $blueprint): array
+    {
+        $values = collect();
+        $target = $defaults;
+
+        while ($target) {
+            $values = $target->defaults()->merge($values);
+            $target = $target->origin();
         }
+
+        if (! $defaults->isEnabled()) {
+            $values->put('enabled', false);
+        }
+
+        $fields = $blueprint
+            ->fields()
+            ->addValues($values->all())
+            ->preProcess();
+
+        return [$fields->values()->all(), $fields->meta()->all()];
     }
 
     protected function removeChildSeo($item)

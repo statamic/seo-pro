@@ -62,7 +62,7 @@ onMounted(() => {
 
 <template>
 	<Modal
-		:title="__('seo-pro::messages.configure_site_defaults')"
+		:title="__('seo-pro::messages.configure_section_defaults')"
 		:open
 		:dismissable="!busy"
 		@dismissed="close"

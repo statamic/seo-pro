@@ -10,6 +10,7 @@ use SebastianBergmann\Comparator\ComparisonFailure;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Facades\YAML;
+use Statamic\SeoPro\SectionDefaults\SectionDefaults;
 use Statamic\SeoPro\ServiceProvider;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Testing\AddonTestCase;
@@ -104,7 +105,14 @@ abstract class TestCase extends AddonTestCase
 
     protected function setSeoOnCollection($collection, $seo)
     {
-        $collection->cascade(['seo' => $seo])->save();
+        $locale = Site::default()->handle();
+        $localized = SectionDefaults::in('collections', $collection->handle(), $locale);
+
+        if ($seo === false) {
+            SectionDefaults::disable('collections', $collection->handle());
+        } else {
+            $localized->set($seo)->save();
+        }
 
         return $this;
     }
