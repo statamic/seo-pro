@@ -24,8 +24,8 @@ trait ViewScenarios
 
         $this->files->copyDirectory(__DIR__.'/Fixtures/views/'.$viewType, resource_path('views-seo-pro'));
 
-        // Clear compiled view cache to ensure fresh compilation with correct component paths
         $compiledPath = config('view.compiled');
+
         if ($compiledPath && $this->files->isDirectory($compiledPath)) {
             foreach ($this->files->files($compiledPath) as $file) {
                 $this->files->delete($file);
