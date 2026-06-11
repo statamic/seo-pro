@@ -35,17 +35,10 @@ class AutomaticRedirectSubscriber
             return;
         }
 
-        $initialPath = $entry->initialPath();
-
-        if (! $initialPath || $initialPath === $entry->buildPath()) {
-            return;
-        }
-
         $newSlug = $entry->slug();
-        $originalSlug = pathinfo($initialPath, PATHINFO_FILENAME);
-        $originalSlug = preg_replace('/^\d{4}-\d{2}-\d{2}(-\d{4,6})?\./', '', $originalSlug);
+        $originalSlug = $this->originalEntrySlug($entry);
 
-        if ($originalSlug === $newSlug) {
+        if (! $originalSlug || $originalSlug === $newSlug) {
             return;
         }
 
@@ -235,6 +228,17 @@ class AutomaticRedirectSubscriber
         }
 
         return $path ?: '/';
+    }
+
+    private function originalEntrySlug($entry): ?string
+    {
+        if ($initialPath = $entry->initialPath()) {
+            $slug = pathinfo($initialPath, PATHINFO_FILENAME);
+
+            return preg_replace('/^\d{4}-\d{2}-\d{2}(-\d{4,6})?\./', '', $slug);
+        }
+
+        return $entry->getOriginal('slug');
     }
 
     private function shouldHandleEntry($entry): bool
