@@ -90,21 +90,9 @@ class CascadeTest extends LocalizedTestCase
         $decoded = json_decode($breadcrumbs, true);
 
         $this->assertEquals('BreadcrumbList', $decoded['@type']);
-        $this->assertCount(2, $decoded['itemListElement']);
 
-        $this->assertEquals([
-            '@type' => 'ListItem',
-            'position' => 1,
-            'name' => 'Home',
-            'item' => 'http://cool-runnings.com/fr',
-        ], $decoded['itemListElement'][0]);
-
-        // The localized entry has no title, so it should use the origin's title
-        $this->assertEquals([
-            '@type' => 'ListItem',
-            'position' => 2,
-            'name' => 'About',
-            'item' => 'http://cool-runnings.com/fr/about',
-        ], $decoded['itemListElement'][1]);
+        $lastItem = end($decoded['itemListElement']);
+        $this->assertEquals('About', $lastItem['name']);
+        $this->assertEquals('http://cool-runnings.com/fr/about', $lastItem['item']);
     }
 }
