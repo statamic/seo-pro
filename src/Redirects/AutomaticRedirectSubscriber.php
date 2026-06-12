@@ -36,7 +36,7 @@ class AutomaticRedirectSubscriber
         }
 
         $newSlug = $entry->slug();
-        $originalSlug = $this->originalEntrySlug($entry);
+        $originalSlug = $this->getOriginalEntrySlug($entry);
 
         if (! $originalSlug || $originalSlug === $newSlug) {
             return;
@@ -230,7 +230,14 @@ class AutomaticRedirectSubscriber
         return $path ?: '/';
     }
 
-    private function originalEntrySlug($entry): ?string
+    private function shouldHandleEntry($entry): bool
+    {
+        $collections = config('statamic.seo-pro.redirects.automatic_redirects.collections', []);
+
+        return in_array('*', $collections) || in_array($entry->collectionHandle(), $collections);
+    }
+
+    private function getOriginalEntrySlug($entry): ?string
     {
         if ($initialPath = $entry->initialPath()) {
             $slug = pathinfo($initialPath, PATHINFO_FILENAME);
@@ -239,13 +246,6 @@ class AutomaticRedirectSubscriber
         }
 
         return $entry->getOriginal('slug');
-    }
-
-    private function shouldHandleEntry($entry): bool
-    {
-        $collections = config('statamic.seo-pro.redirects.automatic_redirects.collections', []);
-
-        return in_array('*', $collections) || in_array($entry->collectionHandle(), $collections);
     }
 
     private function shouldHandleTerm($term): bool
