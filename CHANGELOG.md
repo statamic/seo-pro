@@ -1,5 +1,18 @@
 # Release Notes
 
+## 7.11.0 (2026-06-12)
+
+### What's new
+- Add section default events & invalidate static cache [#603](https://github.com/statamic/seo-pro/issues/603) by @duncanmcclean
+- Add "Disabled" option to JSON-LD entity type [#604](https://github.com/statamic/seo-pro/issues/604) by @duncanmcclean
+
+### What's fixed
+- Fix automatic redirects for Eloquent stored entries [#601](https://github.com/statamic/seo-pro/issues/601) by @joshuablum
+- Fix error when generating JSON-LD breadcrumbs [#602](https://github.com/statamic/seo-pro/issues/602) by @duncanmcclean
+- Bump actions/checkout from 6.0.2 to 6.0.3 in the github-actions group [#596](https://github.com/statamic/seo-pro/issues/596) by @dependabot
+
+
+
 ## 7.10.1 (2026-06-04)
 
 ### What's fixed
