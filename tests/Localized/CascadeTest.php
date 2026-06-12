@@ -84,14 +84,11 @@ class CascadeTest extends LocalizedTestCase
             ->get();
 
         $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
 
-        $this->assertNotNull($breadcrumbs);
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
 
-        $decoded = json_decode($breadcrumbs, true);
-
-        $this->assertEquals('BreadcrumbList', $decoded['@type']);
-
-        $lastItem = end($decoded['itemListElement']);
+        $lastItem = end($breadcrumbs['itemListElement']);
         $this->assertEquals('About', $lastItem['name']);
         $this->assertEquals('http://cool-runnings.com/fr/about', $lastItem['item']);
     }

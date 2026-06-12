@@ -539,34 +539,31 @@ class CascadeTest extends TestCase
             ->get();
 
         $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
 
-        $this->assertNotNull($breadcrumbs);
-
-        $decoded = json_decode($breadcrumbs, true);
-
-        $this->assertEquals('BreadcrumbList', $decoded['@type']);
-        $this->assertCount(3, $decoded['itemListElement']);
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(3, $breadcrumbs['itemListElement']);
 
         $this->assertEquals([
             '@type' => 'ListItem',
             'position' => 1,
             'name' => 'Home',
             'item' => 'http://cool-runnings.com',
-        ], $decoded['itemListElement'][0]);
+        ], $breadcrumbs['itemListElement'][0]);
 
         $this->assertEquals([
             '@type' => 'ListItem',
             'position' => 2,
             'name' => 'Articles',
             'item' => 'http://cool-runnings.com/articles',
-        ], $decoded['itemListElement'][1]);
+        ], $breadcrumbs['itemListElement'][1]);
 
         $this->assertEquals([
             '@type' => 'ListItem',
             'position' => 3,
             'name' => "'Dance Like No One is Watching' Is Bad Advice",
             'item' => 'http://cool-runnings.com/articles/dance',
-        ], $decoded['itemListElement'][2]);
+        ], $breadcrumbs['itemListElement'][2]);
     }
 
     #[Test]
@@ -586,33 +583,30 @@ class CascadeTest extends TestCase
             ->get();
 
         $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
 
-        $this->assertNotNull($breadcrumbs);
-
-        $decoded = json_decode($breadcrumbs, true);
-
-        $this->assertEquals('BreadcrumbList', $decoded['@type']);
-        $this->assertCount(3, $decoded['itemListElement']);
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(3, $breadcrumbs['itemListElement']);
 
         $this->assertEquals([
             '@type' => 'ListItem',
             'position' => 1,
             'name' => 'Home',
             'item' => 'http://cool-runnings.com',
-        ], $decoded['itemListElement'][0]);
+        ], $breadcrumbs['itemListElement'][0]);
 
         $this->assertEquals([
             '@type' => 'ListItem',
             'position' => 2,
             'name' => 'Topics',
             'item' => 'http://cool-runnings.com/topics',
-        ], $decoded['itemListElement'][1]);
+        ], $breadcrumbs['itemListElement'][1]);
 
         $this->assertEquals([
             '@type' => 'ListItem',
             'position' => 3,
             'name' => 'Sneakers',
             'item' => 'http://cool-runnings.com/topics/sneakers',
-        ], $decoded['itemListElement'][2]);
+        ], $breadcrumbs['itemListElement'][2]);
     }
 }
