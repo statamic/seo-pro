@@ -654,7 +654,7 @@ class Cascade
                     return [
                         '@type' => 'ListItem',
                         'position' => $index + 1,
-                        'name' => method_exists($crumb, 'value') ? $crumb->value('title') : $crumb->get('title'),
+                        'name' => $crumb->title,
                         'item' => $crumb->absoluteUrl(),
                     ];
                 })->all(),
