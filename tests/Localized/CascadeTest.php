@@ -67,4 +67,27 @@ class CascadeTest extends LocalizedTestCase
             'it' => 'http://corse-fantastiche.it',
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_entry_using_title_from_origin()
+    {
+        $siteDefaults = SiteDefaults::in('french')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->get('http://cool-runnings.com/fr/about');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+
+        $lastItem = end($breadcrumbs['itemListElement']);
+        $this->assertEquals('About', $lastItem['name']);
+        $this->assertEquals('http://cool-runnings.com/fr/about', $lastItem['item']);
+    }
 }

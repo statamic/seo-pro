@@ -522,4 +522,91 @@ class CascadeTest extends TestCase
             '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://cool-runnings.com"},{"@type":"ListItem","position":2,"name":"\'Dance Like No One is Watching\' Is Bad Advice","item":"http://cool-runnings.com/dance"}]}',
         ], $data['json_ld']->all());
     }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_entry()
+    {
+        Collection::findByHandle('articles')->routes('articles/{slug}')->save();
+
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->get('/articles/dance');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(3, $breadcrumbs['itemListElement']);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com',
+        ], $breadcrumbs['itemListElement'][0]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Articles',
+            'item' => 'http://cool-runnings.com/articles',
+        ], $breadcrumbs['itemListElement'][1]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => "'Dance Like No One is Watching' Is Bad Advice",
+            'item' => 'http://cool-runnings.com/articles/dance',
+        ], $breadcrumbs['itemListElement'][2]);
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_taxonomy_term()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->files->makeDirectory(resource_path('views/topics'), force: true);
+        $this->files->put(resource_path('views/topics/index.antlers.html'), '');
+
+        $this->get('/topics/sneakers');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(3, $breadcrumbs['itemListElement']);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com',
+        ], $breadcrumbs['itemListElement'][0]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Topics',
+            'item' => 'http://cool-runnings.com/topics',
+        ], $breadcrumbs['itemListElement'][1]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => 'Sneakers',
+            'item' => 'http://cool-runnings.com/topics/sneakers',
+        ], $breadcrumbs['itemListElement'][2]);
+    }
 }
