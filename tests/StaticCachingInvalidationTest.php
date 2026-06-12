@@ -4,9 +4,14 @@ namespace Tests;
 
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Site;
+use Statamic\Facades\Taxonomy;
+use Statamic\SeoPro\Events\CollectionDefaultsSaved;
+use Statamic\SeoPro\Events\TaxonomyDefaultsSaved;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\StaticCaching\Cacher;
+use Statamic\StaticCaching\Invalidator;
 
 class StaticCachingInvalidationTest extends TestCase
 {
@@ -95,5 +100,92 @@ class StaticCachingInvalidationTest extends TestCase
         ]);
 
         SiteDefaults::in('fr')->save();
+    }
+
+    #[Test]
+    public function does_nothing_for_collection_defaults_when_static_caching_is_disabled()
+    {
+        $invalidator = Mockery::mock(Invalidator::class);
+        $invalidator->shouldReceive('invalidate')->never();
+
+        $this->app->bind(Invalidator::class, fn () => $invalidator);
+
+        config()->set('statamic.static_caching.strategy', null);
+
+        $collection = Collection::find('pages');
+
+        CollectionDefaultsSaved::dispatch($collection);
+    }
+
+    #[Test]
+    public function flushes_static_cache_when_collection_defaults_are_saved_with_all_rules()
+    {
+        $invalidator = Mockery::mock(Invalidator::class);
+        $invalidator->shouldReceive('invalidate')->never();
+
+        $this->app->bind(Invalidator::class, fn () => $invalidator);
+
+        config()->set('statamic.static_caching.invalidation.rules', 'all');
+
+        $collection = Collection::find('pages');
+
+        CollectionDefaultsSaved::dispatch($collection);
+    }
+
+    #[Test]
+    public function invalidates_collection_when_collection_defaults_are_saved()
+    {
+        $collection = Collection::find('pages');
+
+        $invalidator = Mockery::mock(Invalidator::class);
+        $invalidator->shouldReceive('invalidate')->withArgs(function ($item) use ($collection) {
+            return $item->handle() === $collection->handle();
+        })->once();
+
+        $this->app->bind(Invalidator::class, fn () => $invalidator);
+
+        CollectionDefaultsSaved::dispatch($collection);
+    }
+
+    #[Test]
+    public function does_nothing_for_taxonomy_defaults_when_static_caching_is_disabled()
+    {
+        $invalidator = Mockery::mock(Invalidator::class);
+        $invalidator->shouldReceive('invalidate')->never();
+
+        $this->app->bind(Invalidator::class, fn () => $invalidator);
+
+        config()->set('statamic.static_caching.strategy', null);
+
+        $taxonomy = Taxonomy::find('topics');
+
+        TaxonomyDefaultsSaved::dispatch($taxonomy);
+    }
+
+    #[Test]
+    public function flushes_static_cache_when_taxonomy_defaults_are_saved_with_all_rules()
+    {
+        $cacher = Mockery::mock(Cacher::class)->shouldReceive('flush')->once()->getMock();
+
+        $this->app->bind(Cacher::class, fn () => $cacher);
+
+        config()->set('statamic.static_caching.invalidation.rules', 'all');
+
+        $taxonomy = Taxonomy::find('topics');
+
+        TaxonomyDefaultsSaved::dispatch($taxonomy);
+    }
+
+    #[Test]
+    public function invalidates_terms_when_taxonomy_defaults_are_saved()
+    {
+        $taxonomy = Taxonomy::find('topics');
+
+        $invalidator = Mockery::mock(Invalidator::class);
+        $invalidator->shouldReceive('invalidate')->times($taxonomy->queryTerms()->count());
+
+        $this->app->bind(Invalidator::class, fn () => $invalidator);
+
+        TaxonomyDefaultsSaved::dispatch($taxonomy);
     }
 }
