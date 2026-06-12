@@ -67,4 +67,44 @@ class CascadeTest extends LocalizedTestCase
             'it' => 'http://corse-fantastiche.it',
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_entry_using_title_from_origin()
+    {
+        // The French /about entry has an origin but no title set,
+        // so it should use the origin entry's title in breadcrumbs
+        $siteDefaults = SiteDefaults::in('french')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->get('http://cool-runnings.com/fr/about');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+
+        $this->assertNotNull($breadcrumbs);
+
+        $decoded = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $decoded['@type']);
+        $this->assertCount(2, $decoded['itemListElement']);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com/fr',
+        ], $decoded['itemListElement'][0]);
+
+        // The localized entry has no title, so it should use the origin's title
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'About',
+            'item' => 'http://cool-runnings.com/fr/about',
+        ], $decoded['itemListElement'][1]);
+    }
 }
