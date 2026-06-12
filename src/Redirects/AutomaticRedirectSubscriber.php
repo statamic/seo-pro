@@ -35,17 +35,10 @@ class AutomaticRedirectSubscriber
             return;
         }
 
-        $initialPath = $entry->initialPath();
-
-        if (! $initialPath || $initialPath === $entry->buildPath()) {
-            return;
-        }
-
         $newSlug = $entry->slug();
-        $originalSlug = pathinfo($initialPath, PATHINFO_FILENAME);
-        $originalSlug = preg_replace('/^\d{4}-\d{2}-\d{2}(-\d{4,6})?\./', '', $originalSlug);
+        $originalSlug = $this->getOriginalEntrySlug($entry);
 
-        if ($originalSlug === $newSlug) {
+        if (! $originalSlug || $originalSlug === $newSlug) {
             return;
         }
 
@@ -242,6 +235,19 @@ class AutomaticRedirectSubscriber
         $collections = config('statamic.seo-pro.redirects.automatic_redirects.collections', []);
 
         return in_array('*', $collections) || in_array($entry->collectionHandle(), $collections);
+    }
+
+    private function getOriginalEntrySlug($entry): ?string
+    {
+        // ->getOriginal('slug') doesn't work reliably for entries stored
+        // in the Stache, so we need to use the initialPath instead.
+        if ($initialPath = $entry->initialPath()) {
+            $slug = pathinfo($initialPath, PATHINFO_FILENAME);
+
+            return preg_replace('/^\d{4}-\d{2}-\d{2}(-\d{4,6})?\./', '', $slug);
+        }
+
+        return $entry->getOriginal('slug');
     }
 
     private function shouldHandleTerm($term): bool
