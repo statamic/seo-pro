@@ -239,6 +239,8 @@ class AutomaticRedirectSubscriber
 
     private function getOriginalEntrySlug($entry): ?string
     {
+        // ->getOriginal('slug') doesn't work reliably for entries stored
+        // in the Stache, so we need to use the initialPath instead.
         if ($initialPath = $entry->initialPath()) {
             $slug = pathinfo($initialPath, PATHINFO_FILENAME);
 
