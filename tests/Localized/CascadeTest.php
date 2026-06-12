@@ -71,8 +71,6 @@ class CascadeTest extends LocalizedTestCase
     #[Test]
     public function it_generates_json_ld_breadcrumbs_for_entry_using_title_from_origin()
     {
-        // The French /about entry has an origin but no title set,
-        // so it should use the origin entry's title in breadcrumbs
         $siteDefaults = SiteDefaults::in('french')->set([
             'json_ld_breadcrumbs' => true,
         ]);
