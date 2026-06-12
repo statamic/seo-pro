@@ -112,6 +112,7 @@ class Blueprint
                                         'options' => [
                                             'organization' => __('seo-pro::messages.organization'),
                                             'person' => __('seo-pro::messages.person'),
+                                            'disabled' => __('seo-pro::messages.disabled'),
                                         ],
                                         'default' => 'organization',
                                     ],
