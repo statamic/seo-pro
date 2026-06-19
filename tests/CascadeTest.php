@@ -443,6 +443,58 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_only_outputs_organization_schema_on_the_homepage()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $this->assertContains(
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+            $home['json_ld']->all()
+        );
+
+        $about = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/about'))
+            ->get();
+
+        $this->assertEmpty($about['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_only_outputs_person_schema_on_the_homepage()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'person',
+            'json_ld_person_name' => 'Derice Bannock',
+        ]);
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $this->assertContains(
+            '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
+            $home['json_ld']->all()
+        );
+
+        $about = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/about'))
+            ->get();
+
+        $this->assertEmpty($about['json_ld']->all());
+    }
+
+    #[Test]
     public function it_parses_antlers_in_json_ld_schema_values()
     {
         $siteDefaults = SiteDefaults::in('default')->set([

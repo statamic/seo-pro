@@ -375,7 +375,7 @@ GQL;
 
         $query = <<<'GQL'
 {
-    entry(slug: "nectar") {
+    entry(slug: "home") {
         seo {
             json_ld
         }

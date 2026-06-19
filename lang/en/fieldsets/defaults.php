@@ -26,7 +26,7 @@ return [
     'json_ld_section' => 'JSON-LD',
 
     'json_ld_entity_section' => 'Entity Information',
-    'json_ld_entity_section_instruct' => 'Basic details about the organization or person this site represents.',
+    'json_ld_entity_section_instruct' => 'Basic details about the organization or person this site represents. This schema is only output on the homepage, as [recommended by Google](https://developers.google.com/search/docs/appearance/structured-data/organization).',
     'json_ld_entity' => 'Entity',
     'json_ld_entity_instruct' => 'This helps search engines understand the structured data on your site and improves the likelihood of it appearing with rich search results.',
     'json_ld_organization_name' => 'Organization Name',
@@ -37,7 +37,7 @@ return [
     'json_ld_person_name_instruct' => 'The full name of the person this site represents.',
 
     'json_ld_custom_section' => 'Custom Schema',
-    'json_ld_custom_section_instruct' => 'Add custom JSON-LD schema that will be included on every page across your site.',
+    'json_ld_custom_section_instruct' => 'Add a custom JSON-LD schema that will be output on every page across your site.',
     'json_ld_schema' => 'Schema',
     'json_ld_schema_instruct' => 'Paste your custom schema objects here (`LocalBusiness`, `SoftwareApplication`, etc). You can use Antlers to output data from the item. Will be wrapped in the appropriate script tag.',
 
