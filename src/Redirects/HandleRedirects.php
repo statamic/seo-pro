@@ -57,10 +57,21 @@ class HandleRedirects
     private function findExactMatch(string $path, string $siteHandle): ?Redirect
     {
         return RedirectFacade::query()
-            ->where('source', $path)
+            ->whereIn('source', $this->sourceVariations($path))
             ->where('site', $siteHandle)
             ->where('enabled', true)
             ->first();
+    }
+
+    private function sourceVariations(string $path): array
+    {
+        if ($path === '/') {
+            return ['/'];
+        }
+
+        $withoutTrailingSlash = rtrim($path, '/');
+
+        return [$withoutTrailingSlash, $withoutTrailingSlash.'/'];
     }
 
     private function findWildcardMatch(string $path, string $siteHandle): ?Redirect
