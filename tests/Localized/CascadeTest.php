@@ -96,7 +96,7 @@ class CascadeTest extends LocalizedTestCase
     {
         $siteDefaults = SiteDefaults::in('french')->set([
             'json_ld_entity' => 'organization',
-            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
         ]);
 
         $this->get('http://cool-runnings.com/fr');

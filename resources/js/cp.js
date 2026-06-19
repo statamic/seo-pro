@@ -13,6 +13,7 @@ import SeoProFieldtype from './components/fieldtypes/SeoProFieldtype.vue';
 import PreviewsFieldtype from "./components/fieldtypes/PreviewsFieldtype.vue";
 import SourceFieldtype from './components/fieldtypes/SourceFieldtype.vue';
 import RedirectSourceFieldtype from './components/fieldtypes/RedirectSourceFieldtype.vue';
+import OpeningHoursFieldtype from './components/fieldtypes/OpeningHoursFieldtype.vue';
 import SeoProWidget from "./components/widgets/SeoProWidget.vue";
 import RecentErrorsWidget from "./components/widgets/RecentErrorsWidget.vue";
 
@@ -33,6 +34,7 @@ Statamic.booting(() => {
     Statamic.$components.register('seo_pro_previews-fieldtype', PreviewsFieldtype);
     Statamic.$components.register('seo_pro_source-fieldtype', SourceFieldtype);
     Statamic.$components.register('redirect_source-fieldtype', RedirectSourceFieldtype);
+    Statamic.$components.register('seo_pro_opening_hours-fieldtype', OpeningHoursFieldtype);
 
     Statamic.$components.register('seo-pro-widget', SeoProWidget);
     Statamic.$components.register('seo-pro-recent-errors-widget', RecentErrorsWidget);
