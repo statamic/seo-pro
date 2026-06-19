@@ -50,6 +50,8 @@ return [
     'page_url' => 'URL',
     'page_actionable' => 'Actionable',
     'page_details' => 'Page Details',
+    'filtering_by_rule' => 'Showing pages that don’t pass: :rule',
+    'clear_rule_filter' => 'Clear filter',
     'report_no_results_text' => 'Run reports to look for opportunities to improve your site’s SEO.',
     'generate_your_first_report' => 'Generate your first report',
     'latest_report_score' => 'Latest Report Score',

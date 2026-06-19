@@ -13,6 +13,19 @@ const props = defineProps({
 });
 
 const selectedPage = ref(null);
+const activeRule = ref(null);
+
+const ruleFilterParameters = computed(() => activeRule.value ? { rule: activeRule.value } : {});
+
+const activeRuleDescription = computed(() => {
+	return props.report.results?.find((item) => item.handle === activeRule.value)?.description;
+});
+
+const selectRule = (item) => {
+	if (! item.validates_pages) return;
+
+	activeRule.value = activeRule.value === item.handle ? null : item.handle;
+};
 
 const isGenerating = computed(() => ['pending', 'generating'].includes(props.report.status));
 
@@ -88,7 +101,15 @@ if (isGenerating.value) {
 
 				<table class="data-table">
 					<tbody>
-						<tr v-for="item in report.results">
+						<tr
+							v-for="item in report.results"
+							:key="item.handle"
+							:class="{
+								'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-600': item.validates_pages,
+								'bg-gray-100 dark:bg-dark-600': item.handle === activeRule,
+							}"
+							@click="selectRule(item)"
+						>
 							<td class="w-8 text-center text-pretty">
 								<StatusIcon :status="item.status" />
 							</td>
@@ -114,10 +135,24 @@ if (isGenerating.value) {
 		</Panel>
 
 		<template v-else>
-			<Heading class="mb-4" :text="__('seo-pro::messages.page_details')" />
+			<div class="flex flex-wrap items-center gap-3 mb-4">
+				<Heading :text="__('seo-pro::messages.page_details')" />
+
+				<Badge
+					v-if="activeRule"
+					as="button"
+					color="blue"
+					pill
+					icon-append="x"
+					:text="__('seo-pro::messages.filtering_by_rule', { rule: activeRuleDescription })"
+					:aria-label="__('seo-pro::messages.clear_rule_filter')"
+					@click="activeRule = null"
+				/>
+			</div>
 
 			<Listing
 				:url="pagesUrl"
+				:additional-parameters="ruleFilterParameters"
 				:allow-search="false"
 				:allow-presets="false"
 				:allow-customizing-columns="false"

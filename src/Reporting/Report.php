@@ -253,6 +253,8 @@ class Report implements Arrayable, Jsonable
             $rule->load($result);
 
             $array[] = [
+                'handle' => $rule->id(),
+                'validates_pages' => $rule->validatesPages(),
                 'description' => $rule->description(),
                 'status' => $rule->status(),
                 'comment' => $rule->comment(),
