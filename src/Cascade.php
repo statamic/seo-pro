@@ -650,7 +650,7 @@ class Cascade
             $snippets->push(json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'BreadcrumbList',
-                'itemListElement' => $breadcrumbs->map(function ($crumb, $index) {
+                'itemListElement' => $breadcrumbs->values()->map(function ($crumb, $index) {
                     return [
                         '@type' => 'ListItem',
                         'position' => $index + 1,

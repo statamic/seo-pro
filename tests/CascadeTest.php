@@ -608,5 +608,52 @@ class CascadeTest extends TestCase
             'name' => 'Sneakers',
             'item' => 'http://cool-runnings.com/topics/sneakers',
         ], $breadcrumbs['itemListElement'][2]);
+
+        $this->files->deleteDirectory(resource_path('views/topics'));
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_taxonomy_term_when_taxonomy_has_no_template()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        // Remove the page that shadows the /topics URL so it resolves to the taxonomy itself.
+        // The taxonomy has no template, so the breadcrumbs tag drops it from the trail.
+        $this->files->deleteDirectory(resource_path('views/topics'));
+        Entry::findByUri('/topics')->delete();
+
+        $this->get('/topics/sneakers');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+
+        // The taxonomy crumb is omitted (it has no template), so itemListElement must
+        // still be a sequential JSON array with contiguous positions - not a keyed object with gaps.
+        $this->assertStringContainsString('"itemListElement":[{', $breadcrumbs);
+
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(2, $breadcrumbs['itemListElement']);
+        $this->assertSame([0, 1], array_keys($breadcrumbs['itemListElement']));
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com',
+        ], $breadcrumbs['itemListElement'][0]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Sneakers',
+            'item' => 'http://cool-runnings.com/topics/sneakers',
+        ], $breadcrumbs['itemListElement'][1]);
     }
 }
