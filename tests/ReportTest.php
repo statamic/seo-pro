@@ -466,7 +466,7 @@ EXPECTED;
         ], $this->getReportResult('IdealMetaDescriptionLength'));
     }
 
-    public function reportsPath($path = null)
+    private function reportsPath($path = null)
     {
         if ($path) {
             $path = Str::ensureLeft($path, '/');
@@ -475,7 +475,7 @@ EXPECTED;
         return storage_path('statamic/seopro/reports').$path;
     }
 
-    protected function generateEntries($count)
+    private function generateEntries($count)
     {
         collect(range(1, $count))->each(function ($i) {
             Entry::make()
@@ -489,7 +489,7 @@ EXPECTED;
         return $this;
     }
 
-    protected function generateTerms($count)
+    private function generateTerms($count)
     {
         collect(range(1, $count))->each(function ($i) {
             Term::make()
@@ -502,25 +502,13 @@ EXPECTED;
         return $this;
     }
 
-    protected function getReportResult($key)
+    private function getReportResult($key)
     {
         Carbon::setTestNow($now = now());
 
         Report::create()->save()->generate();
 
         return YAML::file($this->reportsPath('1/report.yaml'))->parse()['results'][$key];
-    }
-
-    /**
-     * Normalize line endings before performing assertion in windows.
-     */
-    public static function assertEqualsIgnoringLineEndings($needle, $haystack, $message = ''): void
-    {
-        parent::assertEquals(
-            is_string($needle) ? static::normalizeMultilineString($needle) : $needle,
-            is_string($haystack) ? static::normalizeMultilineString($haystack) : $haystack,
-            $message
-        );
     }
 }
 

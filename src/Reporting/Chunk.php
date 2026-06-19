@@ -86,6 +86,8 @@ class Chunk
             ->withCurrent($content)
             ->get();
 
+        $data['site'] = $content->locale();
+
         return new Page($content->id(), $data, $this->report);
     }
 }

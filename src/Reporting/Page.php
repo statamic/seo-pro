@@ -127,6 +127,11 @@ class Page implements Arrayable
         return $this->get('canonical_url');
     }
 
+    public function site()
+    {
+        return $this->get('site');
+    }
+
     public function id()
     {
         return $this->id;

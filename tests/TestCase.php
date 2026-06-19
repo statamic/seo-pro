@@ -138,6 +138,18 @@ abstract class TestCase extends AddonTestCase
         );
     }
 
+    /**
+     * Normalize line endings before performing assertion in windows.
+     */
+    public static function assertEqualsIgnoringLineEndings(mixed $expected, mixed $actual, string $message = ''): void
+    {
+        parent::assertEquals(
+            is_string($expected) ? static::normalizeMultilineString($expected) : $expected,
+            is_string($actual) ? static::normalizeMultilineString($actual) : $actual,
+            $message
+        );
+    }
+
     protected function assertArrayHasKeys(array $keys, array|\ArrayAccess $array): void
     {
         foreach ($keys as $key) {
