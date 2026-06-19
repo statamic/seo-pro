@@ -2,6 +2,7 @@
 
 namespace Tests\Redirects;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Collection;
@@ -48,6 +49,42 @@ class HandleRedirectsTest extends TestCase
             ->get('/old-url')
             ->assertRedirect('/new-url')
             ->assertStatus(302);
+    }
+
+    #[Test]
+    public function it_redirects_when_visiting_url_with_trailing_slash()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        // The test HTTP client strips trailing slashes before dispatching, so the
+        // request is handled directly through the kernel to preserve it.
+        $response = $this->app->handle(Request::create('/old-url/', 'GET'));
+
+        $this->assertEquals(301, $response->getStatusCode());
+        $this->assertEquals('/new-url', parse_url($response->headers->get('Location'), PHP_URL_PATH));
+    }
+
+    #[Test]
+    public function it_redirects_when_rule_has_trailing_slash_but_url_does_not()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/old-url/')
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this
+            ->get('/old-url')
+            ->assertRedirect('/new-url')
+            ->assertStatus(301);
     }
 
     #[Test]
