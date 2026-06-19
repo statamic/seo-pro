@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\SiteDefaults;
 
-use Statamic\Facades\Site;
 use Statamic\SeoPro\Fieldtypes\Rules\ValidJsonLd;
 use Statamic\SeoPro\HasAssetField;
 
