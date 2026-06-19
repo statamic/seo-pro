@@ -678,7 +678,7 @@ class Cascade
             '@context' => 'https://schema.org',
             '@type' => $type,
             'name' => $name,
-            '@id' => $this->homeUrl().Str::slug($type),
+            '@id' => $this->homeUrl().'#'.Str::slug($type),
             'url' => $this->jsonLdEntityValue('json_ld_entity_url') ?: $this->homeUrl(),
             'alternateName' => $this->jsonLdEntityValue('json_ld_entity_alternate_name'),
             'description' => $this->jsonLdEntityValue('json_ld_entity_description'),
