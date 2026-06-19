@@ -84,13 +84,4 @@ class ReportTest extends LocalizedTestCase
 
         return YAML::file($this->reportsPath('1/report.yaml'))->parse()['results'][$key];
     }
-
-    public static function assertEqualsIgnoringLineEndings($needle, $haystack, $message = ''): void
-    {
-        parent::assertEquals(
-            is_string($needle) ? static::normalizeMultilineString($needle) : $needle,
-            is_string($haystack) ? static::normalizeMultilineString($haystack) : $haystack,
-            $message
-        );
-    }
 }
