@@ -39,7 +39,7 @@ return [
     'json_ld_custom_section' => 'Custom Schema',
     'json_ld_custom_section_instruct' => 'Add a custom JSON-LD schema that will be output on every page across your site.',
     'json_ld_schema' => 'Schema',
-    'json_ld_schema_instruct' => 'Paste your custom schema objects here (`LocalBusiness`, `SoftwareApplication`, etc). You can use Antlers to output data from the item. Will be wrapped in the appropriate script tag.',
+    'json_ld_schema_instruct' => 'Paste your custom schema objects here (`WebSite`, `SiteNavigationElement`, etc). Will be wrapped in the appropriate script tag.',
 
     'json_ld_breadcrumbs_section' => 'Breadcrumbs',
     'json_ld_breadcrumbs' => 'Breadcrumbs',
