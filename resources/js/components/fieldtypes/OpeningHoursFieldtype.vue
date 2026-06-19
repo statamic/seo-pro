@@ -42,7 +42,6 @@ function updateDay(day, type, time) {
                         granularity="minute"
                         :model-value="timeValue(day, 'opening')"
                         :read-only="isReadOnly"
-                        :clearable="false"
                         @update:model-value="updateDay(day, 'opening', $event)"
                     />
                 </td>
@@ -51,7 +50,6 @@ function updateDay(day, type, time) {
                         granularity="minute"
                         :model-value="timeValue(day, 'closing')"
                         :read-only="isReadOnly"
-                        :clearable="false"
                         @update:model-value="updateDay(day, 'closing', $event)"
                     />
                 </td>
