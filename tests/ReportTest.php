@@ -466,7 +466,7 @@ EXPECTED;
         ], $this->getReportResult('IdealMetaDescriptionLength'));
     }
 
-    public function reportsPath($path = null)
+    private function reportsPath($path = null)
     {
         if ($path) {
             $path = Str::ensureLeft($path, '/');
@@ -475,7 +475,7 @@ EXPECTED;
         return storage_path('statamic/seopro/reports').$path;
     }
 
-    protected function generateEntries($count)
+    private function generateEntries($count)
     {
         collect(range(1, $count))->each(function ($i) {
             Entry::make()
@@ -489,7 +489,7 @@ EXPECTED;
         return $this;
     }
 
-    protected function generateTerms($count)
+    private function generateTerms($count)
     {
         collect(range(1, $count))->each(function ($i) {
             Term::make()
@@ -502,7 +502,7 @@ EXPECTED;
         return $this;
     }
 
-    protected function getReportResult($key)
+    private function getReportResult($key)
     {
         Carbon::setTestNow($now = now());
 
