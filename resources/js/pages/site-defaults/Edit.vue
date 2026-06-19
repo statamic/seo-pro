@@ -92,7 +92,7 @@ const confirmSwitchLocalization = () => {
 const switchToLocalization = (localization) => {
 	localizing.value = localization.handle;
 
-	window.history.replaceState({}, '', localization.url);
+	window.history.replaceState({}, '', localization.url + window.location.hash);
 
 	$axios.get(localization.url).then((response) => {
 		const data = response.data;
