@@ -57,10 +57,14 @@ class UniqueTitleTag extends Rule
 
     protected function groupAllPagesByTitle()
     {
-        return Blink::once('seo-pro-report-'.$this->report->id().'-page-titles-grouped', function () {
-            return $this->page->report()->pages()->mapToGroups(function ($page) {
-                return [$page->get('title') => $page->id()];
-            });
+        $site = $this->page->site();
+
+        return Blink::once('seo-pro-report-'.$this->report->id().'-page-titles-grouped-'.$site, function () use ($site) {
+            return $this->page->report()->pages()
+                ->filter(fn ($page) => $page->site() === $site)
+                ->mapToGroups(function ($page) {
+                    return [$page->get('title') => $page->id()];
+                });
         });
     }
 
