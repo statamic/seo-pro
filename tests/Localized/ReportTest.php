@@ -52,7 +52,7 @@ class ReportTest extends LocalizedTestCase
         $this->assertEqualsIgnoringLineEndings(2, $this->getReportResult('UniqueMetaDescription'));
     }
 
-    protected function makeArticle($site, $slug, $title, $description)
+    private function makeArticle($site, $slug, $title, $description)
     {
         Entry::make()
             ->collection('articles')
@@ -67,7 +67,7 @@ class ReportTest extends LocalizedTestCase
         return $this;
     }
 
-    protected function reportsPath($path = null)
+    private function reportsPath($path = null)
     {
         if ($path) {
             $path = Str::ensureLeft($path, '/');
@@ -76,7 +76,7 @@ class ReportTest extends LocalizedTestCase
         return storage_path('statamic/seopro/reports').$path;
     }
 
-    protected function getReportResult($key)
+    private function getReportResult($key)
     {
         Carbon::setTestNow(now());
 
