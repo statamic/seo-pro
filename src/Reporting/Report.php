@@ -254,7 +254,7 @@ class Report implements Arrayable, Jsonable
 
             $array[] = [
                 'handle' => $rule->id(),
-                'validates_pages' => $rule->validatesPages(),
+                'is_filterable' => $rule->validatesPages(),
                 'description' => $rule->description(),
                 'status' => $rule->status(),
                 'comment' => $rule->comment(),

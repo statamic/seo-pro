@@ -34,7 +34,7 @@ const additionalParameters = computed(() => {
 const isRuleActive = (rule) => activeRule.value === rule.handle;
 
 const selectRule = (rule) => {
-	if (! rule.validates_pages) return;
+	if (! rule.is_filterable) return;
 	activeRule.value = activeRule.value === rule.handle ? null : rule.handle;
 };
 
@@ -118,7 +118,7 @@ watch(activeRule, (rule) => {
 							v-for="item in report.results"
 							:key="item.handle"
 							:class="{
-								'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-600': item.validates_pages,
+								'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-600': item.is_filterable,
 							}"
 							@click="selectRule(item)"
 						>
