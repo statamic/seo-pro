@@ -12,8 +12,8 @@ const props = defineProps({
 	pagesUrl: String,
 });
 
-const activeRule = ref(null);
 const selectedPage = ref(null);
+const activeRule = ref(new URLSearchParams(window.location.search).get('rule'));
 
 const isGenerating = computed(() => ['pending', 'generating'].includes(props.report.status));
 
@@ -65,6 +65,16 @@ if (isGenerating.value) {
 
 	onBeforeUnmount(stop);
 }
+
+watch(activeRule, (rule) => {
+	const url = new URL(window.location.href);
+
+	rule
+		? url.searchParams.set('rule', rule)
+		: url.searchParams.delete('rule');
+
+	window.history.replaceState(window.history.state, '', url);
+});
 </script>
 
 <template>
