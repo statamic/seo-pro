@@ -1,5 +1,21 @@
 # Release Notes
 
+## 7.12.0 (2026-06-22)
+
+### What's new
+- Ability to filter reports by rule [#614](https://github.com/statamic/seo-pro/issues/614) by @duncanmcclean
+
+### What's fixed
+- Handle trailing slashes when matching redirects [#610](https://github.com/statamic/seo-pro/issues/610) by @duncanmcclean
+- Fix invalid breadcrumb JSON-LD schema on taxonomy pages [#611](https://github.com/statamic/seo-pro/issues/611) by @duncanmcclean
+- Update pagination docs [#612](https://github.com/statamic/seo-pro/issues/612) by @duncanmcclean
+- Only output `Organization`/`Person` JSON-LD schemas on the homepage [#613](https://github.com/statamic/seo-pro/issues/613) by @duncanmcclean
+- Scope duplicate title & description checks to the current site [#615](https://github.com/statamic/seo-pro/issues/615) by @duncanmcclean
+- Retain current tab hash in URL when switching localization [#616](https://github.com/statamic/seo-pro/issues/616) by @duncanmcclean
+- Bump shivammathur/setup-php from 2.37.1 to 2.37.2 in the github-actions group [#606](https://github.com/statamic/seo-pro/issues/606) by @dependabot
+
+
+
 ## 7.11.0 (2026-06-12)
 
 ### What's new
