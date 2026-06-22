@@ -31,9 +31,11 @@ const additionalParameters = computed(() => {
 	};
 });
 
-const selectRule = (item) => {
-	if (! item.validates_pages) return;
-	activeRule.value = activeRule.value === item.handle ? null : item.handle;
+const isRuleActive = (rule) => activeRule.value === rule.handle;
+
+const selectRule = (rule) => {
+	if (! rule.validates_pages) return;
+	activeRule.value = activeRule.value === rule.handle ? null : rule.handle;
 };
 
 const formatRelativeDate = (value) => {
@@ -123,15 +125,15 @@ watch(activeRule, (rule) => {
 							<td
 								class="w-8 text-center text-pretty"
 								:class="{
-									'!bg-blue-50 dark:!bg-blue-950 !border !border-s-4 !border-e-0 !border-blue-400 dark:!border-blue-700': item.handle === activeRule,
+									'!bg-blue-50 dark:!bg-blue-950 !border !border-s-4 !border-e-0 !border-blue-400 dark:!border-blue-700': isRuleActive(item),
 								}"
 							>
-								<StatusIcon :status="item.status" :class="{ '-ml-1': item.handle === activeRule }" />
+								<StatusIcon :status="item.status" :class="{ '-ml-1': isRuleActive(item) }" />
 							</td>
 							<td
 								class="!pl-0"
 								:class="{
-								    '!bg-blue-50 dark:!bg-blue-950 !border !border-s-0 !border-blue-400 dark:!border-blue-700 !text-gray-800 dark:!text-gray-100': item.handle === activeRule,
+								    '!bg-blue-50 dark:!bg-blue-950 !border !border-s-0 !border-blue-400 dark:!border-blue-700 !text-gray-800 dark:!text-gray-100': isRuleActive(item),
 								}"
 							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
