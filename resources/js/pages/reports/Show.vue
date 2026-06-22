@@ -13,6 +13,7 @@ const props = defineProps({
 });
 
 const selectedPage = ref(null);
+const activeRule = ref(new URLSearchParams(window.location.search).get('rule'));
 
 const isGenerating = computed(() => ['pending', 'generating'].includes(props.report.status));
 
@@ -21,6 +22,21 @@ const isCachedHeaderReady = computed(() => {
 		&& props.report.pages_crawled
 		&& props.report.score;
 });
+
+const additionalParameters = computed(() => {
+	if (!activeRule.value) return {};
+
+	return {
+		rule: activeRule.value,
+	};
+});
+
+const isRuleActive = (rule) => activeRule.value === rule.handle;
+
+const selectRule = (rule) => {
+	if (! rule.is_filterable) return;
+	activeRule.value = activeRule.value === rule.handle ? null : rule.handle;
+};
 
 const formatRelativeDate = (value) => {
 	const isToday = new Date(value * 1000) < new Date().setUTCHours(0, 0, 0, 0);
@@ -51,6 +67,16 @@ if (isGenerating.value) {
 
 	onBeforeUnmount(stop);
 }
+
+watch(activeRule, (rule) => {
+	const url = new URL(window.location.href);
+
+	rule
+		? url.searchParams.set('rule', rule)
+		: url.searchParams.delete('rule');
+
+	window.history.replaceState(window.history.state, '', url);
+});
 </script>
 
 <template>
@@ -88,11 +114,28 @@ if (isGenerating.value) {
 
 				<table class="data-table">
 					<tbody>
-						<tr v-for="item in report.results">
-							<td class="w-8 text-center text-pretty">
-								<StatusIcon :status="item.status" />
+						<tr
+							v-for="item in report.results"
+							:key="item.handle"
+							:class="{
+								'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-600': item.is_filterable,
+							}"
+							@click="selectRule(item)"
+						>
+							<td
+								class="w-8 text-center text-pretty"
+								:class="{
+									'!bg-blue-50 dark:!bg-blue-950 !border !border-s-4 !border-e-0 !border-blue-400 dark:!border-blue-700': isRuleActive(item),
+								}"
+							>
+								<StatusIcon :status="item.status" :class="{ '-ml-1': isRuleActive(item) }" />
 							</td>
-							<td class="!pl-0">
+							<td
+								class="!pl-0"
+								:class="{
+								    '!bg-blue-50 dark:!bg-blue-950 !border !border-s-0 !border-blue-400 dark:!border-blue-700 !text-gray-800 dark:!text-gray-100': isRuleActive(item),
+								}"
+							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
 									<span>{{ item.description }}</span>
 									<span v-if="item.comment" class="text-gray-700 dark:text-dark-175 sm:text-right text-pretty">
@@ -114,10 +157,11 @@ if (isGenerating.value) {
 		</Panel>
 
 		<template v-else>
-			<Heading class="mb-4" :text="__('seo-pro::messages.page_details')" />
+			<Heading :text="__('seo-pro::messages.page_details')" />
 
 			<Listing
 				:url="pagesUrl"
+				:additional-parameters
 				:allow-search="false"
 				:allow-presets="false"
 				:allow-customizing-columns="false"
