@@ -12,20 +12,8 @@ const props = defineProps({
 	pagesUrl: String,
 });
 
-const selectedPage = ref(null);
 const activeRule = ref(null);
-
-const ruleFilterParameters = computed(() => activeRule.value ? { rule: activeRule.value } : {});
-
-const activeRuleDescription = computed(() => {
-	return props.report.results?.find((item) => item.handle === activeRule.value)?.description;
-});
-
-const selectRule = (item) => {
-	if (! item.validates_pages) return;
-
-	activeRule.value = activeRule.value === item.handle ? null : item.handle;
-};
+const selectedPage = ref(null);
 
 const isGenerating = computed(() => ['pending', 'generating'].includes(props.report.status));
 
@@ -34,6 +22,19 @@ const isCachedHeaderReady = computed(() => {
 		&& props.report.pages_crawled
 		&& props.report.score;
 });
+
+const additionalParameters = computed(() => {
+	if (!activeRule.value) return {};
+
+	return {
+		rule: activeRule.value,
+	};
+});
+
+const selectRule = (item) => {
+	if (! item.validates_pages) return;
+	activeRule.value = activeRule.value === item.handle ? null : item.handle;
+};
 
 const formatRelativeDate = (value) => {
 	const isToday = new Date(value * 1000) < new Date().setUTCHours(0, 0, 0, 0);
@@ -106,14 +107,23 @@ if (isGenerating.value) {
 							:key="item.handle"
 							:class="{
 								'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-600': item.validates_pages,
-								'bg-gray-100 dark:bg-dark-600': item.handle === activeRule,
 							}"
 							@click="selectRule(item)"
 						>
-							<td class="w-8 text-center text-pretty">
-								<StatusIcon :status="item.status" />
+							<td
+								class="w-8 text-center text-pretty"
+								:class="{
+									'!bg-blue-50 dark:!bg-blue-950 !border !border-s-4 !border-e-0 !border-blue-400 dark:!border-blue-700': item.handle === activeRule,
+								}"
+							>
+								<StatusIcon :status="item.status" :class="{ '-ml-1': item.handle === activeRule }" />
 							</td>
-							<td class="!pl-0">
+							<td
+								class="!pl-0"
+								:class="{
+								    '!bg-blue-50 dark:!bg-blue-950 !border !border-s-0 !border-blue-400 dark:!border-blue-700 !text-gray-800 dark:!text-gray-100': item.handle === activeRule,
+								}"
+							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
 									<span>{{ item.description }}</span>
 									<span v-if="item.comment" class="text-gray-700 dark:text-dark-175 sm:text-right text-pretty">
@@ -135,24 +145,11 @@ if (isGenerating.value) {
 		</Panel>
 
 		<template v-else>
-			<div class="flex flex-wrap items-center gap-3 mb-4">
-				<Heading :text="__('seo-pro::messages.page_details')" />
-
-				<Badge
-					v-if="activeRule"
-					as="button"
-					color="blue"
-					pill
-					icon-append="x"
-					:text="__('seo-pro::messages.filtering_by_rule', { rule: activeRuleDescription })"
-					:aria-label="__('seo-pro::messages.clear_rule_filter')"
-					@click="activeRule = null"
-				/>
-			</div>
+			<Heading :text="__('seo-pro::messages.page_details')" />
 
 			<Listing
 				:url="pagesUrl"
-				:additional-parameters="ruleFilterParameters"
+				:additional-parameters
 				:allow-search="false"
 				:allow-presets="false"
 				:allow-customizing-columns="false"
