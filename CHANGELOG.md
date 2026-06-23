@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.12.1 (2026-06-23)
+
+### What's fixed
+- Fix PostgreSQL not-null violation when adding redirects [#619](https://github.com/statamic/seo-pro/issues/619) by @duncanmcclean
+
+
+
 ## 7.12.0 (2026-06-22)
 
 ### What's new
