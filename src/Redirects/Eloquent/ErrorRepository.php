@@ -49,7 +49,10 @@ class ErrorRepository extends StacheRepository implements RepositoryContract
     {
         $model = ErrorModel::find($error->id()) ?? new ErrorModel;
 
-        $model->id = $error->id();
+        if (! is_null($error->id())) {
+            $model->id = $error->id();
+        }
+
         $model->site = $error->site();
         $model->url = $error->url();
         $model->hits = $error->hits();
