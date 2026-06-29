@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.12.2 (2026-06-29)
+
+### What's fixed
+- Complete Dutch (nl) translations [#620](https://github.com/statamic/seo-pro/issues/620) by @lwekuiper
+
+
+
 ## 7.12.1 (2026-06-23)
 
 ### What's fixed
