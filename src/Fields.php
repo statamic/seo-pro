@@ -171,7 +171,7 @@ class Fields
                             'full_width_setting' => true,
                             'field' => [
                                 'type' => 'code',
-                                'mode' => 'javascript',
+                                'mode' => 'application/ld+json',
                                 'mode_selectable' => false,
                                 'show_mode_label' => false,
                                 'validate' => [
