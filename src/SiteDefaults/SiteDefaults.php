@@ -32,15 +32,18 @@ class SiteDefaults
     public static function origins($origins = null): Collection|bool
     {
         if (func_num_args() === 0) {
-            return Site::all()
-                ->mapWithKeys(fn ($site) => [$site->handle() => null])
-                ->merge(Addon::get('statamic/seo-pro')->settings()->get('site_defaults_sites', []))
-                ->map(fn ($origin) => empty($origin) ? null : $origin);
+            return Blink::once('seo-pro::site-defaults-origins', function () {
+                return Site::all()
+                    ->mapWithKeys(fn ($site) => [$site->handle() => null])
+                    ->merge(Addon::get('statamic/seo-pro')->settings()->get('site_defaults_sites', []))
+                    ->map(fn ($origin) => empty($origin) ? null : $origin);
+            });
         }
 
         Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', $origins)->save();
 
         Blink::forget('seo-pro::site-defaults');
+        Blink::forget('seo-pro::site-defaults-origins');
 
         return true;
     }
@@ -67,6 +70,7 @@ class SiteDefaults
         Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $data)->save();
 
         Blink::forget('seo-pro::site-defaults');
+        Blink::forget("seo-pro::site-defaults.augmented.{$localized->locale()}");
 
         return true;
     }
