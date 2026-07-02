@@ -159,7 +159,7 @@ class Blueprint
                                         'display' => __('seo-pro::fieldsets/defaults.json_ld_schema'),
                                         'instructions' => __('seo-pro::fieldsets/defaults.json_ld_schema_instruct'),
                                         'type' => 'code',
-                                        'mode' => 'javascript',
+                                        'mode' => 'application/ld+json',
                                         'mode_selectable' => false,
                                         'show_mode_label' => false,
                                         'localizable' => true,
