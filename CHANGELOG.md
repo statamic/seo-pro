@@ -1,5 +1,15 @@
 # Release Notes
 
+## 7.12.3 (2026-07-02)
+
+### What's fixed
+- Fix Site Defaults save failing with "axios is not defined" [#623](https://github.com/statamic/seo-pro/issues/623) by @duncanmcclean
+- Improve Site Defaults performance with many sites [#624](https://github.com/statamic/seo-pro/issues/624) by @duncanmcclean
+- Use `application/ld+json` mode for JSON-LD code fields [#625](https://github.com/statamic/seo-pro/issues/625) by @duncanmcclean
+- Bump actions/checkout from 6.0.3 to 7.0.0 in the github-actions group [#621](https://github.com/statamic/seo-pro/issues/621) by @dependabot
+
+
+
 ## 7.12.2 (2026-06-29)
 
 ### What's fixed
