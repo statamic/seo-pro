@@ -153,6 +153,35 @@ class CascadeTest extends TestCase
         $this->assertEquals('[My Site] [] [default]', $data['title']);
     }
 
+    #[Test]
+    public function it_returns_the_raw_value_when_a_value_contains_invalid_antlers()
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with([
+                'description' => '{{ collection from="locations" }}',
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('{{ collection from="locations" }}', $data['description']);
+    }
+
+    #[Test]
+    public function it_returns_the_raw_schema_when_json_ld_schema_contains_invalid_antlers()
+    {
+        $data = (new Cascade)
+            ->with([
+                'title' => 'Home',
+                'json_ld_schema' => '{{ collection from="locations" }}',
+            ])
+            ->get();
+
+        $this->assertEquals(['{{ collection from="locations" }}'], $data['json_ld']->all());
+    }
+
     public static function phpInAntlersProvider()
     {
         return [

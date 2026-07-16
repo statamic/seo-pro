@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro;
 
+use Exception;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
@@ -17,7 +18,6 @@ use Statamic\Fieldtypes\Bard;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\View\Antlers\Language\Exceptions\RuntimeException;
 use Statamic\View\Cascade as ViewCascade;
 
 class Cascade
@@ -505,7 +505,7 @@ class Cascade
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
             ));
-        } catch (RuntimeException $e) {
+        } catch (Exception $e) {
             return $item;
         }
     }
@@ -526,7 +526,7 @@ class Cascade
                 $this->current ?? [],
                 ['seo' => $this->data->all()],
             ));
-        } catch (RuntimeException $e) {
+        } catch (Exception $e) {
             return $item;
         }
     }
