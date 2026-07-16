@@ -22,8 +22,8 @@ class ImportRedirectsController extends CpController
             'file' => ['required', 'array', 'min:1'],
         ]);
 
-        $disk = config('statamic.system.file_uploads.disk', 'local');
-        $uploadPath = config('statamic.system.file_uploads.path', 'statamic/file-uploads');
+        $disk = config('statamic.system.file_uploads_disk', 'local');
+        $uploadPath = config('statamic.system.file_uploads_path', 'statamic/file-uploads');
 
         $path = Storage::disk($disk)->path("{$uploadPath}/{$request->file[0]}");
 
