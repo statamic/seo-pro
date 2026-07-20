@@ -120,6 +120,8 @@ You can even use Antlers to pull data from fields as necessary:
 
 ![JSON-LD Schema field on Section Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-json-ld-schema.png)
 
+If you want to use any tags or modifiers in your schema, you may need to [add them to an allowlist](https://statamic.dev/frontend/antlers#opting-into-tags-and-modifiers) in Statamic's `antlers.php` config.
+
 The "Organization Logo" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
 
 ```php
