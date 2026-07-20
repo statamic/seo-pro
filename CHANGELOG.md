@@ -1,5 +1,19 @@
 # Release Notes
 
+## 7.13.0 (2026-07-20)
+
+### What's new
+- Support configurable file uploads disk [#590](https://github.com/statamic/seo-pro/issues/590) by @duncanmcclean
+
+### What's fixed
+- Fix Control Panel crash when SEO fields contain invalid Antlers [#631](https://github.com/statamic/seo-pro/issues/631) by @mynetx
+- Fix publish form freezing when the seo field has a condition [#634](https://github.com/statamic/seo-pro/issues/634) by @duncanmcclean
+- Prepend site URL when testing redirects [#635](https://github.com/statamic/seo-pro/issues/635) by @duncanmcclean
+- Noindex error pages instead of emitting canonical and hreflang meta [#636](https://github.com/statamic/seo-pro/issues/636) by @duncanmcclean
+- Mention allowlist for tags & modifiers in JSON-LD in docs [#637](https://github.com/statamic/seo-pro/issues/637) by @duncanmcclean
+
+
+
 ## 7.12.3 (2026-07-02)
 
 ### What's fixed
