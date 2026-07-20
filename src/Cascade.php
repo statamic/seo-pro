@@ -506,6 +506,8 @@ class Cascade
                 $this->current ?? [],
             ));
         } catch (Exception $e) {
+            report($e);
+
             return $item;
         }
     }
@@ -527,6 +529,8 @@ class Cascade
                 ['seo' => $this->data->all()],
             ));
         } catch (Exception $e) {
+            report($e);
+
             return $item;
         }
     }
