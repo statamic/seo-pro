@@ -79,7 +79,7 @@ class Blueprint
                 'display' => 'SEO Previews',
                 'localizable' => false,
                 'hide_display' => true,
-                'unless' => ['seo.enabled' => 'equals false'],
+                'if' => 'custom showSeoProPreviews',
             ],
             tab: 'SEO Previews',
             prepend: true

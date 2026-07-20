@@ -36,4 +36,14 @@ Statamic.booting(() => {
 
     Statamic.$components.register('seo-pro-widget', SeoProWidget);
     Statamic.$components.register('seo-pro-recent-errors-widget', RecentErrorsWidget);
+
+    Statamic.$conditions.add('showSeoProPreviews', ({ values, container }) => {
+        if (container?.hiddenFields?.value?.seo?.hidden) {
+            return false;
+        }
+
+        const seo = (container?.values?.value ?? values)?.seo;
+
+        return seo?.enabled !== false;
+    });
 });
