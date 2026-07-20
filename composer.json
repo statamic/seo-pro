@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "statamic/cms": "^6.19",
+        "statamic/cms": "^6.25",
         "pixelfear/composer-dist-plugin": "^0.1.6",
         "spatie/simple-excel": "^3.9"
     },
