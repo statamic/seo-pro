@@ -288,6 +288,20 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_noindexes_error_pages()
+    {
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with([
+                'response_code' => 404,
+            ])
+            ->get();
+
+        $this->assertContains('noindex', $data['robots']);
+        $this->assertEquals('noindex', $data['robots_indexing']);
+    }
+
+    #[Test]
     public function it_generates_next_and_prev_urls_off_tag_paginator_from_cms_core()
     {
         $entry = Entry::findByUri($uri = '/about')->entry();

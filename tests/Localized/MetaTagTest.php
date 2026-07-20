@@ -338,4 +338,18 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsStringIgnoringLineEndings('<title>Corse Fantastiche | Home</title>', $content);
     }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_doesnt_generate_multisite_meta_for_404_pages($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+        $this->assertStringNotContainsString('hreflang', $content);
+    }
 }

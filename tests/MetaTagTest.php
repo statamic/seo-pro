@@ -732,6 +732,37 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
+    public function it_noindexes_404_pages_and_omits_canonical_meta($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_noindexes_404_pages_even_when_site_defaults_allow_indexing($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoInSiteDefaults([
+                'robots_indexing' => 'index',
+                'robots_following' => 'follow',
+            ]);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex, follow" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_hydrates_cascade_on_custom_routes_using_blade_directive($viewType)
     {
         if ($viewType === 'antlers') {

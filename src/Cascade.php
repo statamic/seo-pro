@@ -102,8 +102,14 @@ class Cascade
             return $this->getForSitemap();
         }
 
-        if (Arr::get($this->data, 'response_code') === 404) {
+        $responseCode = Arr::get($this->data, 'response_code', 200);
+
+        if ($responseCode === 404) {
             $this->current['title'] = '404 Page Not Found';
+        }
+
+        if ($responseCode >= 400) {
+            $this->data->put('robots_indexing', 'noindex');
         }
 
         $this->data = $this->data->map(function ($item, $key) {
