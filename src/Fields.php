@@ -171,7 +171,7 @@ class Fields
                             'full_width_setting' => true,
                             'field' => [
                                 'type' => 'code',
-                                'mode' => 'javascript',
+                                'mode' => 'application/ld+json',
                                 'mode_selectable' => false,
                                 'show_mode_label' => false,
                                 'validate' => [
@@ -307,6 +307,21 @@ class Fields
                 'display' => __('seo-pro::fieldsets/defaults.image_section'),
                 'instructions' => __('seo-pro::fieldsets/defaults.image_section_instruct'),
                 'fields' => [
+                    [
+                        'handle' => 'og_type',
+                        'field' => [
+                            'display' => __("seo-pro::fieldsets/{$langFile}.og_type"),
+                            'instructions' => __("seo-pro::fieldsets/{$langFile}.og_type_instruct"),
+                            'type' => 'seo_pro_source',
+                            'from_field' => false,
+                            'localizable' => true,
+                            'field' => [
+                                'type' => 'text',
+                            ],
+                            'always_save' => true,
+                            'unless' => ['enabled' => 'equals false'],
+                        ],
+                    ],
                     [
                         'handle' => 'og_title',
                         'field' => [

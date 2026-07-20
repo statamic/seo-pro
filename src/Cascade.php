@@ -121,6 +121,7 @@ class Cascade
 
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
+            'og_type' => $this->data->get('og_type') ?: 'website',
             'og_title' => $this->ogTitle(),
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
@@ -168,6 +169,18 @@ class Cascade
     public function homeUrl()
     {
         return Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/');
+    }
+
+    protected function isHomePage(): bool
+    {
+        if (! method_exists($this->model, 'absoluteUrl')) {
+            return false;
+        }
+
+        $home = Str::removeRight((string) $this->site()->absoluteUrl(), '/');
+        $current = Str::removeRight((string) $this->model->absoluteUrl(), '/');
+
+        return $current !== '' && $current === $home;
     }
 
     public function canonicalUrl()
@@ -618,7 +631,7 @@ class Cascade
         $jsonLdOrganizationLogo = $this->data->get('json_ld_organization_logo');
         $jsonLdPersonName = (string) $this->data->get('json_ld_person_name');
 
-        if ($jsonLdEntity === 'organization' && $jsonLdOrganizationName) {
+        if ($this->isHomePage() && $jsonLdEntity === 'organization' && $jsonLdOrganizationName) {
             if ($jsonLdOrganizationLogo && ! $jsonLdOrganizationLogo instanceof Value) {
                 $jsonLdOrganizationLogo = Asset::find($jsonLdOrganizationLogo);
             }
@@ -633,7 +646,7 @@ class Cascade
             ]), JSON_UNESCAPED_SLASHES));
         }
 
-        if ($jsonLdEntity === 'person' && $jsonLdPersonName) {
+        if ($this->isHomePage() && $jsonLdEntity === 'person' && $jsonLdPersonName) {
             $snippets->push(json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'Person',
@@ -649,11 +662,11 @@ class Cascade
             $snippets->push(json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'BreadcrumbList',
-                'itemListElement' => $breadcrumbs->map(function ($crumb, $index) {
+                'itemListElement' => $breadcrumbs->values()->map(function ($crumb, $index) {
                     return [
                         '@type' => 'ListItem',
                         'position' => $index + 1,
-                        'name' => $crumb->get('title'),
+                        'name' => $crumb->title,
                         'item' => $crumb->absoluteUrl(),
                     ];
                 })->all(),

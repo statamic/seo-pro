@@ -452,6 +452,19 @@ If you wish to customize the contents of the `humans.txt` view, you may also [pu
 
 By default, `canonical` URL meta will show pagination on `?page=2` and higher, with `rel="prev"` / `rel="next"` links when appropriate.
 
+This only works with pagination handled by Statamic itself, like the `paginate` parameter on the [collection](https://statamic.dev/tags/collection) and [taxonomy](https://statamic.dev/tags/taxonomy) tags. SEO Pro reads the current page and the previous/next URLs from the paginator those tags provide.
+
+If you're querying entries manually or paginating other items, like an Eloquent model, SEO Pro won't know about it, so the canonical stays on the unpaginated base URL with no `rel="prev"` / `rel="next"` links. To fix this, store your paginator in [Blink](https://statamic.dev/backend-apis/blink-cache) under the `tag-paginator` key before the `{{ seo_pro:meta }}` tag renders. SEO Pro accepts any standard Laravel `LengthAwarePaginator`:
+
+```php
+use Statamic\Facades\Blink;
+use Statamic\Facades\Entry;
+
+$paginator = Entry::query()->where('collection', 'blog')->paginate(10);
+
+Blink::put('tag-paginator', $paginator);
+```
+
 If you wish to customize or disable pagination, you can [publish the SEO Pro config](#advanced-configuration) and modify these settings within `config/statamic/seo-pro.php`.
 
 ### Twitter Card Meta

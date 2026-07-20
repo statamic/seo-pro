@@ -23,7 +23,7 @@ const save = () => {
 	busy.value = true;
 	error.value = null;
 
-	axios.patch(props.route, { sites: sites.value })
+	$axios.patch(props.route, { sites: sites.value })
 		.then(() => {
 			Statamic.$toast.success(__('Saved'));
 			emit('saved');

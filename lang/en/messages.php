@@ -74,6 +74,7 @@ return [
     'never' => 'Never',
     'organization' => 'Organization',
     'person' => 'Person',
+    'disabled' => 'Disabled',
     'test_redirect' => 'Test Redirect',
     'enabled' => 'Enabled',
     'active' => 'Active',

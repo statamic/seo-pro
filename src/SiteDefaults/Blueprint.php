@@ -112,6 +112,7 @@ class Blueprint
                                         'options' => [
                                             'organization' => __('seo-pro::messages.organization'),
                                             'person' => __('seo-pro::messages.person'),
+                                            'disabled' => __('seo-pro::messages.disabled'),
                                         ],
                                         'default' => 'organization',
                                     ],
@@ -158,7 +159,7 @@ class Blueprint
                                         'display' => __('seo-pro::fieldsets/defaults.json_ld_schema'),
                                         'instructions' => __('seo-pro::fieldsets/defaults.json_ld_schema_instruct'),
                                         'type' => 'code',
-                                        'mode' => 'javascript',
+                                        'mode' => 'application/ld+json',
                                         'mode_selectable' => false,
                                         'show_mode_label' => false,
                                         'localizable' => true,
@@ -259,6 +260,16 @@ class Blueprint
                     'sections' => [
                         [
                             'fields' => [
+                                [
+                                    'handle' => 'og_type',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.og_type'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.og_type_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                        'default' => 'website',
+                                    ],
+                                ],
                                 [
                                     'handle' => 'og_title',
                                     'field' => [

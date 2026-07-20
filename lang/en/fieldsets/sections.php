@@ -54,6 +54,9 @@ return [
     'og_section' => 'Open Graph',
     'og_section_instruct' => 'We automatically generate most Open Graph fields from your meta data and site configuration.',
 
+    'og_type' => 'Open Graph Type',
+    'og_type_instruct' => 'The default type of content for this section (eg. website, article). [Learn more](https://ogp.me/#types)',
+
     'og_title' => 'Open Graph Title',
     'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
 

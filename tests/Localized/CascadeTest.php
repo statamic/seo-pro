@@ -67,4 +67,56 @@ class CascadeTest extends LocalizedTestCase
             'it' => 'http://corse-fantastiche.it',
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
     }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_entry_using_title_from_origin()
+    {
+        $siteDefaults = SiteDefaults::in('french')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->get('http://cool-runnings.com/fr/about');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+
+        $lastItem = end($breadcrumbs['itemListElement']);
+        $this->assertEquals('About', $lastItem['name']);
+        $this->assertEquals('http://cool-runnings.com/fr/about', $lastItem['item']);
+    }
+
+    #[Test]
+    public function it_only_outputs_organization_schema_on_each_sites_homepage()
+    {
+        $siteDefaults = SiteDefaults::in('french')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $this->get('http://cool-runnings.com/fr');
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertContains(
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com/fr#organization","url":"http://cool-runnings.com/fr"}',
+            $home['json_ld']->all()
+        );
+
+        $this->get('http://cool-runnings.com/fr/about');
+
+        $about = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/about', 'french')->entry())
+            ->get();
+
+        $this->assertEmpty($about['json_ld']->all());
+    }
 }
