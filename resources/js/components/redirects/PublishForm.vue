@@ -83,7 +83,7 @@ const testRedirect = () => {
 		return `wildcard${wildcardIndex}`;
 	});
 
-	window.open(url, '_blank');
+	window.open(props.initialMeta.source?.site_url + url, '_blank');
 };
 </script>
 
