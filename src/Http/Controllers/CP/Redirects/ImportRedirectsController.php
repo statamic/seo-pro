@@ -20,14 +20,18 @@ class ImportRedirectsController extends CpController
 
         $request->validate([
             'file' => ['required', 'array', 'min:1'],
+            'file.*' => ['string'],
         ]);
 
         $disk = config('statamic.system.file_uploads_disk', 'local');
         $uploadPath = config('statamic.system.file_uploads_path', 'statamic/file-uploads');
+        $uploadedFile = "{$uploadPath}/{$request->file[0]}";
 
-        $path = Storage::disk($disk)->path("{$uploadPath}/{$request->file[0]}");
+        $tempPath = tempnam(sys_get_temp_dir(), 'seo-pro-import');
+        file_put_contents($tempPath, Storage::disk($disk)->readStream($uploadedFile));
+        app()->terminating(fn () => @unlink($tempPath));
 
-        $reader = SimpleExcelReader::create($path);
+        $reader = SimpleExcelReader::create($tempPath, 'csv');
         $headers = collect($reader->getHeaders())->map(fn (string $header): string => (string) Str::of($header)->lower()->snake());
         $rows = $reader->useHeaders($headers->all())->getRows();
 
@@ -92,7 +96,7 @@ class ImportRedirectsController extends CpController
             }
         });
 
-        Storage::disk($disk)->delete("{$uploadPath}/{$request->file[0]}");
+        Storage::disk($disk)->delete($uploadedFile);
 
         return response()->json([
             'created' => $created,
