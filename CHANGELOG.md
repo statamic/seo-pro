@@ -1,5 +1,14 @@
 # Release Notes
 
+## 7.13.1 (2026-08-07)
+
+### What's fixed
+- Fix custom JSON-LD schema failing to save in Site Defaults [#642](https://github.com/statamic/seo-pro/issues/642) by @duncanmcclean
+- Bump slackapi/slack-github-action from 3.0.3 to 3.0.5 in the github-actions group [#638](https://github.com/statamic/seo-pro/issues/638) by @dependabot
+- Bump the github-actions group with 2 updates [#639](https://github.com/statamic/seo-pro/issues/639) by @dependabot
+
+
+
 ## 7.13.0 (2026-07-20)
 
 ### What's new
