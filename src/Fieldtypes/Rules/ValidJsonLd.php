@@ -10,7 +10,7 @@ class ValidJsonLd implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (Str::startsWith($value['code'], '<script')) {
+        if ($value && Str::startsWith($value, '<script')) {
             $fail('seo-pro::validation.json_ld_omit_script_tags')->translate();
         }
     }

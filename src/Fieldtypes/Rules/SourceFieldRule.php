@@ -23,7 +23,7 @@ class SourceFieldRule implements ValidationRule
         // Run any validation rules that might belong on the source field.
         if ($value['source'] === 'custom') {
             $data = [];
-            Arr::set($data, $attribute, $value['value']);
+            Arr::set($data, $attribute, $this->sourceField->fieldtype()->preProcessValidatable($value['value']));
 
             Validator::make($data, [$attribute => $this->sourceField->get('validate', [])])->validate();
         }
