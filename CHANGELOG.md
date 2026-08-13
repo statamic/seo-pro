@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.13.2 (2026-08-13)
+
+### What's fixed
+- Fix alternate locale array serialization [#644](https://github.com/statamic/seo-pro/issues/644) by @infabo
+
+
+
 ## 7.13.1 (2026-08-07)
 
 ### What's fixed
