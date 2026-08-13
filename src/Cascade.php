@@ -444,7 +444,7 @@ class Cascade
             ]);
         });
 
-        return $alternateLocales->all();
+        return $alternateLocales->values()->all();
     }
 
     protected function currentHreflang($alternateLocales)
