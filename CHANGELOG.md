@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.13.3 (2026-08-25)
+
+### What's fixed
+- Keep canonical/prev/next independent of the noindex gate [#646](https://github.com/statamic/seo-pro/issues/646) by @lwekuiper
+
+
+
 ## 7.13.2 (2026-08-13)
 
 ### What's fixed
