@@ -109,6 +109,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/fr/about" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
@@ -135,6 +136,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/fr" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
@@ -161,6 +163,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/en-gb" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />

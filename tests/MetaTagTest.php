@@ -76,8 +76,8 @@ class MetaTagTest extends TestCase
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -105,8 +105,8 @@ EOT;
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -135,8 +135,8 @@ EOT;
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -872,7 +872,7 @@ EOT);
     }
 
     #[Test]
-    public function it_doesnt_output_canonical_when_robots_noindex()
+    public function it_still_outputs_canonical_when_robots_noindex()
     {
         $this
             ->prepareViews('antlers')
@@ -881,7 +881,8 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertDontSee('" rel="canonical"', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
+        $response->assertDontSee(' rel="home"', false);
     }
 
     #[Test]
