@@ -69,8 +69,8 @@ GQL;
             '<meta property="og:image:alt" content="" />',
             '<meta name="twitter:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />',
             '<meta name="twitter:image:alt" content="" />',
-            '<link href="http://cool-runnings.com" rel="home" />',
             '<link href="http://cool-runnings.com/nectar" rel="canonical" />',
+            '<link href="http://cool-runnings.com" rel="home" />',
             '<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />',
         ])->implode('');
 
@@ -187,8 +187,8 @@ GQL;
             '<meta property="og:locale" content="en_US" />',
             '<meta name="twitter:card" content="summary_large_image" />',
             '<meta name="twitter:title" content="Dance" />',
-            '<link href="http://cool-runnings.com" rel="home" />',
             '<link href="http://cool-runnings.com/topics/dance" rel="canonical" />',
+            '<link href="http://cool-runnings.com" rel="home" />',
             '<link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />',
         ])->implode('');
 

@@ -76,8 +76,7 @@
     {{ /image }}
 {{ /if }}
 
-{{ unless (robots_indexing == 'noindex') }}
-    <link href="{{ home_url | striptags | entities | trim }}" rel="home" />
+{{ unless (response_code >= 400) }}
     <link href="{{ canonical_url | striptags | entities | trim }}" rel="canonical" />
 
     {{ if prev_url }}
@@ -88,18 +87,22 @@
         <link href="{{ next_url | striptags | entities | trim }}" rel="next" />
     {{ /if }}
 
-    {{ if alternate_locales }}
-        <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="{{ current_hreflang }}" />
-        {{ if is_default_site }}
-            <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="x-default" />
-        {{ /if }}
-        {{ alternate_locales }}
-            <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="{{ hreflang }}" />
+    {{ unless (robots_indexing == 'noindex') }}
+        <link href="{{ home_url | striptags | entities | trim }}" rel="home" />
+
+        {{ if alternate_locales }}
+            <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="{{ current_hreflang }}" />
             {{ if is_default_site }}
-                <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="x-default" />
+                <link rel="alternate" href="{{ canonical_url | striptags | entities | trim }}" hreflang="x-default" />
             {{ /if }}
-        {{ /alternate_locales }}
-    {{ /if }}
+            {{ alternate_locales }}
+                <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="{{ hreflang }}" />
+                {{ if is_default_site }}
+                    <link rel="alternate" href="{{ url | striptags | entities | trim }}" hreflang="x-default" />
+                {{ /if }}
+            {{ /alternate_locales }}
+        {{ /if }}
+    {{ /unless }}
 {{ /unless }}
 
 {{ if humans_txt }}
