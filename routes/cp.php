@@ -17,6 +17,10 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
     Route::get('site-defaults/configure', [Controllers\CP\ConfigureSiteDefaultsController::class, 'edit'])->name('site-defaults.configure.edit');
     Route::patch('site-defaults/configure', [Controllers\CP\ConfigureSiteDefaultsController::class, 'update'])->name('site-defaults.configure.update');
 
+    Route::get('robots/edit', [Controllers\CP\RobotsController::class, 'edit'])->name('robots.edit');
+    Route::patch('robots', [Controllers\CP\RobotsController::class, 'update'])->name('robots.update');
+    Route::post('robots/preview', [Controllers\CP\RobotsController::class, 'preview'])->name('robots.preview');
+
     Route::get('section-defaults', [Controllers\CP\SectionDefaultsController::class, 'index'])->name('section-defaults.index');
     Route::get('section-defaults/collections/{seo_pro_collection}/edit', [Controllers\CP\CollectionDefaultsController::class, 'edit'])->name('section-defaults.collections.edit');
     Route::patch('section-defaults/collections/{seo_pro_collection}', [Controllers\CP\CollectionDefaultsController::class, 'update'])->name('section-defaults.collections.update');

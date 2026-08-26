@@ -3,6 +3,10 @@
 return [
 
     'humans_txt' => 'Humans.txt',
+    'robots' => 'Crawling & AI',
+    'robots_description' => 'Manage robots.txt, AI crawler access, content-use preferences, and sitemap discovery.',
+    'edit_robots' => 'Edit robots.txt settings',
+    'robots_txt_generated' => 'robots.txt generated',
     'redirects' => 'Redirects',
     'redirects_description' => 'Manage URL redirects to preserve legacy URLs and improve SEO.',
     'errors' => 'Errors',
