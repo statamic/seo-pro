@@ -21,7 +21,6 @@ use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro\Commands\GenerateReportCommand;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
 use Statamic\SeoPro\Events\RedirectSaved;
-use Statamic\SeoPro\Events\RobotsTxtGenerated;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
 use Statamic\SeoPro\GraphQL\SeoProType;
 use Statamic\SeoPro\Redirects\Error;
@@ -290,7 +289,6 @@ class ServiceProvider extends AddonServiceProvider
             ])));
 
             Git::listen(RedirectSaved::class);
-            Git::listen(RobotsTxtGenerated::class);
         }
 
         return $this;
