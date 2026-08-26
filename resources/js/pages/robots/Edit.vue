@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue';
 import { deepClone } from '@statamic/cms';
 import { Head } from '@statamic/cms/inertia';
 import {
@@ -40,6 +40,22 @@ const generating = ref(false);
 const confirmingGeneration = ref(false);
 const errors = ref({});
 const previewError = ref(false);
+
+const importDescription = computed(() => {
+	if (file.value.importable) {
+		return __('You can import the existing file into custom mode before generating. Generating without importing will overwrite it.');
+	}
+
+	if (file.value.import_issue === 'too_large') {
+		return __('The existing file is larger than 500 KiB and cannot be imported. Generating will overwrite it.');
+	}
+
+	if (file.value.import_issue === 'invalid_utf8') {
+		return __('The existing file is not valid UTF-8 and cannot be imported. Generating will overwrite it.');
+	}
+
+	return __('The existing file could not be read and cannot be imported. Generating will overwrite it.');
+});
 
 const accessOptions = [
 	{ value: 'neutral', label: __('No explicit rule') },
@@ -199,16 +215,16 @@ onUnmounted(() => {
 				:text="__('Configure the policy below, then select Generate to create robots.txt.')"
 			/>
 
-			<Alert
-				v-else-if="!file.managed"
-				variant="warning"
-			>
-				<Heading :text="__('An existing robots.txt file is not currently managed by SEO Pro')" />
-				<Description :text="__('You can import the existing file into custom mode before generating. Generating without importing will overwrite it.')" />
-				<div class="mt-3">
-					<Button size="sm" variant="default" :text="__('Import existing file')" @click="importPhysicalFile" />
-				</div>
-			</Alert>
+				<Alert
+					v-else-if="!file.managed"
+					variant="warning"
+				>
+					<Heading :text="__('An existing robots.txt file is not currently managed by SEO Pro')" />
+					<Description :text="importDescription" />
+					<div v-if="file.importable" class="mt-3">
+						<Button size="sm" variant="default" :text="__('Import existing file')" @click="importPhysicalFile" />
+					</div>
+				</Alert>
 
 			<Alert v-else variant="success" :heading="__('robots.txt is managed by SEO Pro')" />
 

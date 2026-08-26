@@ -101,7 +101,7 @@ class RobotsController extends CpController
                 'nullable',
                 'string',
                 function (string $attribute, mixed $value, \Closure $fail) {
-                    if (strlen($value) > 512000) {
+                    if (strlen($value) > RobotsTxtGenerator::MAX_IMPORT_BYTES) {
                         $fail(__('The :attribute must not be greater than 500 KiB.', ['attribute' => $attribute]));
                     }
 

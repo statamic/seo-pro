@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Role;
 use Statamic\Facades\User;
+use Statamic\SeoPro\Robots\RobotsTxtGenerator;
 
 class RobotsCpTest extends TestCase
 {
@@ -123,7 +124,40 @@ class RobotsCpTest extends TestCase
             ->assertOk()
             ->assertJsonPath('file.exists', true)
             ->assertJsonPath('file.managed', false)
+            ->assertJsonPath('file.importable', true)
             ->assertJsonPath('file.contents', "User-agent: *\nDisallow: /legacy/");
+    }
+
+    #[Test]
+    public function an_oversized_existing_file_is_not_loaded_for_import()
+    {
+        $this->files->put(public_path('robots.txt'), str_repeat('x', RobotsTxtGenerator::MAX_IMPORT_BYTES + 1));
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.robots.edit'))
+            ->assertOk()
+            ->assertJsonPath('file.exists', true)
+            ->assertJsonPath('file.managed', false)
+            ->assertJsonPath('file.importable', false)
+            ->assertJsonPath('file.import_issue', 'too_large')
+            ->assertJsonPath('file.contents', null);
+    }
+
+    #[Test]
+    public function a_non_utf8_existing_file_is_not_loaded_for_import()
+    {
+        $this->files->put(public_path('robots.txt'), "User-agent: *\n# \xC3\x28\n");
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.robots.edit'))
+            ->assertOk()
+            ->assertJsonPath('file.exists', true)
+            ->assertJsonPath('file.managed', false)
+            ->assertJsonPath('file.importable', false)
+            ->assertJsonPath('file.import_issue', 'invalid_utf8')
+            ->assertJsonPath('file.contents', null);
     }
 
     private function validPayload(array $overrides = []): array
