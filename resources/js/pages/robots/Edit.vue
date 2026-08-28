@@ -22,6 +22,7 @@ const props = defineProps({
 	values: { type: Object, required: true },
 	preview: { type: String, required: true },
 	action: { type: String, required: true },
+	generateUrl: { type: String, required: true },
 	previewUrl: { type: String, required: true },
 	liveUrl: { type: String, required: true },
 	file: { type: Object, required: true },
@@ -33,12 +34,15 @@ const { $axios } = instance.appContext.config.globalProperties;
 const form = ref(deepClone(props.values));
 const rendered = ref(props.preview);
 const action = ref(props.action);
+const generateUrl = ref(props.generateUrl);
 const previewUrl = ref(props.previewUrl);
 const liveUrl = ref(props.liveUrl);
 const file = ref(props.file);
+const saving = ref(false);
 const generating = ref(false);
 const confirmingGeneration = ref(false);
 const errors = ref({});
+const errorHeading = ref(__('Unable to save robots.txt settings'));
 const previewError = ref(false);
 
 const importDescription = computed(() => {
@@ -144,15 +148,40 @@ function payload() {
 }
 
 function requestGeneration() {
+	if (saving.value || generating.value) return;
+
 	confirmingGeneration.value = true;
 }
 
+function save() {
+	if (saving.value || generating.value) return;
+
+	saving.value = true;
+	errors.value = {};
+	errorHeading.value = __('Unable to save robots.txt settings');
+
+	$axios.patch(action.value, payload())
+		.then((response) => {
+			rendered.value = response.data.preview;
+			file.value = response.data.file;
+			Statamic.$toast.success(__('Settings saved'));
+		})
+		.catch((error) => {
+			errors.value = error.response?.data?.errors ?? {};
+			Statamic.$toast.error(__('Unable to save robots.txt settings.'));
+		})
+		.finally(() => saving.value = false);
+}
+
 function generate() {
+	if (saving.value || generating.value) return;
+
 	confirmingGeneration.value = false;
 	generating.value = true;
 	errors.value = {};
+	errorHeading.value = __('Unable to generate robots.txt');
 
-	$axios.patch(action.value, payload())
+	$axios.post(generateUrl.value, payload())
 		.then((response) => {
 			rendered.value = response.data.preview;
 			file.value = response.data.file;
@@ -188,7 +217,7 @@ let saveKeyBinding;
 onMounted(() => {
 	saveKeyBinding = Statamic.$keys.bindGlobal(['mod+s'], (event) => {
 		event.preventDefault();
-		requestGeneration();
+		save();
 	});
 });
 
@@ -204,7 +233,8 @@ onUnmounted(() => {
 	<div class="max-w-5xl mx-auto">
 		<Header :title="__('seo-pro::messages.robots')" icon="earth">
 			<Button v-if="file.exists" :href="liveUrl" target="_blank" variant="ghost" icon="external-link" :text="__('View live file')" />
-			<Button variant="primary" :text="__('Generate')" :disabled="generating" :loading="generating" @click="requestGeneration" />
+			<Button variant="default" :text="__('Generate')" :disabled="saving || generating" :loading="generating" @click="requestGeneration" />
+			<Button variant="primary" :text="__('Save')" :disabled="saving || generating" :loading="saving" @click="save" />
 		</Header>
 
 		<div class="space-y-6">
@@ -215,20 +245,27 @@ onUnmounted(() => {
 				:text="__('Configure the policy below, then select Generate to create robots.txt.')"
 			/>
 
-				<Alert
-					v-else-if="!file.managed"
-					variant="warning"
-				>
-					<Heading :text="__('An existing robots.txt file is not currently managed by SEO Pro')" />
-					<Description :text="importDescription" />
-					<div v-if="file.importable" class="mt-3">
-						<Button size="sm" variant="default" :text="__('Import existing file')" @click="importPhysicalFile" />
-					</div>
-				</Alert>
+			<Alert
+				v-else-if="!file.managed"
+				variant="warning"
+			>
+				<Heading :text="__('An existing robots.txt file is not currently managed by SEO Pro')" />
+				<Description :text="importDescription" />
+				<div v-if="file.importable" class="mt-3">
+					<Button size="sm" variant="default" :text="__('Import existing file')" @click="importPhysicalFile" />
+				</div>
+			</Alert>
+
+			<Alert
+				v-else-if="file.outdated"
+				variant="warning"
+				:heading="__('robots.txt needs to be generated')"
+				:text="__('The saved settings differ from the current file. Select Generate to update robots.txt.')"
+			/>
 
 			<Alert v-else variant="success" :heading="__('robots.txt is managed by SEO Pro')" />
 
-			<Alert v-if="Object.keys(errors).length" variant="error" :heading="__('Unable to generate robots.txt')">
+			<Alert v-if="Object.keys(errors).length" variant="error" :heading="errorHeading">
 				<ul class="list-disc ps-5">
 					<li v-for="(messages, field) in errors" :key="field" v-text="messages[0]" />
 				</ul>

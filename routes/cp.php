@@ -19,6 +19,7 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
 
     Route::get('robots/edit', [Controllers\CP\RobotsController::class, 'edit'])->name('robots.edit');
     Route::patch('robots', [Controllers\CP\RobotsController::class, 'update'])->name('robots.update');
+    Route::post('robots/generate', [Controllers\CP\RobotsController::class, 'generate'])->name('robots.generate');
     Route::post('robots/preview', [Controllers\CP\RobotsController::class, 'preview'])->name('robots.preview');
 
     Route::get('section-defaults', [Controllers\CP\SectionDefaultsController::class, 'index'])->name('section-defaults.index');

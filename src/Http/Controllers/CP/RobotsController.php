@@ -31,6 +31,7 @@ class RobotsController extends CpController
             'values' => $policy->all(),
             'preview' => $this->renderer->render($policy),
             'action' => cp_route('seo-pro.robots.update'),
+            'generateUrl' => cp_route('seo-pro.robots.generate'),
             'previewUrl' => cp_route('seo-pro.robots.preview'),
             'liveUrl' => Robots::authority(Site::selected()).'/robots.txt',
             'file' => $this->generator->status(),
@@ -47,8 +48,32 @@ class RobotsController extends CpController
     {
         $this->authorize('edit seo robots');
 
-        $data = $this->validated($request);
-        $policy = new RobotsPolicy($data);
+        $policy = new RobotsPolicy($this->validated($request));
+
+        try {
+            if (! Robots::save($policy)) {
+                throw new \RuntimeException('The settings save was cancelled.');
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw ValidationException::withMessages([
+                'settings' => __('Unable to save robots.txt settings. Make sure the addon settings are writable.'),
+            ]);
+        }
+
+        return [
+            'saved' => true,
+            'preview' => $this->renderer->render($policy),
+            'file' => $this->generator->status(),
+        ];
+    }
+
+    public function generate(Request $request)
+    {
+        $this->authorize('edit seo robots');
+
+        $policy = new RobotsPolicy($this->validated($request));
 
         try {
             $generated = $this->generator->generate($policy);
@@ -56,9 +81,7 @@ class RobotsController extends CpController
             report($exception);
 
             throw ValidationException::withMessages([
-                'file' => __('Unable to generate :path. Make sure the public directory is writable.', [
-                    'path' => $this->generator->path(),
-                ]),
+                'file' => __('Unable to generate robots.txt. Make sure the public directory and addon settings are writable.'),
             ]);
         }
 

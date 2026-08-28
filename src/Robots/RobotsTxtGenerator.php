@@ -33,7 +33,9 @@ class RobotsTxtGenerator
         $generatedAt = now();
 
         try {
-            Robots::saveGenerated($policy, $contents, $generatedAt);
+            if (! Robots::saveGenerated($policy, $contents, $generatedAt)) {
+                throw new RuntimeException('Unable to save robots.txt settings.');
+            }
         } catch (Throwable $exception) {
             $existed
                 ? $this->files->replace($path, $previousContents)
@@ -64,6 +66,7 @@ class RobotsTxtGenerator
                 'timestamp' => null,
                 'importable' => false,
                 'import_issue' => null,
+                'outdated' => false,
             ];
         }
 
@@ -95,7 +98,9 @@ class RobotsTxtGenerator
         }
 
         $generated = Robots::generated();
-        $managed = ($generated['checksum'] ?? null) === hash('sha256', $contents);
+        $checksum = hash('sha256', $contents);
+        $managed = ($generated['checksum'] ?? null) === $checksum;
+        $outdated = $managed && hash('sha256', $this->renderer->render(Robots::get())) !== $checksum;
 
         return [
             'exists' => true,
@@ -105,6 +110,7 @@ class RobotsTxtGenerator
             'timestamp' => $managed ? ($generated['timestamp'] ?? null) : null,
             'importable' => ! $managed,
             'import_issue' => null,
+            'outdated' => $outdated,
         ];
     }
 
@@ -136,6 +142,7 @@ class RobotsTxtGenerator
             'timestamp' => null,
             'importable' => false,
             'import_issue' => $issue,
+            'outdated' => false,
         ];
     }
 }

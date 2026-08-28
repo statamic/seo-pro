@@ -28,7 +28,25 @@ class RobotsCpTest extends TestCase
             ->assertJsonPath('values.ai.training', 'neutral')
             ->assertJsonPath('file.exists', false)
             ->assertJsonPath('file.path', public_path('robots.txt'))
+            ->assertJsonPath('generateUrl', cp_route('seo-pro.robots.generate'))
             ->assertJsonPath('liveUrl', 'http://cool-runnings.com/robots.txt');
+    }
+
+    #[Test]
+    public function saving_persists_the_settings_without_writing_the_file()
+    {
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->patchJson(cp_route('seo-pro.robots.update'), $this->validPayload([
+                'disallow' => ['/private/'],
+            ]))
+            ->assertOk()
+            ->assertJsonPath('saved', true)
+            ->assertJsonPath('file.exists', false);
+
+        $this->assertFileDoesNotExist(public_path('robots.txt'));
+        $this->assertSame(['/private/'], Addon::get('statamic/seo-pro')->settings()->get('robots.policy.disallow'));
+        $this->assertNull(Addon::get('statamic/seo-pro')->settings()->get('robots.generated'));
     }
 
     #[Test]
@@ -36,7 +54,7 @@ class RobotsCpTest extends TestCase
     {
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
-            ->patchJson(cp_route('seo-pro.robots.update'), $this->validPayload([
+            ->postJson(cp_route('seo-pro.robots.generate'), $this->validPayload([
                 'preset' => 'discoverable',
                 'ai' => [
                     'search' => 'allow',
@@ -53,11 +71,31 @@ class RobotsCpTest extends TestCase
             ->assertOk()
             ->assertJsonPath('generated', true)
             ->assertJsonPath('file.exists', true)
-            ->assertJsonPath('file.managed', true);
+            ->assertJsonPath('file.managed', true)
+            ->assertJsonPath('file.outdated', false);
 
         $this->assertFileExists(public_path('robots.txt'));
         $this->assertStringContainsString('User-agent: GPTBot', $response->json('preview'));
         $this->assertSame('disallow', Addon::get('statamic/seo-pro')->settings()->get('robots.policy.ai.training'));
+    }
+
+    #[Test]
+    public function saving_a_changed_policy_marks_the_generated_file_as_outdated()
+    {
+        app(RobotsTxtGenerator::class)->generate();
+        $contents = $this->files->get(public_path('robots.txt'));
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->patchJson(cp_route('seo-pro.robots.update'), $this->validPayload([
+                'disallow' => ['/private/'],
+            ]))
+            ->assertOk()
+            ->assertJsonPath('file.exists', true)
+            ->assertJsonPath('file.managed', true)
+            ->assertJsonPath('file.outdated', true);
+
+        $this->assertSame($contents, $this->files->get(public_path('robots.txt')));
     }
 
     #[Test]
@@ -110,6 +148,7 @@ class RobotsCpTest extends TestCase
 
         $this->actingAs($user)->get(cp_route('seo-pro.robots.edit'))->assertRedirect('/cp');
         $this->actingAs($user)->patch(cp_route('seo-pro.robots.update'), $this->validPayload())->assertRedirect('/cp');
+        $this->actingAs($user)->post(cp_route('seo-pro.robots.generate'), $this->validPayload())->assertRedirect('/cp');
         $this->actingAs($user)->post(cp_route('seo-pro.robots.preview'), $this->validPayload())->assertRedirect('/cp');
     }
 

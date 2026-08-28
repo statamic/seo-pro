@@ -26,21 +26,26 @@ class Robots
         return Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'robots.generated');
     }
 
+    public static function save(RobotsPolicy $policy): bool
+    {
+        $robots = ['policy' => $policy->all()];
+
+        if ($generated = self::generated()) {
+            $robots['generated'] = $generated;
+        }
+
+        return self::saveSettings($robots);
+    }
+
     public static function saveGenerated(RobotsPolicy $policy, string $contents, Carbon $generatedAt): bool
     {
-        $settings = Addon::get('statamic/seo-pro')->settings();
-
-        $settings->set('robots', [
+        return self::saveSettings([
             'policy' => $policy->all(),
             'generated' => [
                 'timestamp' => $generatedAt->toIso8601String(),
                 'checksum' => hash('sha256', $contents),
             ],
-        ])->save();
-
-        Blink::forget('seo-pro::robots');
-
-        return true;
+        ]);
     }
 
     public static function authority(SiteObject $site): string
@@ -108,5 +113,18 @@ class Robots
         return is_array($data[$default] ?? null)
             ? $data[$default]
             : (collect($data)->first(fn ($value) => is_array($value)) ?? []);
+    }
+
+    private static function saveSettings(array $robots): bool
+    {
+        $saved = Addon::get('statamic/seo-pro')->settings()
+            ->set('robots', $robots)
+            ->save();
+
+        if ($saved) {
+            Blink::forget('seo-pro::robots');
+        }
+
+        return $saved;
     }
 }
