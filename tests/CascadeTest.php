@@ -445,7 +445,7 @@ class CascadeTest extends TestCase
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
             'json_ld_entity' => 'person',
-            'json_ld_person_name' => 'Derice Bannock',
+            'json_ld_entity_name' => 'Derice Bannock',
         ]);
 
         $data = (new Cascade)
@@ -468,7 +468,7 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'json_ld_entity' => 'organization',
-            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
             'json_ld_schema' => '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
         ]);
 
@@ -490,7 +490,7 @@ class CascadeTest extends TestCase
     {
         $siteDefaults = SiteDefaults::in('default')->set([
             'json_ld_entity' => 'organization',
-            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
         ]);
 
         $home = (new Cascade)
@@ -516,7 +516,7 @@ class CascadeTest extends TestCase
     {
         $siteDefaults = SiteDefaults::in('default')->set([
             'json_ld_entity' => 'person',
-            'json_ld_person_name' => 'Derice Bannock',
+            'json_ld_entity_name' => 'Derice Bannock',
         ]);
 
         $home = (new Cascade)
@@ -557,8 +557,8 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'json_ld_entity' => 'organization',
-            'json_ld_organization_name' => 'Cool Runnings Ltd',
-            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_logo' => 'assets::img/stetson.jpg',
         ]);
 
         $data = (new Cascade)
@@ -581,8 +581,8 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'json_ld_entity' => 'organization',
-            'json_ld_organization_name' => 'Cool Runnings Ltd',
-            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_logo' => 'assets::img/stetson.jpg',
         ]);
 
         $data = (new Cascade)
@@ -596,13 +596,241 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_defaults_to_organization_when_entity_type_is_missing()
+    {
+        // Legacy defaults that predate the entity type field won't have json_ld_entity set.
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($home['json_ld']->first(), true);
+
+        $this->assertEquals('Organization', $schema['@type']);
+        $this->assertEquals('Cool Runnings Ltd', $schema['name']);
+    }
+
+    #[Test]
+    public function it_does_not_output_entity_schema_when_disabled()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'disabled',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $this->assertEmpty($home['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_migrates_legacy_organization_handles_when_reading_site_defaults()
+    {
+        $this->setSeoInSiteDefaults([
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $values = SiteDefaults::in('default')->all();
+
+        $this->assertEquals('Cool Runnings Ltd', $values['json_ld_entity_name']);
+        $this->assertEquals('assets::img/stetson.jpg', $values['json_ld_entity_logo']);
+        $this->assertArrayNotHasKey('json_ld_organization_name', $values);
+        $this->assertArrayNotHasKey('json_ld_organization_logo', $values);
+    }
+
+    #[Test]
+    public function it_migrates_legacy_person_name_when_reading_site_defaults()
+    {
+        $this->setSeoInSiteDefaults([
+            'json_ld_entity' => 'person',
+            'json_ld_person_name' => 'Derice Bannock',
+        ]);
+
+        $values = SiteDefaults::in('default')->all();
+
+        $this->assertEquals('Derice Bannock', $values['json_ld_entity_name']);
+        $this->assertArrayNotHasKey('json_ld_person_name', $values);
+    }
+
+    #[Test]
+    public function it_includes_shared_entity_fields()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_alternate_name' => 'Cool Runnings',
+            'json_ld_entity_description' => 'Jamaican bobsled team',
+            'json_ld_entity_url' => 'https://example.com',
+            'json_ld_entity_telephone' => '+1234567890',
+            'json_ld_entity_email' => 'hello@example.com',
+            'json_ld_entity_same_as' => [
+                'https://twitter.com/coolrunnings',
+                'https://facebook.com/coolrunnings',
+            ],
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($data['json_ld']->first(), true);
+
+        $this->assertEquals('Cool Runnings', $schema['alternateName']);
+        $this->assertEquals('Jamaican bobsled team', $schema['description']);
+        $this->assertEquals('https://example.com', $schema['url']);
+        $this->assertEquals('+1234567890', $schema['telephone']);
+        $this->assertEquals('hello@example.com', $schema['email']);
+        $this->assertEquals([
+            'https://twitter.com/coolrunnings',
+            'https://facebook.com/coolrunnings',
+        ], $schema['sameAs']);
+    }
+
+    #[Test]
+    public function it_falls_back_to_the_home_url_when_entity_url_is_blank()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($data['json_ld']->first(), true);
+
+        $this->assertEquals('http://cool-runnings.com', $schema['url']);
+    }
+
+    #[Test]
+    public function it_nests_postal_address_and_geo_coordinates()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_street_address' => '1 Ice Track',
+            'json_ld_entity_locality' => 'Calgary',
+            'json_ld_entity_region' => 'Alberta',
+            'json_ld_entity_postal_code' => 'T2P',
+            'json_ld_entity_country' => 'CA',
+            'json_ld_entity_latitude' => '51.0447',
+            'json_ld_entity_longitude' => '-114.0719',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($data['json_ld']->first(), true);
+
+        $this->assertEquals([
+            '@type' => 'PostalAddress',
+            'streetAddress' => '1 Ice Track',
+            'addressLocality' => 'Calgary',
+            'addressRegion' => 'Alberta',
+            'postalCode' => 'T2P',
+            'addressCountry' => 'CA',
+        ], $schema['address']);
+
+        $this->assertEquals([
+            '@type' => 'GeoCoordinates',
+            'latitude' => '51.0447',
+            'longitude' => '-114.0719',
+        ], $schema['geo']);
+    }
+
+    #[Test]
+    public function it_omits_geo_coordinates_when_only_one_value_is_set()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_entity_name' => 'Cool Runnings Ltd',
+            'json_ld_entity_latitude' => '51.0447',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($data['json_ld']->first(), true);
+
+        $this->assertArrayNotHasKey('geo', $schema);
+    }
+
+    #[Test]
+    public function it_generates_local_business_schema()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'local_business',
+            'json_ld_entity_name' => 'Cool Runnings Bobsled',
+            'json_ld_entity_price_range' => '$$',
+            'json_ld_entity_opening_hours' => [
+                'monday' => ['opening' => '09:00', 'closing' => '17:00'],
+                'sunday' => ['opening' => null, 'closing' => null],
+            ],
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($data['json_ld']->first(), true);
+
+        $this->assertEquals('LocalBusiness', $schema['@type']);
+        $this->assertEquals('http://cool-runnings.com#localbusiness', $schema['@id']);
+        $this->assertEquals('$$', $schema['priceRange']);
+        $this->assertEquals([[
+            '@type' => 'OpeningHoursSpecification',
+            'dayOfWeek' => 'https://schema.org/Monday',
+            'opens' => '09:00',
+            'closes' => '17:00',
+        ]], $schema['openingHoursSpecification']);
+    }
+
+    #[Test]
+    public function it_generates_corporation_schema()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'corporation',
+            'json_ld_entity_name' => 'Cool Runnings Inc',
+            'json_ld_entity_ticker_symbol' => 'NASDAQ:COOL',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $schema = json_decode($data['json_ld']->first(), true);
+
+        $this->assertEquals('Corporation', $schema['@type']);
+        $this->assertEquals('http://cool-runnings.com#corporation', $schema['@id']);
+        $this->assertEquals('NASDAQ:COOL', $schema['tickerSymbol']);
+    }
+
+    #[Test]
     public function it_generates_json_ld_breadcrumbs()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
             'json_ld_entity' => 'person',
-            'json_ld_person_name' => 'Derice Bannock',
+            'json_ld_entity_name' => 'Derice Bannock',
             'json_ld_breadcrumbs' => true,
         ]);
 
