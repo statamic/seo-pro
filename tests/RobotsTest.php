@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\LockableFile;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Events\AddonSettingsSaved;
@@ -226,6 +227,107 @@ TXT, $content);
         $this->assertSame('custom', Addon::get('statamic/seo-pro')->settings()->get('robots.policy.preset'));
         Event::assertDispatchedTimes(AddonSettingsSaved::class, 2);
         Event::assertDispatchedTimes(RobotsTxtGenerated::class, 1);
+    }
+
+    #[Test]
+    public function it_restores_the_file_and_settings_when_a_post_save_event_fails()
+    {
+        $generator = app(RobotsTxtGenerator::class);
+        $generator->generate(new RobotsPolicy(['disallow' => ['/previous/']]));
+        $previousContents = $this->files->get(public_path('robots.txt'));
+        $previousSettings = Robots::settingsSnapshot();
+        $generatedEvents = 0;
+
+        Event::listen(RobotsTxtGenerated::class, function () use (&$generatedEvents) {
+            $generatedEvents++;
+        });
+        Event::listen(AddonSettingsSaved::class, function () {
+            throw new \RuntimeException('The settings listener failed.');
+        });
+
+        try {
+            $generator->generate(new RobotsPolicy(['disallow' => ['/changed/']]));
+            $this->fail('Generation should have failed.');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('The settings listener failed.', $exception->getMessage());
+        }
+
+        $this->assertSame($previousContents, $this->files->get(public_path('robots.txt')));
+        $this->assertSame($previousSettings, Robots::settingsSnapshot());
+        $this->assertTrue($generator->status()['managed']);
+        $this->assertFalse($generator->status()['outdated']);
+        $this->assertSame(0, $generatedEvents);
+        $this->assertSame([], glob(public_path('.seo-pro-robots-*')));
+    }
+
+    #[Test]
+    public function it_removes_new_file_and_settings_when_first_generation_fails_after_saving()
+    {
+        $generator = app(RobotsTxtGenerator::class);
+        $previousSettings = Robots::settingsSnapshot();
+        $generatedEvents = 0;
+
+        Event::listen(RobotsTxtGenerated::class, function () use (&$generatedEvents) {
+            $generatedEvents++;
+        });
+        Event::listen(AddonSettingsSaved::class, function () {
+            throw new \RuntimeException('The settings listener failed.');
+        });
+
+        try {
+            $generator->generate();
+            $this->fail('Generation should have failed.');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('The settings listener failed.', $exception->getMessage());
+        }
+
+        $this->assertFileDoesNotExist(public_path('robots.txt'));
+        $this->assertSame($previousSettings, Robots::settingsSnapshot());
+        $this->assertSame(0, $generatedEvents);
+    }
+
+    #[Test]
+    public function it_restores_settings_when_a_settings_only_generation_fails()
+    {
+        $generator = app(RobotsTxtGenerator::class);
+        $generator->generate(new RobotsPolicy(['preset' => 'neutral']));
+        $previousContents = $this->files->get(public_path('robots.txt'));
+        $previousSettings = Robots::settingsSnapshot();
+
+        Event::listen(AddonSettingsSaved::class, function () {
+            throw new \RuntimeException('The settings listener failed.');
+        });
+
+        try {
+            $generator->generate(new RobotsPolicy(['preset' => 'custom']));
+            $this->fail('Generation should have failed.');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('The settings listener failed.', $exception->getMessage());
+        }
+
+        $this->assertSame($previousContents, $this->files->get(public_path('robots.txt')));
+        $this->assertSame($previousSettings, Robots::settingsSnapshot());
+        $this->assertTrue($generator->status()['managed']);
+        $this->assertFalse($generator->status()['outdated']);
+    }
+
+    #[Test]
+    public function it_rejects_concurrent_generation_attempts()
+    {
+        $lock = new LockableFile(storage_path('framework/cache/seo-pro/robots-txt.lock'), 'c+');
+        $lock->getExclusiveLock();
+
+        try {
+            app(RobotsTxtGenerator::class)->generate();
+            $this->fail('Concurrent generation should have failed.');
+        } catch (\RuntimeException $exception) {
+            $this->assertStringContainsString('generation lock', $exception->getMessage());
+        } finally {
+            $lock->close();
+        }
+
+        $this->assertFileDoesNotExist(public_path('robots.txt'));
+        $this->assertFalse(Robots::settingsSnapshot()['exists']);
     }
 
     #[Test]
