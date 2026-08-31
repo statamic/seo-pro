@@ -274,6 +274,7 @@ onUnmounted(() => {
 		<Tabs v-model="activeTab" :unmount-on-hide="false">
 			<TabList>
 				<TabTrigger name="robots.txt" text="robots.txt" />
+				<TabTrigger name="llms.txt" text="llms.txt" />
 			</TabList>
 
 			<TabContent name="robots.txt">
@@ -465,6 +466,10 @@ onUnmounted(() => {
 						@cancel="confirmingGeneration = false"
 					/>
 				</div>
+			</TabContent>
+
+			<TabContent name="llms.txt">
+				<div class="pt-6" />
 			</TabContent>
 		</Tabs>
 	</div>
