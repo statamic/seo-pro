@@ -59,7 +59,7 @@ class RobotsController extends CpController
             report($exception);
 
             throw ValidationException::withMessages([
-                'settings' => __('Unable to save robots.txt settings. Make sure the addon settings are writable.'),
+                'settings' => __('seo-pro::messages.robots_txt.unable_to_save_settings_writable'),
             ]);
         }
 
@@ -82,7 +82,7 @@ class RobotsController extends CpController
             report($exception);
 
             throw ValidationException::withMessages([
-                'file' => __('Unable to generate robots.txt. Make sure the public directory and addon settings are writable.'),
+                'file' => __('seo-pro::messages.robots_txt.unable_to_generate_writable'),
             ]);
         }
 
@@ -140,11 +140,11 @@ class RobotsController extends CpController
                 'string',
                 function (string $attribute, mixed $value, \Closure $fail) {
                     if (strlen($value) > RobotsTxtGenerator::MAX_IMPORT_BYTES) {
-                        $fail(__('The :attribute must not be greater than 500 KiB.', ['attribute' => $attribute]));
+                        $fail(__('seo-pro::messages.robots_txt.custom_source_too_large'));
                     }
 
                     if (! mb_check_encoding($value, 'UTF-8')) {
-                        $fail(__('The :attribute must be valid UTF-8.', ['attribute' => $attribute]));
+                        $fail(__('seo-pro::messages.robots_txt.custom_source_invalid_utf8'));
                     }
                 },
             ],
