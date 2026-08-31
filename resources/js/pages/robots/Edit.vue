@@ -25,6 +25,7 @@ const props = defineProps({
 	generateUrl: { type: String, required: true },
 	previewUrl: { type: String, required: true },
 	liveUrl: { type: String, required: true },
+	sitemapUrlsAreEnvironmentDependent: { type: Boolean, required: true },
 	file: { type: Object, required: true },
 });
 
@@ -86,6 +87,11 @@ const modeOptions = [
 	{ value: 'custom', label: __('Custom source') },
 ];
 
+const sitemapModeOptions = [
+	{ value: 'automatic', label: __('Automatically from Statamic sites') },
+	{ value: 'custom', label: __('Custom canonical URLs') },
+];
+
 const presets = [
 	{
 		value: 'neutral',
@@ -141,6 +147,16 @@ function addPath(type) {
 
 function removePath(type, index) {
 	form.value[type].splice(index, 1);
+	markCustom();
+}
+
+function addSitemapUrl() {
+	form.value.sitemap_urls.push('https://');
+	markCustom();
+}
+
+function removeSitemapUrl(index) {
+	form.value.sitemap_urls.splice(index, 1);
 	markCustom();
 }
 
@@ -371,6 +387,33 @@ onUnmounted(() => {
 						</div>
 						<Switch v-model="form.include_sitemap" @update:model-value="markCustom" />
 					</div>
+
+					<template v-if="form.include_sitemap">
+						<Field :label="__('Sitemap source')" :instructions="__('Automatically derive sitemap URLs from Statamic sites, or provide canonical URLs for a file committed across environments.')">
+							<Select class="max-w-sm" :options="sitemapModeOptions" v-model="form.sitemap_mode" @update:model-value="markCustom" />
+						</Field>
+
+						<Alert
+							v-if="form.sitemap_mode === 'automatic' && sitemapUrlsAreEnvironmentDependent"
+							variant="warning"
+							:heading="__('Sitemap URLs depend on the current environment')"
+							:text="__('One or more Statamic sites use a relative URL. Automatic sitemap URLs will use the current hostname. Choose custom canonical URLs when committing robots.txt for another environment.')"
+						/>
+
+						<Field
+							v-if="form.sitemap_mode === 'custom'"
+							:label="__('Canonical sitemap URLs')"
+							:instructions="__('Add one absolute URL for each sitemap. Directory-based sites normally share one sitemap URL.')"
+						>
+							<div class="space-y-2">
+								<div v-for="(url, index) in form.sitemap_urls" :key="`sitemap-${index}`" class="flex gap-2">
+									<Input type="url" class="font-mono" v-model="form.sitemap_urls[index]" @update:model-value="markCustom" />
+									<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeSitemapUrl(index)" />
+								</div>
+								<Button size="sm" variant="ghost" icon="plus" :text="__('Add sitemap URL')" @click="addSitemapUrl" />
+							</div>
+						</Field>
+					</template>
 				</Panel>
 			</template>
 

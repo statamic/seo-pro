@@ -34,6 +34,7 @@ class RobotsController extends CpController
             'generateUrl' => cp_route('seo-pro.robots.generate'),
             'previewUrl' => cp_route('seo-pro.robots.preview'),
             'liveUrl' => Robots::authority(Site::selected()).'/robots.txt',
+            'sitemapUrlsAreEnvironmentDependent' => Robots::sitemapUrlsAreEnvironmentDependent(),
             'file' => $this->generator->status(),
         ];
 
@@ -120,6 +121,19 @@ class RobotsController extends CpController
             'content_signals.ai_train' => ['nullable', Rule::in(['yes', 'no'])],
             'content_signals.use' => ['nullable', Rule::in(['immediate', 'reference', 'full'])],
             'include_sitemap' => ['required', 'boolean'],
+            'sitemap_mode' => ['required', Rule::in(['automatic', 'custom'])],
+            'sitemap_urls' => [
+                'present',
+                'array',
+                'max:100',
+                Rule::when(
+                    $request->input('mode') === 'managed'
+                        && $request->boolean('include_sitemap')
+                        && $request->input('sitemap_mode') === 'custom',
+                    ['min:1'],
+                ),
+            ],
+            'sitemap_urls.*' => ['required', 'string', 'max:2048', 'url:http,https', 'not_regex:/[\r\n]/'],
             'custom_source' => [
                 'nullable',
                 'string',

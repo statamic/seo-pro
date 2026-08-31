@@ -43,7 +43,7 @@ class RobotsRenderer
         }
 
         if ($values['include_sitemap'] && config('statamic.seo-pro.sitemap.enabled')) {
-            foreach ($this->sitemapUrls() as $url) {
+            foreach ($this->sitemapUrls($values) as $url) {
                 $lines[] = '';
                 $lines[] = 'Sitemap: '.$url;
             }
@@ -91,8 +91,18 @@ class RobotsRenderer
             ->implode(', ');
     }
 
-    private function sitemapUrls(): array
+    private function sitemapUrls(array $values): array
     {
+        if ($values['sitemap_mode'] === 'custom') {
+            return collect($values['sitemap_urls'])
+                ->filter(fn ($url) => is_string($url))
+                ->map(fn (string $url) => trim($url))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+        }
+
         return Site::all()
             ->map(fn ($site) => URL::tidy(Robots::authority($site).'/'.config('statamic.seo-pro.sitemap.url'), false))
             ->unique()

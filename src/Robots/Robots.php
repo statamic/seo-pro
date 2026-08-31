@@ -69,6 +69,8 @@ class Robots
         $values['content_signals'] = array_replace($defaults['content_signals'], $data['content_signals'] ?? []);
         $values['allow'] = is_array($values['allow']) ? $values['allow'] : $defaults['allow'];
         $values['disallow'] = is_array($values['disallow']) ? $values['disallow'] : $defaults['disallow'];
+        $values['sitemap_mode'] = in_array($values['sitemap_mode'], ['automatic', 'custom']) ? $values['sitemap_mode'] : $defaults['sitemap_mode'];
+        $values['sitemap_urls'] = is_array($values['sitemap_urls']) ? $values['sitemap_urls'] : $defaults['sitemap_urls'];
         $values['custom_source'] = (string) ($values['custom_source'] ?? '');
         $values['preset'] = $values['preset'] === 'open' ? 'full' : $values['preset'];
 
@@ -94,8 +96,15 @@ class Robots
                 'use' => null,
             ],
             'include_sitemap' => true,
+            'sitemap_mode' => 'automatic',
+            'sitemap_urls' => [],
             'custom_source' => '',
         ];
+    }
+
+    public static function sitemapUrlsAreEnvironmentDependent(): bool
+    {
+        return Site::all()->contains(fn (SiteObject $site) => ! URL::isAbsolute($site->url()));
     }
 
     private static function policyData(array $data): array
