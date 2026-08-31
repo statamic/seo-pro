@@ -44,6 +44,7 @@ const confirmingGeneration = ref(false);
 const errors = ref({});
 const errorHeading = ref(__('Unable to save robots.txt settings'));
 const previewError = ref(false);
+const dirtyStateName = 'seo-pro-robots';
 
 const importDescription = computed(() => {
 	if (file.value.importable) {
@@ -147,6 +148,12 @@ function payload() {
 	return deepClone(form.value);
 }
 
+function clearDirtyStateIfUnchanged(submitted) {
+	if (JSON.stringify(form.value) === JSON.stringify(submitted)) {
+		Statamic.$dirty.remove(dirtyStateName);
+	}
+}
+
 function requestGeneration() {
 	if (saving.value || generating.value) return;
 
@@ -159,11 +166,13 @@ function save() {
 	saving.value = true;
 	errors.value = {};
 	errorHeading.value = __('Unable to save robots.txt settings');
+	const submitted = payload();
 
-	$axios.patch(action.value, payload())
+	$axios.patch(action.value, submitted)
 		.then((response) => {
 			rendered.value = response.data.preview;
 			file.value = response.data.file;
+			clearDirtyStateIfUnchanged(submitted);
 			Statamic.$toast.success(__('Settings saved'));
 		})
 		.catch((error) => {
@@ -180,11 +189,13 @@ function generate() {
 	generating.value = true;
 	errors.value = {};
 	errorHeading.value = __('Unable to generate robots.txt');
+	const submitted = payload();
 
-	$axios.post(generateUrl.value, payload())
+	$axios.post(generateUrl.value, submitted)
 		.then((response) => {
 			rendered.value = response.data.preview;
 			file.value = response.data.file;
+			clearDirtyStateIfUnchanged(submitted);
 			Statamic.$toast.success(__('robots.txt generated'));
 		})
 		.catch((error) => {
@@ -202,6 +213,8 @@ function importPhysicalFile() {
 
 let previewTimer;
 watch(form, () => {
+	Statamic.$dirty.add(dirtyStateName);
+
 	clearTimeout(previewTimer);
 	previewTimer = setTimeout(() => {
 		$axios.post(previewUrl.value, payload())
