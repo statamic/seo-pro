@@ -17,6 +17,10 @@ import {
 	Select,
 	Subheading,
 	Switch,
+	TabContent,
+	TabList,
+	Tabs,
+	TabTrigger,
 } from '@statamic/cms/ui';
 const props = defineProps({
 	values: { type: Object, required: true },
@@ -46,6 +50,7 @@ const errors = ref({});
 const errorHeading = ref(__('Unable to save robots.txt settings'));
 const previewError = ref(false);
 const dirtyStateName = 'seo-pro-robots';
+const activeTab = ref('robots.txt');
 
 const importDescription = computed(() => {
 	if (file.value.importable) {
@@ -263,191 +268,204 @@ onUnmounted(() => {
 
 	<div class="max-w-5xl mx-auto">
 		<Header :title="__('seo-pro::messages.robots')" icon="earth">
-			<Button v-if="file.exists" :href="liveUrl" target="_blank" variant="ghost" icon="external-link" :text="__('View live file')" />
-			<Button variant="default" :text="__('Generate')" :disabled="saving || generating" :loading="generating" @click="requestGeneration" />
 			<Button variant="primary" :text="__('Save')" :disabled="saving || generating" :loading="saving" @click="save" />
 		</Header>
 
-		<div class="space-y-6">
-			<Alert
-				v-if="!file.exists"
-				variant="default"
-				:heading="__('No robots.txt file exists')"
-				:text="__('Configure the policy below, then select Generate to create robots.txt.')"
-			/>
+		<Tabs v-model="activeTab" :unmount-on-hide="false">
+			<TabList>
+				<TabTrigger name="robots.txt" :text="__('robots.txt')" />
+			</TabList>
 
-			<Alert
-				v-else-if="!file.managed"
-				variant="warning"
-			>
-				<Heading :text="__('An existing robots.txt file is not currently managed by SEO Pro')" />
-				<Description :text="importDescription" />
-				<div v-if="file.importable" class="mt-3">
-					<Button size="sm" variant="default" :text="__('Import existing file')" @click="importPhysicalFile" />
-				</div>
-			</Alert>
-
-			<Alert
-				v-else-if="file.outdated"
-				variant="warning"
-				:heading="__('robots.txt needs to be generated')"
-				:text="__('The saved settings differ from the current file. Select Generate to update robots.txt.')"
-			/>
-
-			<Alert v-else variant="success" :heading="__('robots.txt is managed by SEO Pro')" />
-
-			<Alert v-if="Object.keys(errors).length" variant="error" :heading="errorHeading">
-				<ul class="list-disc ps-5">
-					<li v-for="(messages, field) in errors" :key="field" v-text="messages[0]" />
-				</ul>
-			</Alert>
-
-			<Panel class="p-6 space-y-6">
-				<Field :label="__('Editing mode')" :instructions="__('Managed mode generates validated directives. Custom source mode serves exactly what you enter.')">
-					<Select class="max-w-sm" :options="modeOptions" v-model="form.mode" />
-				</Field>
-			</Panel>
-
-			<template v-if="form.mode === 'managed'">
-				<section>
-					<Subheading size="lg" class="mb-2" :text="__('Policy preset')" />
-					<div class="grid gap-3 md:grid-cols-2">
-						<button
-							v-for="preset in presets"
-							:key="preset.value"
-							type="button"
-							class="rounded-lg border p-4 text-start hover:border-gray-400 dark:border-gray-700"
-							:class="{ 'border-blue-500! ring-1 ring-blue-500': form.preset === preset.value }"
-							@click="applyPreset(preset)"
-						>
-							<Heading :text="preset.label" />
-							<Description class="mt-1" :text="preset.description" />
-						</button>
-					</div>
-				</section>
-
-				<Panel class="p-6">
-					<Heading size="lg" :text="__('AI crawler access')" />
-					<Description class="mt-1 mb-5" :text="__('Access rules control whether known crawlers may fetch your pages. They are requests, not security controls.')" />
-					<div class="divide-y dark:divide-gray-700">
-						<Field class="py-4" :label="__('AI search')" :instructions="__('Crawlers that build indexes for answer and search experiences.')">
-							<Select class="max-w-sm" :options="accessOptions" v-model="form.ai.search" @update:model-value="markCustom" />
-						</Field>
-						<Field class="py-4" :label="__('User-directed agents')" :instructions="__('Agents fetching a page in response to a user request.')">
-							<Select class="max-w-sm" :options="accessOptions" v-model="form.ai.agent" @update:model-value="markCustom" />
-						</Field>
-						<Field class="py-4" :label="__('Model training')" :instructions="__('Crawlers collecting content to train or fine-tune models.')">
-							<Select class="max-w-sm" :options="accessOptions" v-model="form.ai.training" @update:model-value="markCustom" />
-						</Field>
-					</div>
-				</Panel>
-
-				<Panel class="p-6">
-					<Heading size="lg" :text="__('Content Signals')" />
-					<Description class="mt-1 mb-5" :text="__('Declare how fetched content may be used. These preferences do not technically prevent scraping.')" />
-					<div class="grid gap-5 md:grid-cols-2">
-						<Field :label="__('Search indexing')"><Select :options="signalOptions" v-model="form.content_signals.search" @update:model-value="markCustom" /></Field>
-						<Field :label="__('AI input and grounding')"><Select :options="signalOptions" v-model="form.content_signals.ai_input" @update:model-value="markCustom" /></Field>
-						<Field :label="__('AI training')"><Select :options="signalOptions" v-model="form.content_signals.ai_train" @update:model-value="markCustom" /></Field>
-						<Field :label="__('Content use')">
-							<template #label><span class="flex items-center gap-2">{{ __('Content use') }} <Badge size="sm" :text="__('Experimental')" /></span></template>
-							<Select :options="useOptions" v-model="form.content_signals.use" @update:model-value="markCustom" />
-						</Field>
-					</div>
-				</Panel>
-
-				<Panel class="p-6 space-y-6">
-					<div>
-						<Heading size="lg" :text="__('General crawler rules')" />
-						<Description class="mt-1" :text="__('Paths apply to all crawlers unless SEO Pro emits a more specific AI crawler group.')" />
+			<TabContent name="robots.txt">
+				<div class="pt-6">
+					<div class="flex flex-wrap items-center justify-end gap-2 pb-6 sm:gap-3">
+						<Button v-if="file.exists" :href="liveUrl" target="_blank" variant="ghost" icon="external-link" :text="__('View live file')" />
+						<Button variant="default" :text="__('Generate')" :disabled="saving || generating" :loading="generating" @click="requestGeneration" />
 					</div>
 
-					<Field :label="__('Allowed paths')">
-						<div class="space-y-2">
-							<div v-for="(path, index) in form.allow" :key="`allow-${index}`" class="flex gap-2">
-								<Input class="font-mono" v-model="form.allow[index]" @update:model-value="markCustom" />
-								<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removePath('allow', index)" />
-							</div>
-							<Button size="sm" variant="ghost" icon="plus" :text="__('Add allowed path')" @click="addPath('allow')" />
-						</div>
-					</Field>
-
-					<Field :label="__('Disallowed paths')">
-						<div class="space-y-2">
-							<div v-for="(path, index) in form.disallow" :key="`disallow-${index}`" class="flex gap-2">
-								<Input class="font-mono" v-model="form.disallow[index]" @update:model-value="markCustom" />
-								<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removePath('disallow', index)" />
-							</div>
-							<Button size="sm" variant="ghost" icon="plus" :text="__('Add disallowed path')" @click="addPath('disallow')" />
-						</div>
-					</Field>
-
-					<div class="flex items-start justify-between gap-6">
-						<div>
-							<Heading :text="__('Include sitemap')" />
-							<Description :text="__('Add the absolute SEO Pro sitemap URL to robots.txt.')" />
-						</div>
-						<Switch v-model="form.include_sitemap" @update:model-value="markCustom" />
-					</div>
-
-					<template v-if="form.include_sitemap">
-						<Field :label="__('Sitemap source')" :instructions="__('Automatically derive sitemap URLs from Statamic sites, or provide canonical URLs for a file committed across environments.')">
-							<Select class="max-w-sm" :options="sitemapModeOptions" v-model="form.sitemap_mode" @update:model-value="markCustom" />
-						</Field>
-
+					<div class="space-y-6">
 						<Alert
-							v-if="form.sitemap_mode === 'automatic' && sitemapUrlsAreEnvironmentDependent"
-							variant="warning"
-							:heading="__('Sitemap URLs depend on the current environment')"
-							:text="__('One or more Statamic sites use a relative URL. Automatic sitemap URLs will use the current hostname. Choose custom canonical URLs when committing robots.txt for another environment.')"
+							v-if="!file.exists"
+							variant="default"
+							:heading="__('No robots.txt file exists')"
+							:text="__('Configure the policy below, then select Generate to create robots.txt.')"
 						/>
 
-						<Field
-							v-if="form.sitemap_mode === 'custom'"
-							:label="__('Canonical sitemap URLs')"
-							:instructions="__('Add one absolute URL for each sitemap. Directory-based sites normally share one sitemap URL.')"
+						<Alert
+							v-else-if="!file.managed"
+							variant="warning"
 						>
-							<div class="space-y-2">
-								<div v-for="(url, index) in form.sitemap_urls" :key="`sitemap-${index}`" class="flex gap-2">
-									<Input type="url" class="font-mono" v-model="form.sitemap_urls[index]" @update:model-value="markCustom" />
-									<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeSitemapUrl(index)" />
-								</div>
-								<Button size="sm" variant="ghost" icon="plus" :text="__('Add sitemap URL')" @click="addSitemapUrl" />
+							<Heading :text="__('An existing robots.txt file is not currently managed by SEO Pro')" />
+							<Description :text="importDescription" />
+							<div v-if="file.importable" class="mt-3">
+								<Button size="sm" variant="default" :text="__('Import existing file')" @click="importPhysicalFile" />
 							</div>
-						</Field>
-					</template>
-				</Panel>
-			</template>
+						</Alert>
 
-			<Panel v-else class="p-6">
-				<Heading size="lg" :text="__('Custom robots.txt source')" />
-				<Description class="mt-1 mb-5" :text="__('SEO Pro will normalize line endings and add a final newline, but will not otherwise modify this source.')" />
-				<CodeEditor v-model="form.custom_source" mode="nginx" :allow-mode-selection="false" :show-mode-label="false" title="robots.txt" />
-			</Panel>
+						<Alert
+							v-else-if="file.outdated"
+							variant="warning"
+							:heading="__('robots.txt needs to be generated')"
+							:text="__('The saved settings differ from the current file. Select Generate to update robots.txt.')"
+						/>
 
-			<Panel v-if="form.mode === 'managed'" class="p-6">
-				<div class="flex items-center justify-between mb-4">
-					<div>
-						<Heading size="lg" :text="__('Generated preview')" />
-						<Description :text="liveUrl" />
+						<Alert v-else variant="success" :heading="__('robots.txt is managed by SEO Pro')" />
+
+						<Alert v-if="Object.keys(errors).length" variant="error" :heading="errorHeading">
+							<ul class="list-disc ps-5">
+								<li v-for="(messages, field) in errors" :key="field" v-text="messages[0]" />
+							</ul>
+						</Alert>
+
+						<Panel class="p-6 space-y-6">
+							<Field :label="__('Editing mode')" :instructions="__('Managed mode generates validated directives. Custom source mode serves exactly what you enter.')">
+								<Select class="max-w-sm" :options="modeOptions" v-model="form.mode" />
+							</Field>
+						</Panel>
+
+						<template v-if="form.mode === 'managed'">
+							<section>
+								<Subheading size="lg" class="mb-2" :text="__('Policy preset')" />
+								<div class="grid gap-3 md:grid-cols-2">
+									<button
+										v-for="preset in presets"
+										:key="preset.value"
+										type="button"
+										class="rounded-lg border p-4 text-start hover:border-gray-400 dark:border-gray-700"
+										:class="{ 'border-blue-500! ring-1 ring-blue-500': form.preset === preset.value }"
+										@click="applyPreset(preset)"
+									>
+										<Heading :text="preset.label" />
+										<Description class="mt-1" :text="preset.description" />
+									</button>
+								</div>
+							</section>
+
+							<Panel class="p-6">
+								<Heading size="lg" :text="__('AI crawler access')" />
+								<Description class="mt-1 mb-5" :text="__('Access rules control whether known crawlers may fetch your pages. They are requests, not security controls.')" />
+								<div class="divide-y dark:divide-gray-700">
+									<Field class="py-4" :label="__('AI search')" :instructions="__('Crawlers that build indexes for answer and search experiences.')">
+										<Select class="max-w-sm" :options="accessOptions" v-model="form.ai.search" @update:model-value="markCustom" />
+									</Field>
+									<Field class="py-4" :label="__('User-directed agents')" :instructions="__('Agents fetching a page in response to a user request.')">
+										<Select class="max-w-sm" :options="accessOptions" v-model="form.ai.agent" @update:model-value="markCustom" />
+									</Field>
+									<Field class="py-4" :label="__('Model training')" :instructions="__('Crawlers collecting content to train or fine-tune models.')">
+										<Select class="max-w-sm" :options="accessOptions" v-model="form.ai.training" @update:model-value="markCustom" />
+									</Field>
+								</div>
+							</Panel>
+
+							<Panel class="p-6">
+								<Heading size="lg" :text="__('Content Signals')" />
+								<Description class="mt-1 mb-5" :text="__('Declare how fetched content may be used. These preferences do not technically prevent scraping.')" />
+								<div class="grid gap-5 md:grid-cols-2">
+									<Field :label="__('Search indexing')"><Select :options="signalOptions" v-model="form.content_signals.search" @update:model-value="markCustom" /></Field>
+									<Field :label="__('AI input and grounding')"><Select :options="signalOptions" v-model="form.content_signals.ai_input" @update:model-value="markCustom" /></Field>
+									<Field :label="__('AI training')"><Select :options="signalOptions" v-model="form.content_signals.ai_train" @update:model-value="markCustom" /></Field>
+									<Field :label="__('Content use')">
+										<template #label><span class="flex items-center gap-2">{{ __('Content use') }} <Badge size="sm" :text="__('Experimental')" /></span></template>
+										<Select :options="useOptions" v-model="form.content_signals.use" @update:model-value="markCustom" />
+									</Field>
+								</div>
+							</Panel>
+
+							<Panel class="p-6 space-y-6">
+								<div>
+									<Heading size="lg" :text="__('General crawler rules')" />
+									<Description class="mt-1" :text="__('Paths apply to all crawlers unless SEO Pro emits a more specific AI crawler group.')" />
+								</div>
+
+								<Field :label="__('Allowed paths')">
+									<div class="space-y-2">
+										<div v-for="(path, index) in form.allow" :key="`allow-${index}`" class="flex gap-2">
+											<Input class="font-mono" v-model="form.allow[index]" @update:model-value="markCustom" />
+											<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removePath('allow', index)" />
+										</div>
+										<Button size="sm" variant="ghost" icon="plus" :text="__('Add allowed path')" @click="addPath('allow')" />
+									</div>
+								</Field>
+
+								<Field :label="__('Disallowed paths')">
+									<div class="space-y-2">
+										<div v-for="(path, index) in form.disallow" :key="`disallow-${index}`" class="flex gap-2">
+											<Input class="font-mono" v-model="form.disallow[index]" @update:model-value="markCustom" />
+											<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removePath('disallow', index)" />
+										</div>
+										<Button size="sm" variant="ghost" icon="plus" :text="__('Add disallowed path')" @click="addPath('disallow')" />
+									</div>
+								</Field>
+
+								<div class="flex items-start justify-between gap-6">
+									<div>
+										<Heading :text="__('Include sitemap')" />
+										<Description :text="__('Add the absolute SEO Pro sitemap URL to robots.txt.')" />
+									</div>
+									<Switch v-model="form.include_sitemap" @update:model-value="markCustom" />
+								</div>
+
+								<template v-if="form.include_sitemap">
+									<Field :label="__('Sitemap source')" :instructions="__('Automatically derive sitemap URLs from Statamic sites, or provide canonical URLs for a file committed across environments.')">
+										<Select class="max-w-sm" :options="sitemapModeOptions" v-model="form.sitemap_mode" @update:model-value="markCustom" />
+									</Field>
+
+									<Alert
+										v-if="form.sitemap_mode === 'automatic' && sitemapUrlsAreEnvironmentDependent"
+										variant="warning"
+										:heading="__('Sitemap URLs depend on the current environment')"
+										:text="__('One or more Statamic sites use a relative URL. Automatic sitemap URLs will use the current hostname. Choose custom canonical URLs when committing robots.txt for another environment.')"
+									/>
+
+									<Field
+										v-if="form.sitemap_mode === 'custom'"
+										:label="__('Canonical sitemap URLs')"
+										:instructions="__('Add one absolute URL for each sitemap. Directory-based sites normally share one sitemap URL.')"
+									>
+										<div class="space-y-2">
+											<div v-for="(url, index) in form.sitemap_urls" :key="`sitemap-${index}`" class="flex gap-2">
+												<Input type="url" class="font-mono" v-model="form.sitemap_urls[index]" @update:model-value="markCustom" />
+												<Button icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeSitemapUrl(index)" />
+											</div>
+											<Button size="sm" variant="ghost" icon="plus" :text="__('Add sitemap URL')" @click="addSitemapUrl" />
+										</div>
+									</Field>
+								</template>
+							</Panel>
+						</template>
+
+						<Panel v-else class="p-6">
+							<Heading size="lg" :text="__('Custom robots.txt source')" />
+							<Description class="mt-1 mb-5" :text="__('SEO Pro will normalize line endings and add a final newline, but will not otherwise modify this source.')" />
+							<CodeEditor v-model="form.custom_source" mode="nginx" :allow-mode-selection="false" :show-mode-label="false" title="robots.txt" />
+						</Panel>
+
+						<Panel v-if="form.mode === 'managed'" class="p-6">
+							<div class="flex items-center justify-between mb-4">
+								<div>
+									<Heading size="lg" :text="__('Generated preview')" />
+									<Description :text="liveUrl" />
+								</div>
+								<Badge v-if="previewError" color="red" :text="__('Preview unavailable')" />
+							</div>
+							<CodeEditor :model-value="rendered" mode="nginx" :allow-mode-selection="false" :show-mode-label="false" read-only title="robots.txt preview" />
+						</Panel>
 					</div>
-					<Badge v-if="previewError" color="red" :text="__('Preview unavailable')" />
+
+					<DocsCallout :topic="__('Robots.txt')" url="https://statamic.com/addons/statamic/seo-pro/docs" />
+
+					<confirmation-modal
+						:open="confirmingGeneration"
+						:title="__('Generate robots.txt?')"
+						:body-text="__('This will overwrite robots.txt if it already exists. This action cannot be undone.')"
+						:button-text="__('Generate')"
+						:danger="true"
+						@update:open="confirmingGeneration = $event"
+						@confirm="generate"
+						@cancel="confirmingGeneration = false"
+					/>
 				</div>
-				<CodeEditor :model-value="rendered" mode="nginx" :allow-mode-selection="false" :show-mode-label="false" read-only title="robots.txt preview" />
-			</Panel>
-		</div>
-
-		<DocsCallout :topic="__('Robots.txt')" url="https://statamic.com/addons/statamic/seo-pro/docs" />
-
-		<confirmation-modal
-			:open="confirmingGeneration"
-			:title="__('Generate robots.txt?')"
-			:body-text="__('This will overwrite robots.txt if it already exists. This action cannot be undone.')"
-			:button-text="__('Generate')"
-			:danger="true"
-			@update:open="confirmingGeneration = $event"
-			@confirm="generate"
-			@cancel="confirmingGeneration = false"
-		/>
+			</TabContent>
+		</Tabs>
 	</div>
 </template>
