@@ -71,6 +71,7 @@ class RobotsCpTest extends TestCase
             ]))
             ->assertOk()
             ->assertJsonPath('generated', true)
+            ->assertJsonPath('changed', true)
             ->assertJsonPath('file.exists', true)
             ->assertJsonPath('file.managed', true)
             ->assertJsonPath('file.outdated', false);
@@ -78,6 +79,27 @@ class RobotsCpTest extends TestCase
         $this->assertFileExists(public_path('robots.txt'));
         $this->assertStringContainsString('User-agent: GPTBot', $response->json('preview'));
         $this->assertSame('disallow', Addon::get('statamic/seo-pro')->settings()->get('robots.policy.ai.training'));
+    }
+
+    #[Test]
+    public function generating_an_up_to_date_file_reports_no_change()
+    {
+        $user = User::make()->makeSuper()->save();
+
+        $this
+            ->actingAs($user)
+            ->postJson(cp_route('seo-pro.robots.generate'), $this->validPayload())
+            ->assertOk()
+            ->assertJsonPath('changed', true);
+
+        $this
+            ->actingAs($user)
+            ->postJson(cp_route('seo-pro.robots.generate'), $this->validPayload())
+            ->assertOk()
+            ->assertJsonPath('generated', true)
+            ->assertJsonPath('changed', false)
+            ->assertJsonPath('file.managed', true)
+            ->assertJsonPath('file.outdated', false);
     }
 
     #[Test]

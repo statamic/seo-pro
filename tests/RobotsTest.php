@@ -2,12 +2,15 @@
 
 namespace Tests;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Events\AddonSettingsSaved;
 use Statamic\Facades\Addon;
 use Statamic\SeoPro\Events\RobotsTxtGenerated;
 use Statamic\SeoPro\Robots\Robots;
 use Statamic\SeoPro\Robots\RobotsPolicy;
+use Statamic\SeoPro\Robots\RobotsRenderer;
 use Statamic\SeoPro\Robots\RobotsTxtGenerator;
 
 class RobotsTest extends TestCase
@@ -164,6 +167,65 @@ TXT, $content);
         $this->assertSame(hash('sha256', $result['contents']), Addon::get('statamic/seo-pro')->settings()->get('robots.generated.checksum'));
 
         Event::assertDispatched(RobotsTxtGenerated::class, fn ($event) => $event->path === public_path('robots.txt'));
+    }
+
+    #[Test]
+    public function generating_an_up_to_date_file_is_a_no_op()
+    {
+        Event::fake([AddonSettingsSaved::class, RobotsTxtGenerated::class]);
+        $files = new class extends Filesystem
+        {
+            public int $replacements = 0;
+
+            public function replace($path, $content, $mode = null)
+            {
+                $this->replacements++;
+
+                parent::replace($path, $content, $mode);
+            }
+        };
+        $generator = new RobotsTxtGenerator($files, app(RobotsRenderer::class));
+
+        $first = $generator->generate();
+        $second = $generator->generate();
+
+        $this->assertTrue($first['changed']);
+        $this->assertTrue($first['settings_changed']);
+        $this->assertFalse($second['changed']);
+        $this->assertFalse($second['settings_changed']);
+        $this->assertSame($first['timestamp'], $second['timestamp']);
+        $this->assertSame(1, $files->replacements);
+        Event::assertDispatchedTimes(AddonSettingsSaved::class, 1);
+        Event::assertDispatchedTimes(RobotsTxtGenerated::class, 1);
+    }
+
+    #[Test]
+    public function it_saves_a_changed_policy_without_rewriting_identical_contents()
+    {
+        Event::fake([AddonSettingsSaved::class, RobotsTxtGenerated::class]);
+        $files = new class extends Filesystem
+        {
+            public int $replacements = 0;
+
+            public function replace($path, $content, $mode = null)
+            {
+                $this->replacements++;
+
+                parent::replace($path, $content, $mode);
+            }
+        };
+        $generator = new RobotsTxtGenerator($files, app(RobotsRenderer::class));
+
+        $first = $generator->generate(new RobotsPolicy(['preset' => 'neutral']));
+        $second = $generator->generate(new RobotsPolicy(['preset' => 'custom']));
+
+        $this->assertFalse($second['changed']);
+        $this->assertTrue($second['settings_changed']);
+        $this->assertSame($first['timestamp'], $second['timestamp']);
+        $this->assertSame(1, $files->replacements);
+        $this->assertSame('custom', Addon::get('statamic/seo-pro')->settings()->get('robots.policy.preset'));
+        Event::assertDispatchedTimes(AddonSettingsSaved::class, 2);
+        Event::assertDispatchedTimes(RobotsTxtGenerated::class, 1);
     }
 
     #[Test]
