@@ -212,7 +212,9 @@ function generate() {
 			rendered.value = response.data.preview;
 			file.value = response.data.file;
 			clearDirtyStateIfUnchanged(submitted);
-			Statamic.$toast.success(__('robots.txt generated'));
+			Statamic.$toast.success(response.data.changed
+				? __('robots.txt generated')
+				: __('robots.txt is already up to date'));
 		})
 		.catch((error) => {
 			errors.value = error.response?.data?.errors ?? {};

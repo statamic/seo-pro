@@ -26,7 +26,9 @@ class GenerateRobotsTxtCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->success('Generated robots.txt.');
+        $this->components->success($result['changed']
+            ? 'Generated robots.txt.'
+            : 'robots.txt is already up to date.');
         $this->line("Path: <comment>{$result['path']}</comment>");
         $this->line("Generated: <comment>{$result['timestamp']}</comment>");
 

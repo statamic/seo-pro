@@ -88,6 +88,7 @@ class RobotsController extends CpController
 
         return [
             'generated' => true,
+            'changed' => $generated['changed'],
             'preview' => $generated['contents'],
             'file' => $this->generator->status(),
         ];

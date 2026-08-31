@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Robots;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Carbon;
 use RuntimeException;
 use Statamic\SeoPro\Events\RobotsTxtGenerated;
 use Throwable;
@@ -21,6 +22,26 @@ class RobotsTxtGenerator
         $policy ??= Robots::get();
         $contents = $this->renderer->render($policy);
         $path = $this->path();
+        $checksum = hash('sha256', $contents);
+        $generated = Robots::generated() ?? [];
+        $existingGeneratedAt = $this->existingGeneratedAt($generated, $checksum);
+        $fileMatches = $this->fileMatches($path, $contents, $checksum);
+        $settingsMatch = Robots::get()->all() === $policy->all();
+
+        if ($fileMatches && $settingsMatch && $existingGeneratedAt) {
+            return $this->result($path, $contents, $existingGeneratedAt, false, false);
+        }
+
+        if ($fileMatches) {
+            $generatedAt = $existingGeneratedAt ?? now();
+
+            if (! Robots::saveGenerated($policy, $contents, $generatedAt)) {
+                throw new RuntimeException('Unable to save robots.txt settings.');
+            }
+
+            return $this->result($path, $contents, $generatedAt, false, true);
+        }
+
         $existed = $this->files->exists($path);
         $previousContents = $existed ? $this->files->get($path) : null;
 
@@ -46,11 +67,7 @@ class RobotsTxtGenerator
 
         RobotsTxtGenerated::dispatch($policy, $path, $generatedAt);
 
-        return [
-            'path' => $path,
-            'timestamp' => $generatedAt->toIso8601String(),
-            'contents' => $contents,
-        ];
+        return $this->result($path, $contents, $generatedAt, true, true);
     }
 
     public function status(): array
@@ -117,6 +134,50 @@ class RobotsTxtGenerator
     public function path(): string
     {
         return public_path('robots.txt');
+    }
+
+    private function fileMatches(string $path, string $contents, string $checksum): bool
+    {
+        try {
+            if (! $this->files->isFile($path) || $this->files->size($path) !== strlen($contents)) {
+                return false;
+            }
+
+            $existingChecksum = $this->files->hash($path, 'sha256');
+
+            return is_string($existingChecksum) && hash_equals($checksum, $existingChecksum);
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    private function existingGeneratedAt(array $generated, string $checksum): ?Carbon
+    {
+        if (($generated['checksum'] ?? null) !== $checksum || ! is_string($generated['timestamp'] ?? null)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($generated['timestamp']);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    private function result(
+        string $path,
+        string $contents,
+        Carbon $generatedAt,
+        bool $changed,
+        bool $settingsChanged,
+    ): array {
+        return [
+            'path' => $path,
+            'timestamp' => $generatedAt->toIso8601String(),
+            'contents' => $contents,
+            'changed' => $changed,
+            'settings_changed' => $settingsChanged,
+        ];
     }
 
     private function readForImport(string $path): string|false
