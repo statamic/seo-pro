@@ -4,6 +4,8 @@ namespace Statamic\SeoPro\Robots;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use RuntimeException;
+use Statamic\Contracts\Addons\SettingsRepository;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Site;
@@ -46,6 +48,37 @@ class Robots
                 'checksum' => hash('sha256', $contents),
             ],
         ]);
+    }
+
+    public static function settingsSnapshot(): array
+    {
+        $addon = Addon::get('statamic/seo-pro');
+        $settings = app(SettingsRepository::class)->find($addon->id());
+
+        return [
+            'exists' => $settings !== null,
+            'raw' => $settings?->raw() ?? [],
+        ];
+    }
+
+    public static function restoreSettings(array $snapshot): void
+    {
+        $addon = Addon::get('statamic/seo-pro');
+        $repository = app(SettingsRepository::class);
+
+        try {
+            if ($snapshot['exists']) {
+                $repository->save($repository->make($addon, $snapshot['raw']));
+            } elseif ($settings = $repository->find($addon->id())) {
+                $repository->delete($settings);
+            }
+        } finally {
+            Blink::forget('seo-pro::robots');
+        }
+
+        if (self::settingsSnapshot() !== $snapshot) {
+            throw new RuntimeException('Unable to restore the previous SEO Pro settings.');
+        }
     }
 
     public static function authority(SiteObject $site): string

@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Robots;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\LockableFile;
 use Illuminate\Support\Carbon;
 use RuntimeException;
 use Statamic\SeoPro\Events\RobotsTxtGenerated;
@@ -19,6 +20,26 @@ class RobotsTxtGenerator
 
     public function generate(?RobotsPolicy $policy = null): array
     {
+        $lock = null;
+
+        try {
+            $lock = new LockableFile(storage_path('framework/cache/seo-pro/robots-txt.lock'), 'c+');
+            $lock->getExclusiveLock();
+        } catch (Throwable $exception) {
+            $lock?->close();
+
+            throw new RuntimeException('Unable to acquire the robots.txt generation lock. Another generation may already be in progress.', previous: $exception);
+        }
+
+        try {
+            return $this->generateWhileLocked($policy);
+        } finally {
+            $lock->close();
+        }
+    }
+
+    private function generateWhileLocked(?RobotsPolicy $policy): array
+    {
         $policy ??= Robots::get();
         $contents = $this->renderer->render($policy);
         $path = $this->path();
@@ -34,37 +55,29 @@ class RobotsTxtGenerator
 
         if ($fileMatches) {
             $generatedAt = $existingGeneratedAt ?? now();
+            $settingsSnapshot = Robots::settingsSnapshot();
 
-            if (! Robots::saveGenerated($policy, $contents, $generatedAt)) {
-                throw new RuntimeException('Unable to save robots.txt settings.');
+            try {
+                $this->saveGeneratedSettings($policy, $contents, $generatedAt);
+            } catch (Throwable $exception) {
+                $this->rollback($exception, $settingsSnapshot);
             }
 
             return $this->result($path, $contents, $generatedAt, false, true);
         }
 
-        $existed = $this->files->exists($path);
-        $previousContents = $existed ? $this->files->get($path) : null;
-
-        try {
-            $this->files->replace($path, $contents);
-        } catch (Throwable $exception) {
-            throw new RuntimeException("Unable to write robots.txt to [{$path}].", previous: $exception);
-        }
-
+        $settingsSnapshot = Robots::settingsSnapshot();
+        $fileSnapshot = $this->snapshotFile($path);
         $generatedAt = now();
 
         try {
-            if (! Robots::saveGenerated($policy, $contents, $generatedAt)) {
-                throw new RuntimeException('Unable to save robots.txt settings.');
-            }
+            $this->writeFile($path, $contents);
+            $this->saveGeneratedSettings($policy, $contents, $generatedAt);
         } catch (Throwable $exception) {
-            $existed
-                ? $this->files->replace($path, $previousContents)
-                : $this->files->delete($path);
-
-            throw $exception;
+            $this->rollback($exception, $settingsSnapshot, $fileSnapshot);
         }
 
+        $this->discardFileSnapshot($fileSnapshot);
         RobotsTxtGenerated::dispatch($policy, $path, $generatedAt);
 
         return $this->result($path, $contents, $generatedAt, true, true);
@@ -134,6 +147,144 @@ class RobotsTxtGenerator
     public function path(): string
     {
         return public_path('robots.txt');
+    }
+
+    private function writeFile(string $path, string $contents): void
+    {
+        try {
+            $this->files->replace($path, $contents);
+        } catch (Throwable $exception) {
+            throw new RuntimeException("Unable to write robots.txt to [{$path}].", previous: $exception);
+        }
+    }
+
+    private function saveGeneratedSettings(RobotsPolicy $policy, string $contents, Carbon $generatedAt): void
+    {
+        if (! Robots::saveGenerated($policy, $contents, $generatedAt)) {
+            throw new RuntimeException('Unable to save robots.txt settings.');
+        }
+
+        $settings = Robots::settingsSnapshot()['raw']['robots'] ?? [];
+
+        if (($settings['policy'] ?? null) !== $policy->all()
+            || ($settings['generated']['timestamp'] ?? null) !== $generatedAt->toIso8601String()
+            || ($settings['generated']['checksum'] ?? null) !== hash('sha256', $contents)) {
+            throw new RuntimeException('The generated robots.txt settings could not be verified after saving.');
+        }
+    }
+
+    private function snapshotFile(string $path): array
+    {
+        $target = realpath($path) ?: $path;
+
+        if (! $this->files->exists($target)) {
+            return ['exists' => false, 'path' => $target, 'backup' => null, 'mode' => null];
+        }
+
+        if (! $this->files->isFile($target)) {
+            throw new RuntimeException("Unable to back up robots.txt at [{$target}].");
+        }
+
+        $directory = dirname($target);
+        $backup = @tempnam($directory, '.seo-pro-robots-');
+        $backupDirectory = is_string($backup) ? realpath(dirname($backup)) : false;
+        $targetDirectory = realpath($directory);
+
+        if ($backup === false || $backupDirectory === false || $backupDirectory !== $targetDirectory) {
+            if (is_string($backup)) {
+                $this->files->delete($backup);
+            }
+
+            throw new RuntimeException("Unable to create a robots.txt backup beside [{$target}].");
+        }
+
+        try {
+            if (! $this->files->copy($target, $backup)) {
+                throw new RuntimeException("Unable to back up robots.txt at [{$target}].");
+            }
+
+            $permissions = @fileperms($target);
+
+            if ($permissions === false || ! $this->files->chmod($backup, $mode = $permissions & 0777)) {
+                throw new RuntimeException("Unable to preserve robots.txt permissions for [{$target}].");
+            }
+        } catch (Throwable $exception) {
+            $this->files->delete($backup);
+
+            throw $exception;
+        }
+
+        return ['exists' => true, 'path' => $target, 'backup' => $backup, 'mode' => $mode];
+    }
+
+    private function rollback(Throwable $original, array $settingsSnapshot, ?array $fileSnapshot = null): never
+    {
+        $rollbackErrors = [];
+
+        try {
+            Robots::restoreSettings($settingsSnapshot);
+        } catch (Throwable $exception) {
+            $rollbackErrors[] = 'settings: '.$exception->getMessage();
+        }
+
+        if ($fileSnapshot) {
+            try {
+                $this->restoreFileSnapshot($fileSnapshot);
+            } catch (Throwable $exception) {
+                $rollbackErrors[] = 'robots.txt: '.$exception->getMessage();
+            }
+        }
+
+        if ($rollbackErrors) {
+            throw new RuntimeException(
+                $original->getMessage().' Rollback also failed for '.implode('; ', $rollbackErrors),
+                previous: $original,
+            );
+        }
+
+        throw $original;
+    }
+
+    private function restoreFileSnapshot(array $snapshot): void
+    {
+        $path = $snapshot['path'];
+
+        if (! $snapshot['exists']) {
+            if ($this->files->exists($path) && ! $this->files->delete($path)) {
+                throw new RuntimeException("Unable to remove the newly generated file at [{$path}].");
+            }
+
+            return;
+        }
+
+        $backup = $snapshot['backup'];
+
+        if (! is_string($backup) || ! $this->files->isFile($backup)) {
+            throw new RuntimeException("The robots.txt rollback backup for [{$path}] is unavailable.");
+        }
+
+        if (! @rename($backup, $path)) {
+            if ($this->files->exists($path) && ! $this->files->delete($path)) {
+                throw new RuntimeException("Unable to replace robots.txt at [{$path}] during rollback.");
+            }
+
+            if (! @rename($backup, $path)) {
+                throw new RuntimeException("Unable to restore robots.txt at [{$path}]. The backup remains at [{$backup}].");
+            }
+        }
+
+        if (! $this->files->chmod($path, $snapshot['mode'])) {
+            throw new RuntimeException("Unable to restore robots.txt permissions at [{$path}].");
+        }
+    }
+
+    private function discardFileSnapshot(array $snapshot): void
+    {
+        if (is_string($snapshot['backup']) && $this->files->exists($snapshot['backup'])) {
+            if (! $this->files->delete($snapshot['backup'])) {
+                report(new RuntimeException("Unable to remove the robots.txt backup at [{$snapshot['backup']}]."));
+            }
+        }
     }
 
     private function fileMatches(string $path, string $contents, string $checksum): bool
