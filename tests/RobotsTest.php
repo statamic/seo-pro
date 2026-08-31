@@ -118,6 +118,25 @@ TXT, $content);
     }
 
     #[Test]
+    public function it_generates_custom_canonical_sitemap_urls()
+    {
+        $policy = new RobotsPolicy([
+            'sitemap_mode' => 'custom',
+            'sitemap_urls' => [
+                'https://example.com/sitemap.xml',
+                'https://example.de/sitemap.xml',
+                'https://example.com/sitemap.xml',
+            ],
+        ]);
+
+        $content = app(RobotsTxtGenerator::class)->generate($policy)['contents'];
+
+        $this->assertSame(1, substr_count($content, 'Sitemap: https://example.com/sitemap.xml'));
+        $this->assertSame(1, substr_count($content, 'Sitemap: https://example.de/sitemap.xml'));
+        $this->assertStringNotContainsString('cool-runnings.com/sitemap.xml', $content);
+    }
+
+    #[Test]
     public function it_recognizes_unmanaged_and_modified_files()
     {
         $generator = app(RobotsTxtGenerator::class);

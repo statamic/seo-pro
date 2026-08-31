@@ -29,6 +29,7 @@ class RobotsCpTest extends TestCase
             ->assertJsonPath('file.exists', false)
             ->assertJsonPath('file.path', public_path('robots.txt'))
             ->assertJsonPath('generateUrl', cp_route('seo-pro.robots.generate'))
+            ->assertJsonPath('sitemapUrlsAreEnvironmentDependent', true)
             ->assertJsonPath('liveUrl', 'http://cool-runnings.com/robots.txt');
     }
 
@@ -141,6 +142,32 @@ class RobotsCpTest extends TestCase
     }
 
     #[Test]
+    public function custom_sitemap_urls_must_be_absolute_http_urls()
+    {
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->patchJson(cp_route('seo-pro.robots.update'), $this->validPayload([
+                'sitemap_mode' => 'custom',
+                'sitemap_urls' => ['/sitemap.xml'],
+            ]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('sitemap_urls.0');
+    }
+
+    #[Test]
+    public function custom_sitemap_mode_requires_at_least_one_url_when_enabled()
+    {
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->patchJson(cp_route('seo-pro.robots.update'), $this->validPayload([
+                'sitemap_mode' => 'custom',
+                'sitemap_urls' => [],
+            ]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('sitemap_urls');
+    }
+
+    #[Test]
     public function users_without_permission_cannot_manage_robots_settings()
     {
         Role::make('editor')->permissions(['access cp'])->save();
@@ -218,6 +245,8 @@ class RobotsCpTest extends TestCase
                 'use' => null,
             ],
             'include_sitemap' => true,
+            'sitemap_mode' => 'automatic',
+            'sitemap_urls' => [],
             'custom_source' => '',
         ], $overrides);
     }

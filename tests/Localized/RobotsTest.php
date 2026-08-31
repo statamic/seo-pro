@@ -3,6 +3,7 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\SeoPro\Robots\Robots;
 use Statamic\SeoPro\Robots\RobotsPolicy;
 use Statamic\SeoPro\Robots\RobotsTxtGenerator;
 
@@ -25,5 +26,11 @@ class RobotsTest extends LocalizedTestCase
         $this->assertStringContainsString('Disallow: /private/', $content);
         $this->assertSame(1, substr_count($content, 'Sitemap: http://cool-runnings.com/sitemap.xml'));
         $this->assertSame(1, substr_count($content, 'Sitemap: http://corse-fantastiche.it/sitemap.xml'));
+    }
+
+    #[Test]
+    public function absolute_multisite_urls_are_not_environment_dependent()
+    {
+        $this->assertFalse(Robots::sitemapUrlsAreEnvironmentDependent());
     }
 }
