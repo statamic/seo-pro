@@ -67,6 +67,9 @@ class SeoProType extends Type
             'humans_txt' => [
                 'type' => GraphQL::string(),
             ],
+            'llms_txt' => [
+                'type' => GraphQL::string(),
+            ],
             'site' => [
                 'type' => GraphQL::type(SiteType::NAME),
             ],
