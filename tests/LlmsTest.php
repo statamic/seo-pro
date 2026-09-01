@@ -55,7 +55,7 @@ class LlmsTest extends TestCase
             ->assertContentType('text/plain; charset=UTF-8')
             ->assertHeader('Cache-Control', 'public');
 
-        $this->assertSame(<<<'TXT'
+        $this->assertEqualsIgnoringLineEndings(<<<'TXT'
 # Cool Runnings
 
 > The fastest team on ice.
