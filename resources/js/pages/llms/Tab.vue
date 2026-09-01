@@ -334,7 +334,7 @@ defineExpose({ save });
 						<CodeEditor v-model="form.custom_source" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" title="llms.txt" />
 					</Panel>
 
-					<Panel class="p-6">
+					<Panel v-if="form.mode === 'managed'" class="p-6">
 						<div class="flex items-center justify-between mb-4">
 							<div>
 								<Heading size="lg" :text="__('seo-pro::messages.llms_txt.generated_preview')" />
