@@ -215,9 +215,10 @@ defineExpose({ save });
 				<div class="flex flex-wrap items-center gap-2 sm:gap-3">
 					<Button v-if="form.enabled || file.exists" :href="liveUrl" target="_blank" variant="ghost" icon="external-link" :text="__('seo-pro::messages.llms_txt.view_live_file')" />
 					<Button
+						v-if="form.enabled"
 						variant="default"
 						:text="__('Generate')"
-						:disabled="isBusy || !form.enabled || hasUnmanagedFile"
+						:disabled="isBusy || hasUnmanagedFile"
 						:loading="generating"
 						@click="requestGeneration"
 					/>
@@ -261,7 +262,7 @@ defineExpose({ save });
 					</ul>
 				</Alert>
 
-				<Panel class="p-6 space-y-6">
+				<Panel class="p-6">
 					<div class="flex items-start justify-between gap-6">
 						<div>
 							<Heading :text="__('seo-pro::messages.llms_txt.enable')" />
@@ -269,77 +270,81 @@ defineExpose({ save });
 						</div>
 						<Switch v-model="form.enabled" />
 					</div>
-
-					<Field :label="__('seo-pro::messages.llms_txt.editing_mode')" :instructions="__('seo-pro::messages.llms_txt.editing_mode_instructions')">
-						<Select class="max-w-sm" :options="modeOptions" v-model="form.mode" />
-					</Field>
 				</Panel>
 
-				<template v-if="form.mode === 'managed'">
-					<Panel class="p-6 space-y-6">
-						<Field :label="__('seo-pro::messages.llms_txt.title')" :instructions="__('seo-pro::messages.llms_txt.title_instructions')" :required="form.enabled">
-							<Input v-model="form.title" class="font-mono" />
-						</Field>
-						<Field :label="__('seo-pro::messages.llms_txt.summary')" :instructions="__('seo-pro::messages.llms_txt.summary_instructions')">
-							<Textarea v-model="form.summary" rows="3" />
-						</Field>
-						<Field :label="__('seo-pro::messages.llms_txt.details')" :instructions="__('seo-pro::messages.llms_txt.details_instructions')">
-							<Textarea v-model="form.details" rows="5" class="font-mono" />
+				<template v-if="form.enabled">
+					<Panel class="p-6">
+						<Field :label="__('seo-pro::messages.llms_txt.editing_mode')" :instructions="__('seo-pro::messages.llms_txt.editing_mode_instructions')">
+							<Select class="max-w-sm" :options="modeOptions" v-model="form.mode" />
 						</Field>
 					</Panel>
 
-					<section>
-						<div class="flex items-center justify-between gap-4 mb-3">
-							<div>
-								<Subheading size="lg" :text="__('seo-pro::messages.llms_txt.sections')" />
-								<Description :text="__('seo-pro::messages.llms_txt.sections_description')" />
+					<template v-if="form.mode === 'managed'">
+						<Panel class="p-6 space-y-6">
+							<Field :label="__('seo-pro::messages.llms_txt.title')" :instructions="__('seo-pro::messages.llms_txt.title_instructions')" required>
+								<Input v-model="form.title" class="font-mono" />
+							</Field>
+							<Field :label="__('seo-pro::messages.llms_txt.summary')" :instructions="__('seo-pro::messages.llms_txt.summary_instructions')">
+								<Textarea v-model="form.summary" rows="3" />
+							</Field>
+							<Field :label="__('seo-pro::messages.llms_txt.details')" :instructions="__('seo-pro::messages.llms_txt.details_instructions')">
+								<Textarea v-model="form.details" rows="5" class="font-mono" />
+							</Field>
+						</Panel>
+
+						<section>
+							<div class="flex items-center justify-between gap-4 mb-3">
+								<div>
+									<Subheading size="lg" :text="__('seo-pro::messages.llms_txt.sections')" />
+									<Description :text="__('seo-pro::messages.llms_txt.sections_description')" />
+								</div>
+								<Button size="sm" variant="ghost" icon="plus" :text="__('seo-pro::messages.llms_txt.add_section')" @click="addSection" />
 							</div>
-							<Button size="sm" variant="ghost" icon="plus" :text="__('seo-pro::messages.llms_txt.add_section')" @click="addSection" />
-						</div>
 
-						<div class="space-y-4">
-							<Panel v-for="(section, sectionIndex) in form.sections" :key="sectionIndex" class="p-6 space-y-5">
-								<div class="flex gap-2">
-									<Field class="flex-1" :label="__('seo-pro::messages.llms_txt.section_title')">
-										<Input v-model="section.title" />
-									</Field>
-									<Button class="self-end" icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeSection(sectionIndex)" />
-								</div>
-
-								<div class="space-y-3">
-									<div v-for="(link, linkIndex) in section.links" :key="linkIndex" class="rounded-lg border p-4 space-y-3 dark:border-gray-700">
-										<div class="grid gap-3 md:grid-cols-2">
-											<Field :label="__('seo-pro::messages.llms_txt.link_title')"><Input v-model="link.title" /></Field>
-											<Field :label="__('seo-pro::messages.llms_txt.link_url')"><Input v-model="link.url" class="font-mono" /></Field>
-										</div>
-										<div class="flex gap-2">
-											<Field class="flex-1" :label="__('seo-pro::messages.llms_txt.link_description')"><Textarea v-model="link.description" rows="2" /></Field>
-											<Button class="self-end" icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeLink(section, linkIndex)" />
-										</div>
+							<div class="space-y-4">
+								<Panel v-for="(section, sectionIndex) in form.sections" :key="sectionIndex" class="p-6 space-y-5">
+									<div class="flex gap-2">
+										<Field class="flex-1" :label="__('seo-pro::messages.llms_txt.section_title')">
+											<Input v-model="section.title" />
+										</Field>
+										<Button class="self-end" icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeSection(sectionIndex)" />
 									</div>
-									<Button size="sm" variant="ghost" icon="plus" :text="__('seo-pro::messages.llms_txt.add_link')" @click="addLink(section)" />
-								</div>
-							</Panel>
+
+									<div class="space-y-3">
+										<div v-for="(link, linkIndex) in section.links" :key="linkIndex" class="rounded-lg border p-4 space-y-3 dark:border-gray-700">
+											<div class="grid gap-3 md:grid-cols-2">
+												<Field :label="__('seo-pro::messages.llms_txt.link_title')"><Input v-model="link.title" /></Field>
+												<Field :label="__('seo-pro::messages.llms_txt.link_url')"><Input v-model="link.url" class="font-mono" /></Field>
+											</div>
+											<div class="flex gap-2">
+												<Field class="flex-1" :label="__('seo-pro::messages.llms_txt.link_description')"><Textarea v-model="link.description" rows="2" /></Field>
+												<Button class="self-end" icon="trash" variant="ghost" :aria-label="__('Remove')" @click="removeLink(section, linkIndex)" />
+											</div>
+										</div>
+										<Button size="sm" variant="ghost" icon="plus" :text="__('seo-pro::messages.llms_txt.add_link')" @click="addLink(section)" />
+									</div>
+								</Panel>
+							</div>
+						</section>
+					</template>
+
+					<Panel v-else class="p-6">
+						<Heading size="lg" :text="__('seo-pro::messages.llms_txt.custom_source_heading')" />
+						<Description class="mt-1 mb-5" :text="__('seo-pro::messages.llms_txt.custom_source_description')" />
+						<CodeEditor v-model="form.custom_source" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" title="llms.txt" />
+					</Panel>
+
+					<Panel class="p-6">
+						<div class="flex items-center justify-between mb-4">
+							<div>
+								<Heading size="lg" :text="__('seo-pro::messages.llms_txt.generated_preview')" />
+								<Description :text="liveUrl" />
+							</div>
+							<Badge v-if="previewError" color="red" :text="__('seo-pro::messages.llms_txt.preview_unavailable')" />
 						</div>
-					</section>
+						<CodeEditor :model-value="rendered" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" read-only :title="__('seo-pro::messages.llms_txt.preview_title')" />
+					</Panel>
 				</template>
-
-				<Panel v-else class="p-6">
-					<Heading size="lg" :text="__('seo-pro::messages.llms_txt.custom_source_heading')" />
-					<Description class="mt-1 mb-5" :text="__('seo-pro::messages.llms_txt.custom_source_description')" />
-					<CodeEditor v-model="form.custom_source" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" title="llms.txt" />
-				</Panel>
-
-				<Panel class="p-6">
-					<div class="flex items-center justify-between mb-4">
-						<div>
-							<Heading size="lg" :text="__('seo-pro::messages.llms_txt.generated_preview')" />
-							<Description :text="liveUrl" />
-						</div>
-						<Badge v-if="previewError" color="red" :text="__('seo-pro::messages.llms_txt.preview_unavailable')" />
-					</div>
-					<CodeEditor :model-value="rendered" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" read-only :title="__('seo-pro::messages.llms_txt.preview_title')" />
-				</Panel>
 			</div>
 
 			<confirmation-modal
