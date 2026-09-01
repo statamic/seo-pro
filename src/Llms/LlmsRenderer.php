@@ -3,14 +3,15 @@
 namespace Statamic\SeoPro\Llms;
 
 use InvalidArgumentException;
+use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
+use League\CommonMark\Parser\MarkdownParser;
 use Statamic\Facades\Antlers;
+use Statamic\Facades\Markdown;
 use Statamic\Sites\Site as SiteObject;
 use Statamic\View\Cascade;
 
 class LlmsRenderer
 {
-    public const VERSION = 1;
-
     public const MAX_BYTES = 512000;
 
     public function render(LlmsDocument|array $document, string|SiteObject|null $site = null): string
@@ -92,10 +93,10 @@ class LlmsRenderer
     {
         $site = Llms::site($site);
 
-        return hash('sha256', (string) json_encode([
-            'renderer' => self::VERSION,
-            'context' => $this->context($site),
-        ], JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION));
+        return hash('sha256', (string) json_encode(
+            $this->context($site),
+            JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION,
+        ));
     }
 
     private function parse(string $value, array $context): string
@@ -197,6 +198,28 @@ class LlmsRenderer
             throw new InvalidArgumentException('The resolved llms.txt document must not be greater than 500 KiB.');
         }
 
+        $this->validateH1Count($contents);
+
         return $contents;
+    }
+
+    private function validateH1Count(string $contents): void
+    {
+        $walker = (new MarkdownParser(Markdown::environment()))
+            ->parse($contents)
+            ->walker();
+        $h1Count = 0;
+
+        while ($event = $walker->next()) {
+            $node = $event->getNode();
+
+            if ($event->isEntering() && $node instanceof Heading && $node->getLevel() === 1) {
+                $h1Count++;
+            }
+        }
+
+        if ($h1Count !== 1) {
+            throw new InvalidArgumentException('The resolved llms.txt document must contain exactly one Markdown H1 heading.');
+        }
     }
 }

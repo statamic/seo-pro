@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Events\AddonSettingsSaved;
 use Statamic\Facades\Addon;
@@ -81,6 +82,44 @@ TXT."\n", $response->content());
         $this->get('/llms.txt')
             ->assertOk()
             ->assertContent("# Cool Runnings\n\nCustom content.\n");
+    }
+
+    #[Test]
+    #[DataProvider('additionalH1Provider')]
+    public function it_rejects_documents_with_more_than_one_markdown_h1(string $source)
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('must contain exactly one Markdown H1 heading');
+
+        app(LlmsRenderer::class)->render(new LlmsDocument([
+            'enabled' => true,
+            'mode' => 'custom',
+            'custom_source' => $source,
+        ]));
+    }
+
+    public static function additionalH1Provider(): array
+    {
+        return [
+            'ATX heading' => ["# First\n\n# Second"],
+            'Setext heading' => ["# First\n\nSecond\n======"],
+            'heading in a blockquote' => ["# First\n\n> # Second"],
+        ];
+    }
+
+    #[Test]
+    public function h1_syntax_inside_a_fenced_code_block_is_not_counted_as_a_heading()
+    {
+        $source = "# First\n\n```md\n# Example code\n```";
+
+        $this->assertSame(
+            $source."\n",
+            app(LlmsRenderer::class)->render(new LlmsDocument([
+                'enabled' => true,
+                'mode' => 'custom',
+                'custom_source' => $source,
+            ])),
+        );
     }
 
     #[Test]
