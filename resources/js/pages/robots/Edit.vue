@@ -2,6 +2,7 @@
 import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue';
 import { deepClone } from '@statamic/cms';
 import { Head } from '@statamic/cms/inertia';
+import LlmsTab from '../llms/Tab.vue';
 import {
 	Alert,
 	Badge,
@@ -31,6 +32,7 @@ const props = defineProps({
 	liveUrl: { type: String, required: true },
 	sitemapUrlsAreEnvironmentDependent: { type: Boolean, required: true },
 	file: { type: Object, required: true },
+	llmsEditUrl: { type: String, required: true },
 });
 
 const instance = getCurrentInstance();
@@ -51,6 +53,18 @@ const errorHeading = ref(__('seo-pro::messages.robots_txt.unable_to_save_setting
 const previewError = ref(false);
 const dirtyStateName = 'seo-pro-robots';
 const activeTab = ref('robots.txt');
+const llmsTab = ref(null);
+const llmsSaving = ref(false);
+
+function saveActive() {
+	if (activeTab.value === 'llms.txt') {
+		llmsTab.value?.save();
+
+		return;
+	}
+
+	save();
+}
 
 const importDescription = computed(() => {
 	if (file.value.importable) {
@@ -253,7 +267,7 @@ let saveKeyBinding;
 onMounted(() => {
 	saveKeyBinding = Statamic.$keys.bindGlobal(['mod+s'], (event) => {
 		event.preventDefault();
-		save();
+		saveActive();
 	});
 });
 
@@ -268,7 +282,7 @@ onUnmounted(() => {
 
 	<div class="max-w-5xl mx-auto">
 		<Header :title="__('seo-pro::messages.robots')" icon="earth">
-			<Button variant="primary" :text="__('Save')" :disabled="saving || generating" :loading="saving" @click="save" />
+			<Button variant="primary" :text="__('Save')" :disabled="saving || generating || llmsSaving" :loading="saving || llmsSaving" @click="saveActive" />
 		</Header>
 
 		<Tabs v-model="activeTab" :unmount-on-hide="false">
@@ -469,7 +483,7 @@ onUnmounted(() => {
 			</TabContent>
 
 			<TabContent name="llms.txt">
-				<div class="pt-6" />
+				<LlmsTab ref="llmsTab" :edit-url="llmsEditUrl" @saving="llmsSaving = $event" />
 			</TabContent>
 		</Tabs>
 	</div>
