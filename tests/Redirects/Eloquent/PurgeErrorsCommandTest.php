@@ -24,6 +24,25 @@ class PurgeErrorsCommandTest extends TestCase
         $this->loadMigrationsFrom(__DIR__.'/../../../src/Commands/stubs');
     }
 
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/647
+     */
+    #[Test]
+    public function it_purges_errors_without_a_last_hit_at()
+    {
+        Carbon::setTestNow('2026-04-21 12:00:00');
+
+        ErrorModel::create(['site' => 'default', 'url' => '/never-hit', 'hits' => 1, 'last_hit_at' => null, 'data' => []]);
+        ErrorModel::create(['site' => 'default', 'url' => '/recent', 'hits' => 1, 'last_hit_at' => '2026-04-20 12:00:00', 'data' => []]);
+
+        $this
+            ->artisan('statamic:seo-pro:purge-errors')
+            ->assertSuccessful();
+
+        $this->assertDatabaseMissing('seo_pro_errors', ['url' => '/never-hit']);
+        $this->assertDatabaseHas('seo_pro_errors', ['url' => '/recent']);
+    }
+
     #[Test]
     public function it_purges_the_least_valuable_errors_when_max_errors_is_exceeded()
     {
