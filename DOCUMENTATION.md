@@ -317,6 +317,18 @@ You may customize the purge threshold in the config:
 ],
 ```
 
+On a public site, bots probing for unique URLs can create an unbounded number of errors between purges. To bound the total, set `max_errors` to a cap. When the purge runs and the number of errors exceeds the cap, the excess is evicted: errors that have never been hit go first, then those with the fewest hits, then those hit least recently. Frequently-hit 404s, the best redirect candidates, survive longest. The default of `0` disables the cap.
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'max_errors' => 1000,
+    ],
+],
+```
+
 You may also run the command manually:
 
 ```
