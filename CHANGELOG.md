@@ -1,5 +1,17 @@
 # Release Notes
 
+## 7.14.0 (2026-09-03)
+
+### What's new
+- Add configurable cap on tracked 404 errors [#654](https://github.com/statamic/seo-pro/issues/654) by @duncanmcclean
+- Add delete action for tracked 404 errors [#656](https://github.com/statamic/seo-pro/issues/656) by @duncanmcclean
+- Add delete action for redirects [#657](https://github.com/statamic/seo-pro/issues/657) by @duncanmcclean
+
+### What's fixed
+- Fix errors with no `last_hit_at` never being purged [#655](https://github.com/statamic/seo-pro/issues/655) by @duncanmcclean
+
+
+
 ## 7.13.3 (2026-08-25)
 
 ### What's fixed
