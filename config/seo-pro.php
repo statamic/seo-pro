@@ -80,6 +80,7 @@ return [
             'driver' => 'file',
             'directory' => storage_path('statamic/seopro/errors'),
             'purge_after_days' => 30,
+            'max_errors' => 0,
         ],
     ],
 
