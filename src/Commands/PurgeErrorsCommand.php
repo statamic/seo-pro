@@ -24,7 +24,7 @@ class PurgeErrorsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Purges 404 errors older than the configured threshold.';
+    protected $description = 'Purges 404 errors older than the configured threshold, then evicts any exceeding the configured cap.';
 
     /**
      * Execute the console command.
@@ -32,6 +32,13 @@ class PurgeErrorsCommand extends Command
      * @return mixed
      */
     public function handle()
+    {
+        $this
+            ->purgeErrorsOlderThan()
+            ->evictErrorsExceeding();
+    }
+
+    private function purgeErrorsOlderThan(): self
     {
         $threshold = config('statamic.seo-pro.redirects.errors.purge_after_days', 30);
 
@@ -46,5 +53,41 @@ class PurgeErrorsCommand extends Command
         );
 
         $this->components->success("Purged errors older than $threshold days.");
+
+        return $this;
+    }
+
+    private function evictErrorsExceeding(): self
+    {
+        $maxErrors = config('statamic.seo-pro.redirects.errors.max_errors', 0);
+
+        if (! $maxErrors) {
+            return $this;
+        }
+
+        spin(
+            callback: function () use ($maxErrors): void {
+                $errors = Error::query()->get();
+                $excess = $errors->count() - $maxErrors;
+
+                if ($excess <= 0) {
+                    return;
+                }
+
+                $errors
+                    ->sortBy([
+                        fn ($a, $b) => (bool) $a->lastHitAt() <=> (bool) $b->lastHitAt(),
+                        fn ($a, $b) => $a->hits() <=> $b->hits(),
+                        fn ($a, $b) => $a->lastHitAt() <=> $b->lastHitAt(),
+                    ])
+                    ->take($excess)
+                    ->each->delete();
+            },
+            message: 'Evicting excess errors...',
+        );
+
+        $this->components->success("Evicted errors exceeding the cap of $maxErrors.");
+
+        return $this;
     }
 }
