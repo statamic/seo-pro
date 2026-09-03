@@ -1,0 +1,17 @@
+{
+  "resources/css/cp.css": {
+    "file": "assets/cp-CkimKHnm.css",
+    "name": "cp",
+    "names": [
+      "cp.css"
+    ],
+    "src": "resources/css/cp.css",
+    "isEntry": true
+  },
+  "resources/js/cp.js": {
+    "file": "assets/cp-Cjzz8XJ0.js",
+    "name": "cp",
+    "src": "resources/js/cp.js",
+    "isEntry": true
+  }
+}
