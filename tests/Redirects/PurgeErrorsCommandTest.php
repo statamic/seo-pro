@@ -96,6 +96,34 @@ class PurgeErrorsCommandTest extends TestCase
         $this->assertNotNull(Facades\Error::find('recent-two'));
     }
 
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/647
+     */
+    #[Test]
+    public function it_purges_errors_without_a_last_hit_at()
+    {
+        Carbon::setTestNow('2026-04-21 12:00:00');
+
+        Facades\Error::make()
+            ->id('never-hit')
+            ->url('/never-hit-page')
+            ->save();
+
+        Facades\Error::make()
+            ->id('recent')
+            ->url('/recent-page')
+            ->hits(1)
+            ->lastHitAt('2026-04-20 12:00:00')
+            ->save();
+
+        $this
+            ->artisan('statamic:seo-pro:purge-errors')
+            ->assertSuccessful();
+
+        $this->assertNull(Facades\Error::find('never-hit'));
+        $this->assertNotNull(Facades\Error::find('recent'));
+    }
+
     #[Test]
     public function it_purges_the_least_valuable_errors_when_max_errors_is_exceeded()
     {

@@ -46,6 +46,7 @@ class PurgeErrorsCommand extends Command
             callback: function () use ($threshold): void {
                 Error::query()
                     ->where('last_hit_at', '<', now()->subDays($threshold))
+                    ->orWhereNull('last_hit_at')
                     ->get()
                     ->each->delete();
             },
