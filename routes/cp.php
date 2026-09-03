@@ -23,6 +23,8 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
     Route::get('section-defaults/taxonomies/{seo_pro_taxonomy}/edit', [Controllers\CP\TaxonomyDefaultsController::class, 'edit'])->name('section-defaults.taxonomies.edit');
     Route::patch('section-defaults/taxonomies/{seo_pro_taxonomy}', [Controllers\CP\TaxonomyDefaultsController::class, 'update'])->name('section-defaults.taxonomies.update');
 
+    Route::post('errors/actions', [Controllers\CP\Errors\ErrorActionController::class, 'run'])->name('errors.actions.run');
+    Route::post('errors/actions/list', [Controllers\CP\Errors\ErrorActionController::class, 'bulkActions'])->name('errors.actions.bulk');
     Route::resource('errors', Controllers\CP\Errors\ErrorController::class)->only('index');
 
     Route::get('redirects/export', Controllers\CP\Redirects\ExportRedirectsController::class)->name('redirects.export');

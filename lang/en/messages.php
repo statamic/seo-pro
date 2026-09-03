@@ -12,6 +12,7 @@ return [
     'edit_redirects' => 'Edit Redirects',
     'create_redirects' => 'Create Redirects',
     'delete_redirects' => 'Delete Redirects',
+    'delete_errors' => 'Delete Errors',
     'redirect_source' => 'URL to redirect from. Use `*` as a wildcard, like `/blog/2026/*`.',
     'redirect_destination' => 'URL to redirect to. Use `$1`, `$2`, etc. for wildcard matches.',
     'redirect_response_code' => 'HTTP response code for this redirect.',

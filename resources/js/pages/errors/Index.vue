@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link } from '@statamic/cms/inertia';
-import { Header, Button, Listing, DocsCallout } from '@statamic/cms/ui';
+import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cms/ui';
 import { ref } from 'vue';
 
 defineProps({
@@ -28,6 +28,7 @@ function requestComplete({ items: newItems, parameters }) {
 	<Listing
 		ref="listing"
 		:url="cp_url(`seo-pro/errors`)"
+		:action-url="cp_url(`seo-pro/errors/actions`)"
 		:columns
 		:allow-presets="false"
 		:allow-customizing-columns="false"
@@ -41,10 +42,13 @@ function requestComplete({ items: newItems, parameters }) {
 		<template #cell-url="{ row: error }">
 			<a class="title-index-field" :href="error.url" target="_blank" rel="noopener noreferrer" v-text="error.url" />
 		</template>
-		<template #cell-actions="{ row: error }">
+		<template #cell-create_redirect="{ row: error }">
 			<div class="flex justify-end">
 				<Button size="xs" icon="moved" :href="error.create_redirect_url" :text="__('seo-pro::messages.create_redirect')" />
 			</div>
+		</template>
+		<template #prepended-row-actions="{ row: error }">
+			<DropdownItem :text="__('seo-pro::messages.create_redirect')" :href="error.create_redirect_url" icon="moved" />
 		</template>
 	</Listing>
 
