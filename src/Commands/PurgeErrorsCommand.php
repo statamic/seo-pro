@@ -24,7 +24,7 @@ class PurgeErrorsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Purges 404 errors older than the configured threshold, then evicts any exceeding the configured cap.';
+    protected $description = 'Purges 404 errors older than the configured threshold, then purges any exceeding the configured cap.';
 
     /**
      * Execute the console command.
@@ -35,7 +35,7 @@ class PurgeErrorsCommand extends Command
     {
         $this
             ->purgeErrorsOlderThan()
-            ->evictErrorsExceeding();
+            ->purgeErrorsExceeding();
     }
 
     private function purgeErrorsOlderThan(): self
@@ -57,7 +57,7 @@ class PurgeErrorsCommand extends Command
         return $this;
     }
 
-    private function evictErrorsExceeding(): self
+    private function purgeErrorsExceeding(): self
     {
         $maxErrors = config('statamic.seo-pro.redirects.errors.max_errors', 0);
 
@@ -83,10 +83,10 @@ class PurgeErrorsCommand extends Command
                     ->take($excess)
                     ->each->delete();
             },
-            message: 'Evicting excess errors...',
+            message: 'Purging excess errors...',
         );
 
-        $this->components->success("Evicted errors exceeding the cap of $maxErrors.");
+        $this->components->success("Purged errors exceeding the cap of $maxErrors.");
 
         return $this;
     }

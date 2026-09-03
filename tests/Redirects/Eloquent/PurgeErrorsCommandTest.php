@@ -25,7 +25,7 @@ class PurgeErrorsCommandTest extends TestCase
     }
 
     #[Test]
-    public function it_evicts_the_least_valuable_errors_when_max_errors_is_exceeded()
+    public function it_purges_the_least_valuable_errors_when_max_errors_is_exceeded()
     {
         Carbon::setTestNow('2026-04-21 12:00:00');
 
