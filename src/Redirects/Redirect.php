@@ -177,11 +177,6 @@ class Redirect
         return cp_route('seo-pro.redirects.update', $this->id());
     }
 
-    public function deleteUrl(): string
-    {
-        return cp_route('seo-pro.redirects.destroy', $this->id());
-    }
-
     public function getQueryableValue(string $field)
     {
         if (in_array($method = Str::camel($field), $this->queryableMethods())) {

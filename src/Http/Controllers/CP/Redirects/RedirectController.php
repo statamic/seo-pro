@@ -193,11 +193,4 @@ class RedirectController extends CpController
 
         $redirect->save();
     }
-
-    public function destroy(Request $request, Redirect $redirect)
-    {
-        $this->authorize('delete', $redirect);
-
-        $redirect->delete();
-    }
 }

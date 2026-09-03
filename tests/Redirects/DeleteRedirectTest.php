@@ -14,44 +14,89 @@ class DeleteRedirectTest extends TestCase
     use PreventsSavingStacheItemsToDisk;
 
     #[Test]
-    public function can_delete_redirect()
+    public function can_delete_selected_redirects()
     {
-        Facades\Redirect::make()
-            ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
-            ->responseCode(302)
-            ->enabled(true)
-            ->save();
-
-        $this->assertNotNull(Facades\Redirect::find('abc'));
+        $this->createRedirect('abc', '/old-url');
+        $this->createRedirect('def', '/another-old-url');
+        $this->createRedirect('ghi', '/untouched-url');
 
         $this
             ->actingAs(User::make()->makeSuper()->save())
-            ->delete(cp_route('seo-pro.redirects.destroy', 'abc'))
-            ->assertOk();
+            ->postJson(cp_route('seo-pro.redirects.actions.run'), [
+                'action' => 'delete_redirect',
+                'selections' => ['abc', 'def'],
+                'values' => [],
+            ])
+            ->assertOk()
+            ->assertJson(['success' => true]);
 
         $this->assertNull(Facades\Redirect::find('abc'));
+        $this->assertNull(Facades\Redirect::find('def'));
+        $this->assertNotNull(Facades\Redirect::find('ghi'));
     }
 
     #[Test]
-    public function cant_delete_redirect_without_permission()
+    public function delete_action_is_listed_for_selected_redirects()
     {
-        Facades\Redirect::make()
-            ->id('abc')
-            ->source('https://cool-runnings.com/old-url')
-            ->destination('https://cool-runnings.com/new-url')
-            ->responseCode(302)
-            ->enabled(true)
-            ->save();
+        $this->createRedirect('abc', '/old-url');
+        $this->createRedirect('def', '/another-old-url');
 
-        Role::make('test')->addPermission('access cp')->save();
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.redirects.actions.bulk'), [
+                'selections' => ['abc', 'def'],
+            ])
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.handle', 'delete_redirect');
+    }
+
+    #[Test]
+    public function cant_delete_selected_redirects_without_permission()
+    {
+        $this->createRedirect('abc', '/old-url');
+        $this->createRedirect('def', '/another-old-url');
+
+        Role::make('test')->addPermission('access cp')->addPermission('view seo redirects')->save();
 
         $this
             ->actingAs(User::make()->assignRole('test')->save())
-            ->delete(cp_route('seo-pro.redirects.destroy', 'abc'))
-            ->assertRedirect('/cp');
+            ->postJson(cp_route('seo-pro.redirects.actions.run'), [
+                'action' => 'delete_redirect',
+                'selections' => ['abc', 'def'],
+                'values' => [],
+            ])
+            ->assertForbidden();
 
         $this->assertNotNull(Facades\Redirect::find('abc'));
+        $this->assertNotNull(Facades\Redirect::find('def'));
+    }
+
+    #[Test]
+    public function delete_action_is_not_listed_without_permission()
+    {
+        $this->createRedirect('abc', '/old-url');
+        $this->createRedirect('def', '/another-old-url');
+
+        Role::make('test')->addPermission('access cp')->addPermission('view seo redirects')->save();
+
+        $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->postJson(cp_route('seo-pro.redirects.actions.bulk'), [
+                'selections' => ['abc', 'def'],
+            ])
+            ->assertOk()
+            ->assertJsonCount(0);
+    }
+
+    private function createRedirect(string $id, string $source): void
+    {
+        Facades\Redirect::make()
+            ->id($id)
+            ->source($source)
+            ->destination('/new-url')
+            ->responseCode(302)
+            ->enabled(true)
+            ->save();
     }
 }
