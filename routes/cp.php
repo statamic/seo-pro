@@ -29,7 +29,9 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
 
     Route::get('redirects/export', Controllers\CP\Redirects\ExportRedirectsController::class)->name('redirects.export');
     Route::post('redirects/import', Controllers\CP\Redirects\ImportRedirectsController::class)->name('redirects.import');
-    Route::resource('redirects', Controllers\CP\Redirects\RedirectController::class)->except('show');
+    Route::post('redirects/actions', [Controllers\CP\Redirects\RedirectActionController::class, 'run'])->name('redirects.actions.run');
+    Route::post('redirects/actions/list', [Controllers\CP\Redirects\RedirectActionController::class, 'bulkActions'])->name('redirects.actions.bulk');
+    Route::resource('redirects', Controllers\CP\Redirects\RedirectController::class)->except('show', 'destroy');
 
     Route::post('preview', Controllers\CP\PreviewController::class)->name('preview');
 });
