@@ -5,6 +5,8 @@ namespace Statamic\SeoPro\Http\Controllers\CP;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Llms\Llms;
@@ -40,6 +42,8 @@ class LlmsController extends CpController
                 'handle' => $site->handle(),
                 'name' => $site->name(),
             ])->values()->all(),
+            'collectionOptions' => $this->collectionOptions($site),
+            'entryOptions' => $this->entryOptions($site),
             'file' => $this->generator->status($site),
         ];
     }
@@ -120,6 +124,10 @@ class LlmsController extends CpController
             'title' => [Rule::requiredIf($enabled && $managed), 'nullable', 'string', 'max:5000'],
             'summary' => ['nullable', 'string', 'max:20000'],
             'details' => ['nullable', 'string', 'max:100000'],
+            'collections' => ['sometimes', 'array', 'max:100'],
+            'collections.*' => ['string', 'max:255', 'distinct'],
+            'entries' => ['sometimes', 'array', 'max:1000'],
+            'entries.*' => ['string', 'max:255', 'distinct'],
             'sections' => ['present', 'array', 'max:50'],
             'sections.*.title' => ['nullable', 'string', 'max:5000'],
             'sections.*.links' => ['present', 'array', 'max:100'],
@@ -145,6 +153,8 @@ class LlmsController extends CpController
         $values['title'] ??= '';
         $values['summary'] ??= '';
         $values['details'] ??= '';
+        $values['collections'] ??= [];
+        $values['entries'] ??= [];
         $values['custom_source'] ??= '';
 
         if ($validateRenderedDocument && $enabled) {
@@ -175,5 +185,41 @@ class LlmsController extends CpController
         } catch (Throwable) {
             return '';
         }
+    }
+
+    private function collectionOptions($site): array
+    {
+        return Collection::all()
+            ->filter(fn ($collection) => $collection->sites()->contains($site->handle()))
+            ->map(fn ($collection) => [
+                'label' => $collection->title(),
+                'value' => $collection->handle(),
+            ])
+            ->sortBy('label', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values()
+            ->all();
+    }
+
+    private function entryOptions($site): array
+    {
+        return Entry::query()
+            ->where('site', $site->handle())
+            ->whereNotNull('uri')
+            ->whereStatus('published')
+            ->get()
+            ->map(function ($entry) {
+                $title = $entry->value('title');
+                $title = is_scalar($title) || $title instanceof \Stringable
+                    ? trim((string) preg_replace('/\s+/u', ' ', (string) $title))
+                    : '';
+
+                return [
+                    'label' => sprintf('%s — %s', $title ?: ($entry->slug() ?? $entry->id()), $entry->collection()->title()),
+                    'value' => $entry->id(),
+                ];
+            })
+            ->sortBy('label', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values()
+            ->all();
     }
 }

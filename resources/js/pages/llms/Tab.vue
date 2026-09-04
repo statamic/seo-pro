@@ -6,6 +6,7 @@ import {
 	Badge,
 	Button,
 	CodeEditor,
+	Combobox,
 	Description,
 	Field,
 	Heading,
@@ -40,6 +41,8 @@ const liveUrl = ref('');
 const file = ref({});
 const sites = ref([]);
 const site = ref('');
+const collectionOptions = ref([]);
+const entryOptions = ref([]);
 const errors = ref({});
 const previewError = ref(false);
 const hydrating = ref(false);
@@ -64,6 +67,8 @@ function hydrate(data) {
 	file.value = data.file;
 	sites.value = data.sites;
 	site.value = data.site;
+	collectionOptions.value = data.collectionOptions;
+	entryOptions.value = data.entryOptions;
 	errors.value = {};
 	previewError.value = false;
 	loaded.value = true;
@@ -289,6 +294,31 @@ defineExpose({ save });
 							</Field>
 							<Field :label="__('seo-pro::messages.llms_txt.details')" :instructions="__('seo-pro::messages.llms_txt.details_instructions')">
 								<Textarea v-model="form.details" rows="5" class="font-mono" />
+							</Field>
+						</Panel>
+
+						<Panel class="p-6 space-y-6">
+							<div>
+								<Heading size="lg" :text="__('seo-pro::messages.llms_txt.statamic_content')" />
+								<Description class="mt-1" :text="__('seo-pro::messages.llms_txt.statamic_content_description')" />
+							</div>
+							<Field :label="__('seo-pro::messages.llms_txt.collections')" :instructions="__('seo-pro::messages.llms_txt.collections_instructions')">
+								<Combobox
+									v-model="form.collections"
+									multiple
+									searchable
+									:options="collectionOptions"
+									:placeholder="__('seo-pro::messages.llms_txt.select_collections')"
+								/>
+							</Field>
+							<Field :label="__('seo-pro::messages.llms_txt.entries')" :instructions="__('seo-pro::messages.llms_txt.entries_instructions')">
+								<Combobox
+									v-model="form.entries"
+									multiple
+									searchable
+									:options="entryOptions"
+									:placeholder="__('seo-pro::messages.llms_txt.select_entries')"
+								/>
 							</Field>
 						</Panel>
 

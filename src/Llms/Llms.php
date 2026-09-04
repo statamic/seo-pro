@@ -86,6 +86,8 @@ class Llms
         $values['summary'] = (string) ($values['summary'] ?? '');
         $values['details'] = (string) ($values['details'] ?? '');
         $values['custom_source'] = (string) ($values['custom_source'] ?? '');
+        $values['collections'] = self::normalizeSelections($values['collections']);
+        $values['entries'] = self::normalizeSelections($values['entries']);
         $values['sections'] = collect(is_array($values['sections']) ? $values['sections'] : [])
             ->filter(fn ($section) => is_array($section))
             ->map(function (array $section) {
@@ -116,6 +118,8 @@ class Llms
             'title' => '{{ config:app:name }}',
             'summary' => '',
             'details' => '',
+            'collections' => [],
+            'entries' => [],
             'sections' => [],
             'custom_source' => '',
         ];
@@ -212,5 +216,15 @@ class Llms
         }
 
         return $saved;
+    }
+
+    private static function normalizeSelections(mixed $selections): array
+    {
+        return collect(is_array($selections) ? $selections : [])
+            ->filter(fn ($selection) => is_string($selection) && trim($selection) !== '')
+            ->map(fn (string $selection) => trim($selection))
+            ->unique()
+            ->values()
+            ->all();
     }
 }

@@ -14,6 +14,8 @@ class LlmsRenderer
 {
     public const MAX_BYTES = 512000;
 
+    public function __construct(private ?LlmsContent $content = null) {}
+
     public function render(LlmsDocument|array $document, string|SiteObject|null $site = null): string
     {
         $values = $document instanceof LlmsDocument
@@ -51,14 +53,22 @@ class LlmsRenderer
             $lines[] = $this->normalizeLines($details);
         }
 
-        foreach ($values['sections'] as $section) {
-            $sectionTitle = trim($this->parse($section['title'], $context));
+        $sections = [
+            ...$this->content()->sections($values, $site),
+            ...$values['sections'],
+        ];
+
+        foreach ($sections as $section) {
+            $parseAntlers = $section['parse_antlers'] ?? true;
+            $sectionTitle = trim($parseAntlers
+                ? $this->parse($section['title'], $context)
+                : $section['title']);
             $links = collect($section['links'])
-                ->map(function (array $link) use ($context) {
+                ->map(function (array $link) use ($context, $parseAntlers) {
                     return [
-                        'title' => trim($this->parse($link['title'], $context)),
-                        'url' => trim($this->parse($link['url'], $context)),
-                        'description' => trim($this->parse($link['description'], $context)),
+                        'title' => trim($parseAntlers ? $this->parse($link['title'], $context) : $link['title']),
+                        'url' => trim($parseAntlers ? $this->parse($link['url'], $context) : $link['url']),
+                        'description' => trim($parseAntlers ? $this->parse($link['description'], $context) : $link['description']),
                     ];
                 })
                 ->filter(fn (array $link) => $link['title'] !== '' || $link['url'] !== '')
@@ -102,6 +112,11 @@ class LlmsRenderer
     private function parse(string $value, array $context): string
     {
         return (string) Antlers::parse($value, $context);
+    }
+
+    private function content(): LlmsContent
+    {
+        return $this->content ??= app(LlmsContent::class);
     }
 
     private function context(SiteObject $site): array
