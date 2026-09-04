@@ -25,6 +25,13 @@ class LlmsCpTest extends TestCase
             ->assertJsonPath('values.enabled', false)
             ->assertJsonPath('values.mode', 'managed')
             ->assertJsonPath('values.title', '{{ config:app:name }}')
+            ->assertJsonPath('values.collections', [])
+            ->assertJsonPath('values.entries', [])
+            ->assertJsonFragment(['label' => 'Articles', 'value' => 'articles'])
+            ->assertJsonFragment([
+                'label' => 'About — Pages',
+                'value' => '62136fa2-9e5c-4c38-a894-a2753f02f5ff',
+            ])
             ->assertJsonPath('file.exists', false)
             ->assertJsonPath('file.path', public_path('llms.txt'))
             ->assertJsonPath('liveUrl', 'http://cool-runnings.com/llms.txt');
@@ -56,6 +63,28 @@ class LlmsCpTest extends TestCase
             ->assertJsonPath('file.managed', true);
 
         $this->assertSame("# Cool Runnings\n", $this->files->get(public_path('llms.txt')));
+    }
+
+    #[Test]
+    public function selected_collections_and_entries_are_saved_and_previewed()
+    {
+        $this->actingAs(User::make()->makeSuper()->save())
+            ->patchJson(cp_route('seo-pro.llms.update'), $this->payload([
+                'collections' => ['articles'],
+                'entries' => ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+            ]))
+            ->assertOk()
+            ->assertJsonPath('saved', true)
+            ->assertSee('## Articles', false)
+            ->assertSee('## Pages', false);
+
+        $settings = Addon::get('statamic/seo-pro')->settings();
+
+        $this->assertSame(['articles'], $settings->get('llms.sites.default.policy.collections'));
+        $this->assertSame(
+            ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+            $settings->get('llms.sites.default.policy.entries'),
+        );
     }
 
     #[Test]
@@ -148,6 +177,8 @@ class LlmsCpTest extends TestCase
             'title' => 'Cool Runnings',
             'summary' => '',
             'details' => '',
+            'collections' => [],
+            'entries' => [],
             'sections' => [],
             'custom_source' => '',
         ], $overrides);

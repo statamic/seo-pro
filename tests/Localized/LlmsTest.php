@@ -50,4 +50,29 @@ class LlmsTest extends LocalizedTestCase
         $this->assertSame(public_path('fr/llms.txt'), $result['path']);
         $this->assertSame("# Français\n", $this->files->get(public_path('fr/llms.txt')));
     }
+
+    #[Test]
+    public function selected_content_is_resolved_for_the_configured_site()
+    {
+        Llms::saveWithoutGenerated(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Français',
+            'collections' => ['articles'],
+            'entries' => ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+        ]), Site::get('french'));
+
+        $contents = $this->get('http://cool-runnings.com/fr/llms.txt')
+            ->assertOk()
+            ->content();
+
+        $this->assertStringContainsString(
+            '- [Les Nectar of the Gods](http://cool-runnings.com/fr/nectar)',
+            $contents,
+        );
+        $this->assertStringContainsString(
+            '- [About](http://cool-runnings.com/fr/about)',
+            $contents,
+        );
+        $this->assertStringNotContainsString('The Magic Happens', $contents);
+    }
 }

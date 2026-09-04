@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Events\AddonSettingsSaved;
 use Statamic\Facades\Addon;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\Llms\Llms;
@@ -82,6 +83,84 @@ TXT."\n", $response->content());
         $this->get('/llms.txt')
             ->assertOk()
             ->assertContent("# Cool Runnings\n\nCustom content.\n");
+    }
+
+    #[Test]
+    public function it_includes_selected_collections_and_entries_grouped_by_collection()
+    {
+        $this->saveEnabled([
+            'collections' => ['articles'],
+            'entries' => ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+        ]);
+
+        $contents = $this->get('/llms.txt')->assertOk()->content();
+
+        $this->assertStringContainsString("## Articles\n", $contents);
+        $this->assertStringContainsString(
+            '- [The Magic Happens at 7 1/2 Pumps](http://cool-runnings.com/magic)',
+            $contents,
+        );
+        $this->assertStringContainsString("## Pages\n", $contents);
+        $this->assertStringContainsString(
+            '- [About](http://cool-runnings.com/about)',
+            $contents,
+        );
+    }
+
+    #[Test]
+    public function an_entry_selected_individually_and_through_its_collection_is_only_included_once()
+    {
+        $this->saveEnabled([
+            'collections' => ['pages'],
+            'entries' => ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+        ]);
+
+        $contents = $this->get('/llms.txt')->assertOk()->content();
+
+        $this->assertSame(1, substr_count($contents, '](http://cool-runnings.com/about)'));
+    }
+
+    #[Test]
+    public function selected_draft_entries_are_not_included()
+    {
+        Entry::make()
+            ->id('draft-page')
+            ->collection('pages')
+            ->slug('draft-page')
+            ->published(false)
+            ->data(['title' => 'Draft Page'])
+            ->save();
+        $this->saveEnabled([
+            'collections' => ['pages'],
+            'entries' => ['draft-page'],
+        ]);
+
+        $contents = $this->get('/llms.txt')->assertOk()->content();
+
+        $this->assertStringNotContainsString('Draft Page', $contents);
+        $this->assertStringNotContainsString('/draft-page', $contents);
+    }
+
+    #[Test]
+    public function selected_content_changes_invalidate_the_route_cache_and_refresh_a_managed_file()
+    {
+        $this->saveEnabled([
+            'entries' => ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+        ]);
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate();
+
+        $this->get('/llms.txt')->assertOk()->assertSee('- [About](', false);
+
+        Entry::find('62136fa2-9e5c-4c38-a894-a2753f02f5ff')
+            ->set('title', 'About the Team')
+            ->save();
+
+        $this->get('/llms.txt')->assertOk()->assertSee('- [About the Team](', false);
+        $this->assertStringContainsString(
+            '- [About the Team](http://cool-runnings.com/about)',
+            $this->files->get(public_path('llms.txt')),
+        );
     }
 
     #[Test]
