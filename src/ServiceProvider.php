@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Statamic\Console\Commands\Multisite;
+use Statamic\Console\Commands\StaticWarm;
 use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Addon;
 use Statamic\Facades\CP\Nav;
@@ -20,9 +21,11 @@ use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro\Commands\GenerateReportCommand;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
+use Statamic\SeoPro\Events\LlmsTxtGenerated;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
 use Statamic\SeoPro\GraphQL\SeoProType;
+use Statamic\SeoPro\Llms\Llms;
 use Statamic\SeoPro\Redirects\Error;
 use Statamic\SeoPro\Redirects\ErrorRepository;
 use Statamic\SeoPro\Redirects\HandleRedirects;
@@ -86,6 +89,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootGit()
             ->bootAddonScheduledCommands()
             ->bootAddonGraphQL()
+            ->bootLlmsTxt()
             ->bootMultisiteCommandHook();
     }
 
@@ -287,10 +291,21 @@ class ServiceProvider extends AddonServiceProvider
             config()->set('statamic.git.paths', array_values(array_unique([
                 ...config('statamic.git.paths', []),
                 public_path('robots.txt'),
+                ...Site::all()->map(fn ($site) => public_path(Llms::relativePath($site)))->all(),
             ])));
 
             Git::listen(RedirectSaved::class);
+            Git::listen(LlmsTxtGenerated::class);
         }
+
+        return $this;
+    }
+
+    protected function bootLlmsTxt()
+    {
+        StaticWarm::hook('additional', function ($urls, $next) {
+            return $next($urls->merge(Llms::enabledSites()->map(fn ($site) => Llms::url($site))));
+        });
 
         return $this;
     }

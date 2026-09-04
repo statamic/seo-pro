@@ -36,6 +36,7 @@ class RobotsController extends CpController
             'liveUrl' => Robots::authority(Site::selected()).'/robots.txt',
             'sitemapUrlsAreEnvironmentDependent' => Robots::sitemapUrlsAreEnvironmentDependent(),
             'file' => $this->generator->status(),
+            'llmsEditUrl' => cp_route('seo-pro.llms.edit'),
         ];
 
         if ($request->wantsJson()) {

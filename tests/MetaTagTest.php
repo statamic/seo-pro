@@ -943,6 +943,24 @@ EOT);
     }
 
     #[Test]
+    public function it_escapes_the_llms_txt_meta_url()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['llms_txt'] = 'https://example.com/llms.txt?one=1&two="quoted"';
+
+            return $next($metaData);
+        });
+
+        $this->get('/about')->assertSee(
+            '<link rel="describedby" href="https://example.com/llms.txt?one=1&amp;two=&quot;quoted&quot;" />',
+            false,
+        );
+    }
+
+    #[Test]
     public function it_applies_multiple_meta_data_hooks_in_sequence()
     {
         $this->withoutExceptionHandling();

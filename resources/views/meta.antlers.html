@@ -109,6 +109,10 @@
     <link type="text/plain" rel="author" href="{{ humans_txt }}" />
 {{ /if }}
 
+{{ if llms_txt }}
+    <link rel="describedby" href="{{ llms_txt | striptags | entities | trim }}" />
+{{ /if }}
+
 {{ if google_verification }}
     <meta name="google-site-verification" content="{{ google_verification | striptags | entities | trim }}" />
 {{ /if }}
