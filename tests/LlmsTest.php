@@ -11,6 +11,7 @@ use Statamic\Events\AddonSettingsSaved;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
+use Statamic\Facades\URL;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\Llms\Llms;
 use Statamic\SeoPro\Llms\LlmsDocument;
@@ -23,6 +24,7 @@ class LlmsTest extends TestCase
     protected function tearDown(): void
     {
         $this->files->delete(public_path('llms.txt'));
+        $this->files->deleteDirectory(public_path('moved'));
 
         parent::tearDown();
     }
@@ -269,6 +271,91 @@ TXT."\n", $response->content());
         $this->assertTrue($result['removed']);
         $this->assertFileDoesNotExist(public_path('llms.txt'));
         $this->assertNull(Llms::generated());
+    }
+
+    #[Test]
+    public function a_managed_file_is_relocated_when_the_site_url_changes()
+    {
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
+
+        Site::default()->set('url', '/moved/');
+        URL::clearUrlCache();
+
+        $result = $generator->sync(new LlmsDocument(['enabled' => true, 'title' => 'Second']));
+
+        $this->assertTrue($result['changed']);
+        $this->assertFileDoesNotExist(public_path('llms.txt'));
+        $this->assertSame("# Second\n", $this->files->get(public_path('moved/llms.txt')));
+        $this->assertSame(public_path('moved/llms.txt'), Llms::generated()['path']);
+    }
+
+    #[Test]
+    public function disabling_after_a_site_url_change_removes_the_previous_managed_file()
+    {
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
+
+        Site::default()->set('url', '/moved/');
+        URL::clearUrlCache();
+
+        $result = $generator->sync(new LlmsDocument(['enabled' => false, 'title' => 'First']));
+
+        $this->assertTrue($result['removed']);
+        $this->assertFileDoesNotExist(public_path('llms.txt'));
+        $this->assertFileDoesNotExist(public_path('moved/llms.txt'));
+        $this->assertNull(Llms::generated());
+    }
+
+    #[Test]
+    public function a_modified_file_at_the_previous_site_path_is_not_removed()
+    {
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
+        $generated = Llms::generated();
+        $this->files->put(public_path('llms.txt'), "# Changed manually\n");
+
+        Site::default()->set('url', '/moved/');
+        URL::clearUrlCache();
+
+        try {
+            $generator->sync(new LlmsDocument(['enabled' => true, 'title' => 'Second']));
+            $this->fail('Synchronization should refuse to remove the modified previous file.');
+        } catch (\RuntimeException $exception) {
+            $this->assertStringContainsString('has changed and will not be removed', $exception->getMessage());
+        }
+
+        $this->assertSame("# Changed manually\n", $this->files->get(public_path('llms.txt')));
+        $this->assertFileDoesNotExist(public_path('moved/llms.txt'));
+        $this->assertSame($generated, Llms::generated());
+    }
+
+    #[Test]
+    public function a_failed_relocation_restores_the_previous_file_and_settings()
+    {
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
+        $previousSettings = Llms::settingsSnapshot();
+
+        Site::default()->set('url', '/moved/');
+        URL::clearUrlCache();
+
+        Event::listen(AddonSettingsSaved::class, function () {
+            throw new \RuntimeException('The settings listener failed.');
+        });
+
+        try {
+            $generator->sync(new LlmsDocument(['enabled' => true, 'title' => 'Second']));
+            $this->fail('Relocation should have failed.');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('The settings listener failed.', $exception->getMessage());
+        }
+
+        $this->assertSame("# First\n", $this->files->get(public_path('llms.txt')));
+        $this->assertFileDoesNotExist(public_path('moved/llms.txt'));
+        $this->assertSame($previousSettings, Llms::settingsSnapshot());
+        $this->assertSame([], glob(public_path('moved/.seo-pro-llms-*')));
+        $this->assertSame([], glob(public_path('.seo-pro-llms-*')));
     }
 
     #[Test]

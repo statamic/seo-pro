@@ -33,14 +33,15 @@ class LlmsTxtGenerator
 
         return $this->locked(function () use ($document, $site) {
             $status = $this->status($site);
+            $relocated = $this->relocatedManagedFile($site, $status['path']);
 
             if (! $document->enabled()) {
-                return $status['managed']
-                    ? $this->removeManagedWhileLocked($document, $site)
+                return $status['managed'] || $relocated
+                    ? $this->removeManagedWhileLocked($document, $site, $status, $relocated)
                     : $this->saveOnly($document, $site, $status);
             }
 
-            return $status['managed']
+            return $status['managed'] || $relocated
                 ? $this->generateWhileLocked($document, $site)
                 : $this->saveOnly($document, $site, $status);
         });
@@ -131,27 +132,43 @@ class LlmsTxtGenerator
         $contents = $this->renderer->render($document, $site);
         $checksum = hash('sha256', $contents);
         $generated = Llms::generated($site) ?? [];
+        $relocated = $this->relocatedManagedFile($site, $path);
         $existingGeneratedAt = $this->existingGeneratedAt($generated, $checksum);
         $fileMatches = $this->fileMatches($path, $contents, $checksum);
         $settingsMatch = Llms::get($site)->all() === $document->all();
 
-        if ($fileMatches && $settingsMatch && $existingGeneratedAt) {
+        if ($fileMatches && $settingsMatch && $existingGeneratedAt && ! $relocated) {
             return $this->result($path, $contents, $existingGeneratedAt, false, false, false);
         }
 
         if ($fileMatches) {
             $generatedAt = $existingGeneratedAt ?? now();
             $settingsSnapshot = Llms::settingsSnapshot();
+            $relocatedSnapshot = $relocated
+                ? $this->snapshotFile($relocated['path'], expectedChecksum: $relocated['checksum'])
+                : null;
 
             try {
                 $this->saveGeneratedSettings($document, $site, $contents, $path, $generatedAt);
+
+                if ($relocated) {
+                    $this->deleteManagedFile($relocated['path'], $relocated['checksum']);
+                }
             } catch (Throwable $exception) {
-                $this->rollback($exception, $settingsSnapshot);
+                $this->rollback($exception, $settingsSnapshot, ...array_filter([$relocatedSnapshot]));
+            }
+
+            if ($relocatedSnapshot) {
+                $this->discardFileSnapshot($relocatedSnapshot);
             }
 
             $this->cache->forget($site);
 
-            return $this->result($path, $contents, $generatedAt, false, true, false);
+            if ($relocated) {
+                LlmsTxtGenerated::dispatch($document, $site, $path, $generatedAt);
+            }
+
+            return $this->result($path, $contents, $generatedAt, (bool) $relocated, true, false);
         }
 
         $settingsSnapshot = Llms::settingsSnapshot();
@@ -160,44 +177,73 @@ class LlmsTxtGenerator
             expectedChecksum: $status['exists'] ? ($generated['checksum'] ?? null) : null,
             expectMissing: ! $status['exists'],
         );
+        $relocatedSnapshot = $relocated
+            ? $this->snapshotFile($relocated['path'], expectedChecksum: $relocated['checksum'])
+            : null;
         $generatedAt = now();
 
         try {
             $this->writeFile($path, $contents);
             $this->saveGeneratedSettings($document, $site, $contents, $path, $generatedAt);
+
+            if ($relocated) {
+                $this->deleteManagedFile($relocated['path'], $relocated['checksum']);
+            }
         } catch (Throwable $exception) {
-            $this->rollback($exception, $settingsSnapshot, $fileSnapshot);
+            $this->rollback(
+                $exception,
+                $settingsSnapshot,
+                ...array_filter([$fileSnapshot, $relocatedSnapshot]),
+            );
         }
 
         $this->discardFileSnapshot($fileSnapshot);
+
+        if ($relocatedSnapshot) {
+            $this->discardFileSnapshot($relocatedSnapshot);
+        }
+
         $this->cache->forget($site);
         LlmsTxtGenerated::dispatch($document, $site, $path, $generatedAt);
 
         return $this->result($path, $contents, $generatedAt, true, true, false);
     }
 
-    private function removeManagedWhileLocked(LlmsDocument $document, SiteObject $site): array
-    {
-        $path = $this->path($site);
+    private function removeManagedWhileLocked(
+        LlmsDocument $document,
+        SiteObject $site,
+        array $status,
+        ?array $relocated,
+    ): array {
+        $path = $status['path'];
         $settingsSnapshot = Llms::settingsSnapshot();
-        $fileSnapshot = $this->snapshotFile(
-            $path,
-            expectedChecksum: Llms::generated($site)['checksum'] ?? null,
-        );
+        $checksum = Llms::generated($site)['checksum'] ?? null;
+        $managedFiles = $relocated
+            ? [$relocated]
+            : [['path' => $path, 'checksum' => $checksum]];
+        $fileSnapshots = collect($managedFiles)
+            ->map(fn (array $file) => $this->snapshotFile(
+                $file['path'],
+                expectedChecksum: $file['checksum'],
+            ))
+            ->all();
 
         try {
-            if ($this->files->exists($path) && ! $this->files->delete($path)) {
-                throw new RuntimeException("Unable to remove the managed llms.txt file at [{$path}].");
+            foreach ($managedFiles as $file) {
+                $this->deleteManagedFile($file['path'], $file['checksum']);
             }
 
             if (! Llms::saveWithoutGenerated($document, $site)) {
                 throw new RuntimeException('Unable to save llms.txt settings.');
             }
         } catch (Throwable $exception) {
-            $this->rollback($exception, $settingsSnapshot, $fileSnapshot);
+            $this->rollback($exception, $settingsSnapshot, ...$fileSnapshots);
         }
 
-        $this->discardFileSnapshot($fileSnapshot);
+        foreach ($fileSnapshots as $fileSnapshot) {
+            $this->discardFileSnapshot($fileSnapshot);
+        }
+
         $this->cache->forget($site);
 
         return $this->result($path, '', now(), true, true, true);
@@ -278,7 +324,8 @@ class LlmsTxtGenerator
 
         if (($settings['policy'] ?? null) !== $document->all()
             || ($settings['generated']['timestamp'] ?? null) !== $generatedAt->toIso8601String()
-            || ($settings['generated']['checksum'] ?? null) !== hash('sha256', $contents)) {
+            || ($settings['generated']['checksum'] ?? null) !== hash('sha256', $contents)
+            || ($settings['generated']['path'] ?? null) !== $path) {
             throw new RuntimeException('The generated llms.txt settings could not be verified after saving.');
         }
     }
@@ -351,7 +398,89 @@ class LlmsTxtGenerator
         return ['exists' => true, 'path' => $target, 'backup' => $backup, 'mode' => $mode];
     }
 
-    private function rollback(Throwable $original, array $settingsSnapshot, ?array $fileSnapshot = null): never
+    private function relocatedManagedFile(SiteObject $site, string $currentPath): ?array
+    {
+        $generated = Llms::generated($site) ?? [];
+        $path = $generated['path'] ?? null;
+        $checksum = $generated['checksum'] ?? null;
+
+        if (! is_string($path)
+            || ! is_string($checksum)
+            || $this->pathsMatch($path, $currentPath)
+            || ! $this->isWithinPublicDirectory($path)) {
+            return null;
+        }
+
+        if (is_link($path)) {
+            throw new RuntimeException("SEO Pro will not manage an llms.txt symbolic link at [{$path}].");
+        }
+
+        if (! $this->files->exists($path)) {
+            return null;
+        }
+
+        $resolvedPath = realpath($path);
+
+        if (! is_string($resolvedPath)
+            || ! $this->isWithinPublicDirectory($resolvedPath)
+            || ! $this->files->isFile($path)
+            || ! $this->fileHasChecksum($path, $checksum)) {
+            throw new RuntimeException("The previously managed llms.txt file at [{$path}] has changed and will not be removed.");
+        }
+
+        return compact('path', 'checksum');
+    }
+
+    private function deleteManagedFile(string $path, string $checksum): void
+    {
+        if (! $this->files->exists($path)) {
+            return;
+        }
+
+        if (is_link($path) || ! $this->files->isFile($path) || ! $this->fileHasChecksum($path, $checksum)) {
+            throw new RuntimeException("The managed llms.txt file at [{$path}] changed and will not be removed.");
+        }
+
+        if (! $this->files->delete($path)) {
+            throw new RuntimeException("Unable to remove the managed llms.txt file at [{$path}].");
+        }
+    }
+
+    private function pathsMatch(string $first, string $second): bool
+    {
+        $first = rtrim(str_replace('\\', '/', $first), '/');
+        $second = rtrim(str_replace('\\', '/', $second), '/');
+
+        return DIRECTORY_SEPARATOR === '\\'
+            ? strtolower($first) === strtolower($second)
+            : $first === $second;
+    }
+
+    private function fileHasChecksum(string $path, string $checksum): bool
+    {
+        try {
+            $currentChecksum = $this->files->hash($path, 'sha256');
+
+            return is_string($currentChecksum) && hash_equals($checksum, $currentChecksum);
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    private function isWithinPublicDirectory(string $path): bool
+    {
+        $publicPath = rtrim(str_replace('\\', '/', public_path()), '/');
+        $path = str_replace('\\', '/', $path);
+
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $publicPath = strtolower($publicPath);
+            $path = strtolower($path);
+        }
+
+        return str_starts_with($path, $publicPath.'/');
+    }
+
+    private function rollback(Throwable $original, array $settingsSnapshot, array ...$fileSnapshots): never
     {
         $rollbackErrors = [];
 
@@ -361,7 +490,7 @@ class LlmsTxtGenerator
             $rollbackErrors[] = 'settings: '.$exception->getMessage();
         }
 
-        if ($fileSnapshot) {
+        foreach ($fileSnapshots as $fileSnapshot) {
             try {
                 $this->restoreFileSnapshot($fileSnapshot);
             } catch (Throwable $exception) {
