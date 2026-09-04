@@ -110,7 +110,7 @@
 {{ /if }}
 
 {{ if llms_txt }}
-    <link rel="describedby" href="{{ llms_txt }}" />
+    <link rel="describedby" href="{{ llms_txt | striptags | entities | trim }}" />
 {{ /if }}
 
 {{ if google_verification }}
