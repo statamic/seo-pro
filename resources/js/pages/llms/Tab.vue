@@ -55,8 +55,20 @@ const modeOptions = [
 
 const isBusy = computed(() => loading.value || saving.value || generating.value);
 const hasUnmanagedFile = computed(() => file.value.exists && !file.value.managed);
+let previewTimer = null;
+let previewController = null;
+let previewRequest = 0;
+
+function cancelPreview() {
+	clearTimeout(previewTimer);
+	previewTimer = null;
+	previewController?.abort();
+	previewController = null;
+	previewRequest++;
+}
 
 function hydrate(data) {
+	cancelPreview();
 	hydrating.value = true;
 	form.value = deepClone(data.values);
 	rendered.value = data.preview;
@@ -79,6 +91,7 @@ function hydrate(data) {
 function load(selectedSite = null) {
 	if (loading.value) return;
 
+	cancelPreview();
 	loading.value = true;
 	$axios.get(props.editUrl, { params: selectedSite ? { site: selectedSite } : {} })
 		.then((response) => hydrate(response.data))
@@ -101,6 +114,7 @@ function clearDirtyStateIfUnchanged(submitted) {
 function save() {
 	if (!loaded.value || isBusy.value) return;
 
+	cancelPreview();
 	saving.value = true;
 	emit('saving', true);
 	errors.value = {};
@@ -130,6 +144,7 @@ function requestGeneration() {
 }
 
 function generate() {
+	cancelPreview();
 	confirmingGeneration.value = false;
 	generating.value = true;
 	emit('saving', true);
@@ -181,24 +196,43 @@ function removeLink(section, index) {
 	section.links.splice(index, 1);
 }
 
-let previewTimer;
 watch(form, () => {
 	if (!loaded.value || hydrating.value) return;
 
 	Statamic.$dirty.add(dirtyStateName);
-	clearTimeout(previewTimer);
+	cancelPreview();
+
+	if (!form.value?.enabled || form.value.mode !== 'managed') {
+		previewError.value = false;
+		return;
+	}
+
+	const request = previewRequest;
 	previewTimer = setTimeout(() => {
-		$axios.post(previewUrl.value, payload())
+		previewTimer = null;
+		const controller = new AbortController();
+		previewController = controller;
+
+		$axios.post(previewUrl.value, payload(), { signal: controller.signal })
 			.then((response) => {
+				if (controller.signal.aborted || request !== previewRequest) return;
+
 				rendered.value = response.data.preview;
 				previewError.value = false;
 			})
-			.catch(() => previewError.value = true);
+			.catch(() => {
+				if (controller.signal.aborted || request !== previewRequest) return;
+
+				previewError.value = true;
+			})
+			.finally(() => {
+				if (previewController === controller) previewController = null;
+			});
 	}, 250);
 }, { deep: true });
 
 onMounted(() => load());
-onUnmounted(() => clearTimeout(previewTimer));
+onUnmounted(() => cancelPreview());
 
 defineExpose({ save });
 </script>
