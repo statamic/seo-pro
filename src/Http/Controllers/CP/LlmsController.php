@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
+use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\Llms\Llms;
 use Statamic\SeoPro\Llms\LlmsDocument;
@@ -38,7 +39,7 @@ class LlmsController extends CpController
             'previewUrl' => cp_route('seo-pro.llms.preview'),
             'liveUrl' => Llms::url($site),
             'site' => $site->handle(),
-            'sites' => Site::all()->map(fn ($site) => [
+            'sites' => Site::authorized()->map(fn ($site) => [
                 'handle' => $site->handle(),
                 'name' => $site->name(),
             ])->values()->all(),
@@ -125,9 +126,35 @@ class LlmsController extends CpController
             'summary' => ['nullable', 'string', 'max:20000'],
             'details' => ['nullable', 'string', 'max:100000'],
             'collections' => ['sometimes', 'array', 'max:100'],
-            'collections.*' => ['string', 'max:255', 'distinct'],
+            'collections.*' => [
+                'bail',
+                'string',
+                'max:255',
+                'distinct',
+                function (string $attribute, mixed $value, \Closure $fail) use ($site) {
+                    $collection = Collection::find((string) $value);
+
+                    if (! $collection
+                        || ! $collection->sites()->contains($site->handle())
+                        || User::current()->cannot('view', $collection)) {
+                        $fail(__('The selected :attribute is invalid.', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'entries' => ['sometimes', 'array', 'max:1000'],
-            'entries.*' => ['string', 'max:255', 'distinct'],
+            'entries.*' => [
+                'bail',
+                'string',
+                'max:255',
+                'distinct',
+                function (string $attribute, mixed $value, \Closure $fail) use ($site) {
+                    $entry = Entry::find((string) $value)?->in($site->handle());
+
+                    if (! $entry || User::current()->cannot('view', $entry)) {
+                        $fail(__('The selected :attribute is invalid.', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'sections' => ['present', 'array', 'max:50'],
             'sections.*.title' => ['nullable', 'string', 'max:5000'],
             'sections.*.links' => ['present', 'array', 'max:100'],
@@ -174,6 +201,7 @@ class LlmsController extends CpController
         $site = Site::get($handle);
 
         abort_unless($site, 404);
+        $this->authorize('view', $site);
 
         return $site;
     }
@@ -190,7 +218,8 @@ class LlmsController extends CpController
     private function collectionOptions($site): array
     {
         return Collection::all()
-            ->filter(fn ($collection) => $collection->sites()->contains($site->handle()))
+            ->filter(fn ($collection) => $collection->sites()->contains($site->handle())
+                && User::current()->can('view', $collection))
             ->map(fn ($collection) => [
                 'label' => $collection->title(),
                 'value' => $collection->handle(),
@@ -207,6 +236,7 @@ class LlmsController extends CpController
             ->whereNotNull('uri')
             ->whereStatus('published')
             ->get()
+            ->filter(fn ($entry) => User::current()->can('view', $entry))
             ->map(function ($entry) {
                 $title = $entry->value('title');
                 $title = is_scalar($title) || $title instanceof \Stringable
