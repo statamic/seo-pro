@@ -15,6 +15,7 @@ class IndexController
             'canViewRedirects' => auth()->user()->can('view seo redirects'),
             'canEditSiteDefaults' => auth()->user()->can('edit seo site defaults'),
             'canEditSectionDefaults' => auth()->user()->can('edit seo section defaults'),
+            'canEditRobots' => auth()->user()->can('edit seo robots'),
         ]);
     }
 }
