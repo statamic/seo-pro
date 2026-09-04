@@ -16,7 +16,7 @@ class LlmsController extends Controller
 
     public function show(Request $request)
     {
-        $site = Site::findByUrl($request->url());
+        $site = Site::get($request->route('seoProSite'));
 
         abort_unless($site && Llms::url($site) === rtrim($request->url(), '/'), 404);
 

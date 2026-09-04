@@ -2,14 +2,27 @@
 
 namespace Tests\Localized;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Site;
+use Statamic\Facades\URL;
+use Statamic\Facades\YAML;
+use Statamic\SeoPro\Http\Controllers\LlmsController;
 use Statamic\SeoPro\Llms\Llms;
 use Statamic\SeoPro\Llms\LlmsDocument;
+use Statamic\SeoPro\Llms\LlmsRoutes;
 use Statamic\SeoPro\Llms\LlmsTxtGenerator;
 
 class LlmsTest extends LocalizedTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        LlmsRoutes::register(Site::all());
+    }
+
     protected function tearDown(): void
     {
         $this->files->delete(public_path('llms.txt'));
@@ -37,6 +50,59 @@ class LlmsTest extends LocalizedTestCase
             ->assertOk()
             ->assertContent("# Français\n");
         $this->get('http://cool-runnings.com/en-gb/llms.txt')->assertNotFound();
+    }
+
+    #[Test]
+    public function routes_support_deeply_nested_site_paths()
+    {
+        $sites = YAML::file("{$this->siteFixturePath}/resources/sites.yaml")->parse();
+        $sites['german'] = [
+            'name' => 'German',
+            'locale' => 'de_DE',
+            'url' => 'http://cool-runnings.com/regions/europe/de/',
+        ];
+
+        Site::setSites($sites);
+        URL::clearUrlCache();
+        LlmsRoutes::register(Site::all());
+
+        Llms::saveWithoutGenerated(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Deutsch',
+        ]), Site::get('german'));
+
+        $this->get('http://cool-runnings.com/regions/europe/de/llms.txt')
+            ->assertOk()
+            ->assertContent("# Deutsch\n");
+    }
+
+    #[Test]
+    public function routes_are_scoped_to_their_site_domains()
+    {
+        Llms::saveWithoutGenerated(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'English',
+        ]), Site::get('default'));
+        Llms::saveWithoutGenerated(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Italiano',
+        ]), Site::get('italian'));
+
+        $this->get('http://cool-runnings.com/llms.txt')
+            ->assertOk()
+            ->assertContent("# English\n");
+        $this->get('http://corse-fantastiche.it/llms.txt')
+            ->assertOk()
+            ->assertContent("# Italiano\n");
+    }
+
+    #[Test]
+    public function unrelated_llms_txt_paths_are_not_claimed_by_seo_pro()
+    {
+        $request = Request::create('http://cool-runnings.com/not-a-site/llms.txt');
+        $route = Route::getRoutes()->match($request);
+
+        $this->assertNotSame(LlmsController::class.'@show', $route->getActionName());
     }
 
     #[Test]
