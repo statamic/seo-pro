@@ -52,10 +52,18 @@
     {{ image }}
 
         {{ if is_og_glide_enabled }}
-            {{ glide:generate :src="image" preset="seo_pro_og" absolute="true" }}
-                <meta property="og:image" content="{{ url }}" />
-                <meta property="og:image:width" content="{{ width }}" />
-                <meta property="og:image:height" content="{{ height }}" />
+            {{ glide:generate :src="image" preset="seo_pro_og" absolute="true" as="og_generated" }}
+                {{ if og_generated }}
+                    {{ og_generated }}
+                        <meta property="og:image" content="{{ url }}" />
+                        <meta property="og:image:width" content="{{ width }}" />
+                        <meta property="og:image:height" content="{{ height }}" />
+                    {{ /og_generated }}
+                {{ else }}
+                    <meta property="og:image" content="{{ permalink }}" />
+                    <meta property="og:image:width" content="{{ width }}" />
+                    <meta property="og:image:height" content="{{ height }}" />
+                {{ /if }}
             {{ /glide:generate }}
         {{ else }}
             <meta property="og:image" content="{{ permalink }}" />
@@ -65,8 +73,14 @@
         <meta property="og:image:alt" content="{{ alt | striptags | entities | trim }}" />
 
         {{ if is_twitter_glide_enabled }}
-            {{ glide:generate :src="image" preset="seo_pro_twitter" absolute="true" }}
-                <meta name="twitter:image" content="{{ url }}" />
+            {{ glide:generate :src="image" preset="seo_pro_twitter" absolute="true" as="twitter_generated" }}
+                {{ if twitter_generated }}
+                    {{ twitter_generated }}
+                        <meta name="twitter:image" content="{{ url }}" />
+                    {{ /twitter_generated }}
+                {{ else }}
+                    <meta name="twitter:image" content="{{ permalink }}" />
+                {{ /if }}
             {{ /glide:generate }}
         {{ else }}
             <meta name="twitter:image" content="{{ permalink }}" />
