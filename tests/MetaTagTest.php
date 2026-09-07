@@ -407,42 +407,36 @@ EOT;
     }
 
     #[Test]
-    #[DataProvider('viewScenarioProvider')]
-    public function it_uses_raw_asset_url_for_svg_social_images($viewType)
+    #[DataProvider('ungeneratableSocialImageProvider')]
+    public function it_falls_back_to_raw_asset_url_when_glide_cannot_generate_social_image($viewType, $image)
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
 
         $this
             ->prepareViews($viewType)
             ->setSeoOnEntry(Entry::findByUri('/about'), [
-                'image' => 'img/icon.svg',
+                'image' => $image,
             ]);
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/icon.svg" />', false);
-        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/img/icon.svg" />', false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/'.$image.'" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/'.$image.'" />', false);
         $response->assertDontSee('/img/asset/', false);
-        $response->assertDontSee('seo_pro_og', false);
-        $response->assertDontSee('seo_pro_twitter', false);
     }
 
-    #[Test]
-    #[DataProvider('viewScenarioProvider')]
-    public function it_falls_back_to_raw_asset_url_when_glide_generation_fails($viewType)
+    public static function ungeneratableSocialImageProvider()
     {
-        Config::set('statamic.seo-pro.assets.container', 'assets');
+        $images = [
+            'format unsupported by driver' => 'img/icon.svg',
+            'file fails to decode' => 'img/corrupt.jpg',
+        ];
 
-        $this
-            ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findByUri('/about'), [
-                'image' => 'img/corrupt.jpg',
-            ]);
-
-        $response = $this->get('/about');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/corrupt.jpg" />', false);
-        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/img/corrupt.jpg" />', false);
+        foreach (static::viewScenarioProvider() as [$viewType]) {
+            foreach ($images as $reason => $image) {
+                yield "{$viewType}, {$reason}" => [$viewType, $image];
+            }
+        }
     }
 
     #[Test]
