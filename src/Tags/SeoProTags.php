@@ -52,10 +52,10 @@ class SeoProTags extends Tags
             ->withCurrent($current)
             ->get();
 
-        $metaData['is_twitter_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_twitter')
-            && $this->shouldGlideSocialImage($metaData['image'] ?? null);
-        $metaData['is_og_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_og')
-            && $this->shouldGlideSocialImage($metaData['image'] ?? null);
+        $shouldGlideSocialImage = $this->shouldGlideSocialImage($metaData['image'] ?? null);
+
+        $metaData['is_twitter_glide_enabled'] = $shouldGlideSocialImage && $this->isGlidePresetEnabled('seo_pro_twitter');
+        $metaData['is_og_glide_enabled'] = $shouldGlideSocialImage && $this->isGlidePresetEnabled('seo_pro_og');
 
         $metaData = $this->runHooks('meta-data', $metaData);
 
@@ -83,7 +83,7 @@ class SeoProTags extends Tags
         return array_key_exists($preset, Image::customManipulationPresets());
     }
 
-    protected function shouldGlideSocialImage(mixed $image): bool
+    private function shouldGlideSocialImage(mixed $image): bool
     {
         $asset = $this->socialImageAsset($image);
 
@@ -94,7 +94,7 @@ class SeoProTags extends Tags
         return ! in_array(strtolower($asset->extension()), ['gif', 'svg'], true);
     }
 
-    protected function socialImageAsset(mixed $image): ?Asset
+    private function socialImageAsset(mixed $image): ?Asset
     {
         if ($image instanceof Value) {
             $image = $image->value();
