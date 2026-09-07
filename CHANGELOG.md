@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.14.1 (2026-09-07)
+
+### What's fixed
+- Fall back to the raw asset URL when Glide can't generate a social image [#660](https://github.com/statamic/seo-pro/issues/660) by @edalzell
+
+
+
 ## 7.14.0 (2026-09-03)
 
 ### What's new
