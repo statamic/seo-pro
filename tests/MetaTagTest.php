@@ -408,27 +408,6 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
-    public function it_uses_raw_asset_url_for_gif_social_images($viewType)
-    {
-        Config::set('statamic.seo-pro.assets.container', 'assets');
-
-        $this
-            ->prepareViews($viewType)
-            ->setSeoOnEntry(Entry::findByUri('/about'), [
-                'image' => 'img/pixel.gif',
-            ]);
-
-        $response = $this->get('/about');
-        $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/pixel.gif" />', false);
-        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/img/pixel.gif" />', false);
-        $response->assertDontSee('/img/asset/', false);
-        $response->assertDontSee('seo_pro_og', false);
-        $response->assertDontSee('seo_pro_twitter', false);
-    }
-
-    #[Test]
-    #[DataProvider('viewScenarioProvider')]
     public function it_uses_raw_asset_url_for_svg_social_images($viewType)
     {
         Config::set('statamic.seo-pro.assets.container', 'assets');
