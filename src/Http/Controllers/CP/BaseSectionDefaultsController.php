@@ -8,6 +8,8 @@ use Statamic\Contracts\Taxonomies\Taxonomy;
 use Statamic\CP\PublishForm;
 use Statamic\Facades\Blueprint;
 use Statamic\Http\Controllers\CP\CpController;
+use Statamic\SeoPro\Events\CollectionDefaultsSaved;
+use Statamic\SeoPro\Events\TaxonomyDefaultsSaved;
 use Statamic\SeoPro\Fields;
 use Statamic\Support\Arr;
 
@@ -77,6 +79,12 @@ abstract class BaseSectionDefaultsController extends CpController
         }
 
         $item->cascade($cascade->all())->save();
+
+        if ($item instanceof Collection) {
+            CollectionDefaultsSaved::dispatch($item);
+        } elseif ($item instanceof Taxonomy) {
+            TaxonomyDefaultsSaved::dispatch($item);
+        }
 
         if ($disabled) {
             $this->removeChildSeo($item);

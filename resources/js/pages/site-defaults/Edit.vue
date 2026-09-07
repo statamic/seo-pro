@@ -92,7 +92,7 @@ const confirmSwitchLocalization = () => {
 const switchToLocalization = (localization) => {
 	localizing.value = localization.handle;
 
-	window.history.replaceState({}, '', localization.url);
+	window.history.replaceState({}, '', localization.url + window.location.hash);
 
 	$axios.get(localization.url).then((response) => {
 		const data = response.data;
@@ -150,6 +150,7 @@ const switchToLocalization = (localization) => {
 			:sync-field-confirmation-text
 			:track-dirty-state="true"
 			as-config
+			remember-tab
 		/>
 
 		<ConfigureModal

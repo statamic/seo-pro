@@ -57,6 +57,8 @@ class SeoProTags extends Tags
         $metaData['is_og_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_og')
             && $this->shouldGlideSocialImage($metaData['image'] ?? null);
 
+        $metaData = $this->runHooks('meta-data', $metaData);
+
         return $this->aliasedResult($metaData);
     }
 

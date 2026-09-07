@@ -112,13 +112,25 @@ description: "{{ content | strip_tags | truncate(250, '...') }}"
 
 You may configure data for the Organization/Person objects, as well as enable breadcrumb data from your Site Defaults:
 
-![JSON-LD Tab on Site Defaults page](./docs-site-defaults-json-ld.png)
+![JSON-LD Tab on Site Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-site-defaults-json-ld.png)
 
 You can then configure JSON-LD objects for your content via section defaults, which can be overridden on a per-entry/term basis.
 
 You can even use Antlers to pull data from fields as necessary:
 
-![JSON-LD Schema field on Section Defaults page](./docs-json-ld-schema.png)
+![JSON-LD Schema field on Section Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-json-ld-schema.png)
+
+If you want to use any tags or modifiers in your schema, you may need to [add them to an allowlist](https://statamic.dev/frontend/antlers#opting-into-tags-and-modifiers) in Statamic's `antlers.php` config.
+
+The "Organization Logo" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
+
+```php
+// config/statamic/seo-pro.php
+
+'json_ld' => [
+    'use_glide_for_logo' => false,
+],
+```
 
 ## Reports
 
@@ -147,6 +159,227 @@ You may add a reports widget to your dashboard to get a quick insight into your 
 ],
 ```
 
+## Redirects
+
+SEO Pro includes a redirect manager that lets you define URL redirects, automatically create redirects when slugs change, and track 404 errors.
+
+### Managing Redirects
+
+Head to `Tools > SEO Pro > Redirects` to create and manage redirects. Each redirect has a source URL, a destination URL, and a response code (301 or 302). Redirects can also be enabled or disabled.
+
+![Redirects listing](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-redirects.png)
+
+#### Importing & Exporting
+
+You can import and export redirects as CSV files. Click the "Import/Export" dropdown on the Redirects listing page to access these options.
+
+**Exporting** will download a CSV file containing all redirects for your authorized sites, with the following columns: `source`, `destination`, `response_code`, `enabled`, and `description`.
+
+**Importing** accepts a CSV file with a header row. The `source` and `destination` columns are required. The `response_code`, `enabled`, and `description` columns are optional — if omitted, new redirects will use the default response code and be enabled by default.
+
+If a redirect already exists with the same source URL (on the selected site), it will be updated rather than duplicated. When updating, only the columns present in the CSV will be changed — omitted columns will retain their existing values.
+
+#### Wildcards
+
+You can use wildcards in your source URLs. Each `*` captures a segment, and you can reference them in the destination with `$1`, `$2`, etc:
+
+- Source: `/blog/*` → Destination: `/articles/$1`
+- Source: `/blog/*/posts/*` → Destination: `/articles/$1/entries/$2`
+
+Exact matches always take priority over wildcard matches.
+
+#### Query Strings
+
+By default, query strings from the original URL are retained when redirecting. You may disable this behaviour in your config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'preserve_query_string' => false,
+],
+```
+
+#### Storage
+
+By default, redirects are stored as YAML files in the `content/seo-pro/redirects` directory. You can change this in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'driver' => 'file',
+    'directory' => base_path('content/seo-pro/redirects'),
+],
+```
+
+Alternatively, you may store redirects in the database by changing the driver:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'driver' => 'database',
+],
+```
+
+Then run `php please seo-pro:database-redirects` to publish the migration and import existing redirects.
+
+#### Hit Tracking
+
+Out of the box, SEO Pro tracks the number of hits and the timestamp of the last hit for each redirect. If you store redirects in flat files, this can lead to frequent file changes creating noise in version control.
+
+You may disable hit tracking in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'track_hits' => false,
+],
+```
+
+### Multi-Site
+
+Redirects and errors are scoped to individual sites. Each redirect belongs to a single site, and the source URL is stored relative to the site root. For example, a redirect with the source `/about` on the French site will only match requests to `example.com/fr/about` (or `example.fr/about`, depending on your site configuration).
+
+When using the Control Panel, redirects and errors are filtered to the currently selected site. The site can be changed using the site filter in the listing.
+
+When you enable multi-site on an existing install via `php please multisite`, SEO Pro will automatically move your existing redirect and error files into subdirectories for the default site.
+
+### Automatic Redirects
+
+SEO Pro can automatically create redirects when an entry or term's slug changes. This prevents broken links when content is reorganized.
+
+To enable automatic redirects, set the `SEO_PRO_AUTOMATIC_REDIRECTS` environment variable to `true`:
+
+```env
+SEO_PRO_AUTOMATIC_REDIRECTS=true
+```
+
+By default, automatic redirects apply to all collections and taxonomies. You may limit this to specific collections or taxonomies in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'automatic_redirects' => [
+        'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', false),
+        'collections' => ['pages', 'posts'],
+        'taxonomies' => ['tags'],
+    ],
+],
+```
+
+When an entry's slug changes, a redirect is created from the old URL to the new one, using the default response code (301 by default). If a redirect already exists for the old URL, its destination is updated rather than creating a duplicate.
+
+You may change the default response code in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'default_response_code' => 301,
+],
+```
+
+In a multi-site setup, when an entry's slug changes, redirects are also created for any localizations that share the same slug change, each pointing to the localized version of the content.
+
+Self-referencing redirects (where the source and destination are the same URL) are automatically cleaned up.
+
+### Error Tracking
+
+SEO Pro can track 404 errors, giving you visibility into broken links on your site. When a request doesn't match a redirect, the URL is recorded as an error.
+
+To enable error tracking, set the `SEO_PRO_TRACK_ERRORS` environment variable:
+
+```env
+SEO_PRO_TRACK_ERRORS=true
+```
+
+Errors can be viewed at `Tools > SEO Pro > Errors`. From there, you can see each error's URL, hit count, and last hit time. Each error also has a link to quickly create a redirect for that URL.
+
+When a redirect is created, any errors matching the redirect's source URL are automatically deleted.
+
+#### Purging Old Errors
+
+It's easy to accumulate lots of errors over time. To keep things tidy, SEO Pro will automatically purge errors older than 30 days.
+
+You may customize the purge threshold in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'purge_after_days' => 30,
+    ],
+],
+```
+
+On a public site, bots probing for unique URLs can create an unbounded number of errors between purges. To bound the total, set `max_errors` to a cap. When the purge runs and the number of errors exceeds the cap, the excess is purged: errors that have never been hit go first, then those with the fewest hits, then those hit least recently. Frequently-hit 404s, the best redirect candidates, survive longest. The default of `0` disables the cap.
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'max_errors' => 1000,
+    ],
+],
+```
+
+You may also run the command manually:
+
+```
+php please seo-pro:purge-errors
+```
+
+#### Storage
+
+By default, errors are stored in the `storage/statamic/seopro/errors` directory. You can change this in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+   'errors' => [
+      'driver' => 'file',
+      'directory' => storage_path('statamic/seopro/errors'),
+   ],
+],
+```
+
+Errors can be stored in the database independently of redirects:
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'driver' => 'database',
+    ],
+],
+```
+
+Then run `php please seo-pro:database-errors` to publish the migration and import existing errors.
+
+#### Widget
+
+You can add a recent errors widget to your dashboard to see the latest 404s at a glance:
+
+```php
+// config/statamic/cp.php
+
+'widgets' => [
+    [
+        'type' => 'recent_errors',
+        'width' => 50,
+        'limit' => 5,
+    ],
+],
+```
+
 ## Advanced Configuration
 
 ### Publishing Config
@@ -172,6 +405,21 @@ You may also override the default `meta.antlers.html` view, though it is not pub
 ### Sitemap.xml
 
 A `sitemap.xml` route is automatically generated for you.
+
+When using multi-site, SEO Pro creates unique sitemaps for each _domain_. If you use multi-site with one domain, a _single_ sitemap gets created and the [`hreflang` attribute](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) is getting added to the XML making it easier for search engines to discover localizations of content across your sites. 
+
+Probably easier to understand with an example:
+
+- Site A: `https://example.com`
+- Site B: `https://example.com/de-de`
+- Site C: `https://example.fr`
+
+This structure will result in the following sitemaps being created:
+
+- `https://example.com/sitemap.xml` includes pages from Site A & Site B with the `hreflang` attribute added to them
+- `https://example.fr/sitemap.xml` includes pages from Site C
+
+This follows recommendations and best practices provided by Google and other search engines. It prevents sitemaps linking to pages from other domains which is considered a "no no".
 
 If you disable SEO on the section or item level, the relevant section/item will automatically be discluded from the sitemap.
 
@@ -217,6 +465,19 @@ If you wish to customize the contents of the `humans.txt` view, you may also [pu
 ### Pagination Meta
 
 By default, `canonical` URL meta will show pagination on `?page=2` and higher, with `rel="prev"` / `rel="next"` links when appropriate.
+
+This only works with pagination handled by Statamic itself, like the `paginate` parameter on the [collection](https://statamic.dev/tags/collection) and [taxonomy](https://statamic.dev/tags/taxonomy) tags. SEO Pro reads the current page and the previous/next URLs from the paginator those tags provide.
+
+If you're querying entries manually or paginating other items, like an Eloquent model, SEO Pro won't know about it, so the canonical stays on the unpaginated base URL with no `rel="prev"` / `rel="next"` links. To fix this, store your paginator in [Blink](https://statamic.dev/backend-apis/blink-cache) under the `tag-paginator` key before the `{{ seo_pro:meta }}` tag renders. SEO Pro accepts any standard Laravel `LengthAwarePaginator`:
+
+```php
+use Statamic\Facades\Blink;
+use Statamic\Facades\Entry;
+
+$paginator = Entry::query()->where('collection', 'blog')->paginate(10);
+
+Blink::put('tag-paginator', $paginator);
+```
 
 If you wish to customize or disable pagination, you can [publish the SEO Pro config](#advanced-configuration) and modify these settings within `config/statamic/seo-pro.php`.
 

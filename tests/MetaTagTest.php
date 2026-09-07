@@ -19,6 +19,7 @@ use Statamic\Facades\Entry;
 use Statamic\Facades\URL;
 use Statamic\Query\ItemQueryBuilder;
 use Statamic\Query\OrderedQueryBuilder;
+use Statamic\SeoPro\Tags\SeoProTags;
 use Statamic\Statamic;
 
 class MetaTagTest extends TestCase
@@ -64,19 +65,19 @@ class MetaTagTest extends TestCase
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>Home | Site Name</title>
+<title>Home | Cool Runnings</title>
 <meta name="description" content="I see a bad-ass mother." />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Home" />
 <meta property="og:description" content="I see a bad-ass mother." />
 <meta property="og:url" content="http://cool-runnings.com" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="Cool Runnings" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -93,19 +94,19 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>The View | Site Name</title>
+<title>The View | Cool Runnings</title>
 <meta name="description" content="A wonderful view!" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The View" />
 <meta property="og:description" content="A wonderful view!" />
 <meta property="og:url" content="http://cool-runnings.com/the-view" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="Cool Runnings" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -123,19 +124,19 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>The View | Site Name</title>
+<title>The View | Cool Runnings</title>
 <meta name="description" content="A wonderful view!" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The View" />
 <meta property="og:description" content="A wonderful view!" />
 <meta property="og:url" content="http://cool-runnings.com/the-view" />
-<meta property="og:site_name" content="Site Name" />
+<meta property="og:site_name" content="Cool Runnings" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -188,7 +189,7 @@ EOT;
 
         $response = $this->get('/about');
         $response->assertSee("<h1>{$viewType}</h1>", false);
-        $response->assertSee('<title>Site Name &gt;&gt;&gt; Aboot</title>', false);
+        $response->assertSee('<title>Cool Runnings &gt;&gt;&gt; Aboot</title>', false);
     }
 
     #[Test]
@@ -701,6 +702,50 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
+    public function it_uses_robots_indexing_and_following_over_legacy_robots_array($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        // Site defaults have the legacy robots array (eg. from a v5 migration)
+        $this->setSeoInSiteDefaults([
+            'robots' => ['index', 'follow'],
+        ]);
+
+        // Entry explicitly sets the new robots_indexing/robots_following fields
+        $this->setSeoOnEntry(Entry::findByUri('/about'), [
+            'robots_indexing' => 'noindex',
+            'robots_following' => 'nofollow',
+        ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="robots" content="noindex, nofollow" />', false);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_uses_legacy_robots_array_when_entry_sets_it_but_not_new_fields($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        // Site defaults have the new robots_indexing/robots_following fields
+        $this->setSeoInSiteDefaults([
+            'robots_indexing' => 'index',
+            'robots_following' => 'follow',
+        ]);
+
+        // Entry explicitly sets the legacy robots array but not new fields
+        $this->setSeoOnEntry(Entry::findByUri('/about'), [
+            'robots' => ['noindex'],
+        ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta name="robots" content="noindex" />', false);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_custom_humans_url($viewType)
     {
         Config::set('statamic.seo-pro.humans.url', 'aliens.md');
@@ -736,13 +781,44 @@ EOT;
         $this->prepareViews($viewType);
 
         $expected = <<<'EOT'
-<title>404 Page Not Found | Site Name</title>
+<title>404 Page Not Found | Cool Runnings</title>
 EOT;
 
         $content = $this->get('/non-existent-page')->content();
         $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
         $this->assertStringContainsStringIgnoringLineEndings($this->normalizeMultilineString($expected), $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_noindexes_404_pages_and_omits_canonical_meta($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_noindexes_404_pages_even_when_site_defaults_allow_indexing($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoInSiteDefaults([
+                'robots_indexing' => 'index',
+                'robots_following' => 'follow',
+            ]);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex, follow" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
     }
 
     #[Test]
@@ -757,7 +833,7 @@ EOT;
 
         $content = $this->get('/custom-get-route')->content();
 
-        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Site Name</title>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<title>Custom Route Entry Title | Cool Runnings</title>', $content);
     }
 
     #[Test]
@@ -856,7 +932,7 @@ EOT);
     }
 
     #[Test]
-    public function it_doesnt_output_canonical_when_robots_noindex()
+    public function it_still_outputs_canonical_when_robots_noindex()
     {
         $this
             ->prepareViews('antlers')
@@ -865,7 +941,8 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertDontSee('" rel="canonical"', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
+        $response->assertDontSee(' rel="home"', false);
     }
 
     #[Test]
@@ -879,7 +956,7 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>About Page 2 | Site Name</title>', false);
+        $response->assertSee('<title>About Page 2 | Cool Runnings</title>', false);
 
         $this
             ->prepareViews('antlers')
@@ -888,7 +965,7 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertSee('<title>Site Name | About Page 2</title>', false);
+        $response->assertSee('<title>Cool Runnings | About Page 2</title>', false);
 
         $this
             ->prepareViews('antlers')
@@ -906,7 +983,67 @@ EOT);
             ->setSeoOnEntry(Entry::findByUri('/about'), []);
 
         $response = $this->get('/about');
-        $response->assertDontSee('<title>About Page 2 | Site Name</title>', false);
+        $response->assertDontSee('<title>About Page 2 | Cool Runnings</title>', false);
+    }
+
+    #[Test]
+    public function it_applies_meta_data_hook_to_rendered_output()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['compiled_title'] = 'Hooked Title';
+
+            return $next($metaData);
+        });
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>Hooked Title</title>', false);
+    }
+
+    #[Test]
+    public function it_applies_multiple_meta_data_hooks_in_sequence()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['compiled_title'] = 'First';
+
+            return $next($metaData);
+        });
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['compiled_title'] .= ' Second';
+
+            return $next($metaData);
+        });
+
+        $response = $this->get('/about');
+        $response->assertSee('<title>First Second</title>', false);
+    }
+
+    #[Test]
+    public function it_makes_hook_added_keys_available_in_meta_data_tag()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepareViews('antlers');
+
+        SeoProTags::hook('meta-data', function ($metaData, $next) {
+            $metaData['custom_key'] = 'hook_value';
+
+            return $next($metaData);
+        });
+
+        $this->files->put(resource_path('views-seo-pro/layout.antlers.html'), <<<'EOT'
+{{ seo_pro:meta_data }}
+    <span>{{ custom_key }}</span>
+{{ /seo_pro:meta_data }}
+EOT);
+
+        $content = $this->get('/about')->content();
+        $this->assertStringContainsStringIgnoringLineEndings('<span>hook_value</span>', $content);
     }
 
     protected function setCustomGlidePresetDimensions($app)
@@ -973,6 +1110,6 @@ class FakeSsgPaginator extends StatamicLengthAwarePaginator
 {
     public function url($page)
     {
-        return \Statamic\Facades\URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
+        return URL::makeRelative(sprintf('%s/page/%s', $this->path(), $page));
     }
 }

@@ -84,7 +84,7 @@ class SeoProFieldtype extends Fieldtype
             ->values()
             ->all();
 
-        return new BlueprintFields($fields);
+        return (new BlueprintFields($fields))->setParent($this->field()->parent());
     }
 
     protected function fieldConfig()

@@ -45,6 +45,10 @@ return [
         'excluded_sites' => [],
     ],
 
+    'json_ld' => [
+        'use_glide_for_logo' => true,
+    ],
+
     'reports' => [
         'keep_recent' => 'all',
         'queue_chunk_size' => 1000,
@@ -57,6 +61,26 @@ return [
             'warn_min' => 120,
             'pass_max' => 160,
             'warn_max' => 240,
+        ],
+    ],
+
+    'redirects' => [
+        'driver' => 'file',
+        'directory' => base_path('content/seo-pro/redirects'),
+        'preserve_query_string' => true,
+        'default_response_code' => 301,
+        'track_hits' => true,
+        'automatic_redirects' => [
+            'enabled' => env('SEO_PRO_AUTOMATIC_REDIRECTS', false),
+            'collections' => ['*'],
+            'taxonomies' => ['*'],
+        ],
+        'errors' => [
+            'enabled' => env('SEO_PRO_TRACK_ERRORS', false),
+            'driver' => 'file',
+            'directory' => storage_path('statamic/seopro/errors'),
+            'purge_after_days' => 30,
+            'max_errors' => 0,
         ],
     ],
 

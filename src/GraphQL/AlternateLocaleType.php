@@ -2,10 +2,11 @@
 
 namespace Statamic\SeoPro\GraphQL;
 
+use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
 use Statamic\GraphQL\Types\SiteType;
 
-class AlternateLocaleType extends \Rebing\GraphQL\Support\Type
+class AlternateLocaleType extends Type
 {
     const NAME = 'AlternateLocaleType';
 

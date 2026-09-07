@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\SiteDefaults;
 
 use Illuminate\Support\Collection;
 use Statamic\Data\HasOrigin;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Events\SiteDefaultsSaved;
@@ -98,23 +99,25 @@ class LocalizedSiteDefaults
 
     public function augmented(): array
     {
-        $contentValues = Blueprint::make()
-            ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
-            ->fields()
-            ->addValues($this->values()->all())
-            ->augment()
-            ->values();
+        return Blink::once("seo-pro::site-defaults.augmented.{$this->locale}", function () {
+            $contentValues = Blueprint::make()
+                ->setContents(['tabs' => ['main' => ['sections' => Fields::new()->getConfig()]]])
+                ->fields()
+                ->addValues($this->values()->all())
+                ->augment()
+                ->values();
 
-        $siteDefaultValues = $this->blueprint()
-            ->fields()
-            ->addValues($this->values()->all())
-            ->augment()
-            ->values();
+            $siteDefaultValues = $this->blueprint()
+                ->fields()
+                ->addValues($this->values()->all())
+                ->augment()
+                ->values();
 
-        return $siteDefaultValues
-            ->merge($contentValues)
-            ->only($this->keys()->all())
-            ->all();
+            return $siteDefaultValues
+                ->merge($contentValues)
+                ->only($this->keys()->all())
+                ->all();
+        });
     }
 
     public function editUrl(): string

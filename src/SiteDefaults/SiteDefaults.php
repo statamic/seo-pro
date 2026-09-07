@@ -13,7 +13,7 @@ class SiteDefaults
     public static function get(): Collection
     {
         return Blink::once('seo-pro::site-defaults', function () {
-            $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+            $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'site_defaults', []);
 
             return Site::all()->map(function ($site) use ($data) {
                 $values = Arr::get($data, Site::multiEnabled() ? $site->handle() : null);
@@ -32,15 +32,18 @@ class SiteDefaults
     public static function origins($origins = null): Collection|bool
     {
         if (func_num_args() === 0) {
-            return Site::all()
-                ->mapWithKeys(fn ($site) => [$site->handle() => null])
-                ->merge(Addon::get('statamic/seo-pro')->settings()->get('site_defaults_sites', []))
-                ->map(fn ($origin) => empty($origin) ? null : $origin);
+            return Blink::once('seo-pro::site-defaults-origins', function () {
+                return Site::all()
+                    ->mapWithKeys(fn ($site) => [$site->handle() => null])
+                    ->merge(Addon::get('statamic/seo-pro')->settings()->get('site_defaults_sites', []))
+                    ->map(fn ($origin) => empty($origin) ? null : $origin);
+            });
         }
 
         Addon::get('statamic/seo-pro')->settings()->set('site_defaults_sites', $origins)->save();
 
         Blink::forget('seo-pro::site-defaults');
+        Blink::forget('seo-pro::site-defaults-origins');
 
         return true;
     }
@@ -56,7 +59,7 @@ class SiteDefaults
 
     public static function save(LocalizedSiteDefaults $localized): bool
     {
-        $data = Addon::get('statamic/seo-pro')->settings()->get('site_defaults', []);
+        $data = Arr::get(Addon::get('statamic/seo-pro')->settings()->raw(), 'site_defaults', []);
 
         if (Site::multiEnabled()) {
             $data[$localized->locale()] = $localized->all();
@@ -67,6 +70,7 @@ class SiteDefaults
         Addon::get('statamic/seo-pro')->settings()->set('site_defaults', $data)->save();
 
         Blink::forget('seo-pro::site-defaults');
+        Blink::forget("seo-pro::site-defaults.augmented.{$localized->locale()}");
 
         return true;
     }
@@ -79,12 +83,13 @@ class SiteDefaults
     private static function defaultValues(): array
     {
         return [
-            'site_name' => 'Site Name',
+            'site_name' => '{{ config:app:name }}',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => '@seo:title',
             'description' => '@seo:content',
             'canonical_url' => '@seo:permalink',
+            'og_type' => 'website',
             'priority' => 0.5,
             'change_frequency' => 'monthly',
         ];

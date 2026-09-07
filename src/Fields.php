@@ -2,16 +2,11 @@
 
 namespace Statamic\SeoPro;
 
-use Statamic\Assets\Asset;
-use Statamic\Facades\Blink;
-use Statamic\Facades\Site;
 use Statamic\SeoPro\Fieldtypes\Rules\ValidJsonLd;
-use Statamic\SeoPro\SiteDefaults\SiteDefaults;
-use Statamic\Statamic;
 
 class Fields
 {
-    use GetsSectionDefaults, HasAssetField;
+    use HasAssetField;
 
     protected $data;
     protected $isContent;
@@ -70,7 +65,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.title"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.title_instruct"),
-                            'placeholder' => $this->getPlaceholder('title'),
                             'type' => 'seo_pro_source',
                             'disableable' => true,
                             'localizable' => true,
@@ -87,7 +81,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.description"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.description_instruct"),
-                            'placeholder' => $this->getPlaceholder('description'),
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'field' => [
@@ -103,7 +96,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.site_name"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.site_name_instruct"),
-                            'placeholder' => $this->getPlaceholder('site_name'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
@@ -118,7 +110,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.site_name_position"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.site_name_position_instruct"),
-                            'placeholder' => $this->getPlaceholder('site_name_position'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'localizable' => true,
@@ -139,7 +130,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.site_name_separator"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.site_name_separator_instruct"),
-                            'placeholder' => $this->getPlaceholder('site_name_separator'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'localizable' => true,
@@ -155,7 +145,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.canonical_url"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.canonical_url_instruct"),
-                            'placeholder' => $this->isContent ? $this->getPlaceholder('canonical_url') : false,
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'field' => $this->isContent ? ['type' => 'text'] : false,
@@ -174,16 +163,15 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.json_ld_schema"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.json_ld_schema_instruct"),
-                            'placeholder' => $this->getPlaceholder('json_ld_schema'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
-                            'inherit' => $this->isContent,
+                            'inherit' => true,
                             'localizable' => true,
                             'full_width_setting' => true,
                             'field' => [
                                 'type' => 'code',
-                                'mode' => 'javascript',
+                                'mode' => 'application/ld+json',
                                 'mode_selectable' => false,
                                 'show_mode_label' => false,
                                 'validate' => [
@@ -228,7 +216,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.robots_indexing"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_indexing_instruct"),
-                            'placeholder' => $this->getPlaceholder('robots_indexing'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
@@ -250,7 +237,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.robots_following"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_following_instruct"),
-                            'placeholder' => $this->getPlaceholder('robots_following'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
@@ -272,7 +258,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.robots_noarchive"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_noarchive_instruct"),
-                            'placeholder' => $this->getPlaceholder('robots_noarchive'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
@@ -289,7 +274,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.robots_noimageindex"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_noimageindex_instruct"),
-                            'placeholder' => $this->getPlaceholder('robots_noimageindex'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
@@ -306,7 +290,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.robots_nosnippet"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_nosnippet_instruct"),
-                            'placeholder' => $this->getPlaceholder('robots_nosnippet'),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
                             'disableable' => true,
@@ -324,6 +307,21 @@ class Fields
                 'display' => __('seo-pro::fieldsets/defaults.image_section'),
                 'instructions' => __('seo-pro::fieldsets/defaults.image_section_instruct'),
                 'fields' => [
+                    [
+                        'handle' => 'og_type',
+                        'field' => [
+                            'display' => __("seo-pro::fieldsets/{$langFile}.og_type"),
+                            'instructions' => __("seo-pro::fieldsets/{$langFile}.og_type_instruct"),
+                            'type' => 'seo_pro_source',
+                            'from_field' => false,
+                            'localizable' => true,
+                            'field' => [
+                                'type' => 'text',
+                            ],
+                            'always_save' => true,
+                            'unless' => ['enabled' => 'equals false'],
+                        ],
+                    ],
                     [
                         'handle' => 'og_title',
                         'field' => [
@@ -344,7 +342,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.image"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.image_instruct"),
-                            'placeholder' => $this->getPlaceholder('image'),
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'allowed_fieldtypes' => [
@@ -416,7 +413,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.sitemap"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.sitemap_instruct"),
-                            'placeholder' => $this->getPlaceholder('sitemap'),
                             'type' => 'seo_pro_source',
                             'disableable' => true,
                             'field' => false,
@@ -431,7 +427,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.priority"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.priority_instruct"),
-                            'placeholder' => $this->getPlaceholder('priority'),
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'field' => [
@@ -446,7 +441,6 @@ class Fields
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.change_frequency"),
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.change_frequency_instruct"),
-                            'placeholder' => $this->getPlaceholder('change_frequency'),
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'field' => [
@@ -467,41 +461,5 @@ class Fields
                 ],
             ],
         ];
-    }
-
-    /**
-     * Get inherited value from SEO cascade for use as placeholder.
-     *
-     * @param  string  $handle
-     * @return mixed
-     */
-    protected function getPlaceholder($handle)
-    {
-        if (! Statamic::isCpRoute()) {
-            return null;
-        }
-
-        $cascade = Blink::once('seo-pro::placeholder.cascade', function () {
-            $cascade = (new Cascade)->withSiteDefaults(SiteDefaults::in($this->data?->locale() ?? Site::selected()->handle())->all());
-
-            if ($this->data) {
-                $cascade = $cascade
-                    ->withSectionDefaults($this->getSectionDefaults($this->data))
-                    ->with($this->data->value('seo', []))
-                    ->withCurrent($this->data);
-            }
-
-            return $cascade;
-        });
-
-        $placeholder = $cascade->value($handle);
-
-        if (is_array($placeholder)) {
-            return collect($placeholder)->implode(', ');
-        } elseif ($placeholder instanceof Asset) {
-            return $placeholder->path();
-        }
-
-        return $placeholder;
     }
 }

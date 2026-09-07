@@ -16,7 +16,7 @@ class SitemapController extends Controller
         abort_unless(config('statamic.seo-pro.sitemap.enabled'), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
-        $cacheKey = implode('_', [Sitemap::CACHE_KEY, request()->getHttpHost(), $this->sitemap->sites()->map->handle()->join('')]);
+        $cacheKey = $this->cacheKey();
 
         if (config('statamic.seo-pro.sitemap.pagination.enabled', false)) {
             $content = Cache::remember("{$cacheKey}_index", $cacheUntil, function () {
@@ -44,7 +44,7 @@ class SitemapController extends Controller
         abort_unless(filter_var($page, FILTER_VALIDATE_INT), 404);
 
         $cacheUntil = Carbon::now()->addMinutes(config('statamic.seo-pro.sitemap.expire'));
-        $cacheKey = implode('_', [Sitemap::CACHE_KEY, $page, request()->getHttpHost(), $this->sitemap->sites()->map->handle()->join('')]);
+        $cacheKey = $this->cacheKey($page);
 
         $content = Cache::remember($cacheKey, $cacheUntil, function () use ($page) {
             abort_if(empty($pages = $this->sitemap->paginatedPages($page)), 404);
@@ -56,5 +56,19 @@ class SitemapController extends Controller
         });
 
         return response($content)->header('Content-Type', 'text/xml');
+    }
+
+    protected function cacheKey(string $suffix = ''): string
+    {
+        $key = collect([
+            Sitemap::CACHE_KEY,
+            request()->getHttpHost(),
+            $this->sitemap->sites()->map->handle()->join(''),
+            $suffix,
+        ])->filter()->implode('_');
+
+        Sitemap::trackCacheKey($key);
+
+        return $key;
     }
 }

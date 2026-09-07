@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\SiteDefaults;
 
+use Statamic\SeoPro\Fieldtypes\Rules\ValidJsonLd;
 use Statamic\SeoPro\HasAssetField;
 
 class Blueprint
@@ -111,6 +112,7 @@ class Blueprint
                                         'options' => [
                                             'organization' => __('seo-pro::messages.organization'),
                                             'person' => __('seo-pro::messages.person'),
+                                            'disabled' => __('seo-pro::messages.disabled'),
                                         ],
                                         'default' => 'organization',
                                     ],
@@ -122,7 +124,7 @@ class Blueprint
                                         'instructions' => __('seo-pro::fieldsets/defaults.json_ld_organization_name_instruct'),
                                         'type' => 'text',
                                         'localizable' => true,
-                                        'if' => ['json_ld_entity' => 'equals Organization'],
+                                        'if' => ['json_ld_entity' => 'equals organization'],
                                     ],
                                 ],
                                 [
@@ -131,7 +133,7 @@ class Blueprint
                                         'display' => __('seo-pro::fieldsets/defaults.json_ld_organization_logo'),
                                         'instructions' => __('seo-pro::fieldsets/defaults.json_ld_organization_logo_instruct'),
                                         'localizable' => true,
-                                        'if' => ['json_ld_entity' => 'equals Organization'],
+                                        'if' => ['json_ld_entity' => 'equals organization'],
                                         ...static::getAssetFieldConfig(),
                                     ],
                                 ],
@@ -142,7 +144,30 @@ class Blueprint
                                         'instructions' => __('seo-pro::fieldsets/defaults.json_ld_person_name_instruct'),
                                         'type' => 'text',
                                         'localizable' => true,
-                                        'if' => ['json_ld_entity' => 'equals Person'],
+                                        'if' => ['json_ld_entity' => 'equals person'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'display' => __('seo-pro::fieldsets/defaults.json_ld_custom_section'),
+                            'instructions' => __('seo-pro::fieldsets/defaults.json_ld_custom_section_instruct'),
+                            'fields' => [
+                                [
+                                    'handle' => 'json_ld_schema',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.json_ld_schema'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.json_ld_schema_instruct'),
+                                        'type' => 'code',
+                                        'mode' => 'application/ld+json',
+                                        'mode_selectable' => false,
+                                        'show_mode_label' => false,
+                                        'localizable' => true,
+                                        'full_width_setting' => true,
+                                        'fullscreen' => false,
+                                        'validate' => [
+                                            new ValidJsonLd,
+                                        ],
                                     ],
                                 ],
                             ],
@@ -236,6 +261,16 @@ class Blueprint
                         [
                             'fields' => [
                                 [
+                                    'handle' => 'og_type',
+                                    'field' => [
+                                        'display' => __('seo-pro::fieldsets/defaults.og_type'),
+                                        'instructions' => __('seo-pro::fieldsets/defaults.og_type_instruct'),
+                                        'type' => 'text',
+                                        'localizable' => true,
+                                        'default' => 'website',
+                                    ],
+                                ],
+                                [
                                     'handle' => 'og_title',
                                     'field' => [
                                         'display' => __('seo-pro::fieldsets/defaults.og_title'),
@@ -246,6 +281,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
+                                        'default' => '@seo:title',
                                     ],
                                 ],
                             ],
@@ -301,6 +337,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'text',
                                         ],
+                                        'default' => '@seo:title',
                                     ],
                                 ],
                                 [
@@ -314,6 +351,7 @@ class Blueprint
                                         'field' => [
                                             'type' => 'textarea',
                                         ],
+                                        'default' => '@seo:description',
                                     ],
                                 ],
                             ],

@@ -7,7 +7,7 @@ const instance = getCurrentInstance();
 const { $axios } = instance.appContext.config.globalProperties;
 
 const props = defineProps({
-	id: String,
+	id: Number,
 	initialStatus: String,
 	initialScore: Number,
 });

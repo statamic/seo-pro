@@ -10,13 +10,11 @@ use Statamic\Facades\Asset;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
-use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
-use Statamic\Fieldtypes\Text;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
@@ -93,6 +91,8 @@ class Cascade
 
     public function get()
     {
+        $this->hydrateCascade();
+
         if (! $this->current) {
             $this->withCurrent(Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
@@ -102,16 +102,32 @@ class Cascade
             return $this->getForSitemap();
         }
 
-        if (Arr::get($this->data, 'response_code') === 404) {
+        $responseCode = Arr::get($this->data, 'response_code', 200);
+
+        if ($responseCode === 404) {
             $this->current['title'] = '404 Page Not Found';
         }
 
+        if ($responseCode >= 400) {
+            $this->data->put('robots_indexing', 'noindex');
+        }
+
         $this->data = $this->data->map(function ($item, $key) {
+            // Skip json_ld_schema. It might need to use resolved SEO values as context.
+            if ($key === 'json_ld_schema') {
+                return $item;
+            }
+
             return $this->parse($key, $item);
         });
 
+        if ($this->data->has('json_ld_schema')) {
+            $this->data->put('json_ld_schema', $this->parseJsonLdSchema($this->data->get('json_ld_schema')));
+        }
+
         return $this->data->merge([
             'compiled_title' => $this->compiledTitle(),
+            'og_type' => $this->data->get('og_type') ?: 'website',
             'og_title' => $this->ogTitle(),
             'canonical_url' => $this->canonicalUrl(),
             'prev_url' => $this->prevUrl(),
@@ -159,6 +175,18 @@ class Cascade
     public function homeUrl()
     {
         return Site::current()?->absoluteUrl() ?? URL::makeAbsolute('/');
+    }
+
+    protected function isHomePage(): bool
+    {
+        if (! method_exists($this->model, 'absoluteUrl')) {
+            return false;
+        }
+
+        $home = Str::removeRight((string) $this->site()->absoluteUrl(), '/');
+        $current = Str::removeRight((string) $this->model->absoluteUrl(), '/');
+
+        return $current !== '' && $current === $home;
     }
 
     public function canonicalUrl()
@@ -416,7 +444,7 @@ class Cascade
             ]);
         });
 
-        return $alternateLocales->all();
+        return $alternateLocales->values()->all();
     }
 
     protected function currentHreflang($alternateLocales)
@@ -478,49 +506,50 @@ class Cascade
 
     protected function parseAntlers($item)
     {
-        // Simplistically prevent php in antlers.
-        if (Str::contains($item, ['{{?', '{{$', '@{'])) {
-            return $item;
-        }
-
-        // Also, the parser has extra runtime protections around `Value` objects
-        // when `antlers: true` is set on a blueprint field. While this may be
-        // improved in future, we'll give custom seo fields same treatment.
         try {
-            $textFieldType = new Text;
-            $textFieldType->setField(new Field('___tmpValue', ['antlers' => true]));
-            $value = new Value($item, '___tmpValue', $textFieldType);
-
-            $viewCascade = array_merge(
+            return (string) Antlers::parse($item, array_merge(
                 app(ViewCascade::class)->toArray(),
                 $this->current ?? [],
-                ['___tmpValue' => $value, 'config' => config()->all()],
-                $this->hydrateGlobals()
-            );
+            ));
+        } catch (Exception $e) {
+            report($e);
 
-            return (string) Antlers::parse('{{ ___tmpValue }}', $viewCascade);
-        } catch (Exception $exception) {
             return $item;
         }
     }
 
-    private function hydrateGlobals()
+    protected function parseJsonLdSchema($item)
     {
-        $data = [];
-
-        foreach ($globals = GlobalSet::all() as $global) {
-            if ($global = $global->in($this->site()->handle())) {
-                $data[$global->handle()] = $global;
-            }
+        if ($item instanceof Value) {
+            $item = $item->raw();
         }
 
-        if ($mainGlobal = $globals->get('global')) {
-            foreach ($mainGlobal->toDeferredAugmentedArray() as $key => $value) {
-                $data[$key] = $value;
-            }
+        if (! is_string($item) || ! Str::contains($item, '{{')) {
+            return $item;
         }
 
-        return $data;
+        try {
+            return (string) Antlers::parse($item, array_merge(
+                app(ViewCascade::class)->toArray(),
+                $this->current ?? [],
+                ['seo' => $this->data->all()],
+            ));
+        } catch (Exception $e) {
+            report($e);
+
+            return $item;
+        }
+    }
+
+    private function hydrateCascade()
+    {
+        $cascade = app(ViewCascade::class);
+
+        // Hydrate if not already hydrated.
+        // Determine if it's already hydrated by seeing if there's an arbitrary value already in there.
+        if (! $cascade->get('now')) {
+            $cascade->hydrate();
+        }
     }
 
     protected function humans()
@@ -532,18 +561,22 @@ class Cascade
 
     protected function robots()
     {
-        if ($this->data->has('robots')) {
-            $robots = $this->data->get('robots');
+        $entryHasLegacyRobots = $this->data->has('robots')
+            && ! isset($this->siteDefaults['robots'])
+            && ! isset($this->sectionDefaults['robots']);
 
-            if ($robots instanceof \Statamic\Fields\Value) {
-                $robots = $robots->value();
-            }
+        $entryHasNewRobotsFields = (
+            $this->data->has('robots_indexing')
+            && ! isset($this->siteDefaults['robots_indexing'])
+            && ! isset($this->sectionDefaults['robots_indexing'])
+        ) || (
+            $this->data->has('robots_following')
+            && ! isset($this->siteDefaults['robots_following'])
+            && ! isset($this->sectionDefaults['robots_following'])
+        );
 
-            if (is_array($robots) && ! empty($robots) && isset($robots[0]['key'])) {
-                return collect($robots)->pluck('key')->toArray();
-            }
-
-            return is_array($robots) ? $robots : [];
+        if ($entryHasLegacyRobots && ! $entryHasNewRobotsFields) {
+            return $this->getLegacyRobots();
         }
 
         $robots = [];
@@ -568,7 +601,30 @@ class Cascade
             $robots[] = 'nosnippet';
         }
 
-        return $robots;
+        if (! empty($robots)) {
+            return $robots;
+        }
+
+        return $this->getLegacyRobots();
+    }
+
+    protected function getLegacyRobots(): array
+    {
+        if (! $this->data->has('robots')) {
+            return [];
+        }
+
+        $robots = $this->data->get('robots');
+
+        if ($robots instanceof Value) {
+            $robots = $robots->value();
+        }
+
+        if (is_array($robots) && isset($robots[0]['key'])) {
+            return collect($robots)->pluck('key')->toArray();
+        }
+
+        return is_array($robots) ? $robots : [];
     }
 
     protected function robotsIndexing()
@@ -585,7 +641,7 @@ class Cascade
         $jsonLdOrganizationLogo = $this->data->get('json_ld_organization_logo');
         $jsonLdPersonName = (string) $this->data->get('json_ld_person_name');
 
-        if ($jsonLdEntity === 'Organization' && $jsonLdOrganizationName) {
+        if ($this->isHomePage() && $jsonLdEntity === 'organization' && $jsonLdOrganizationName) {
             if ($jsonLdOrganizationLogo && ! $jsonLdOrganizationLogo instanceof Value) {
                 $jsonLdOrganizationLogo = Asset::find($jsonLdOrganizationLogo);
             }
@@ -596,13 +652,11 @@ class Cascade
                 'name' => $jsonLdOrganizationName,
                 '@id' => $this->homeUrl().'#organization',
                 'url' => $this->homeUrl(),
-                'logo' => $jsonLdOrganizationLogo
-                    ? Statamic::tag('glide')->src($jsonLdOrganizationLogo)->square(512)->absolute(true)->fetch()
-                    : null,
+                'logo' => $this->jsonLdOrganizationLogoUrl($jsonLdOrganizationLogo),
             ]), JSON_UNESCAPED_SLASHES));
         }
 
-        if ($jsonLdEntity === 'Person' && $jsonLdPersonName) {
+        if ($this->isHomePage() && $jsonLdEntity === 'person' && $jsonLdPersonName) {
             $snippets->push(json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'Person',
@@ -618,10 +672,10 @@ class Cascade
             $snippets->push(json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'BreadcrumbList',
-                'itemListElement' => $breadcrumbs->map(function ($crumb, $index) {
+                'itemListElement' => $breadcrumbs->values()->map(function ($crumb, $index) {
                     return [
                         '@type' => 'ListItem',
-                        'position' => $index,
+                        'position' => $index + 1,
                         'name' => $crumb->title,
                         'item' => $crumb->absoluteUrl(),
                     ];
@@ -634,6 +688,19 @@ class Cascade
         }
 
         return $snippets;
+    }
+
+    protected function jsonLdOrganizationLogoUrl($logo)
+    {
+        if (! $logo) {
+            return null;
+        }
+
+        if (config('statamic.seo-pro.json_ld.use_glide_for_logo', true)) {
+            return Statamic::tag('glide')->src($logo)->square(512)->absolute(true)->fetch();
+        }
+
+        return $logo->absoluteUrl();
     }
 
     protected function augmentData($data)

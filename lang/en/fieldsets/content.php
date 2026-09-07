@@ -52,6 +52,9 @@ return [
     'image' => 'Social Image',
     'image_instruct' => 'This image is used as a social network preview image.',
 
+    'og_type' => 'Open Graph Type',
+    'og_type_instruct' => 'The type of content (eg. website, article). [Learn more](https://ogp.me/#types)',
+
     'og_title' => 'Open Graph Title',
     'og_title_instruct' => 'Pick an existing field or custom value to set as your Open Graph title.',
 

@@ -112,6 +112,7 @@ class Page implements Arrayable
             $rule->setPage($this)->load($array);
 
             $results[] = [
+                'handle' => $rule->id(),
                 'description' => $rule->description(),
                 'status' => $rule->status(),
                 'comment' => $rule->comment(),
@@ -125,6 +126,11 @@ class Page implements Arrayable
     public function url()
     {
         return $this->get('canonical_url');
+    }
+
+    public function site()
+    {
+        return $this->get('site');
     }
 
     public function id()

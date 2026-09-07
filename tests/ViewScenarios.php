@@ -20,7 +20,17 @@ trait ViewScenarios
 
     public function prepareViews($viewType)
     {
+        $this->cleanUpViews();
+
         $this->files->copyDirectory(__DIR__.'/Fixtures/views/'.$viewType, resource_path('views-seo-pro'));
+
+        $compiledPath = config('view.compiled');
+
+        if ($compiledPath && $this->files->isDirectory($compiledPath)) {
+            foreach ($this->files->files($compiledPath) as $file) {
+                $this->files->delete($file);
+            }
+        }
 
         return $this;
     }

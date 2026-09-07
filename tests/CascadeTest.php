@@ -10,6 +10,7 @@ use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Statamic\Facades\URL;
+use Statamic\Fields\Value;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 
@@ -31,14 +32,14 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'Site Name',
+            'site_name' => 'Cool Runnings',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => 'Home',
             'description' => 'I see a bad-ass mother.',
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Home | Site Name',
+            'compiled_title' => 'Home | Cool Runnings',
             'og_title' => 'Home',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
@@ -132,6 +133,55 @@ class CascadeTest extends TestCase
         $this->assertEquals('RED', $data['description']);
     }
 
+    #[Test]
+    public function it_hydrates_when_parsing_antlers()
+    {
+        config([
+            'app.name' => 'My Site',
+            'app.foo' => 'bar',
+            'statamic.system.view_config_allowlist' => ['app.name'],
+        ]);
+
+        $entry = Entry::findByUri('/about')->entry();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with(['title' => '[{{ config:app:name }}] [{{ config:app:foo }}] [{{ site }}]'])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('[My Site] [] [default]', $data['title']);
+    }
+
+    #[Test]
+    public function it_returns_the_raw_value_when_a_value_contains_invalid_antlers()
+    {
+        $entry = Entry::findByUri('/about')->entry();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with([
+                'description' => '{{ collection from="locations" }}',
+            ])
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEquals('{{ collection from="locations" }}', $data['description']);
+    }
+
+    #[Test]
+    public function it_returns_the_raw_schema_when_json_ld_schema_contains_invalid_antlers()
+    {
+        $data = (new Cascade)
+            ->with([
+                'title' => 'Home',
+                'json_ld_schema' => '{{ collection from="locations" }}',
+            ])
+            ->get();
+
+        $this->assertEquals(['{{ collection from="locations" }}'], $data['json_ld']->all());
+    }
+
     public static function phpInAntlersProvider()
     {
         return [
@@ -200,15 +250,15 @@ class CascadeTest extends TestCase
             ->get();
 
         $expected = [
-            'site_name' => 'Site Name',
+            'site_name' => 'Cool Runnings',
             'site_name_position' => 'after',
             'site_name_separator' => '|',
             'title' => null,
             'description' => null,
             'priority' => 0.5,
             'change_frequency' => 'monthly',
-            'compiled_title' => 'Site Name',
-            'og_title' => 'Site Name',
+            'compiled_title' => 'Cool Runnings',
+            'og_title' => 'Cool Runnings',
             'canonical_url' => 'http://cool-runnings.com',
             'prev_url' => null,
             'next_url' => null,
@@ -234,7 +284,21 @@ class CascadeTest extends TestCase
             ->get();
 
         $this->assertEquals('404 Page Not Found', $data['title']);
-        $this->assertEquals('404 Page Not Found | Site Name', $data['compiled_title']);
+        $this->assertEquals('404 Page Not Found | Cool Runnings', $data['compiled_title']);
+    }
+
+    #[Test]
+    public function it_noindexes_error_pages()
+    {
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->with([
+                'response_code' => 404,
+            ])
+            ->get();
+
+        $this->assertContains('noindex', $data['robots']);
+        $this->assertEquals('noindex', $data['robots_indexing']);
     }
 
     #[Test]
@@ -380,7 +444,7 @@ class CascadeTest extends TestCase
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
-            'json_ld_entity' => 'Person',
+            'json_ld_entity' => 'person',
             'json_ld_person_name' => 'Derice Bannock',
         ]);
 
@@ -399,12 +463,145 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_generates_json_ld_data_with_custom_schema_from_site_defaults()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_schema' => '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->with([
+                'title' => 'Home',
+            ])
+            ->get();
+
+        $this->assertEquals([
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+            '{"@context":"https://schema.org","@type":"LocalBusiness","name":"Cool Runnings Ltd"}',
+        ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_only_outputs_organization_schema_on_the_homepage()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+        ]);
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $this->assertContains(
+            '{"@context":"https://schema.org","@type":"Organization","name":"Cool Runnings Ltd","@id":"http://cool-runnings.com#organization","url":"http://cool-runnings.com"}',
+            $home['json_ld']->all()
+        );
+
+        $about = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/about'))
+            ->get();
+
+        $this->assertEmpty($about['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_only_outputs_person_schema_on_the_homepage()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'person',
+            'json_ld_person_name' => 'Derice Bannock',
+        ]);
+
+        $home = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/'))
+            ->get();
+
+        $this->assertContains(
+            '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
+            $home['json_ld']->all()
+        );
+
+        $about = (new Cascade)
+            ->with($siteDefaults->all())
+            ->withCurrent(Entry::findByUri('/about'))
+            ->get();
+
+        $this->assertEmpty($about['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_parses_antlers_in_json_ld_schema_values()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_schema' => new Value('{"@context":"https://schema.org","@type":"WebPage","name":"{{ title }}"}'),
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $this->assertEquals('{"@context":"https://schema.org","@type":"WebPage","name":"Home"}', $data['json_ld']->last());
+    }
+
+    #[Test]
+    public function glide_url_is_returned_for_json_ld_organization_logo()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $organization = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertStringContainsString('/img/asset/', $organization['logo']);
+        $this->assertStringContainsString('w=512', $organization['logo']);
+        $this->assertStringContainsString('h=512', $organization['logo']);
+    }
+
+    #[Test]
+    public function permalink_is_returned_for_json_ld_organization_logo_when_config_is_false()
+    {
+        config(['statamic.seo-pro.json_ld.use_glide_for_logo' => false]);
+
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'site_name' => 'Cool Writings',
+            'json_ld_entity' => 'organization',
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_organization_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $organization = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Organization', $organization['@type']);
+        $this->assertEquals('http://cool-runnings.com/assets/img/stetson.jpg', $organization['logo']);
+    }
+
+    #[Test]
     public function it_generates_json_ld_breadcrumbs()
     {
         $siteDefaults = SiteDefaults::in('default')->set([
             'site_name' => 'Cool Writings',
             'description' => 'Bob sled team',
-            'json_ld_entity' => 'Person',
+            'json_ld_entity' => 'person',
             'json_ld_person_name' => 'Derice Bannock',
             'json_ld_breadcrumbs' => true,
         ]);
@@ -417,7 +614,141 @@ class CascadeTest extends TestCase
 
         $this->assertEquals([
             '{"@context":"https://schema.org","@type":"Person","name":"Derice Bannock","@id":"http://cool-runnings.com#person","url":"http://cool-runnings.com"}',
-            '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":0,"name":"Home","item":"http://cool-runnings.com"},{"@type":"ListItem","position":1,"name":"\'Dance Like No One is Watching\' Is Bad Advice","item":"http://cool-runnings.com/dance"}]}',
+            '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://cool-runnings.com"},{"@type":"ListItem","position":2,"name":"\'Dance Like No One is Watching\' Is Bad Advice","item":"http://cool-runnings.com/dance"}]}',
         ], $data['json_ld']->all());
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_entry()
+    {
+        Collection::findByHandle('articles')->routes('articles/{slug}')->save();
+
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->get('/articles/dance');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(3, $breadcrumbs['itemListElement']);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com',
+        ], $breadcrumbs['itemListElement'][0]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Articles',
+            'item' => 'http://cool-runnings.com/articles',
+        ], $breadcrumbs['itemListElement'][1]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => "'Dance Like No One is Watching' Is Bad Advice",
+            'item' => 'http://cool-runnings.com/articles/dance',
+        ], $breadcrumbs['itemListElement'][2]);
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_taxonomy_term()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        $this->files->makeDirectory(resource_path('views/topics'), force: true);
+        $this->files->put(resource_path('views/topics/index.antlers.html'), '');
+
+        $this->get('/topics/sneakers');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(3, $breadcrumbs['itemListElement']);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com',
+        ], $breadcrumbs['itemListElement'][0]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Topics',
+            'item' => 'http://cool-runnings.com/topics',
+        ], $breadcrumbs['itemListElement'][1]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => 'Sneakers',
+            'item' => 'http://cool-runnings.com/topics/sneakers',
+        ], $breadcrumbs['itemListElement'][2]);
+
+        $this->files->deleteDirectory(resource_path('views/topics'));
+    }
+
+    #[Test]
+    public function it_generates_json_ld_breadcrumbs_for_taxonomy_term_when_taxonomy_has_no_template()
+    {
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_breadcrumbs' => true,
+        ]);
+
+        // Remove the page that shadows the /topics URL so it resolves to the taxonomy itself.
+        // The taxonomy has no template, so the breadcrumbs tag drops it from the trail.
+        $this->files->deleteDirectory(resource_path('views/topics'));
+        Entry::findByUri('/topics')->delete();
+
+        $this->get('/topics/sneakers');
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $breadcrumbs = collect($data['json_ld'])->first(fn ($snippet) => str_contains($snippet, 'BreadcrumbList'));
+
+        // The taxonomy crumb is omitted (it has no template), so itemListElement must
+        // still be a sequential JSON array with contiguous positions - not a keyed object with gaps.
+        $this->assertStringContainsString('"itemListElement":[{', $breadcrumbs);
+
+        $breadcrumbs = json_decode($breadcrumbs, true);
+
+        $this->assertEquals('BreadcrumbList', $breadcrumbs['@type']);
+        $this->assertCount(2, $breadcrumbs['itemListElement']);
+        $this->assertSame([0, 1], array_keys($breadcrumbs['itemListElement']));
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => 'http://cool-runnings.com',
+        ], $breadcrumbs['itemListElement'][0]);
+
+        $this->assertEquals([
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Sneakers',
+            'item' => 'http://cool-runnings.com/topics/sneakers',
+        ], $breadcrumbs['itemListElement'][1]);
     }
 }
