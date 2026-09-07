@@ -24,6 +24,8 @@ class SiteDefaults
                     $values = self::defaultValues();
                 }
 
+                $values = self::migrateRenamedFields((array) $values);
+
                 return new LocalizedSiteDefaults($site->handle(), collect($values));
             });
         });
@@ -93,5 +95,28 @@ class SiteDefaults
             'priority' => 0.5,
             'change_frequency' => 'monthly',
         ];
+    }
+
+    private static function migrateRenamedFields(array $values): array
+    {
+        $renamedFields = [
+            'json_ld_organization_name' => 'json_ld_entity_name',
+            'json_ld_person_name' => 'json_ld_entity_name',
+            'json_ld_organization_logo' => 'json_ld_entity_logo',
+        ];
+
+        foreach ($renamedFields as $old => $new) {
+            if (! Arr::has($values, $old)) {
+                continue;
+            }
+
+            if (empty($values[$new]) && ! empty($values[$old])) {
+                $values[$new] = $values[$old];
+            }
+
+            unset($values[$old]);
+        }
+
+        return $values;
     }
 }

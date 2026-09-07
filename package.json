@@ -5,6 +5,7 @@
         "build": "vite build"
     },
     "dependencies": {
+        "@internationalized/date": "^3.12.2",
         "@tailwindcss/vite": "^4.2.4",
         "cross-env": "^7.0.2",
         "striptags": "^3.2.0",
