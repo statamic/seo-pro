@@ -27,6 +27,11 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
     Route::post('errors/actions/list', [Controllers\CP\Errors\ErrorActionController::class, 'bulkActions'])->name('errors.actions.bulk');
     Route::resource('errors', Controllers\CP\Errors\ErrorController::class)->only('index');
 
+    Route::post('dead-links/recheck-all', [Controllers\CP\DeadLinks\DeadLinkController::class, 'recheckAll'])->name('dead-links.recheck-all');
+    Route::post('dead-links/actions', [Controllers\CP\DeadLinks\DeadLinkActionController::class, 'run'])->name('dead-links.actions.run');
+    Route::post('dead-links/actions/list', [Controllers\CP\DeadLinks\DeadLinkActionController::class, 'bulkActions'])->name('dead-links.actions.bulk');
+    Route::resource('dead-links', Controllers\CP\DeadLinks\DeadLinkController::class)->only('index');
+
     Route::get('redirects/export', Controllers\CP\Redirects\ExportRedirectsController::class)->name('redirects.export');
     Route::post('redirects/import', Controllers\CP\Redirects\ImportRedirectsController::class)->name('redirects.import');
     Route::post('redirects/actions', [Controllers\CP\Redirects\RedirectActionController::class, 'run'])->name('redirects.actions.run');

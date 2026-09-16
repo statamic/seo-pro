@@ -84,4 +84,22 @@ return [
         ],
     ],
 
+    'dead_links' => [
+        'enabled' => env('SEO_PRO_TRACK_DEAD_LINKS', false),
+        'driver' => 'file',
+        'directory' => storage_path('statamic/seopro/dead-links'),
+        'excluded_hosts' => [],
+        'check' => [
+            'frequency' => 'hourly',
+            'timeout' => 10,
+            'batch_size' => 100,
+            'concurrency' => 10,
+            'user_agent' => 'Mozilla/5.0 (compatible; SeoProDeadLinkChecker/1.0; +https://statamic.com)',
+        ],
+        'notifications' => [
+            'enabled' => false,
+            'recipients' => [],
+        ],
+    ],
+
 ];
