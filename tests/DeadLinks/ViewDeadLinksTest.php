@@ -24,6 +24,28 @@ class ViewDeadLinksTest extends TestCase
     }
 
     #[Test]
+    public function the_seo_pro_tools_page_links_to_dead_links_when_permitted()
+    {
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->get(cp_route('seo-pro.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('canViewDeadLinks', true));
+    }
+
+    #[Test]
+    public function the_seo_pro_tools_page_hides_dead_links_without_permission()
+    {
+        Role::make('test')->addPermission('access cp')->addPermission('view seo reports')->save();
+
+        $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->get(cp_route('seo-pro.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('canViewDeadLinks', false));
+    }
+
+    #[Test]
     public function cant_view_dead_links_without_permission()
     {
         Role::make('test')->addPermission('access cp')->save();
