@@ -1,5 +1,12 @@
 # Release Notes
 
+## 7.14.2 (2026-09-17)
+
+### What's fixed
+- Fix dark mode colours in the report Page Details modal [#666](https://github.com/statamic/seo-pro/issues/666) by @duncanmcclean
+
+
+
 ## 7.14.1 (2026-09-07)
 
 ### What's fixed
