@@ -108,7 +108,7 @@ watch(activeRule, (rule) => {
 					</div>
 				</div>
 
-				<div class="bg-gray-300 dark:bg-dark-650 h-4 w-full rounded-2xl mr-2">
+				<div class="bg-gray-300 dark:bg-gray-700 h-4 w-full rounded-2xl mr-2">
 					<div class="h-4 rounded-2xl" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-600': report.score >= 90 }" />
 				</div>
 
@@ -118,7 +118,7 @@ watch(activeRule, (rule) => {
 							v-for="item in report.results"
 							:key="item.handle"
 							:class="{
-								'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-600': item.is_filterable,
+								'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800': item.is_filterable,
 							}"
 							@click="selectRule(item)"
 						>
@@ -138,7 +138,7 @@ watch(activeRule, (rule) => {
 							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
 									<span>{{ item.description }}</span>
-									<span v-if="item.comment" class="text-gray-700 dark:text-dark-175 sm:text-right text-pretty">
+									<span v-if="item.comment" class="sm:text-right text-pretty">
 										<Description :text="item.comment" />
 									</span>
 								</div>
