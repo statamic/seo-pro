@@ -83,7 +83,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 75.0
+score: 100.0
 pages_crawled: 10
 pages_actionable: 10
 results:
@@ -92,7 +92,7 @@ results:
   IdealTitleLength:
     failures: 0
     warnings: 10
-  UniqueMetaDescription: 10
+  UniqueMetaDescription: 0
   IdealMetaDescriptionLength:
     failures: 10
     warnings: 0
@@ -255,7 +255,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 75.0
+score: 100.0
 pages_crawled: 10
 pages_actionable: 10
 results:
@@ -264,7 +264,7 @@ results:
   IdealTitleLength:
     failures: 0
     warnings: 10
-  UniqueMetaDescription: 10
+  UniqueMetaDescription: 0
   IdealMetaDescriptionLength:
     failures: 10
     warnings: 0
@@ -299,7 +299,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 76.0
+score: 100.0
 pages_crawled: 9
 pages_actionable: 9
 results:
@@ -308,7 +308,7 @@ results:
   IdealTitleLength:
     failures: 0
     warnings: 9
-  UniqueMetaDescription: 9
+  UniqueMetaDescription: 0
   IdealMetaDescriptionLength:
     failures: 9
     warnings: 0
@@ -339,7 +339,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 82.0
+score: 100.0
 pages_crawled: 4
 pages_actionable: 4
 results:
@@ -348,7 +348,7 @@ results:
   IdealTitleLength:
     failures: 0
     warnings: 4
-  UniqueMetaDescription: 4
+  UniqueMetaDescription: 0
   IdealMetaDescriptionLength:
     failures: 4
     warnings: 0
@@ -520,6 +520,17 @@ EXPECTED;
             ->assertOk();
 
         $this->assertCount(0, $response->json('data'));
+    }
+
+    #[Test]
+    public function it_does_not_flag_empty_titles_and_descriptions_as_duplicates()
+    {
+        $this->generateEntries(3);
+
+        Entry::all()->each(fn ($entry) => $entry->set('seo', ['title' => null, 'description' => null])->save());
+
+        $this->assertEquals(0, $this->getReportResult('UniqueTitleTag'));
+        $this->assertEquals(0, $this->getReportResult('UniqueMetaDescription'));
     }
 
     private function generateReportWithDuplicateTitles()
