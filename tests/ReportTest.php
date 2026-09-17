@@ -468,6 +468,57 @@ EXPECTED;
     }
 
     #[Test]
+    public function it_shows_page_descriptions_and_comments_for_title_length()
+    {
+        $this->generateEntries(5);
+
+        $titles = [null, str_repeat('a', 5), str_repeat('a', 45), str_repeat('a', 65), str_repeat('a', 80)];
+
+        Entry::all()->values()->each(fn ($entry, $i) => $entry->set('seo', ['title' => $titles[$i]])->save());
+
+        $this->assertPageResults('IdealTitleLength', [
+            ['status' => 'fail', 'description' => 'Title tag is missing.', 'comment' => ''],
+            ['status' => 'warning', 'description' => 'Title tag is too short.', 'comment' => 'Title tag is 5 characters. Ideal length is 30–60.'],
+            ['status' => 'pass', 'description' => 'Title tag is within the ideal length range.', 'comment' => 'Title tag is 45 characters (ideal length).'],
+            ['status' => 'warning', 'description' => 'Title tag is too long.', 'comment' => 'Title tag is 65 characters. Ideal length is 30–60.'],
+            ['status' => 'fail', 'description' => 'Title tag is too long.', 'comment' => 'Title tag is 80 characters. Ideal length is 30–60.'],
+        ]);
+    }
+
+    #[Test]
+    public function it_shows_page_descriptions_and_comments_for_description_length()
+    {
+        $this->generateEntries(5);
+
+        $descriptions = [null, str_repeat('a', 50), str_repeat('a', 140), str_repeat('a', 200), str_repeat('a', 260)];
+
+        Entry::all()->values()->each(fn ($entry, $i) => $entry->set('seo', ['description' => $descriptions[$i]])->save());
+
+        $this->assertPageResults('IdealMetaDescriptionLength', [
+            ['status' => 'fail', 'description' => 'Meta description is missing.', 'comment' => ''],
+            ['status' => 'warning', 'description' => 'Meta description is too short.', 'comment' => 'Meta description is 50 characters. Ideal length is 120–160.'],
+            ['status' => 'pass', 'description' => 'Meta description is within the ideal length range.', 'comment' => 'Meta description is 140 characters (ideal length).'],
+            ['status' => 'warning', 'description' => 'Meta description is too long.', 'comment' => 'Meta description is 200 characters. Ideal length is 120–160.'],
+            ['status' => 'fail', 'description' => 'Meta description is too long.', 'comment' => 'Meta description is 260 characters. Ideal length is 120–160.'],
+        ]);
+    }
+
+    #[Test]
+    public function it_counts_multibyte_characters_when_measuring_length()
+    {
+        $this->generateEntries(1);
+
+        // 35 characters, but 70 bytes.
+        Entry::all()->each(fn ($entry) => $entry->set('seo', [
+            'title' => str_repeat('ü', 35),
+            'description' => str_repeat('ü', 140),
+        ])->save());
+
+        $this->assertEquals('pass', $this->getPageResults('IdealTitleLength')->first()['status']);
+        $this->assertEquals('pass', $this->getPageResults('IdealMetaDescriptionLength')->first()['status']);
+    }
+
+    #[Test]
     public function it_filters_pages_down_to_those_failing_a_rule()
     {
         $this->generateReportWithDuplicateTitles();
@@ -569,6 +620,26 @@ EXPECTED;
         });
 
         return $this;
+    }
+
+    private function assertPageResults($rule, $expected)
+    {
+        $this->assertEqualsCanonicalizing(
+            collect($expected)->map(fn ($result) => json_encode($result))->all(),
+            $this->getPageResults($rule)->map(fn ($result) => json_encode($result))->all(),
+        );
+    }
+
+    private function getPageResults($rule)
+    {
+        if (! Report::find(1)) {
+            Report::create()->save()->generate();
+        }
+
+        return Report::find(1)->pages()
+            ->map(fn ($page) => collect($page->getRuleResults())->firstWhere('handle', $rule))
+            ->map(fn ($result) => ['status' => $result['status'], 'description' => $result['description'], 'comment' => $result['comment']])
+            ->values();
     }
 
     private function getReportResult($key)
