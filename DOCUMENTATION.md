@@ -380,6 +380,131 @@ You can add a recent errors widget to your dashboard to see the latest 404s at a
 ],
 ```
 
+## Dead Links
+
+SEO Pro can track external links found in your content and periodically check them for broken links, so you can find and fix them before your visitors do.
+
+To enable dead link tracking, set the `SEO_PRO_TRACK_DEAD_LINKS` environment variable:
+
+```env
+SEO_PRO_TRACK_DEAD_LINKS=true
+```
+
+### Managing Dead Links
+
+Head to `Tools > SEO Pro > Dead Links` to see every tracked link, along with its status, HTTP response code, and how many times in a row it's failed. You can filter the listing by status, and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
+
+### How Links Are Tracked
+
+Whenever an entry, term, or global set is saved, SEO Pro scans every field on its blueprint for external URLs and keeps a record of each one, along with exactly where it was found. If a link is later removed from your content, it's removed from that item's list of references automatically — and cleaned up entirely once nothing references it any more.
+
+To scan your existing content for the first time (or re-scan everything), run:
+
+```
+php please seo-pro:scan-dead-links
+```
+
+### Checking Links
+
+SEO Pro periodically checks each tracked link with an HTTP request, and marks it as failing if it returns a status outside the 200-399 range (or times out, or can't be reached at all).
+
+You can configure how often links are checked, along with the request timeout and concurrency:
+
+```php
+// config/statamic/seo-pro.php
+
+'dead_links' => [
+    'check' => [
+        'frequency' => 'hourly', // every_15_minutes, every_30_minutes, hourly, every_6_hours, every_12_hours, daily, weekly
+        'timeout' => 10,
+        'batch_size' => 100,
+        'concurrency' => 10,
+    ],
+],
+```
+
+You may exclude specific hosts from being tracked at all — your own site's domain(s) are already excluded automatically:
+
+```php
+// config/statamic/seo-pro.php
+
+'dead_links' => [
+    'excluded_hosts' => ['staging.example.com'],
+],
+```
+
+Checks run automatically on your server's scheduler (make sure `php artisan schedule:run` is in your crontab), or you can trigger one manually:
+
+```
+php please seo-pro:check-dead-links
+```
+
+### Notifications
+
+SEO Pro can send a collated email whenever a check finds links that are newly broken:
+
+```php
+// config/statamic/seo-pro.php
+
+'dead_links' => [
+    'notifications' => [
+        'enabled' => true,
+        'recipients' => ['you@example.com'],
+    ],
+],
+```
+
+You won't be notified again about an ongoing failure until it recovers and then fails again.
+
+### Storage
+
+By default, dead links are stored as YAML files in the `storage/statamic/seopro/dead-links` directory:
+
+```php
+// config/statamic/seo-pro.php
+
+'dead_links' => [
+    'driver' => 'file',
+    'directory' => storage_path('statamic/seopro/dead-links'),
+],
+```
+
+Alternatively, you may store dead links in the database by changing the driver:
+
+```php
+// config/statamic/seo-pro.php
+
+'dead_links' => [
+    'driver' => 'database',
+],
+```
+
+Then run `php please seo-pro:database-dead-links` to publish the migration and import any existing dead links.
+
+### Tracking Additional Content
+
+If you use Runway (or any other Eloquent-backed models) and want them scanned for dead links too, hook into the same mechanism the built-in entry/term/global tracking uses, from your own model's saved/deleted events:
+
+```php
+use Statamic\SeoPro\DeadLinks\ContentScanner;
+
+Product::saved(function ($product) {
+    ContentScanner::syncForSubject(
+        'runway-product',                 // a type key of your choosing
+        (string) $product->getKey(),
+        '',                                // site handle, if relevant
+        $product->toArray(),
+        $product->blueprint(),             // or null to scan every attribute
+        $product->title,
+        $product->editUrl(),
+    );
+});
+
+Product::deleted(function ($product) {
+    ContentScanner::deleteForSubject('runway-product', (string) $product->getKey(), '');
+});
+```
+
 ## Advanced Configuration
 
 ### Publishing Config
