@@ -86,7 +86,7 @@ class SeoProFieldtypeTest extends TestCase
     }
 
     #[Test]
-    public function it_shows_the_ideal_length_range_from_the_config_in_the_instructions()
+    public function it_uses_the_ideal_length_range_from_the_config_in_the_title_and_description_fields()
     {
         config()->set('statamic.seo-pro.reports.title_length.warn_min', 20);
         config()->set('statamic.seo-pro.reports.title_length.pass_max', 50);
@@ -97,5 +97,7 @@ class SeoProFieldtypeTest extends TestCase
 
         $this->assertEquals('Every URL in your site should have a unique Meta Title, ideally 20–50 characters long.', $fields['title']['field']['instructions']);
         $this->assertEquals('Every URL in your site should have a unique Meta Description, ideally 100–150 characters long.', $fields['description']['field']['instructions']);
+        $this->assertEquals(50, $fields['title']['field']['field']['character_limit']);
+        $this->assertEquals(150, $fields['description']['field']['field']['character_limit']);
     }
 }

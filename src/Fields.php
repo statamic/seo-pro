@@ -73,7 +73,7 @@ class Fields
                             'localizable' => true,
                             'field' => [
                                 'type' => 'text',
-                                'character_limit' => 60,
+                                'character_limit' => config('statamic.seo-pro.reports.title_length.pass_max', 60),
                             ],
                             'always_save' => true,
                             'unless' => ['enabled' => 'equals false'],
@@ -91,7 +91,7 @@ class Fields
                             'localizable' => true,
                             'field' => [
                                 'type' => 'textarea',
-                                'character_limit' => 160,
+                                'character_limit' => config('statamic.seo-pro.reports.meta_description_length.pass_max', 160),
                             ],
                             'always_save' => true,
                             'unless' => ['enabled' => 'equals false'],
