@@ -6,10 +6,10 @@ return [
     'enabled_instruct' => 'Disabling this item will exclude it from reports and the sitemap, and prevent anything from being rendered through the template tag.',
 
     'title' => 'Meta Title',
-    'title_instruct' => 'Every URL in your site should have a unique Meta Title, ideally less than 60 characters long.',
+    'title_instruct' => 'Every URL in your site should have a unique Meta Title, ideally :min–:max characters long.',
 
     'description' => 'Meta Description',
-    'description_instruct' => 'Every URL in your site should have a unique Meta Description, ideally less than 160 characters long.',
+    'description_instruct' => 'Every URL in your site should have a unique Meta Description, ideally :min–:max characters long.',
 
     'site_name' => 'Site Name',
     'site_name_instruct' => 'Optionally disable the site name for this page.',
