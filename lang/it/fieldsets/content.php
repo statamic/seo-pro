@@ -6,10 +6,10 @@ return [
     'enabled_instruct' => 'Disattivare questo elemento lo escluderà dai report e dalla sitemap, e impedirà qualsiasi output tramite il tag template.',
 
     'title' => 'Meta Title',
-    'title_instruct' => 'Ogni URL del sito dovrebbe avere un Meta Title univoco, idealmente inferiore a 60 caratteri.',
+    'title_instruct' => 'Ogni URL del sito dovrebbe avere un Meta Title univoco, idealmente tra :min e :max caratteri.',
 
     'description' => 'Meta Description',
-    'description_instruct' => 'Ogni URL del sito dovrebbe avere una Meta Description univoca, idealmente inferiore a 160 caratteri.',
+    'description_instruct' => 'Ogni URL del sito dovrebbe avere una Meta Description univoca, idealmente tra :min e :max caratteri.',
 
     'site_name' => 'Nome del sito',
     'site_name_instruct' => 'Opzionalmente disattiva il nome del sito per questa pagina.',
