@@ -49,6 +49,12 @@ class UniqueMetaDescription extends Rule
 
     public function processPage()
     {
+        if (blank($this->metaDescription())) {
+            $this->count = 0;
+
+            return;
+        }
+
         $this->count = $this
             ->groupAllPagesByDescription()
             ->get($this->metaDescription())
@@ -80,7 +86,7 @@ class UniqueMetaDescription extends Rule
 
     public function pageStatus()
     {
-        return $this->count === 1 ? 'pass' : 'fail';
+        return $this->count <= 1 ? 'pass' : 'fail';
     }
 
     protected function metaDescription()
