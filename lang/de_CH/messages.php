@@ -134,7 +134,7 @@ return [
         'title_length_page_failing_missing' => 'Titel-Tag fehlt.',
         'title_length_page_failing_too_short' => 'Titel-Tag ist zu kurz.',
         'title_length_page_failing_too_long' => 'Titel-Tag ist zu lang.',
-        'title_length_page_passing' => 'Titel-Tag ist :length Zeichen lang (empfohlene Länge).',
+        'title_length_page_passing' => 'Titel-Tag ist :length Zeichen lang.',
         'meta_description_length_actionable_pill' => 'Beschreibung',
         'meta_description_length_site' => 'Meta-Beschreibungen sollten eine Länge im empfohlenen Bereich haben.',
         'meta_description_length_page' => 'Meta-Beschreibung liegt im empfohlenen Bereich.',
@@ -144,7 +144,7 @@ return [
         'meta_description_length_page_failing_missing' => 'Meta-Beschreibung fehlt.',
         'meta_description_length_page_failing_too_short' => 'Meta-Beschreibung ist zu kurz.',
         'meta_description_length_page_failing_too_long' => 'Meta-Beschreibung ist zu lang.',
-        'meta_description_length_page_passing' => 'Meta-Beschreibung ist :length Zeichen lang (empfohlene Länge).',
+        'meta_description_length_page_passing' => 'Meta-Beschreibung ist :length Zeichen lang.',
     ],
 
 ];

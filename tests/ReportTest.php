@@ -479,7 +479,7 @@ EXPECTED;
         $this->assertPageResults('IdealTitleLength', [
             ['status' => 'fail', 'description' => 'Title tag is missing.', 'comment' => ''],
             ['status' => 'warning', 'description' => 'Title tag is too short.', 'comment' => 'Title tag is 5 characters. Ideal length is 30–60.'],
-            ['status' => 'pass', 'description' => 'Title tag is within the ideal length range.', 'comment' => 'Title tag is 45 characters (ideal length).'],
+            ['status' => 'pass', 'description' => 'Title tag is within the ideal length range.', 'comment' => 'Title tag is 45 characters.'],
             ['status' => 'warning', 'description' => 'Title tag is too long.', 'comment' => 'Title tag is 65 characters. Ideal length is 30–60.'],
             ['status' => 'fail', 'description' => 'Title tag is too long.', 'comment' => 'Title tag is 80 characters. Ideal length is 30–60.'],
         ]);
@@ -497,7 +497,7 @@ EXPECTED;
         $this->assertPageResults('IdealMetaDescriptionLength', [
             ['status' => 'fail', 'description' => 'Meta description is missing.', 'comment' => ''],
             ['status' => 'warning', 'description' => 'Meta description is too short.', 'comment' => 'Meta description is 50 characters. Ideal length is 120–160.'],
-            ['status' => 'pass', 'description' => 'Meta description is within the ideal length range.', 'comment' => 'Meta description is 140 characters (ideal length).'],
+            ['status' => 'pass', 'description' => 'Meta description is within the ideal length range.', 'comment' => 'Meta description is 140 characters.'],
             ['status' => 'warning', 'description' => 'Meta description is too long.', 'comment' => 'Meta description is 200 characters. Ideal length is 120–160.'],
             ['status' => 'fail', 'description' => 'Meta description is too long.', 'comment' => 'Meta description is 260 characters. Ideal length is 120–160.'],
         ]);

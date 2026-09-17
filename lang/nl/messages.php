@@ -134,7 +134,7 @@ return [
         'title_length_page_failing_missing' => 'Titel-tag ontbreekt.',
         'title_length_page_failing_too_short' => 'Titel-tag is te kort.',
         'title_length_page_failing_too_long' => 'Titel-tag is te lang.',
-        'title_length_page_passing' => 'Titel-tag is :length tekens (ideale lengte).',
+        'title_length_page_passing' => 'Titel-tag is :length tekens.',
         'meta_description_length_actionable_pill' => 'Beschrijving',
         'meta_description_length_site' => 'Metabeschrijvingen moeten binnen het ideale lengtebereik vallen.',
         'meta_description_length_page' => 'Metabeschrijving valt binnen het ideale lengtebereik.',
@@ -144,7 +144,7 @@ return [
         'meta_description_length_page_failing_missing' => 'Metabeschrijving ontbreekt.',
         'meta_description_length_page_failing_too_short' => 'Metabeschrijving is te kort.',
         'meta_description_length_page_failing_too_long' => 'Metabeschrijving is te lang.',
-        'meta_description_length_page_passing' => 'Metabeschrijving is :length tekens (ideale lengte).',
+        'meta_description_length_page_passing' => 'Metabeschrijving is :length tekens.',
     ],
 
 ];

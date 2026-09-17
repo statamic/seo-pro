@@ -136,7 +136,7 @@ return [
         'title_length_page_failing_missing' => 'Title tag is missing.',
         'title_length_page_failing_too_short' => 'Title tag is too short.',
         'title_length_page_failing_too_long' => 'Title tag is too long.',
-        'title_length_page_passing' => 'Title tag is :length characters (ideal length).',
+        'title_length_page_passing' => 'Title tag is :length characters.',
         'meta_description_length_actionable_pill' => 'Description',
         'meta_description_length_site' => 'Meta descriptions should be within the ideal length range.',
         'meta_description_length_page' => 'Meta description is within the ideal length range.',
@@ -146,7 +146,7 @@ return [
         'meta_description_length_page_failing_missing' => 'Meta description is missing.',
         'meta_description_length_page_failing_too_short' => 'Meta description is too short.',
         'meta_description_length_page_failing_too_long' => 'Meta description is too long.',
-        'meta_description_length_page_passing' => 'Meta description is :length characters (ideal length).',
+        'meta_description_length_page_passing' => 'Meta description is :length characters.',
     ],
 
 ];
