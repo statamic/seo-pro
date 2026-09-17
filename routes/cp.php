@@ -22,6 +22,11 @@ Route::prefix('seo-pro')->name('seo-pro.')->group(function () {
     Route::post('robots/generate', [Controllers\CP\RobotsController::class, 'generate'])->name('robots.generate');
     Route::post('robots/preview', [Controllers\CP\RobotsController::class, 'preview'])->name('robots.preview');
 
+    Route::get('llms/edit', [Controllers\CP\LlmsController::class, 'edit'])->name('llms.edit');
+    Route::patch('llms', [Controllers\CP\LlmsController::class, 'update'])->name('llms.update');
+    Route::post('llms/generate', [Controllers\CP\LlmsController::class, 'generate'])->name('llms.generate');
+    Route::post('llms/preview', [Controllers\CP\LlmsController::class, 'preview'])->name('llms.preview');
+
     Route::get('section-defaults', [Controllers\CP\SectionDefaultsController::class, 'index'])->name('section-defaults.index');
     Route::get('section-defaults/collections/{seo_pro_collection}/edit', [Controllers\CP\CollectionDefaultsController::class, 'edit'])->name('section-defaults.collections.edit');
     Route::patch('section-defaults/collections/{seo_pro_collection}', [Controllers\CP\CollectionDefaultsController::class, 'update'])->name('section-defaults.collections.update');

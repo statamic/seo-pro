@@ -15,6 +15,7 @@ use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
+use Statamic\SeoPro\Llms\Llms;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
@@ -134,6 +135,7 @@ class Cascade
             'next_url' => $this->nextUrl(),
             'home_url' => $this->homeUrl(),
             'humans_txt' => $this->humans(),
+            'llms_txt' => $this->llms(),
             'site' => $this->site(),
             'is_default_site' => $this->site()->isDefault(),
             'alternate_locales' => $alternateLocales = $this->alternateLocales(),
@@ -556,6 +558,15 @@ class Cascade
     {
         if (config('statamic.seo-pro.humans.enabled')) {
             return URL::makeAbsolute(Str::ensureLeft(config('statamic.seo-pro.humans.url'), '/'));
+        }
+    }
+
+    protected function llms()
+    {
+        $site = $this->site();
+
+        if (Llms::get($site)->enabled()) {
+            return Llms::url($site);
         }
     }
 
