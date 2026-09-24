@@ -45,6 +45,7 @@ const collectionOptions = ref([]);
 const entryOptions = ref([]);
 const errors = ref({});
 const previewError = ref(null);
+const maxBytes = ref(0);
 const hydrating = ref(false);
 const dirtyStateName = 'seo-pro-llms';
 
@@ -55,6 +56,9 @@ const modeOptions = [
 
 const isBusy = computed(() => loading.value || saving.value || generating.value);
 const hasUnmanagedFile = computed(() => file.value.exists && !file.value.managed);
+const renderedBytes = computed(() => new TextEncoder().encode(rendered.value ?? '').length);
+const approachingSizeLimit = computed(() => form.value?.enabled && maxBytes.value > 0 && renderedBytes.value >= maxBytes.value * 0.8);
+const formatKiB = (bytes) => Math.ceil(bytes / 1024).toLocaleString();
 let previewTimer = null;
 let previewController = null;
 let previewRequest = 0;
@@ -82,7 +86,8 @@ function hydrate(data) {
 	collectionOptions.value = data.collectionOptions;
 	entryOptions.value = data.entryOptions;
 	errors.value = {};
-	previewError.value = null;
+	previewError.value = data.previewError ?? null;
+	maxBytes.value = data.maxBytes;
 	loaded.value = true;
 	Statamic.$dirty.remove(dirtyStateName);
 	queueMicrotask(() => hydrating.value = false);
@@ -410,8 +415,20 @@ defineExpose({ save });
 								<Description :text="liveUrl" />
 							</div>
 							<Badge v-if="previewError" color="red" :text="__('seo-pro::messages.llms_txt.preview_unavailable')" />
+							<Badge
+								v-else-if="rendered"
+								:color="approachingSizeLimit ? 'amber' : 'default'"
+								:text="__('seo-pro::messages.llms_txt.size', { size: formatKiB(renderedBytes), limit: formatKiB(maxBytes) })"
+							/>
 						</div>
 						<Alert v-if="previewError" class="mb-4" variant="warning" :text="previewError" />
+						<Alert
+							v-else-if="approachingSizeLimit"
+							class="mb-4"
+							variant="warning"
+							:heading="__('seo-pro::messages.llms_txt.size_limit_approaching')"
+							:text="__('seo-pro::messages.llms_txt.size_limit_approaching_description')"
+						/>
 						<CodeEditor :model-value="rendered" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" read-only :title="__('seo-pro::messages.llms_txt.preview_title')" />
 					</Panel>
 				</template>

@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\Llms;
 
 use Illuminate\Contracts\Cache\Repository;
 use Statamic\Sites\Site as SiteObject;
+use Throwable;
 
 class LlmsRenderCache
 {
@@ -21,13 +22,33 @@ class LlmsRenderCache
         ], JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION));
         $cached = $this->cache->get($this->key($site));
 
-        if (is_array($cached)
-            && ($cached['fingerprint'] ?? null) === $fingerprint
-            && is_string($cached['contents'] ?? null)) {
-            return $cached['contents'];
+        $lastContents = is_array($cached) && is_string($cached['contents'] ?? null) ? $cached['contents'] : null;
+
+        if ($lastContents !== null && ($cached['fingerprint'] ?? null) === $fingerprint) {
+            return $lastContents;
         }
 
-        $contents = $this->renderer->render($document, $site);
+        if ($lastContents !== null && ($cached['failed'] ?? null) === $fingerprint) {
+            return $lastContents;
+        }
+
+        try {
+            $contents = $this->renderer->render($document, $site);
+        } catch (Throwable $exception) {
+            if ($lastContents === null) {
+                throw $exception;
+            }
+
+            // Keep serving the last successful render, and don't retry until something changes.
+            report($exception);
+            $this->cache->forever($this->key($site), [
+                'fingerprint' => null,
+                'failed' => $fingerprint,
+                'contents' => $lastContents,
+            ]);
+
+            return $lastContents;
+        }
 
         $this->cache->forever($this->key($site), [
             'fingerprint' => $fingerprint,
@@ -39,7 +60,21 @@ class LlmsRenderCache
 
     public function forget(string|SiteObject|null $site = null): void
     {
-        $this->cache->forget($this->key(Llms::site($site)));
+        $key = $this->key(Llms::site($site));
+        $cached = $this->cache->get($key);
+
+        if (! is_array($cached) || ! is_string($cached['contents'] ?? null)) {
+            $this->cache->forget($key);
+
+            return;
+        }
+
+        // Keep the contents as a fallback in case the next render fails.
+        $this->cache->forever($key, [
+            'fingerprint' => null,
+            'failed' => null,
+            'contents' => $cached['contents'],
+        ]);
     }
 
     private function key(SiteObject $site): string

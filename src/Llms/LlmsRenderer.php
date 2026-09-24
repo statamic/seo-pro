@@ -243,7 +243,10 @@ class LlmsRenderer
         }
 
         if (strlen($contents) > self::MAX_BYTES) {
-            throw new InvalidArgumentException('The resolved llms.txt document must not be greater than 500 KiB.');
+            throw new InvalidArgumentException(sprintf(
+                'The resolved llms.txt document is %s KiB, which is over the 500 KiB limit. Select fewer collections or entries, or shorten the content.',
+                ceil(strlen($contents) / 1024),
+            ));
         }
 
         $this->validateH1Count($contents);

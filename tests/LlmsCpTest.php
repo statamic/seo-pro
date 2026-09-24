@@ -4,8 +4,13 @@ namespace Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Role;
+use Statamic\Facades\Site;
 use Statamic\Facades\User;
+use Statamic\SeoPro\Llms\Llms;
+use Statamic\SeoPro\Llms\LlmsDocument;
+use Statamic\SeoPro\Llms\LlmsRenderer;
 
 class LlmsCpTest extends TestCase
 {
@@ -34,7 +39,31 @@ class LlmsCpTest extends TestCase
             ])
             ->assertJsonPath('file.exists', false)
             ->assertJsonPath('file.path', public_path('llms.txt'))
-            ->assertJsonPath('liveUrl', 'http://cool-runnings.com/llms.txt');
+            ->assertJsonPath('liveUrl', 'http://cool-runnings.com/llms.txt')
+            ->assertJsonPath('previewError', null)
+            ->assertJsonPath('maxBytes', LlmsRenderer::MAX_BYTES);
+    }
+
+    #[Test]
+    public function loading_reports_why_the_saved_document_can_no_longer_be_rendered()
+    {
+        Llms::saveWithoutGenerated(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Cool Runnings',
+            'collections' => ['articles'],
+        ]), Site::default());
+        Entry::make()
+            ->collection('articles')
+            ->slug('oversized')
+            ->data(['title' => str_repeat('a', 600 * 1024)])
+            ->save();
+
+        $response = $this->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.llms.edit'))
+            ->assertOk()
+            ->assertJsonPath('preview', '');
+
+        $this->assertStringContainsString('over the 500 KiB limit', $response->json('previewError'));
     }
 
     #[Test]

@@ -340,6 +340,84 @@ TXT."\n", $response->content());
     }
 
     #[Test]
+    public function documents_over_the_size_limit_are_rejected_with_their_size()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The resolved llms.txt document is 601 KiB, which is over the 500 KiB limit.');
+
+        app(LlmsRenderer::class)->render(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Cool Runnings',
+            'details' => str_repeat('a', 600 * 1024),
+        ]));
+    }
+
+    #[Test]
+    public function the_route_serves_the_last_successful_version_when_rendering_fails()
+    {
+        Exceptions::fake();
+        $this->saveEnabled(['collections' => ['articles']]);
+        $contents = $this->get('/llms.txt')->assertOk()->content();
+
+        $this->saveOversizedArticle();
+
+        $this->get('/llms.txt')->assertOk()->assertContent($contents);
+        Exceptions::assertReported(fn (InvalidArgumentException $exception) => str_contains($exception->getMessage(), 'over the 500 KiB limit'));
+    }
+
+    #[Test]
+    public function the_route_returns_a_503_when_nothing_has_rendered_successfully()
+    {
+        Exceptions::fake();
+        $this->saveEnabled(['collections' => ['articles']]);
+        $this->saveOversizedArticle();
+
+        $this->get('/llms.txt')->assertServiceUnavailable();
+        Exceptions::assertReported(fn (InvalidArgumentException $exception) => str_contains($exception->getMessage(), 'over the 500 KiB limit'));
+    }
+
+    #[Test]
+    public function a_failed_render_is_not_retried_until_the_content_changes()
+    {
+        Exceptions::fake();
+        $renderer = new class extends LlmsRenderer
+        {
+            public int $renders = 0;
+
+            public bool $fail = false;
+
+            public function render(LlmsDocument|array $document, string|\Statamic\Sites\Site|null $site = null): string
+            {
+                $this->renders++;
+
+                if ($this->fail) {
+                    throw new InvalidArgumentException('Rendering failed.');
+                }
+
+                return parent::render($document, $site);
+            }
+        };
+        $cache = new LlmsRenderCache(new Repository(new ArrayStore), $renderer);
+        $document = new LlmsDocument(['enabled' => true, 'title' => 'First']);
+
+        $this->assertSame("# First\n", $cache->get($document));
+
+        $renderer->fail = true;
+        $cache->forget();
+
+        $this->assertSame("# First\n", $cache->get($document));
+        $this->assertSame("# First\n", $cache->get($document));
+        $this->assertSame(2, $renderer->renders);
+        Exceptions::assertReportedCount(1);
+
+        $renderer->fail = false;
+        $cache->forget();
+
+        $this->assertSame("# Second\n", $cache->get(new LlmsDocument(['enabled' => true, 'title' => 'Second'])));
+        $this->assertSame(3, $renderer->renders);
+    }
+
+    #[Test]
     public function saving_does_not_create_a_physical_file_until_generation_is_requested()
     {
         $document = new LlmsDocument(['enabled' => true, 'title' => 'Cool Runnings']);
@@ -541,6 +619,15 @@ TXT."\n", $response->content());
         $this->saveEnabled(['title' => 'Cool Runnings']);
 
         $this->assertSame('http://cool-runnings.com/llms.txt', (new Cascade)->get()['llms_txt']);
+    }
+
+    private function saveOversizedArticle(): void
+    {
+        Entry::make()
+            ->collection('articles')
+            ->slug('oversized')
+            ->data(['title' => str_repeat('a', 600 * 1024)])
+            ->save();
     }
 
     private function saveEnabled(array $overrides = []): void

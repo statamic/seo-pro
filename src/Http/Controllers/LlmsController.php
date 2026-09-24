@@ -9,6 +9,7 @@ use Statamic\SeoPro\Llms\Llms;
 use Statamic\SeoPro\Llms\LlmsRenderCache;
 use Statamic\StaticCaching\Cacher;
 use Statamic\StaticCaching\Cachers\FileCacher;
+use Throwable;
 
 class LlmsController extends Controller
 {
@@ -24,7 +25,14 @@ class LlmsController extends Controller
 
         abort_unless($document->enabled(), 404);
 
-        $contents = $this->cache->get($document, $site);
+        try {
+            $contents = $this->cache->get($document, $site);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            abort(503);
+        }
+
         $response = response($contents)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
             ->header('ETag', '"'.hash('sha256', $contents).'"')

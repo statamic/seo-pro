@@ -30,10 +30,13 @@ class LlmsController extends CpController
         $this->authorize('edit seo robots');
         $site = $this->site($request);
         $document = Llms::get($site);
+        $preview = $this->renderPreview($document, $site);
 
         return [
             'values' => $document->all(),
-            'preview' => $this->previewContents($document, $site),
+            'preview' => $preview['preview'] ?? '',
+            'previewError' => $document->enabled() ? $preview['error'] : null,
+            'maxBytes' => LlmsRenderer::MAX_BYTES,
             'action' => cp_route('seo-pro.llms.update'),
             'generateUrl' => cp_route('seo-pro.llms.generate'),
             'previewUrl' => cp_route('seo-pro.llms.preview'),
@@ -106,12 +109,7 @@ class LlmsController extends CpController
         $site = $this->site($request);
         $document = new LlmsDocument($this->validated($request, $site, false));
 
-        try {
-            return ['preview' => $this->renderer->render($document, $site), 'error' => null];
-        } catch (Throwable $exception) {
-            // Incomplete drafts are expected while editing, so report why instead of failing the request.
-            return ['preview' => null, 'error' => $exception->getMessage()];
-        }
+        return $this->renderPreview($document, $site);
     }
 
     private function validated(Request $request, $site, bool $validateRenderedDocument = true): array
@@ -207,12 +205,13 @@ class LlmsController extends CpController
         return $site;
     }
 
-    private function previewContents(LlmsDocument $document, $site): string
+    private function renderPreview(LlmsDocument $document, $site): array
     {
         try {
-            return $this->renderer->render($document, $site);
-        } catch (Throwable) {
-            return '';
+            return ['preview' => $this->renderer->render($document, $site), 'error' => null];
+        } catch (Throwable $exception) {
+            // Incomplete drafts are expected while editing, so report why instead of failing the request.
+            return ['preview' => null, 'error' => $exception->getMessage()];
         }
     }
 
