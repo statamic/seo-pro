@@ -1,5 +1,13 @@
 # Release Notes
 
+## 7.14.3 (2026-09-24)
+
+### What's fixed
+- Fix duplicate and contradictory messages in ideal length rules [#668](https://github.com/statamic/seo-pro/issues/668) by @helloDanuk
+- Skip redirects that resolve to the URL being visited [#673](https://github.com/statamic/seo-pro/issues/673) by @duncanmcclean
+
+
+
 ## 7.14.2 (2026-09-17)
 
 ### What's fixed
