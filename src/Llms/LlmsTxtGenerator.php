@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Llms;
 
 use Carbon\CarbonInterface;
+use Illuminate\Contracts\Filesystem\LockTimeoutException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\LockableFile;
 use Illuminate\Support\Facades\Date;
@@ -14,6 +15,10 @@ use Throwable;
 class LlmsTxtGenerator
 {
     public const MAX_BYTES = LlmsRenderer::MAX_BYTES;
+
+    private const LOCK_ATTEMPTS = 100;
+
+    private const LOCK_RETRY_MILLISECONDS = 100;
 
     public function __construct(
         private Filesystem $files,
@@ -286,11 +291,18 @@ class LlmsTxtGenerator
 
         try {
             $lock = new LockableFile(storage_path('framework/cache/seo-pro/llms-txt.lock'), 'c+');
-            $lock->getExclusiveLock();
+
+            // Wait for a generation in progress, e.g. from a simultaneous entry save, so this update isn't lost.
+            retry(
+                self::LOCK_ATTEMPTS,
+                fn () => $lock->getExclusiveLock(),
+                self::LOCK_RETRY_MILLISECONDS,
+                fn (Throwable $exception) => $exception instanceof LockTimeoutException,
+            );
         } catch (Throwable $exception) {
             $lock?->close();
 
-            throw new RuntimeException('Unable to acquire the llms.txt generation lock. Another generation may already be in progress.', previous: $exception);
+            throw new RuntimeException('Unable to acquire the llms.txt generation lock. Another generation is still in progress.', previous: $exception);
         }
 
         try {

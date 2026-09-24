@@ -5,9 +5,11 @@ namespace Tests;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
+use Illuminate\Filesystem\LockableFile;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Support\Sleep;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -467,6 +469,38 @@ TXT."\n", $response->content());
     }
 
     #[Test]
+    public function generation_waits_for_a_generation_in_progress()
+    {
+        $lock = $this->holdGenerationLock();
+        Sleep::fake();
+        Sleep::whenFakingSleep(fn () => $lock->close());
+
+        app(LlmsTxtGenerator::class)->generate(new LlmsDocument(['enabled' => true, 'title' => 'Cool Runnings']));
+
+        Sleep::assertSleptTimes(1);
+        $this->assertSame("# Cool Runnings\n", $this->files->get(public_path('llms.txt')));
+    }
+
+    #[Test]
+    public function generation_gives_up_when_a_generation_in_progress_does_not_finish()
+    {
+        $lock = $this->holdGenerationLock();
+        Sleep::fake();
+
+        try {
+            app(LlmsTxtGenerator::class)->generate(new LlmsDocument(['enabled' => true, 'title' => 'Cool Runnings']));
+            $this->fail('Generation should have timed out waiting for the lock.');
+        } catch (\RuntimeException $exception) {
+            $this->assertStringContainsString('generation lock', $exception->getMessage());
+        } finally {
+            $lock->close();
+        }
+
+        Sleep::assertSleptTimes(99);
+        $this->assertFileDoesNotExist(public_path('llms.txt'));
+    }
+
+    #[Test]
     public function a_managed_file_is_relocated_when_the_site_url_changes()
     {
         $generator = app(LlmsTxtGenerator::class);
@@ -619,6 +653,14 @@ TXT."\n", $response->content());
         $this->saveEnabled(['title' => 'Cool Runnings']);
 
         $this->assertSame('http://cool-runnings.com/llms.txt', (new Cascade)->get()['llms_txt']);
+    }
+
+    private function holdGenerationLock(): LockableFile
+    {
+        $lock = new LockableFile(storage_path('framework/cache/seo-pro/llms-txt.lock'), 'c+');
+        $lock->getExclusiveLock();
+
+        return $lock;
     }
 
     private function saveOversizedArticle(): void
