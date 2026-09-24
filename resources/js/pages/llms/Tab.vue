@@ -44,7 +44,7 @@ const site = ref('');
 const collectionOptions = ref([]);
 const entryOptions = ref([]);
 const errors = ref({});
-const previewError = ref(false);
+const previewError = ref(null);
 const hydrating = ref(false);
 const dirtyStateName = 'seo-pro-llms';
 
@@ -82,7 +82,7 @@ function hydrate(data) {
 	collectionOptions.value = data.collectionOptions;
 	entryOptions.value = data.entryOptions;
 	errors.value = {};
-	previewError.value = false;
+	previewError.value = null;
 	loaded.value = true;
 	Statamic.$dirty.remove(dirtyStateName);
 	queueMicrotask(() => hydrating.value = false);
@@ -189,7 +189,7 @@ function removeSection(index) {
 }
 
 function addLink(section) {
-	section.links.push({ title: '', url: 'https://', description: '' });
+	section.links.push({ title: '', url: '', description: '' });
 }
 
 function removeLink(section, index) {
@@ -203,7 +203,7 @@ watch(form, () => {
 	cancelPreview();
 
 	if (!form.value?.enabled || form.value.mode !== 'managed') {
-		previewError.value = false;
+		previewError.value = null;
 		return;
 	}
 
@@ -217,13 +217,18 @@ watch(form, () => {
 			.then((response) => {
 				if (controller.signal.aborted || request !== previewRequest) return;
 
+				if (response.data.error) {
+					previewError.value = response.data.error;
+					return;
+				}
+
 				rendered.value = response.data.preview;
-				previewError.value = false;
+				previewError.value = null;
 			})
-			.catch(() => {
+			.catch((error) => {
 				if (controller.signal.aborted || request !== previewRequest) return;
 
-				previewError.value = true;
+				previewError.value = error.response?.data?.message ?? __('seo-pro::messages.llms_txt.preview_unavailable');
 			})
 			.finally(() => {
 				if (previewController === controller) previewController = null;
@@ -378,7 +383,7 @@ defineExpose({ save });
 										<div v-for="(link, linkIndex) in section.links" :key="linkIndex" class="rounded-lg border p-4 space-y-3 dark:border-gray-700">
 											<div class="grid gap-3 md:grid-cols-2">
 												<Field :label="__('seo-pro::messages.llms_txt.link_title')"><Input v-model="link.title" /></Field>
-												<Field :label="__('seo-pro::messages.llms_txt.link_url')"><Input v-model="link.url" class="font-mono" /></Field>
+												<Field :label="__('seo-pro::messages.llms_txt.link_url')"><Input v-model="link.url" class="font-mono" placeholder="https://" /></Field>
 											</div>
 											<div class="flex gap-2">
 												<Field class="flex-1" :label="__('seo-pro::messages.llms_txt.link_description')"><Textarea v-model="link.description" rows="2" /></Field>
@@ -406,6 +411,7 @@ defineExpose({ save });
 							</div>
 							<Badge v-if="previewError" color="red" :text="__('seo-pro::messages.llms_txt.preview_unavailable')" />
 						</div>
+						<Alert v-if="previewError" class="mb-4" variant="warning" :text="previewError" />
 						<CodeEditor :model-value="rendered" mode="markdown" :allow-mode-selection="false" :show-mode-label="false" read-only :title="__('seo-pro::messages.llms_txt.preview_title')" />
 					</Panel>
 				</template>

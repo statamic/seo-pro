@@ -157,6 +157,36 @@ class LlmsCpTest extends TestCase
     }
 
     #[Test]
+    public function previewing_an_incomplete_draft_reports_why_it_cannot_be_rendered()
+    {
+        $payload = $this->payload([
+            'sections' => [
+                ['title' => '', 'links' => [['title' => 'Docs', 'url' => 'https://example.com/docs', 'description' => '']]],
+            ],
+        ]);
+
+        $this->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.llms.preview'), $payload)
+            ->assertOk()
+            ->assertJsonPath('preview', null)
+            ->assertJsonPath('error', 'Every non-empty llms.txt section requires a title.');
+
+        $this->patchJson(cp_route('seo-pro.llms.update'), $payload)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('document');
+    }
+
+    #[Test]
+    public function previewing_a_valid_draft_returns_the_rendered_document()
+    {
+        $this->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.llms.preview'), $this->payload())
+            ->assertOk()
+            ->assertJsonPath('preview', "# Cool Runnings\n")
+            ->assertJsonPath('error', null);
+    }
+
+    #[Test]
     public function users_without_permission_cannot_manage_llms_txt()
     {
         Role::make('editor')->permissions(['access cp'])->save();

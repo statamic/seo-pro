@@ -107,9 +107,10 @@ class LlmsController extends CpController
         $document = new LlmsDocument($this->validated($request, $site, false));
 
         try {
-            return ['preview' => $this->renderer->render($document, $site)];
+            return ['preview' => $this->renderer->render($document, $site), 'error' => null];
         } catch (Throwable $exception) {
-            throw ValidationException::withMessages(['document' => $exception->getMessage()]);
+            // Incomplete drafts are expected while editing, so report why instead of failing the request.
+            return ['preview' => null, 'error' => $exception->getMessage()];
         }
     }
 
