@@ -64,13 +64,16 @@ class Fields
                         'handle' => 'title',
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.title"),
-                            'instructions' => __("seo-pro::fieldsets/{$langFile}.title_instruct"),
+                            'instructions' => __("seo-pro::fieldsets/{$langFile}.title_instruct", [
+                                'min' => config('statamic.seo-pro.reports.title_length.warn_min', 30),
+                                'max' => config('statamic.seo-pro.reports.title_length.pass_max', 60),
+                            ]),
                             'type' => 'seo_pro_source',
                             'disableable' => true,
                             'localizable' => true,
                             'field' => [
                                 'type' => 'text',
-                                'character_limit' => 60,
+                                'character_limit' => config('statamic.seo-pro.reports.title_length.pass_max', 60),
                             ],
                             'always_save' => true,
                             'unless' => ['enabled' => 'equals false'],
@@ -80,12 +83,15 @@ class Fields
                         'handle' => 'description',
                         'field' => [
                             'display' => __("seo-pro::fieldsets/{$langFile}.description"),
-                            'instructions' => __("seo-pro::fieldsets/{$langFile}.description_instruct"),
+                            'instructions' => __("seo-pro::fieldsets/{$langFile}.description_instruct", [
+                                'min' => config('statamic.seo-pro.reports.meta_description_length.warn_min', 120),
+                                'max' => config('statamic.seo-pro.reports.meta_description_length.pass_max', 160),
+                            ]),
                             'type' => 'seo_pro_source',
                             'localizable' => true,
                             'field' => [
                                 'type' => 'textarea',
-                                'character_limit' => 160,
+                                'character_limit' => config('statamic.seo-pro.reports.meta_description_length.pass_max', 160),
                             ],
                             'always_save' => true,
                             'unless' => ['enabled' => 'equals false'],
