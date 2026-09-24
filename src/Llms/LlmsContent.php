@@ -80,6 +80,7 @@ class LlmsContent
             'title' => trim((string) preg_replace('/\s+/u', ' ', $collection->title())),
             'links' => [],
             'parse_antlers' => false,
+            'generated' => true,
         ];
         $sections[$handle]['links'][] = [
             'title' => $title,

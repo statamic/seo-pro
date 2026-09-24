@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Llms;
 
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
 use League\CommonMark\Parser\MarkdownParser;
@@ -60,6 +61,7 @@ class LlmsRenderer
 
         foreach ($sections as $section) {
             $parseAntlers = $section['parse_antlers'] ?? true;
+            $generated = $section['generated'] ?? false;
             $sectionTitle = trim($parseAntlers
                 ? $this->parse($section['title'], $context)
                 : $section['title']);
@@ -67,14 +69,15 @@ class LlmsRenderer
                 ->map(function (array $link) use ($context, $parseAntlers) {
                     return [
                         'title' => trim($parseAntlers ? $this->parse($link['title'], $context) : $link['title']),
-                        'url' => trim($parseAntlers ? $this->parse($link['url'], $context) : $link['url']),
+                        'url' => $this->encodeUrl(trim($parseAntlers ? $this->parse($link['url'], $context) : $link['url'])),
                         'description' => trim($parseAntlers ? $this->parse($link['description'], $context) : $link['description']),
                     ];
                 })
                 ->filter(fn (array $link) => $link['title'] !== '' || $link['url'] !== '')
+                ->filter(fn (array $link) => ! $generated || $this->isValidGeneratedLink($link))
                 ->values();
 
-            if ($sectionTitle === '' && $links->isEmpty()) {
+            if ($links->isEmpty() && ($sectionTitle === '' || $generated)) {
                 continue;
             }
 
@@ -179,6 +182,19 @@ class LlmsRenderer
         }
     }
 
+    private function isValidGeneratedLink(array $link): bool
+    {
+        try {
+            $this->validateLink($link);
+        } catch (InvalidArgumentException $exception) {
+            report($exception);
+
+            return false;
+        }
+
+        return true;
+    }
+
     private function validateSingleLine(string $value, string $label): void
     {
         if (str_contains($value, "\n") || str_contains($value, "\r")) {
@@ -189,6 +205,23 @@ class LlmsRenderer
     private function escapeLinkTitle(string $title): string
     {
         return str_replace(['\\', '[', ']'], ['\\\\', '\\[', '\\]'], $title);
+    }
+
+    private function encodeUrl(string $url): string
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (is_string($host) && preg_match('/[^\x00-\x7F]/', $host)) {
+            $asciiHost = idn_to_ascii($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+
+            if ($asciiHost !== false) {
+                $url = Str::replaceFirst($host, $asciiHost, $url);
+            }
+        }
+
+        // Percent-encode non-ASCII characters and those that would end the Markdown link.
+        // Line breaks are kept so validation can still reject multi-line URLs.
+        return preg_replace_callback('/[^\x00-\x7F]|[ <>()]/u', fn (array $match) => rawurlencode($match[0]), $url) ?? $url;
     }
 
     private function normalizeLines(string $contents): string

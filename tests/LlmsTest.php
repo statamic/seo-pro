@@ -7,6 +7,8 @@ use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Exceptions;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Events\AddonSettingsSaved;
@@ -16,6 +18,7 @@ use Statamic\Facades\Site;
 use Statamic\Facades\URL;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\Llms\Llms;
+use Statamic\SeoPro\Llms\LlmsContent;
 use Statamic\SeoPro\Llms\LlmsDocument;
 use Statamic\SeoPro\Llms\LlmsRenderCache;
 use Statamic\SeoPro\Llms\LlmsRenderer;
@@ -126,6 +129,96 @@ TXT."\n", $response->content());
     }
 
     #[Test]
+    public function entry_urls_on_an_international_domain_are_encoded()
+    {
+        Site::default()->set('url', 'http://bücher.de/');
+        URL::clearUrlCache();
+
+        $contents = app(LlmsRenderer::class)->render(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Cool Runnings',
+            'entries' => ['62136fa2-9e5c-4c38-a894-a2753f02f5ff'],
+        ]));
+
+        $this->assertStringContainsString('- [About](http://xn--bcher-kva.de/about)', $contents);
+    }
+
+    #[Test]
+    public function manual_link_urls_are_encoded_for_markdown()
+    {
+        $this->saveEnabled([
+            'sections' => [[
+                'title' => 'Links',
+                'links' => [
+                    ['title' => 'Books', 'url' => 'https://bücher.de/über', 'description' => ''],
+                    ['title' => 'Spaces', 'url' => 'https://example.com/a b/(c)', 'description' => ''],
+                    ['title' => 'Encoded', 'url' => 'https://example.com/%C3%BCber-uns', 'description' => ''],
+                ],
+            ]],
+        ]);
+
+        $contents = $this->get('/llms.txt')->assertOk()->content();
+
+        $this->assertStringContainsString('- [Books](https://xn--bcher-kva.de/%C3%BCber)', $contents);
+        $this->assertStringContainsString('- [Spaces](https://example.com/a%20b/%28c%29)', $contents);
+        $this->assertStringContainsString('- [Encoded](https://example.com/%C3%BCber-uns)', $contents);
+    }
+
+    #[Test]
+    public function invalid_manual_link_urls_are_rejected()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('must be an absolute HTTP or HTTPS URL');
+
+        app(LlmsRenderer::class)->render(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Cool Runnings',
+            'sections' => [[
+                'title' => 'Links',
+                'links' => [['title' => 'Script', 'url' => 'javascript:alert(1)', 'description' => '']],
+            ]],
+        ]));
+    }
+
+    #[Test]
+    public function invalid_entry_links_are_skipped_and_reported()
+    {
+        Exceptions::fake();
+        $content = new class extends LlmsContent
+        {
+            public function sections(LlmsDocument|array $document, string|\Statamic\Sites\Site|null $site = null): array
+            {
+                return [
+                    [
+                        'title' => 'Pages',
+                        'links' => [
+                            ['title' => 'Relative', 'url' => '/relative', 'description' => ''],
+                            ['title' => 'About', 'url' => 'http://cool-runnings.com/about', 'description' => ''],
+                        ],
+                        'parse_antlers' => false,
+                        'generated' => true,
+                    ],
+                    [
+                        'title' => 'Articles',
+                        'links' => [['title' => 'Relative', 'url' => '/also-relative', 'description' => '']],
+                        'parse_antlers' => false,
+                        'generated' => true,
+                    ],
+                ];
+            }
+        };
+
+        $contents = (new LlmsRenderer($content))->render(new LlmsDocument([
+            'enabled' => true,
+            'title' => 'Cool Runnings',
+        ]));
+
+        $this->assertSame("# Cool Runnings\n\n## Pages\n\n- [About](http://cool-runnings.com/about)\n", $contents);
+        Exceptions::assertReportedCount(2);
+        Exceptions::assertReported(fn (InvalidArgumentException $exception) => str_contains($exception->getMessage(), '[/relative]'));
+    }
+
+    #[Test]
     public function selected_draft_entries_are_not_included()
     {
         Entry::make()
@@ -172,7 +265,7 @@ TXT."\n", $response->content());
     #[DataProvider('additionalH1Provider')]
     public function it_rejects_documents_with_more_than_one_markdown_h1(string $source)
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('must contain exactly one Markdown H1 heading');
 
         app(LlmsRenderer::class)->render(new LlmsDocument([
