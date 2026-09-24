@@ -1,5 +1,39 @@
 # Release Notes
 
+## 7.14.3 (2026-09-24)
+
+### What's fixed
+- Fix duplicate and contradictory messages in ideal length rules [#668](https://github.com/statamic/seo-pro/issues/668) by @helloDanuk
+- Skip redirects that resolve to the URL being visited [#673](https://github.com/statamic/seo-pro/issues/673) by @duncanmcclean
+
+
+
+## 7.14.2 (2026-09-17)
+
+### What's fixed
+- Fix dark mode colours in the report Page Details modal [#666](https://github.com/statamic/seo-pro/issues/666) by @duncanmcclean
+
+
+
+## 7.14.1 (2026-09-07)
+
+### What's fixed
+- Fall back to the raw asset URL when Glide can't generate a social image [#660](https://github.com/statamic/seo-pro/issues/660) by @edalzell
+
+
+
+## 7.14.0 (2026-09-03)
+
+### What's new
+- Add configurable cap on tracked 404 errors [#654](https://github.com/statamic/seo-pro/issues/654) by @duncanmcclean
+- Add delete action for tracked 404 errors [#656](https://github.com/statamic/seo-pro/issues/656) by @duncanmcclean
+- Add delete action for redirects [#657](https://github.com/statamic/seo-pro/issues/657) by @duncanmcclean
+
+### What's fixed
+- Fix errors with no `last_hit_at` never being purged [#655](https://github.com/statamic/seo-pro/issues/655) by @duncanmcclean
+
+
+
 ## 7.13.3 (2026-08-25)
 
 ### What's fixed

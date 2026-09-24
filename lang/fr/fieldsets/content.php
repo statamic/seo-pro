@@ -6,10 +6,10 @@ return [
     'enabled_instruct' => 'Si vous désactivez cet élément, il sera exclu des rapports et empêchera tout rendu par le biais de la balise de modèle.',
 
     'title' => 'Titre Meta',
-    'title_instruct' => 'Chaque URL de votre site doit avoir un titre unique, idéalement moins de 60 caractères.',
+    'title_instruct' => 'Chaque URL de votre site doit avoir un titre unique, idéalement entre :min et :max caractères.',
 
     'description' => 'Description Meta',
-    'description_instruct' => 'Chaque URL de votre site doit avoir une description méta unique, idéalement inférieure à 160 caractères.',
+    'description_instruct' => 'Chaque URL de votre site doit avoir une description méta unique, idéalement entre :min et :max caractères.',
 
     'canonical_url' => 'URL Canonique',
     'canonical_url_instruct' => 'Chaque URL de votre site doit avoir une URL canonique unique.',

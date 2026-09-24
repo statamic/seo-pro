@@ -407,6 +407,39 @@ EOT;
     }
 
     #[Test]
+    #[DataProvider('ungeneratableSocialImageProvider')]
+    public function it_falls_back_to_raw_asset_url_when_glide_cannot_generate_social_image($viewType, $image)
+    {
+        Config::set('statamic.seo-pro.assets.container', 'assets');
+
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'image' => $image,
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/'.$image.'" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/'.$image.'" />', false);
+        $response->assertDontSee('/img/asset/', false);
+    }
+
+    public static function ungeneratableSocialImageProvider()
+    {
+        $images = [
+            'format unsupported by driver' => 'img/icon.svg',
+            'file fails to decode' => 'img/corrupt.jpg',
+        ];
+
+        foreach (static::viewScenarioProvider() as [$viewType]) {
+            foreach ($images as $reason => $image) {
+                yield "{$viewType}, {$reason}" => [$viewType, $image];
+            }
+        }
+    }
+
+    #[Test]
     #[DataProvider('viewScenarioProvider')]
     public function it_generates_home_url_for_entry_meta($viewType)
     {

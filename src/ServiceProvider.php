@@ -133,6 +133,7 @@ class ServiceProvider extends AddonServiceProvider
                                 Permission::make('create seo redirects')->label(__('seo-pro::messages.create_redirects')),
                                 Permission::make('delete seo redirects')->label(__('seo-pro::messages.delete_redirects')),
                             ]),
+                        Permission::make('delete seo errors')->label(__('seo-pro::messages.delete_errors')),
                     ]);
             });
             Permission::register('view seo reports', function ($permission) {

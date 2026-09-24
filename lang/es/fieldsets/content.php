@@ -6,10 +6,10 @@ return [
     'enabled_instruct' => 'Desabilitando este elemento lo excluirá de los reportes y del sitemap, además la etiqueta no renderizará ningún contenido.',
 
     'title' => 'Meta Título',
-    'title_instruct' => 'Cada URL en tu sitio debería llevar un Meta Título único, idealmente de menos de 60 caracteres.',
+    'title_instruct' => 'Cada URL en tu sitio debería llevar un Meta Título único, idealmente de :min a :max caracteres.',
 
     'description' => 'Meta Descripción',
-    'description_instruct' => 'Cada URL en tu sitio debería llevar un Meta Descripción único, idealmente de menos de 160 caracteres.',
+    'description_instruct' => 'Cada URL en tu sitio debería llevar un Meta Descripción único, idealmente de :min a :max caracteres.',
 
     'canonical_url' => 'URL Canónica',
     'canonical_url_instruct' => 'Cada URL en tu sitio debe tener una URL canónica única.',
