@@ -424,21 +424,19 @@ class LlmsTxtGenerator
             return null;
         }
 
-        if (is_link($path)) {
-            throw new RuntimeException("SEO Pro will not manage an llms.txt symbolic link at [{$path}].");
-        }
-
-        if (! $this->files->exists($path)) {
+        if (is_link($path) || ! $this->files->exists($path)) {
             return null;
         }
 
         $resolvedPath = realpath($path);
 
+        // Like a changed file at the current path, a previous file that was changed or replaced
+        // is no longer managed. It's left in place, and the stale record is cleared on save.
         if (! is_string($resolvedPath)
             || ! $this->isWithinPublicDirectory($resolvedPath)
             || ! $this->files->isFile($path)
             || ! $this->fileHasChecksum($path, $checksum)) {
-            throw new RuntimeException("The previously managed llms.txt file at [{$path}] has changed and will not be removed.");
+            return null;
         }
 
         return compact('path', 'checksum');

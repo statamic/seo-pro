@@ -535,26 +535,65 @@ TXT."\n", $response->content());
     }
 
     #[Test]
-    public function a_modified_file_at_the_previous_site_path_is_not_removed()
+    public function a_modified_file_at_the_previous_site_path_is_released_instead_of_removed()
     {
         $generator = app(LlmsTxtGenerator::class);
         $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
-        $generated = Llms::generated();
         $this->files->put(public_path('llms.txt'), "# Changed manually\n");
+
+        Site::default()->set('url', '/moved/');
+        URL::clearUrlCache();
+
+        $generator->sync(new LlmsDocument(['enabled' => true, 'title' => 'Second']));
+
+        $this->assertSame("# Changed manually\n", $this->files->get(public_path('llms.txt')));
+        $this->assertFileDoesNotExist(public_path('moved/llms.txt'));
+        $this->assertNull(Llms::generated());
+        $this->assertSame('Second', Llms::get()->all()['title']);
+
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'Third']));
+
+        $this->assertSame("# Third\n", $this->files->get(public_path('moved/llms.txt')));
+        $this->assertSame("# Changed manually\n", $this->files->get(public_path('llms.txt')));
+    }
+
+    #[Test]
+    public function a_symbolic_link_at_the_previous_site_path_is_released_instead_of_removed()
+    {
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
+        $this->files->put(public_path('moved-target.txt'), "# Linked\n");
+        $this->files->delete(public_path('llms.txt'));
+        symlink(public_path('moved-target.txt'), public_path('llms.txt'));
 
         Site::default()->set('url', '/moved/');
         URL::clearUrlCache();
 
         try {
             $generator->sync(new LlmsDocument(['enabled' => true, 'title' => 'Second']));
-            $this->fail('Synchronization should refuse to remove the modified previous file.');
-        } catch (\RuntimeException $exception) {
-            $this->assertStringContainsString('has changed and will not be removed', $exception->getMessage());
+
+            $this->assertTrue(is_link(public_path('llms.txt')));
+            $this->assertNull(Llms::generated());
+        } finally {
+            $this->files->delete([public_path('llms.txt'), public_path('moved-target.txt')]);
         }
+    }
+
+    #[Test]
+    public function llms_txt_can_be_disabled_after_the_previous_file_was_modified()
+    {
+        $generator = app(LlmsTxtGenerator::class);
+        $generator->generate(new LlmsDocument(['enabled' => true, 'title' => 'First']));
+        $this->files->put(public_path('llms.txt'), "# Changed manually\n");
+
+        Site::default()->set('url', '/moved/');
+        URL::clearUrlCache();
+
+        $generator->sync(new LlmsDocument(['enabled' => false, 'title' => 'First']));
 
         $this->assertSame("# Changed manually\n", $this->files->get(public_path('llms.txt')));
-        $this->assertFileDoesNotExist(public_path('moved/llms.txt'));
-        $this->assertSame($generated, Llms::generated());
+        $this->assertNull(Llms::generated());
+        $this->assertFalse(Llms::get()->enabled());
     }
 
     #[Test]
