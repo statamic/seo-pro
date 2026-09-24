@@ -1,5 +1,7 @@
 import Index from './pages/Index.vue';
 import ErrorsIndex from './pages/errors/Index.vue';
+import DeadLinksIndex from './pages/dead-links/Index.vue';
+import DeadLinksEmpty from './pages/dead-links/Empty.vue';
 import RedirectsIndex from './pages/redirects/Index.vue';
 import RedirectsEmpty from './pages/redirects/Empty.vue';
 import RedirectsCreate from './pages/redirects/Create.vue';
@@ -19,6 +21,8 @@ import RecentErrorsWidget from "./components/widgets/RecentErrorsWidget.vue";
 Statamic.booting(() => {
     Statamic.$inertia.register('seo-pro::Index', Index);
     Statamic.$inertia.register('seo-pro::Errors/Index', ErrorsIndex);
+    Statamic.$inertia.register('seo-pro::DeadLinks/Index', DeadLinksIndex);
+    Statamic.$inertia.register('seo-pro::DeadLinks/Empty', DeadLinksEmpty);
     Statamic.$inertia.register('seo-pro::Redirects/Index', RedirectsIndex);
     Statamic.$inertia.register('seo-pro::Redirects/Empty', RedirectsEmpty);
     Statamic.$inertia.register('seo-pro::Redirects/Create', RedirectsCreate);
