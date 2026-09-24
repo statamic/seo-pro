@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -25,6 +27,7 @@ class LlmsTest extends TestCase
     {
         $this->files->delete(public_path('llms.txt'));
         $this->files->deleteDirectory(public_path('moved'));
+        Date::useDefault();
 
         parent::tearDown();
     }
@@ -271,6 +274,25 @@ TXT."\n", $response->content());
         $this->assertTrue($result['removed']);
         $this->assertFileDoesNotExist(public_path('llms.txt'));
         $this->assertNull(Llms::generated());
+    }
+
+    #[Test]
+    public function it_supports_apps_that_use_immutable_dates()
+    {
+        Date::use(CarbonImmutable::class);
+        $generator = app(LlmsTxtGenerator::class);
+        $document = new LlmsDocument(['enabled' => true, 'title' => 'Cool Runnings']);
+
+        $generator->sync($document);
+        $generator->generate($document);
+        $result = $generator->generate($document);
+
+        $this->assertFalse($result['changed']);
+        $this->assertSame(Llms::generated()['timestamp'], $result['timestamp']);
+
+        $result = $generator->sync(new LlmsDocument(['enabled' => false, 'title' => 'Cool Runnings']));
+
+        $this->assertTrue($result['removed']);
     }
 
     #[Test]

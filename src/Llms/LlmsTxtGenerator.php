@@ -2,9 +2,10 @@
 
 namespace Statamic\SeoPro\Llms;
 
+use Carbon\CarbonInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\LockableFile;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use RuntimeException;
 use Statamic\SeoPro\Events\LlmsTxtGenerated;
 use Statamic\Sites\Site as SiteObject;
@@ -314,7 +315,7 @@ class LlmsTxtGenerator
         SiteObject $site,
         string $contents,
         string $path,
-        Carbon $generatedAt,
+        CarbonInterface $generatedAt,
     ): void {
         if (! Llms::saveGenerated($document, $site, $contents, $path, $generatedAt)) {
             throw new RuntimeException('Unable to save llms.txt settings.');
@@ -565,14 +566,14 @@ class LlmsTxtGenerator
         }
     }
 
-    private function existingGeneratedAt(array $generated, string $checksum): ?Carbon
+    private function existingGeneratedAt(array $generated, string $checksum): ?CarbonInterface
     {
         if (($generated['checksum'] ?? null) !== $checksum || ! is_string($generated['timestamp'] ?? null)) {
             return null;
         }
 
         try {
-            return Carbon::parse($generated['timestamp']);
+            return Date::parse($generated['timestamp']);
         } catch (Throwable) {
             return null;
         }
@@ -581,7 +582,7 @@ class LlmsTxtGenerator
     private function result(
         string $path,
         string $contents,
-        Carbon $generatedAt,
+        CarbonInterface $generatedAt,
         bool $changed,
         bool $settingsChanged,
         bool $removed,

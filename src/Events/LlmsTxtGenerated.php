@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro\Events;
 
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 use Statamic\Contracts\Git\ProvidesCommitMessage;
 use Statamic\Events\Event;
 use Statamic\SeoPro\Llms\LlmsDocument;
@@ -14,7 +14,7 @@ class LlmsTxtGenerated extends Event implements ProvidesCommitMessage
         public LlmsDocument $document,
         public Site $site,
         public string $path,
-        public Carbon $generatedAt,
+        public CarbonInterface $generatedAt,
     ) {}
 
     public function commitMessage(): string
