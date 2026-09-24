@@ -25,12 +25,12 @@ const close = () => {
 		    <div
 		        v-for="item in page.results"
 		        class="flex leading-normal p-2 rounded-lg gap-x-3"
-		        :class="{ 'bg-red-50 dark:!bg-dark-400': item.status !== 'pass' }"
+		        :class="{ 'bg-red-50 dark:bg-red-300/6': item.status !== 'pass' }"
 		    >
 			    <StatusIcon :status="item.status" class="mt-1" />
-			    <div class="flex-1 prose text-gray-700">
-				    <Heading size="sm" class="text-gray-900 dark:!text-dark-100" :text="item.description" />
-				    <Description :class="{ 'text-red-500': item.status !== 'pass' }" v-if="item.comment" :text="item.comment" />
+			    <div class="flex-1">
+				    <Heading :text="item.description" />
+				    <Description v-if="item.comment" :class="{ '!text-red-500 dark:!text-red-400': item.status !== 'pass' }" :text="item.comment" />
 			    </div>
 		    </div>
 	    </div>

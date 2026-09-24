@@ -27,14 +27,17 @@ class HandleRedirects
             return;
         }
 
+        $destination = $this->resolveDestination($redirect, $path, $request);
+
+        if ($this->redirectsToItself($destination, $request)) {
+            return;
+        }
+
         if (config('statamic.seo-pro.redirects.track_hits', true)) {
             RecordRedirectHit::dispatch($redirect->id());
         }
 
-        return redirect(
-            $this->resolveDestination($redirect, $path, $request),
-            $redirect->responseCode(),
-        );
+        return redirect($destination, $redirect->responseCode());
     }
 
     private function stripSitePrefix(string $requestPath, SiteInstance $site): string
@@ -110,5 +113,13 @@ class HandleRedirects
         }
 
         return $destination;
+    }
+
+    private function redirectsToItself(string $destination, Request $request): bool
+    {
+        return Str::of(url($destination))
+            ->before('?')
+            ->rtrim('/')
+            ->exactly($request->url());
     }
 }
