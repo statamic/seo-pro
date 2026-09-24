@@ -2,7 +2,7 @@
 
 namespace Statamic\SeoPro\Events;
 
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 use Statamic\Contracts\Git\ProvidesCommitMessage;
 use Statamic\Events\Event;
 use Statamic\SeoPro\Robots\RobotsPolicy;
@@ -12,7 +12,7 @@ class RobotsTxtGenerated extends Event implements ProvidesCommitMessage
     public function __construct(
         public RobotsPolicy $policy,
         public string $path,
-        public Carbon $generatedAt,
+        public CarbonInterface $generatedAt,
     ) {}
 
     public function commitMessage(): string

@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\LockableFile;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Events\AddonSettingsSaved;
@@ -19,6 +21,7 @@ class RobotsTest extends TestCase
     protected function tearDown(): void
     {
         $this->files->delete(public_path('robots.txt'));
+        Date::useDefault();
 
         parent::tearDown();
     }
@@ -168,6 +171,19 @@ TXT, $content);
         $this->assertSame(hash('sha256', $result['contents']), Addon::get('statamic/seo-pro')->settings()->get('robots.generated.checksum'));
 
         Event::assertDispatched(RobotsTxtGenerated::class, fn ($event) => $event->path === public_path('robots.txt'));
+    }
+
+    #[Test]
+    public function it_supports_apps_that_use_immutable_dates()
+    {
+        Date::use(CarbonImmutable::class);
+        $generator = app(RobotsTxtGenerator::class);
+
+        $generator->generate();
+        $result = $generator->generate();
+
+        $this->assertFalse($result['changed']);
+        $this->assertSame(Robots::generated()['timestamp'], $result['timestamp']);
     }
 
     #[Test]

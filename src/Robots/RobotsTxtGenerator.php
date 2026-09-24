@@ -2,9 +2,10 @@
 
 namespace Statamic\SeoPro\Robots;
 
+use Carbon\CarbonInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\LockableFile;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use RuntimeException;
 use Statamic\SeoPro\Events\RobotsTxtGenerated;
 use Throwable;
@@ -158,7 +159,7 @@ class RobotsTxtGenerator
         }
     }
 
-    private function saveGeneratedSettings(RobotsPolicy $policy, string $contents, Carbon $generatedAt): void
+    private function saveGeneratedSettings(RobotsPolicy $policy, string $contents, CarbonInterface $generatedAt): void
     {
         if (! Robots::saveGenerated($policy, $contents, $generatedAt)) {
             throw new RuntimeException('Unable to save robots.txt settings.');
@@ -302,14 +303,14 @@ class RobotsTxtGenerator
         }
     }
 
-    private function existingGeneratedAt(array $generated, string $checksum): ?Carbon
+    private function existingGeneratedAt(array $generated, string $checksum): ?CarbonInterface
     {
         if (($generated['checksum'] ?? null) !== $checksum || ! is_string($generated['timestamp'] ?? null)) {
             return null;
         }
 
         try {
-            return Carbon::parse($generated['timestamp']);
+            return Date::parse($generated['timestamp']);
         } catch (Throwable) {
             return null;
         }
@@ -318,7 +319,7 @@ class RobotsTxtGenerator
     private function result(
         string $path,
         string $contents,
-        Carbon $generatedAt,
+        CarbonInterface $generatedAt,
         bool $changed,
         bool $settingsChanged,
     ): array {

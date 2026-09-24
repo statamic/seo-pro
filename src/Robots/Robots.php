@@ -2,8 +2,8 @@
 
 namespace Statamic\SeoPro\Robots;
 
+use Carbon\CarbonInterface;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use RuntimeException;
 use Statamic\Contracts\Addons\SettingsRepository;
 use Statamic\Facades\Addon;
@@ -39,7 +39,7 @@ class Robots
         return self::saveSettings($robots);
     }
 
-    public static function saveGenerated(RobotsPolicy $policy, string $contents, Carbon $generatedAt): bool
+    public static function saveGenerated(RobotsPolicy $policy, string $contents, CarbonInterface $generatedAt): bool
     {
         return self::saveSettings([
             'policy' => $policy->all(),
