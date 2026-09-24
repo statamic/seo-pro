@@ -235,6 +235,67 @@ php please seo-pro:generate:robots-txt
 
 Robots settings and generation metadata use Statamic's addon settings repository. By default, they are stored with the other SEO Pro settings in `resources/addons/seo-pro.yaml`.
 
+## llms.txt
+
+SEO Pro can publish an [`llms.txt`](https://llmstxt.org) document for each Statamic site. The feature is opt-in and returns a 404 until it is enabled in `Tools > SEO Pro > Crawling & AI > llms.txt`.
+
+Managed mode builds the document from a required H1 title, an optional summary, optional additional Markdown context, selected Statamic content, and optional sections of curated links. Selected collections include all their published, routable entries for the current site. Entries can also be selected individually. SEO Pro groups these links by collection and removes duplicates when an entry is selected both ways. Custom mode accepts the complete Markdown source. Antlers is parsed in both modes, so values such as `{{ config:app:name }}` can be used. When enabled, the resolved output must begin with a non-empty H1 and contain exactly one Markdown H1 in total.
+
+### Routes and Caching
+
+The dynamic route is available at `/llms.txt`, or beneath the site's base path for directory-based multi-site installations, such as `/fr/llms.txt`. Rendered output is cached using a fingerprint of the settings, site, and Antlers configuration context, so the document is not rebuilt on every request. SEO Pro invalidates that cache when the settings or selected Statamic content change.
+
+Statamic Half Measure static caching stores and restores the complete plain-text response, including its content type. Full Measure normally writes every response as an `.html` file, which common rewrite rules serve as HTML. SEO Pro therefore keeps this route out of Full Measure's HTML cache and uses its own rendered-content cache. Generate a physical file when the web server should serve it directly.
+
+The enabled document is also exposed as `llms_txt` in SEO Pro's cascade and GraphQL type, and the meta tag includes a `rel="describedby"` link. SEO Pro adds enabled URLs to Statamic's regular static-warm command. It does not register URLs with `statamic/ssg`; add the appropriate route to your SSG configuration when required by your deployment.
+
+### Physical Files and Deployments
+
+Select **Generate** to create a physical file, normally `public/llms.txt`. For a directory-based site, the path follows the site's base path, such as `public/fr/llms.txt`. Once created, SEO Pro keeps that file synchronized when its settings are saved and removes it when the feature is disabled.
+
+Ownership is verified using the checksum stored in SEO Pro's generation metadata. SEO Pro will never overwrite or remove an existing file that it does not manage. Manually changing a generated file relinquishes ownership, and the Control Panel displays a warning instead of modifying it.
+
+Git-based and deployment workflows can maintain the same site-scoped settings directly in `resources/addons/seo-pro.yaml` when a project does not use the Control Panel:
+
+```yaml
+llms:
+  sites:
+    default:
+      policy:
+        enabled: true
+        mode: managed
+        title: '{{ config:app:name }}'
+        summary: A concise description of the site.
+        details: Optional additional Markdown context.
+        collections:
+          - pages
+        entries:
+          - 62136fa2-9e5c-4c38-a894-a2753f02f5ff
+        sections:
+          - title: Documentation
+            links:
+              - title: Getting started
+                url: https://example.com/docs/getting-started.md
+                description: The main setup guide.
+        custom_source: ''
+```
+
+SEO Pro adds the `generated` ownership metadata after creating the physical file; it should not be authored manually.
+
+Generate all enabled sites from the command line:
+
+```shell
+php please seo-pro:generate:llms-txt
+```
+
+Use one or more `--site` options to select site handles:
+
+```shell
+php please seo-pro:generate:llms-txt --site=default --site=french
+```
+
+If multiple domains resolve to the same physical public path, generate one site per deployment using `--site`. Generated files are added to Statamic's Git-tracked paths, and a successful physical change dispatches `Statamic\SeoPro\Events\LlmsTxtGenerated`.
+
 ## Redirects
 
 SEO Pro includes a redirect manager that lets you define URL redirects, automatically create redirects when slugs change, and track 404 errors.

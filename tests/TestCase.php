@@ -13,12 +13,18 @@ use Statamic\Facades\YAML;
 use Statamic\SeoPro\ServiceProvider;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Testing\AddonTestCase;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 
 abstract class TestCase extends AddonTestCase
 {
     protected $siteFixturePath = __DIR__.'/Fixtures/site';
     protected $files;
     protected string $addonServiceProvider = ServiceProvider::class;
+
+    /**
+     * Sites the app boots with. Defaults to the fixture's sites.
+     */
+    protected ?array $sites = null;
 
     protected function setUp(): void
     {
@@ -29,7 +35,7 @@ abstract class TestCase extends AddonTestCase
         $this->copyDirectoryFromFixture('content');
         $this->copyDirectoryFromFixture('assets');
 
-        Site::setSites(YAML::file("{$this->siteFixturePath}/resources/sites.yaml")->parse());
+        Site::setSites($this->sites());
 
         URL::clearUrlCache();
 
@@ -38,6 +44,30 @@ abstract class TestCase extends AddonTestCase
         $this->addGqlMacros();
 
         $this->addTestResponseMacros();
+    }
+
+    protected function sites(): array
+    {
+        return $this->sites ?? YAML::file("{$this->siteFixturePath}/resources/sites.yaml")->parse();
+    }
+
+    /**
+     * Boot the app again with the given sites, so anything registered while
+     * booting, such as routes, is rebuilt against them.
+     */
+    protected function bootWithSites(array $sites): void
+    {
+        $this->sites = $sites;
+
+        $this->refreshApplication();
+
+        $this->files = app(Filesystem::class);
+
+        Site::setSites($this->sites());
+
+        URL::clearUrlCache();
+
+        $this->addGqlMacros();
     }
 
     protected function copyDirectoryFromFixture($directory)
@@ -87,6 +117,17 @@ abstract class TestCase extends AddonTestCase
             $files->copy("{$this->siteFixturePath}/config/{$config}.php", config_path("{$config}.php"));
             $app['config']->set(str_replace('/', '.', $config), require ("{$this->siteFixturePath}/config/{$config}.php"));
         }
+
+        // Statamic reads the sites from here while booting. They need to be in place
+        // before anything that depends on them is registered, like the site aware
+        // llms.txt routes, which have to be registered before Statamic's catch-all.
+        $files->ensureDirectoryExists($app->resourcePath());
+        $files->put(
+            $app->resourcePath('sites.yaml'),
+            $this->sites === null
+                ? $files->get("{$this->siteFixturePath}/resources/sites.yaml")
+                : SymfonyYaml::dump($this->sites, 5, 2),
+        );
     }
 
     protected function setSeoInSiteDefaults($seo)
