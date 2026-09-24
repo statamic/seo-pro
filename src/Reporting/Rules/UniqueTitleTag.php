@@ -49,6 +49,12 @@ class UniqueTitleTag extends Rule
 
     public function processPage()
     {
+        if (blank($this->title())) {
+            $this->count = 0;
+
+            return;
+        }
+
         $this->count = $this
             ->groupAllPagesByTitle()
             ->get($this->title())
@@ -80,7 +86,7 @@ class UniqueTitleTag extends Rule
 
     public function pageStatus()
     {
-        return $this->count === 1 ? 'pass' : 'fail';
+        return $this->count <= 1 ? 'pass' : 'fail';
     }
 
     protected function title()
