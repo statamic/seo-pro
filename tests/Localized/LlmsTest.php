@@ -6,23 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Site;
-use Statamic\Facades\URL;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\Http\Controllers\LlmsController;
 use Statamic\SeoPro\Llms\Llms;
 use Statamic\SeoPro\Llms\LlmsDocument;
-use Statamic\SeoPro\Llms\LlmsRoutes;
 use Statamic\SeoPro\Llms\LlmsTxtGenerator;
 
 class LlmsTest extends LocalizedTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        LlmsRoutes::register(Site::all());
-    }
-
     protected function tearDown(): void
     {
         $this->files->delete(public_path('llms.txt'));
@@ -62,9 +53,7 @@ class LlmsTest extends LocalizedTestCase
             'url' => 'http://cool-runnings.com/regions/europe/de/',
         ];
 
-        Site::setSites($sites);
-        URL::clearUrlCache();
-        LlmsRoutes::register(Site::all());
+        $this->bootWithSites($sites);
 
         Llms::saveWithoutGenerated(new LlmsDocument([
             'enabled' => true,
