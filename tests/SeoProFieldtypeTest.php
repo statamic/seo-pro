@@ -8,6 +8,7 @@ use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
+use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\Fieldtypes\SeoProFieldtype;
 
 class SeoProFieldtypeTest extends TestCase
@@ -82,5 +83,21 @@ class SeoProFieldtypeTest extends TestCase
         $this->assertEquals('Foo', (string) $augment['title']);
         $this->assertEquals('Bar', (string) $augment['description']);
         $this->assertEquals('Cool Runnings', (string) $augment['site_name']); // Site default
+    }
+
+    #[Test]
+    public function it_uses_the_ideal_length_range_from_the_config_in_the_title_and_description_fields()
+    {
+        config()->set('statamic.seo-pro.reports.title_length.warn_min', 20);
+        config()->set('statamic.seo-pro.reports.title_length.pass_max', 50);
+        config()->set('statamic.seo-pro.reports.meta_description_length.warn_min', 100);
+        config()->set('statamic.seo-pro.reports.meta_description_length.pass_max', 150);
+
+        $fields = collect(Fields::new([])->getConfig())->flatMap(fn ($section) => $section['fields'])->keyBy('handle');
+
+        $this->assertEquals('Every URL in your site should have a unique Meta Title, ideally 20–50 characters long.', $fields['title']['field']['instructions']);
+        $this->assertEquals('Every URL in your site should have a unique Meta Description, ideally 100–150 characters long.', $fields['description']['field']['instructions']);
+        $this->assertEquals(50, $fields['title']['field']['field']['character_limit']);
+        $this->assertEquals(150, $fields['description']['field']['field']['character_limit']);
     }
 }
