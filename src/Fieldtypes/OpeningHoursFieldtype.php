@@ -3,7 +3,7 @@
 namespace Statamic\SeoPro\Fieldtypes;
 
 use Statamic\Fields\Fieldtype;
-use Statamic\SeoPro\Fieldtypes\Rules\CompleteOpeningHours;
+use Statamic\SeoPro\Fieldtypes\Rules\ValidOpeningHours;
 
 class OpeningHoursFieldtype extends Fieldtype
 {
@@ -42,7 +42,7 @@ class OpeningHoursFieldtype extends Fieldtype
 
     public function rules(): array
     {
-        return [new CompleteOpeningHours];
+        return [new ValidOpeningHours];
     }
 
     public function preload(): array

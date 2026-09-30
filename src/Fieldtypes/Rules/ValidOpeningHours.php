@@ -5,7 +5,7 @@ namespace Statamic\SeoPro\Fieldtypes\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class CompleteOpeningHours implements ValidationRule
+class ValidOpeningHours implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

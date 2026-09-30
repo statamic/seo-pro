@@ -39,7 +39,7 @@ class UpdateSiteDefaultsTest extends TestCase
 
     #[Test]
     #[DataProvider('invalidJsonLdEntityFieldsProvider')]
-    public function it_validates_json_ld_entity_fields($field, $value)
+    public function it_validates_json_ld_entity_fields(string $field, mixed $value)
     {
         $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -52,7 +52,7 @@ class UpdateSiteDefaultsTest extends TestCase
             ->assertJsonValidationErrors($field);
     }
 
-    public static function invalidJsonLdEntityFieldsProvider()
+    public static function invalidJsonLdEntityFieldsProvider(): array
     {
         return [
             'url' => ['json_ld_entity_url', 'not a url'],

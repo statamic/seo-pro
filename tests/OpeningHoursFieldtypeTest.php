@@ -32,7 +32,7 @@ class OpeningHoursFieldtypeTest extends TestCase
 
     #[Test]
     #[DataProvider('malformedDataProvider')]
-    public function it_pre_processes_malformed_data_as_empty_days($data)
+    public function it_pre_processes_malformed_data_as_empty_days(mixed $data)
     {
         $processed = $this->fieldtype()->preProcess($data);
 
@@ -74,12 +74,12 @@ class OpeningHoursFieldtypeTest extends TestCase
 
     #[Test]
     #[DataProvider('malformedDataProvider')]
-    public function it_processes_malformed_data_as_null($data)
+    public function it_processes_malformed_data_as_null(mixed $data)
     {
         $this->assertNull($this->fieldtype()->process($data));
     }
 
-    public static function malformedDataProvider()
+    public static function malformedDataProvider(): array
     {
         return [
             'null' => [null],
