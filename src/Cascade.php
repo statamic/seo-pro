@@ -4,6 +4,7 @@ namespace Statamic\SeoPro;
 
 use Exception;
 use Illuminate\Support\Collection;
+use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\Asset;
@@ -15,10 +16,13 @@ use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
+use Statamic\SeoPro\Fieldtypes\OpeningHoursFieldtype;
+use Statamic\Sites\Site as SiteInstance;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\View\Cascade as ViewCascade;
+use Stringable;
 
 class Cascade
 {
@@ -28,6 +32,7 @@ class Cascade
     protected $current;
     protected $explicitUrl;
     protected $model;
+    protected $taxonomy;
     protected $forSitemap = false;
 
     public function __construct()
@@ -82,6 +87,13 @@ class Cascade
         return $this;
     }
 
+    public function withTaxonomy($taxonomy)
+    {
+        $this->taxonomy = $taxonomy;
+
+        return $this;
+    }
+
     public function withExplicitUrl($url)
     {
         $this->explicitUrl = $url;
@@ -94,7 +106,7 @@ class Cascade
         $this->hydrateCascade();
 
         if (! $this->current) {
-            $this->withCurrent(Entry::findByUri('/'));
+            $this->withCurrent(Entry::findByUri('/', Site::current()->handle()) ?? Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
         }
 
@@ -419,14 +431,13 @@ class Cascade
         }
 
         $alternateLocales = collect(Config::getOtherLocales($this->model->locale()))
-            ->filter(fn ($locale) => $this->model->in($locale))
-            ->filter(fn ($locale) => $this->model->in($locale)->status() === 'published')
+            ->filter(fn ($locale) => $this->isAvailableIn($locale))
             ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
             ->map(function ($locale) {
                 return [
                     'site' => $site = Site::get($locale),
                     'is_default_site' => $site->isDefault(),
-                    'url' => $this->model->in($locale)->absoluteUrl(),
+                    'url' => $this->absoluteUrlIn($site),
                 ];
             });
 
@@ -445,6 +456,27 @@ class Cascade
         });
 
         return $alternateLocales->values()->all();
+    }
+
+    private function isAvailableIn(string $locale): bool
+    {
+        if ($this->taxonomy) {
+            return $this->taxonomy->sites()->contains($locale)
+                && (! $this->taxonomy->collection() || $this->taxonomy->collection()->sites()->contains($locale));
+        }
+
+        return $this->model->in($locale)?->status() === 'published';
+    }
+
+    private function absoluteUrlIn(SiteInstance $site): string
+    {
+        if ($this->taxonomy) {
+            $prefix = $this->taxonomy->collection()?->uri($site->handle());
+
+            return URL::tidy($site->absoluteUrl().$prefix.'/'.str_replace('_', '-', $this->taxonomy->handle()));
+        }
+
+        return $this->model->in($site->handle())->absoluteUrl();
     }
 
     protected function currentHreflang($alternateLocales)
@@ -635,35 +667,12 @@ class Cascade
     protected function jsonLd()
     {
         $snippets = collect();
+        $jsonLdEntity = $this->jsonLdEntityString('json_ld_entity') ?: 'organization';
 
-        $jsonLdEntity = (string) $this->data->get('json_ld_entity');
-        $jsonLdOrganizationName = (string) $this->data->get('json_ld_organization_name');
-        $jsonLdOrganizationLogo = $this->data->get('json_ld_organization_logo');
-        $jsonLdPersonName = (string) $this->data->get('json_ld_person_name');
-
-        if ($this->isHomePage() && $jsonLdEntity === 'organization' && $jsonLdOrganizationName) {
-            if ($jsonLdOrganizationLogo && ! $jsonLdOrganizationLogo instanceof Value) {
-                $jsonLdOrganizationLogo = Asset::find($jsonLdOrganizationLogo);
+        if ($this->isHomePage() && $jsonLdEntity !== 'disabled') {
+            if ($entity = $this->buildEntitySchema($jsonLdEntity)) {
+                $snippets->push(json_encode($entity, JSON_UNESCAPED_SLASHES));
             }
-
-            $snippets->push(json_encode(array_filter([
-                '@context' => 'https://schema.org',
-                '@type' => 'Organization',
-                'name' => $jsonLdOrganizationName,
-                '@id' => $this->homeUrl().'#organization',
-                'url' => $this->homeUrl(),
-                'logo' => $this->jsonLdOrganizationLogoUrl($jsonLdOrganizationLogo),
-            ]), JSON_UNESCAPED_SLASHES));
-        }
-
-        if ($this->isHomePage() && $jsonLdEntity === 'person' && $jsonLdPersonName) {
-            $snippets->push(json_encode([
-                '@context' => 'https://schema.org',
-                '@type' => 'Person',
-                'name' => $jsonLdPersonName,
-                '@id' => $this->homeUrl().'#person',
-                'url' => $this->homeUrl(),
-            ], JSON_UNESCAPED_SLASHES));
         }
 
         if ($this->data->get('json_ld_breadcrumbs') && request()->segment(1)) {
@@ -690,7 +699,145 @@ class Cascade
         return $snippets;
     }
 
-    protected function jsonLdOrganizationLogoUrl($logo)
+    protected function buildEntitySchema(string $entity): ?array
+    {
+        $type = match ($entity) {
+            'organization' => 'Organization',
+            'person' => 'Person',
+            'local_business' => 'LocalBusiness',
+            'corporation' => 'Corporation',
+            default => null,
+        };
+
+        if (! $type || ! $name = $this->jsonLdEntityString('json_ld_entity_name')) {
+            return null;
+        }
+
+        $imageKey = $entity === 'person' ? 'image' : 'logo';
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => $type,
+            'name' => $name,
+            '@id' => $this->homeUrl().'#'.Str::slug($type),
+            'url' => $this->jsonLdEntityString('json_ld_entity_url') ?: $this->homeUrl(),
+            'alternateName' => $this->jsonLdEntityString('json_ld_entity_alternate_name'),
+            'description' => $this->jsonLdEntityString('json_ld_entity_description'),
+            $imageKey => $this->jsonLdEntityImageUrl($this->resolveJsonLdEntityLogo()),
+            'telephone' => $this->jsonLdEntityString('json_ld_entity_telephone'),
+            'email' => $this->jsonLdEntityString('json_ld_entity_email'),
+            'address' => $this->buildJsonLdEntityAddress(),
+            'geo' => $this->buildJsonLdEntityGeo(),
+            'sameAs' => $this->buildJsonLdEntitySameAs(),
+        ];
+
+        if ($entity === 'local_business') {
+            $schema['priceRange'] = $this->jsonLdEntityString('json_ld_entity_price_range');
+            $schema['openingHoursSpecification'] = $this->buildJsonLdEntityOpeningHours();
+        }
+
+        if ($entity === 'corporation') {
+            $schema['tickerSymbol'] = $this->jsonLdEntityString('json_ld_entity_ticker_symbol');
+        }
+
+        return array_filter($schema);
+    }
+
+    protected function jsonLdEntityString(string $key): string
+    {
+        $value = $this->jsonLdEntityValue($key);
+
+        return is_scalar($value) || $value instanceof Stringable ? trim((string) $value) : '';
+    }
+
+    protected function jsonLdEntityValue(string $key): mixed
+    {
+        $value = $this->data->get($key);
+
+        return $value instanceof Value ? $value->value() : $value;
+    }
+
+    protected function buildJsonLdEntityAddress(): ?array
+    {
+        $address = array_filter([
+            '@type' => 'PostalAddress',
+            'streetAddress' => $this->jsonLdEntityString('json_ld_entity_street_address'),
+            'addressLocality' => $this->jsonLdEntityString('json_ld_entity_locality'),
+            'addressRegion' => $this->jsonLdEntityString('json_ld_entity_region'),
+            'postalCode' => $this->jsonLdEntityString('json_ld_entity_postal_code'),
+            'addressCountry' => $this->jsonLdEntityString('json_ld_entity_country'),
+        ]);
+
+        return count($address) > 1 ? $address : null;
+    }
+
+    protected function buildJsonLdEntityGeo(): ?array
+    {
+        $latitude = $this->jsonLdEntityString('json_ld_entity_latitude');
+        $longitude = $this->jsonLdEntityString('json_ld_entity_longitude');
+
+        if (! $latitude || ! $longitude) {
+            return null;
+        }
+
+        return [
+            '@type' => 'GeoCoordinates',
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+        ];
+    }
+
+    protected function buildJsonLdEntitySameAs(): array
+    {
+        return collect($this->jsonLdEntityValue('json_ld_entity_same_as'))->filter()->values()->all();
+    }
+
+    protected function buildJsonLdEntityOpeningHours(): array
+    {
+        $hours = $this->jsonLdEntityValue('json_ld_entity_opening_hours');
+
+        if (! is_array($hours)) {
+            return [];
+        }
+
+        return collect($hours)
+            ->map(function ($times, $day) {
+                if (! in_array($day, OpeningHoursFieldtype::DAYS) || empty($times['opening']) || empty($times['closing'])) {
+                    return null;
+                }
+
+                return [
+                    '@type' => 'OpeningHoursSpecification',
+                    'dayOfWeek' => 'https://schema.org/'.Str::ucfirst($day),
+                    'opens' => $times['opening'],
+                    'closes' => $times['closing'],
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    protected function resolveJsonLdEntityLogo()
+    {
+        $logo = $this->jsonLdEntityValue('json_ld_entity_logo');
+
+        if ($logo instanceof Collection || $logo instanceof Builder) {
+            $logo = $logo->first();
+        }
+
+        if (is_array($logo)) {
+            $logo = $logo[0] ?? null;
+        }
+
+        if ($logo && ! $logo instanceof AssetContract) {
+            $logo = Asset::find($logo);
+        }
+
+        return $logo ?: null;
+    }
+
+    protected function jsonLdEntityImageUrl($logo)
     {
         if (! $logo) {
             return null;

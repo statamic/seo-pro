@@ -217,6 +217,24 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
+    public function it_generates_json_ld_entity_schema_from_select_fields($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoInSiteDefaults([
+                'json_ld_entity' => 'local_business',
+                'json_ld_entity_name' => 'Cool Runnings Bobsled',
+                'json_ld_entity_price_range' => '$$',
+            ]);
+
+        $this
+            ->get('/')
+            ->assertSee('"@type":"LocalBusiness"', false)
+            ->assertSee('"priceRange":"$$"', false);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_generates_sanitized_title($viewType)
     {
         $this

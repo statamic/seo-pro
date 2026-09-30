@@ -37,6 +37,11 @@ class SourceFieldtype extends Fieldtype
             return ['source' => 'disable', 'value' => $data];
         }
 
+        // Fields which are no longer disableable may still have `false` saved, which overrides inherited values.
+        if ($originalData === false && $this->sourceField()) {
+            return ['source' => 'custom', 'value' => $this->sourceField()->defaultValue()];
+        }
+
         if (! $data && $this->config('inherit') !== false) {
             return ['source' => 'inherit', 'value' => $data];
         }

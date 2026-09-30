@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "statamic/cms": "^6.25",
+        "statamic/cms": "^6.34",
         "spatie/simple-excel": "^3.9"
     },
     "require-dev": {

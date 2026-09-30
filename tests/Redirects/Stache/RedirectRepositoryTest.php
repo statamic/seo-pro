@@ -96,6 +96,24 @@ class RedirectRepositoryTest extends TestCase
         $this->assertStringContainsString('redirects/'.$redirect->id().'.yaml', $redirect->path());
     }
 
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/675
+     */
+    #[Test]
+    public function it_truncates_id_when_source_is_too_long()
+    {
+        $redirect = Facades\Redirect::make()
+            ->source('/'.str_repeat('a', 300))
+            ->destination('/new-url')
+            ->responseCode(301)
+            ->enabled(true);
+
+        $this->repo->save($redirect);
+
+        $this->assertEquals(str_repeat('a', 200), $redirect->id());
+        $this->assertFileExists($redirect->path());
+    }
+
     #[Test]
     public function it_appends_suffix_when_generated_id_already_exists()
     {

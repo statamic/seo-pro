@@ -7,6 +7,7 @@ use Statamic\SeoPro\Reporting\Rule;
 
 class UniqueTitleTag extends Rule
 {
+    use Concerns\DeductsPointsForFailingPages;
     use Concerns\FailsWhenPagesDontPass;
 
     /**
@@ -49,6 +50,12 @@ class UniqueTitleTag extends Rule
 
     public function processPage()
     {
+        if (blank($this->title())) {
+            $this->count = 0;
+
+            return;
+        }
+
         $this->count = $this
             ->groupAllPagesByTitle()
             ->get($this->title())
@@ -80,22 +87,12 @@ class UniqueTitleTag extends Rule
 
     public function pageStatus()
     {
-        return $this->count === 1 ? 'pass' : 'fail';
+        return $this->count <= 1 ? 'pass' : 'fail';
     }
 
     protected function title()
     {
         return $this->page->get('title');
-    }
-
-    public function maxPoints()
-    {
-        return $this->points() * $this->report->pages()->count();
-    }
-
-    public function demerits()
-    {
-        return $this->points() * $this->failures;
     }
 
     protected function points()
