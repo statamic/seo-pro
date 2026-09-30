@@ -4,6 +4,7 @@ namespace Tests;
 
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
@@ -11,6 +12,7 @@ use Statamic\Facades\Entry;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\Fields\Field;
+use Statamic\SeoPro\Fields;
 use Statamic\SeoPro\Fieldtypes\SourceFieldtype;
 
 class SourceFieldtypeTest extends TestCase
@@ -175,5 +177,29 @@ class SourceFieldtypeTest extends TestCase
 
         $this->assertArrayHasKey('placeholder', $preloaded);
         $this->assertEquals('My Article Title', $preloaded['placeholder']);
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/630
+     */
+    #[Test]
+    #[DataProvider('robotsFieldProvider')]
+    public function previously_disabled_robots_fields_show_the_value_they_resolve_to(string $handle, string $expected)
+    {
+        $config = collect(Fields::new()->getConfig())
+            ->flatMap(fn ($section) => $section['fields'])
+            ->firstWhere('handle', $handle)['field'];
+
+        $field = (new SourceFieldtype)->setField(new Field($handle, $config));
+
+        $this->assertEquals(['source' => 'custom', 'value' => $expected], $field->preProcess(false));
+    }
+
+    public static function robotsFieldProvider(): array
+    {
+        return [
+            'indexing' => ['robots_indexing', 'index'],
+            'following' => ['robots_following', 'follow'],
+        ];
     }
 }

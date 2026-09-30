@@ -224,7 +224,6 @@ class Fields
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_indexing_instruct"),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
-                            'disableable' => true,
                             'localizable' => true,
                             'field' => [
                                 'type' => 'button_group',
@@ -245,7 +244,6 @@ class Fields
                             'instructions' => __("seo-pro::fieldsets/{$langFile}.robots_following_instruct"),
                             'type' => 'seo_pro_source',
                             'from_field' => false,
-                            'disableable' => true,
                             'localizable' => true,
                             'field' => [
                                 'type' => 'button_group',
