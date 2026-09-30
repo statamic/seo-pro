@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
+use Statamic\Facades\Taxonomy;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Tests\ViewScenarios;
 
@@ -80,6 +81,87 @@ EOT;
         $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
         $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/530
+     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_generates_multisite_meta_for_taxonomy_index_route($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        Taxonomy::find('topics')->sites(['default', 'french', 'italian'])->template('page')->save();
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:locale:alternate" content="en_US" />
+<meta property="og:locale:alternate" content="it_IT" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link rel="alternate" href="http://cool-runnings.com/fr/topics" hreflang="fr" />
+<link rel="alternate" href="http://cool-runnings.com/topics" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/topics" hreflang="x-default" />
+<link rel="alternate" href="http://corse-fantastiche.it/topics" hreflang="it" />
+EOT;
+
+        $content = $this->get('/fr/topics')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/530
+     */
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_generates_multisite_meta_for_collection_taxonomy_index_route($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        Taxonomy::find('topics')->sites(['default', 'french', 'italian'])->template('page')->save();
+        Entry::find('b9e4bfe3-9c12-4553-b7ef-f43c22ffaa63')->makeLocalization('french')->slug('articles')->save();
+
+        $expectedOgLocaleMeta = <<<'EOT'
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:locale:alternate" content="en_US" />
+EOT;
+
+        $expectedAlternateHreflangMeta = <<<'EOT'
+<link rel="alternate" href="http://cool-runnings.com/fr/articles/topics" hreflang="fr" />
+<link rel="alternate" href="http://cool-runnings.com/articles/topics" hreflang="en" />
+<link rel="alternate" href="http://cool-runnings.com/articles/topics" hreflang="x-default" />
+EOT;
+
+        $content = $this->get('/fr/articles/topics')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedOgLocaleMeta, $content);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedAlternateHreflangMeta, $content);
+        $this->assertStringNotContainsString('hreflang="it"', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_falls_back_to_the_default_home_page_when_the_current_site_doesnt_have_one($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        Site::setSites([
+            ...Site::all()->map->rawConfig()->all(),
+            'german' => ['name' => 'German', 'locale' => 'de_DE', 'url' => 'http://cool-runnings.com/de/'],
+        ]);
+
+        Taxonomy::find('topics')->sites(['default', 'german'])->template('page')->save();
+
+        $content = $this->get('/de/topics')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="description" content="I see a bad-ass mother." />', $content);
     }
 
     #[Test]

@@ -17,6 +17,7 @@ use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
 use Statamic\SeoPro\Fieldtypes\OpeningHoursFieldtype;
+use Statamic\Sites\Site as SiteInstance;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
@@ -31,6 +32,7 @@ class Cascade
     protected $current;
     protected $explicitUrl;
     protected $model;
+    protected $taxonomy;
     protected $forSitemap = false;
 
     public function __construct()
@@ -85,6 +87,13 @@ class Cascade
         return $this;
     }
 
+    public function withTaxonomy($taxonomy)
+    {
+        $this->taxonomy = $taxonomy;
+
+        return $this;
+    }
+
     public function withExplicitUrl($url)
     {
         $this->explicitUrl = $url;
@@ -97,7 +106,7 @@ class Cascade
         $this->hydrateCascade();
 
         if (! $this->current) {
-            $this->withCurrent(Entry::findByUri('/'));
+            $this->withCurrent(Entry::findByUri('/', Site::current()->handle()) ?? Entry::findByUri('/'));
             $this->withExplicitUrl(request()->url());
         }
 
@@ -422,14 +431,13 @@ class Cascade
         }
 
         $alternateLocales = collect(Config::getOtherLocales($this->model->locale()))
-            ->filter(fn ($locale) => $this->model->in($locale))
-            ->filter(fn ($locale) => $this->model->in($locale)->status() === 'published')
+            ->filter(fn ($locale) => $this->isAvailableIn($locale))
             ->reject(fn ($locale) => collect(config('statamic.seo-pro.alternate_locales.excluded_sites'))->contains($locale))
             ->map(function ($locale) {
                 return [
                     'site' => $site = Site::get($locale),
                     'is_default_site' => $site->isDefault(),
-                    'url' => $this->model->in($locale)->absoluteUrl(),
+                    'url' => $this->absoluteUrlIn($site),
                 ];
             });
 
@@ -448,6 +456,27 @@ class Cascade
         });
 
         return $alternateLocales->values()->all();
+    }
+
+    private function isAvailableIn(string $locale): bool
+    {
+        if ($this->taxonomy) {
+            return $this->taxonomy->sites()->contains($locale)
+                && (! $this->taxonomy->collection() || $this->taxonomy->collection()->sites()->contains($locale));
+        }
+
+        return $this->model->in($locale)?->status() === 'published';
+    }
+
+    private function absoluteUrlIn(SiteInstance $site): string
+    {
+        if ($this->taxonomy) {
+            $prefix = $this->taxonomy->collection()?->uri($site->handle());
+
+            return URL::tidy($site->absoluteUrl().$prefix.'/'.str_replace('_', '-', $this->taxonomy->handle()));
+        }
+
+        return $this->model->in($site->handle())->absoluteUrl();
     }
 
     protected function currentHreflang($alternateLocales)
