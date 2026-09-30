@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Tags;
 
+use Statamic\Contracts\Taxonomies\Taxonomy;
 use Statamic\Facades\Image;
 use Statamic\Facades\Site;
 use Statamic\SeoPro\Cascade;
@@ -38,6 +39,7 @@ class SeoProTags extends Tags
      */
     public function metaData()
     {
+        $page = $this->context->get('page');
         $current = optional($this->context->get('seo'))->augmentable();
 
         $metaData = (new Cascade)
@@ -46,6 +48,7 @@ class SeoProTags extends Tags
             ->with($this->context->value('seo'))
             ->with($current ? [] : $this->context->except('template_content'))
             ->withCurrent($current)
+            ->withTaxonomy($page instanceof Taxonomy ? $page : null)
             ->get();
 
         $metaData['is_twitter_glide_enabled'] = $this->isGlidePresetEnabled('seo_pro_twitter');
