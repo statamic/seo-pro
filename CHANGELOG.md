@@ -1,5 +1,21 @@
 # Release Notes
 
+## 7.15.0 (2026-09-30)
+
+### What's new
+- Expand JSON-LD entity information in site defaults [#617](https://github.com/statamic/seo-pro/issues/617) by @duncanmcclean
+
+### What's fixed
+- Truncate long error and redirect IDs [#676](https://github.com/statamic/seo-pro/issues/676) by @duncanmcclean
+- Fix UI inconsistencies in the report detail view [#677](https://github.com/statamic/seo-pro/issues/677) by @duncanmcclean
+- Fix hreflangs on taxonomy index pages [#678](https://github.com/statamic/seo-pro/issues/678) by @duncanmcclean
+- Remove misleading Disable option from robots indexing & following fields [#679](https://github.com/statamic/seo-pro/issues/679) by @duncanmcclean
+- Don't flag empty titles and meta descriptions as duplicates [#669](https://github.com/statamic/seo-pro/issues/669) by @helloDanuk
+- Give the NoUnderscoresInUrl rule points so failures affect the score [#680](https://github.com/statamic/seo-pro/issues/680) by @duncanmcclean
+- Revise German translations (de, de_CH) [#670](https://github.com/statamic/seo-pro/issues/670) by @helloDanuk
+
+
+
 ## 7.14.3 (2026-09-24)
 
 ### What's fixed
