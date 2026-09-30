@@ -1,5 +1,6 @@
 <script setup>
 import { Widget, Button, Description } from '@statamic/cms/ui';
+import { NumberFormatter } from '@statamic/cms';
 
 defineProps({
 	icon: String,
@@ -24,7 +25,7 @@ defineProps({
 					'text-green-500': report.score > 90,
 				}"
              >
-				{{ report.score }}%
+				{{ NumberFormatter.format(report.score / 100, 'percent') }}
 			</h2>
 			<Description :text="__('seo-pro::messages.latest_report_score')" />
 		</div>
