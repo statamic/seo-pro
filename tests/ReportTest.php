@@ -593,7 +593,6 @@ EXPECTED;
 
         $report = Report::find(1);
 
-        // The unique rule ignores the empty descriptions, but the length rule fails them.
         $this->assertEquals(0, $report->results()['UniqueMetaDescription']);
         $this->assertEquals(['failures' => 5, 'warnings' => 0], $report->results()['IdealMetaDescriptionLength']);
         $this->assertEquals(86, $report->score());
