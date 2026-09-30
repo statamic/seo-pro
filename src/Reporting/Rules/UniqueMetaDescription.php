@@ -7,6 +7,7 @@ use Statamic\SeoPro\Reporting\Rule;
 
 class UniqueMetaDescription extends Rule
 {
+    use Concerns\DeductsPointsForFailingPages;
     use Concerns\FailsWhenPagesDontPass;
 
     /**
@@ -49,6 +50,12 @@ class UniqueMetaDescription extends Rule
 
     public function processPage()
     {
+        if (blank($this->metaDescription())) {
+            $this->count = 0;
+
+            return;
+        }
+
         $this->count = $this
             ->groupAllPagesByDescription()
             ->get($this->metaDescription())
@@ -80,22 +87,12 @@ class UniqueMetaDescription extends Rule
 
     public function pageStatus()
     {
-        return $this->count === 1 ? 'pass' : 'fail';
+        return $this->count <= 1 ? 'pass' : 'fail';
     }
 
     protected function metaDescription()
     {
         return $this->page->get('description');
-    }
-
-    public function maxPoints()
-    {
-        return $this->points() * $this->report->pages()->count();
-    }
-
-    public function demerits()
-    {
-        return $this->points() * $this->failures;
     }
 
     protected function points()

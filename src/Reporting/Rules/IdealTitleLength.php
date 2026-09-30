@@ -6,6 +6,7 @@ use Statamic\SeoPro\Reporting\Rule;
 
 class IdealTitleLength extends Rule
 {
+    use Concerns\DeductsPointsForFailingPages;
     use Concerns\FailsWhenPagesDontPass;
 
     protected $length;
@@ -130,6 +131,11 @@ class IdealTitleLength extends Rule
             $this->warnings,
             ['count' => $this->warnings]
         );
+    }
+
+    protected function points()
+    {
+        return 1;
     }
 
     public function processPage()
