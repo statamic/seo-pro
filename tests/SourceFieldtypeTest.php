@@ -184,7 +184,7 @@ class SourceFieldtypeTest extends TestCase
      */
     #[Test]
     #[DataProvider('robotsFieldProvider')]
-    public function previously_disabled_robots_fields_show_the_value_they_resolve_to($handle, $expected)
+    public function previously_disabled_robots_fields_show_the_value_they_resolve_to(string $handle, string $expected)
     {
         $config = collect(Fields::new()->getConfig())
             ->flatMap(fn ($section) => $section['fields'])
@@ -195,7 +195,7 @@ class SourceFieldtypeTest extends TestCase
         $this->assertEquals(['source' => 'custom', 'value' => $expected], $field->preProcess(false));
     }
 
-    public static function robotsFieldProvider()
+    public static function robotsFieldProvider(): array
     {
         return [
             'indexing' => ['robots_indexing', 'index'],
