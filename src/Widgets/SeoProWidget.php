@@ -8,6 +8,7 @@ use Statamic\Facades\Entry;
 use Statamic\Facades\Term;
 use Statamic\Facades\User;
 use Statamic\SeoPro\Reporting\Report;
+use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Widgets\VueComponent;
 use Statamic\Widgets\Widget;
 
@@ -126,7 +127,8 @@ class SeoProWidget extends Widget
 
     /**
      * Page rules open the report filtered by the rule. The site name has no
-     * page list, so it links to the site defaults where it is set instead.
+     * page list, so it links to the site defaults where it is set instead:
+     * on multisite, those of the first site that currently has no name.
      */
     protected function ruleUrl(array $rule, string $reportUrl): ?string
     {
@@ -134,11 +136,13 @@ class SeoProWidget extends Widget
             return $reportUrl.'?rule='.$rule['handle'];
         }
 
-        if ($rule['handle'] === 'SiteName' && User::current()?->can('edit seo site defaults')) {
-            return cp_route('seo-pro.site-defaults.edit');
+        if ($rule['handle'] !== 'SiteName' || ! User::current()?->can('edit seo site defaults')) {
+            return null;
         }
 
-        return null;
+        return SiteDefaults::get()
+            ->first(fn ($defaults) => empty(trim((string) ($defaults->augmented()['site_name'] ?? ''))))
+            ?->editUrl() ?? cp_route('seo-pro.site-defaults.edit');
     }
 
     /**
