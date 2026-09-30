@@ -119,10 +119,26 @@ class SeoProWidget extends Widget
                 'badge' => $rule['is_filterable'] && $pages !== null
                     ? trans_choice('seo-pro::messages.widget.pages', $pages, ['count' => $pages])
                     : __('seo-pro::messages.widget.site_wide'),
-                // Only page rules can be filtered in the report.
-                'url' => $rule['is_filterable'] ? $reportUrl.'?rule='.$handle : null,
+                'url' => $this->ruleUrl($rule, $reportUrl),
             ];
         })->values();
+    }
+
+    /**
+     * Page rules open the report filtered by the rule. The site name has no
+     * page list, so it links to the site defaults where it is set instead.
+     */
+    protected function ruleUrl(array $rule, string $reportUrl): ?string
+    {
+        if ($rule['is_filterable']) {
+            return $reportUrl.'?rule='.$rule['handle'];
+        }
+
+        if ($rule['handle'] === 'SiteName' && User::current()?->can('edit seo site defaults')) {
+            return cp_route('seo-pro.site-defaults.edit');
+        }
+
+        return null;
     }
 
     /**

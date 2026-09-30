@@ -159,12 +159,24 @@ YAML);
     }
 
     #[Test]
-    public function site_rules_have_no_page_count_and_no_link()
+    public function the_site_name_links_to_the_site_defaults()
     {
+        $this->actingAsSuper();
+
         $rule = $this->rules([$this->row('SiteName', 'fail', filterable: false)], ['SiteName' => false])->first();
 
         $this->assertSame('Site name', $rule['label']);
         $this->assertSame('Site', $rule['badge']);
+        $this->assertSame('http://cool-runnings.com/cp/seo-pro/site-defaults/edit', $rule['url']);
+    }
+
+    #[Test]
+    public function the_site_name_has_no_link_without_permission_to_edit_site_defaults()
+    {
+        $this->actingAs(User::make()->save());
+
+        $rule = $this->rules([$this->row('SiteName', 'fail', filterable: false)], ['SiteName' => false])->first();
+
         $this->assertNull($rule['url']);
     }
 
