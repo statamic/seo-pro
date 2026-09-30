@@ -71,7 +71,7 @@ class RedirectRepository implements RepositoryContract
     private function generateId(string $source): string
     {
         if ($slug = Str::slug($source)) {
-            return $slug;
+            return Str::substr($slug, 0, 200);
         }
 
         return $this->stache->generateId();
