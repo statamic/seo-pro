@@ -7,6 +7,7 @@ use Statamic\Support\Str;
 
 class NoUnderscoresInUrl extends Rule
 {
+    use Concerns\DeductsPointsForFailingPages;
     use Concerns\FailsWhenPagesDontPass;
 
     protected $passes;
@@ -33,6 +34,11 @@ class NoUnderscoresInUrl extends Rule
             $this->failures,
             ['count' => $this->failures]
         );
+    }
+
+    protected function points()
+    {
+        return 1;
     }
 
     public function processPage()
