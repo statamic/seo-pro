@@ -33,7 +33,7 @@ class Errors extends ResourceCollection
     {
         $columns = $this->blueprint->columns();
 
-        $actions = Column::make('actions')
+        $createRedirect = Column::make('create_redirect')
             ->label('')
             ->listable(true)
             ->visible(true)
@@ -41,7 +41,7 @@ class Errors extends ResourceCollection
             ->defaultOrder($columns->count() + 1)
             ->sortable(false);
 
-        $columns->put('actions', $actions);
+        $columns->put('create_redirect', $createRedirect);
 
         if ($key = $this->columnPreferenceKey) {
             $columns->setPreferred($key);

@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePoll } from '@statamic/cms/inertia';
-import { DateFormatter } from '@statamic/cms';
+import { DateFormatter, NumberFormatter } from '@statamic/cms';
 import { Header, Button, DocsCallout, Icon, Panel, Card, Description, Listing, Badge, DropdownItem, Heading } from '@statamic/cms/ui';
 import StatusIcon from "../../components/reporting/StatusIcon.vue";
 import { computed, ref, watch, onBeforeUnmount } from 'vue';
@@ -13,6 +13,7 @@ const props = defineProps({
 });
 
 const selectedPage = ref(null);
+const activeRule = ref(new URLSearchParams(window.location.search).get('rule'));
 
 const isGenerating = computed(() => ['pending', 'generating'].includes(props.report.status));
 
@@ -21,6 +22,27 @@ const isCachedHeaderReady = computed(() => {
 		&& props.report.pages_crawled
 		&& props.report.score;
 });
+
+const scoreColor = computed(() => {
+	if (props.report.score < 70) return 'red';
+	if (props.report.score < 90) return 'amber';
+	return 'green';
+});
+
+const additionalParameters = computed(() => {
+	if (!activeRule.value) return {};
+
+	return {
+		rule: activeRule.value,
+	};
+});
+
+const isRuleActive = (rule) => activeRule.value === rule.handle;
+
+const selectRule = (rule) => {
+	if (! rule.is_filterable) return;
+	activeRule.value = activeRule.value === rule.handle ? null : rule.handle;
+};
 
 const formatRelativeDate = (value) => {
 	const isToday = new Date(value * 1000) < new Date().setUTCHours(0, 0, 0, 0);
@@ -51,6 +73,16 @@ if (isGenerating.value) {
 
 	onBeforeUnmount(stop);
 }
+
+watch(activeRule, (rule) => {
+	const url = new URL(window.location.href);
+
+	rule
+		? url.searchParams.set('rule', rule)
+		: url.searchParams.delete('rule');
+
+	window.history.replaceState(window.history.state, '', url);
+});
 </script>
 
 <template>
@@ -78,24 +110,57 @@ if (isGenerating.value) {
 					</div>
 					<div>
 						<Description class="mb-1" :text="__('seo-pro::messages.site_score')" />
-						<div class="text-lg" :class="{ 'text-red-500': report.score < 70, 'text-orange': report.score < 90, 'text-green-600': report.score >= 90 }">{{ report.score }}%</div>
+						<div
+							class="text-lg"
+							:class="{
+								'text-red-500': scoreColor === 'red',
+								'text-amber-500': scoreColor === 'amber',
+								'text-green-600': scoreColor === 'green',
+							}"
+							v-text="NumberFormatter.format(report.score / 100, 'percent')"
+						/>
 					</div>
 				</div>
 
-				<div class="bg-gray-300 dark:bg-dark-650 h-4 w-full rounded-2xl mr-2">
-					<div class="h-4 rounded-2xl" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-600': report.score >= 90 }" />
+				<div class="bg-gray-300 dark:bg-gray-700 h-4 w-full rounded-2xl mr-2">
+					<div
+						class="h-4 rounded-2xl"
+						:style="`width: ${report.score}%`"
+						:class="{
+							'bg-red-500': scoreColor === 'red',
+							'bg-amber-500': scoreColor === 'amber',
+							'bg-green-600': scoreColor === 'green',
+						}"
+					/>
 				</div>
 
 				<table class="data-table">
 					<tbody>
-						<tr v-for="item in report.results">
-							<td class="w-8 text-center text-pretty">
+						<tr
+							v-for="item in report.results"
+							:key="item.handle"
+							:class="{
+								'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800': item.is_filterable,
+							}"
+							@click="selectRule(item)"
+						>
+							<td
+								class="w-8 text-center text-pretty"
+								:class="{
+									'!bg-ui-accent-bg/10 !border-t-ui-accent-bg !border-s-ui-accent-bg !shadow-[inset_3px_-1px_0_var(--color-ui-accent-bg)]': isRuleActive(item),
+								}"
+							>
 								<StatusIcon :status="item.status" />
 							</td>
-							<td class="!pl-0">
+							<td
+								class="!pl-0"
+								:class="{
+								    '!bg-ui-accent-bg/10 !border-t-ui-accent-bg !border-e-ui-accent-bg !shadow-[inset_0_-1px_0_var(--color-ui-accent-bg)] !text-gray-800 dark:!text-gray-100': isRuleActive(item),
+								}"
+							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
 									<span>{{ item.description }}</span>
-									<span v-if="item.comment" class="text-gray-700 dark:text-dark-175 sm:text-right text-pretty">
+									<span v-if="item.comment" class="sm:text-right text-pretty">
 										<Description :text="item.comment" />
 									</span>
 								</div>
@@ -114,16 +179,17 @@ if (isGenerating.value) {
 		</Panel>
 
 		<template v-else>
-			<Heading class="mb-4" :text="__('seo-pro::messages.page_details')" />
+			<Heading class="mb-3" :text="__('seo-pro::messages.page_details')" />
 
 			<Listing
 				:url="pagesUrl"
+				:additional-parameters
 				:allow-search="false"
 				:allow-presets="false"
 				:allow-customizing-columns="false"
 			>
 				<template #cell-status="{ row: page }">
-					<div class="flex items-center">
+					<div class="flex items-center whitespace-nowrap">
 						<StatusIcon :status="page.status" class="inline-block w-5" />
 						{{ __('seo-pro::messages.rules.'+page.status) }}
 					</div>

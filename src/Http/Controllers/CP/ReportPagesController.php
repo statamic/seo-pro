@@ -30,6 +30,12 @@ class ReportPagesController extends CpController
             )
             ->values();
 
+        if ($rule = $request->input('rule')) {
+            $pages = $pages
+                ->filter(fn ($page) => $this->pageFailsRule($page, $rule))
+                ->values();
+        }
+
         $currentPage = $request->input('page', 1);
         $perPage = $request->input('perPage', config('statamic.cp.pagination_size'));
 
@@ -49,6 +55,13 @@ class ReportPagesController extends CpController
                 ],
             ],
         ]);
+    }
+
+    private function pageFailsRule(Page $page, string $rule): bool
+    {
+        return $page->getRuleResults()->contains(
+            fn ($result) => $result['handle'] === $rule && $result['status'] !== 'pass',
+        );
     }
 
     private function sortablePageValue(Page $page, string $column): ?string

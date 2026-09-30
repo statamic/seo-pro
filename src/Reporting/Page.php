@@ -112,6 +112,7 @@ class Page implements Arrayable
             $rule->setPage($this)->load($array);
 
             $results[] = [
+                'handle' => $rule->id(),
                 'description' => $rule->description(),
                 'status' => $rule->status(),
                 'comment' => $rule->comment(),

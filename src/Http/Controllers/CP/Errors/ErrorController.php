@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\SeoPro\Http\Controllers\CP;
+namespace Statamic\SeoPro\Http\Controllers\CP\Errors;
 
 use Inertia\Inertia;
 use Statamic\CP\Column;
@@ -53,7 +53,7 @@ class ErrorController extends CpController
 
         $columns = $blueprint
             ->columns()
-            ->put('actions', Column::make('actions')
+            ->put('create_redirect', Column::make('create_redirect')
                 ->label('')
                 ->listable(true)
                 ->visible(true)

@@ -6,10 +6,10 @@ return [
     'enabled_instruct' => 'Wenn du diesen Eintrag deaktivierst, wird er aus Berichten und der Sitemap ausgeschlossen – und es wird nichts über das Template-Tag ausgegeben.',
 
     'title' => 'Meta-Titel',
-    'title_instruct' => 'Jede URL auf deiner Website sollte einen eindeutigen Meta-Titel haben – idealerweise mit weniger als 60 Zeichen.',
+    'title_instruct' => 'Jede URL auf deiner Website sollte einen eindeutigen Meta-Titel haben – idealerweise mit :min–:max Zeichen.',
 
     'description' => 'Meta-Beschreibung',
-    'description_instruct' => 'Jede URL auf deiner Website sollte eine eindeutige Meta-Beschreibung haben – idealerweise mit weniger als 160 Zeichen.',
+    'description_instruct' => 'Jede URL auf deiner Website sollte eine eindeutige Meta-Beschreibung haben – idealerweise mit :min–:max Zeichen.',
 
     'site_name' => 'Website-Name',
     'site_name_instruct' => 'Deaktiviere optional den Website-Namen auf dieser Seite.',

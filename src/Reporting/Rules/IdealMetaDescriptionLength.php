@@ -27,21 +27,12 @@ class IdealMetaDescriptionLength extends Rule
             return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
         }
 
-        $warnMin = config('statamic.seo-pro.reports.meta_description_length.warn_min', 120);
-        $warnMax = config('statamic.seo-pro.reports.meta_description_length.warn_max', 240);
-
-        if ($this->length < $warnMin) {
-            return __('seo-pro::messages.rules.meta_description_length_page_failing_too_short', [
-                'length' => $this->length,
-                'min' => $warnMin,
-            ]);
+        if ($this->length < config('statamic.seo-pro.reports.meta_description_length.warn_min', 120)) {
+            return __('seo-pro::messages.rules.meta_description_length_page_failing_too_short');
         }
 
-        if ($this->length > $warnMax) {
-            return __('seo-pro::messages.rules.meta_description_length_page_failing_too_long', [
-                'length' => $this->length,
-                'max' => $warnMax,
-            ]);
+        if ($this->length > config('statamic.seo-pro.reports.meta_description_length.pass_max', 160)) {
+            return __('seo-pro::messages.rules.meta_description_length_page_failing_too_long');
         }
 
         return __('seo-pro::messages.rules.meta_description_length_page');
@@ -111,16 +102,11 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageFailingComment()
     {
-        $warnMax = config('statamic.seo-pro.reports.meta_description_length.warn_max', 240);
-
         if ($this->length === 0) {
-            return __('seo-pro::messages.rules.meta_description_length_page_failing_missing');
+            return '';
         }
 
-        return __('seo-pro::messages.rules.meta_description_length_page_failing_too_long', [
-            'length' => $this->length,
-            'max' => $warnMax,
-        ]);
+        return $this->pageWarningComment();
     }
 
     public function pagePassingComment()
@@ -130,7 +116,11 @@ class IdealMetaDescriptionLength extends Rule
 
     public function pageWarningComment()
     {
-        return __('seo-pro::messages.rules.meta_description_length_page_warning', ['length' => $this->length]);
+        return __('seo-pro::messages.rules.meta_description_length_page_warning', [
+            'length' => $this->length,
+            'min' => config('statamic.seo-pro.reports.meta_description_length.warn_min', 120),
+            'max' => config('statamic.seo-pro.reports.meta_description_length.pass_max', 160),
+        ]);
     }
 
     public function siteWarningComment()
@@ -144,7 +134,7 @@ class IdealMetaDescriptionLength extends Rule
 
     public function processPage()
     {
-        $this->length = strlen($this->page->get('description', ''));
+        $this->length = mb_strlen($this->page->get('description') ?? '');
     }
 
     public function pageStatus()

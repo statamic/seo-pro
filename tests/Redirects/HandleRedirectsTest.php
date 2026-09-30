@@ -4,6 +4,7 @@ namespace Tests\Redirects;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
@@ -84,6 +85,52 @@ class HandleRedirectsTest extends TestCase
         $this
             ->get('/old-url')
             ->assertRedirect('/new-url')
+            ->assertStatus(301);
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/672
+     */
+    #[Test]
+    #[DataProvider('selfReferencingRedirectProvider')]
+    public function it_does_not_redirect_to_the_url_being_visited(string $source, string $destination, string $url)
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source($source)
+            ->destination($destination)
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this->get($url)->assertNotFound();
+    }
+
+    public static function selfReferencingRedirectProvider(): array
+    {
+        return [
+            'same url' => ['/foo', '/foo', '/foo'],
+            'url differing by case' => ['/Foo', '/foo', '/foo'],
+            'url differing by trailing slash' => ['/foo', '/foo/', '/foo'],
+            'absolute url' => ['/Foo', 'http://cool-runnings.com/foo', '/foo'],
+            'wildcard' => ['/blog/*', '/blog/$1', '/blog/hello-world'],
+        ];
+    }
+
+    #[Test]
+    public function it_redirects_urls_differing_from_the_destination_by_case()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/Foo')
+            ->destination('/foo')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this
+            ->get('/Foo')
+            ->assertRedirect('/foo')
             ->assertStatus(301);
     }
 
@@ -188,6 +235,22 @@ class HandleRedirectsTest extends TestCase
         $this
             ->get('/old-url')
             ->assertRedirect('https://example.com/new-url');
+    }
+
+    #[Test]
+    public function it_redirects_to_the_same_path_on_another_domain()
+    {
+        Facades\Redirect::make()
+            ->id('abc')
+            ->source('/foo')
+            ->destination('https://example.com/foo')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this
+            ->get('/foo')
+            ->assertRedirect('https://example.com/foo');
     }
 
     #[Test]

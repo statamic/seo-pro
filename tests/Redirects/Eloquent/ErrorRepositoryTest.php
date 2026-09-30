@@ -89,6 +89,20 @@ class ErrorRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_does_not_set_a_null_id_when_saving_a_new_error()
+    {
+        $error = Facades\Error::make()
+            ->url('/missing-page')
+            ->hits(1)
+            ->lastHitAt('2026-04-21 12:00:00');
+
+        $method = new \ReflectionMethod($this->repo, 'toModel');
+        $model = $method->invoke($this->repo, $error);
+
+        $this->assertArrayNotHasKey('id', $model->getAttributes());
+    }
+
+    #[Test]
     public function it_sets_default_site_when_saving_without_one()
     {
         $error = Facades\Error::make()

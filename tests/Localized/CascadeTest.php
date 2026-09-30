@@ -3,6 +3,7 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
@@ -26,6 +27,22 @@ class CascadeTest extends LocalizedTestCase
             'en' => 'http://cool-runnings.com/about',
             'fr' => 'http://cool-runnings.com/fr/about',
         ], collect($data['alternate_locales'])->pluck('url', 'hreflang')->all());
+    }
+
+    #[Test]
+    public function it_reindexes_alternate_locales_after_filtering()
+    {
+        Config::set('statamic.seo-pro.alternate_locales.excluded_sites', ['french']);
+
+        $entry = Entry::findByUri('/about', 'default')->entry();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertSame([0], array_keys($data['alternate_locales']));
+        $this->assertSame('it', $data['alternate_locales'][0]['hreflang']);
     }
 
     #[Test]

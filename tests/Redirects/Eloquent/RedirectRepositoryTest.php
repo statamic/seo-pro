@@ -97,6 +97,21 @@ class RedirectRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_does_not_set_a_null_id_when_saving_a_new_redirect()
+    {
+        $redirect = Facades\Redirect::make()
+            ->source('/old-url')
+            ->destination('/new-url')
+            ->responseCode(302)
+            ->enabled(true);
+
+        $method = new \ReflectionMethod($this->repo, 'toModel');
+        $model = $method->invoke($this->repo, $redirect);
+
+        $this->assertArrayNotHasKey('id', $model->getAttributes());
+    }
+
+    #[Test]
     public function it_sets_default_site_when_saving_without_one()
     {
         $redirect = Facades\Redirect::make()

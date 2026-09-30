@@ -27,21 +27,12 @@ class IdealTitleLength extends Rule
             return __('seo-pro::messages.rules.title_length_page_failing_missing');
         }
 
-        $warnMin = config('statamic.seo-pro.reports.title_length.warn_min', 30);
-        $warnMax = config('statamic.seo-pro.reports.title_length.warn_max', 70);
-
-        if ($this->length < $warnMin) {
-            return __('seo-pro::messages.rules.title_length_page_failing_too_short', [
-                'length' => $this->length,
-                'min' => $warnMin,
-            ]);
+        if ($this->length < config('statamic.seo-pro.reports.title_length.warn_min', 30)) {
+            return __('seo-pro::messages.rules.title_length_page_failing_too_short');
         }
 
-        if ($this->length > $warnMax) {
-            return __('seo-pro::messages.rules.title_length_page_failing_too_long', [
-                'length' => $this->length,
-                'max' => $warnMax,
-            ]);
+        if ($this->length > config('statamic.seo-pro.reports.title_length.pass_max', 60)) {
+            return __('seo-pro::messages.rules.title_length_page_failing_too_long');
         }
 
         return __('seo-pro::messages.rules.title_length_page');
@@ -111,16 +102,11 @@ class IdealTitleLength extends Rule
 
     public function pageFailingComment()
     {
-        $warnMax = config('statamic.seo-pro.reports.title_length.warn_max', 70);
-
         if ($this->length === 0) {
-            return __('seo-pro::messages.rules.title_length_page_failing_missing');
+            return '';
         }
 
-        return __('seo-pro::messages.rules.title_length_page_failing_too_long', [
-            'length' => $this->length,
-            'max' => $warnMax,
-        ]);
+        return $this->pageWarningComment();
     }
 
     public function pagePassingComment()
@@ -130,7 +116,11 @@ class IdealTitleLength extends Rule
 
     public function pageWarningComment()
     {
-        return __('seo-pro::messages.rules.title_length_page_warning', ['length' => $this->length]);
+        return __('seo-pro::messages.rules.title_length_page_warning', [
+            'length' => $this->length,
+            'min' => config('statamic.seo-pro.reports.title_length.warn_min', 30),
+            'max' => config('statamic.seo-pro.reports.title_length.pass_max', 60),
+        ]);
     }
 
     public function siteWarningComment()
@@ -144,7 +134,7 @@ class IdealTitleLength extends Rule
 
     public function processPage()
     {
-        $this->length = strlen($this->page->get('title', ''));
+        $this->length = mb_strlen($this->page->get('title') ?? '');
     }
 
     public function pageStatus()
