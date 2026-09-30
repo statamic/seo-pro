@@ -83,7 +83,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 100.0
+score: 83.0
 pages_crawled: 10
 pages_actionable: 10
 results:
@@ -207,7 +207,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 75.0
+score: 83.0
 pages_crawled: 10
 pages_actionable: 6
 results:
@@ -255,7 +255,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 100.0
+score: 83.0
 pages_crawled: 10
 pages_actionable: 10
 results:
@@ -299,7 +299,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 100.0
+score: 84.0
 pages_crawled: 9
 pages_actionable: 9
 results:
@@ -339,7 +339,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 100.0
+score: 87.0
 pages_crawled: 4
 pages_actionable: 4
 results:
@@ -582,6 +582,21 @@ EXPECTED;
 
         $this->assertEquals(0, $this->getReportResult('UniqueTitleTag'));
         $this->assertEquals(0, $this->getReportResult('UniqueMetaDescription'));
+    }
+
+    #[Test]
+    public function it_does_not_score_100_when_meta_descriptions_are_missing()
+    {
+        $this->generateEntries(5);
+
+        Report::create()->save()->generate();
+
+        $report = Report::find(1);
+
+        // The unique rule ignores the empty descriptions, but the length rule fails them.
+        $this->assertEquals(0, $report->results()['UniqueMetaDescription']);
+        $this->assertEquals(['failures' => 5, 'warnings' => 0], $report->results()['IdealMetaDescriptionLength']);
+        $this->assertEquals(86, $report->score());
     }
 
     private function generateReportWithDuplicateTitles()

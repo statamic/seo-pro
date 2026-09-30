@@ -132,6 +132,21 @@ class IdealTitleLength extends Rule
         );
     }
 
+    public function maxPoints()
+    {
+        return $this->points() * $this->report->pages()->count();
+    }
+
+    public function demerits()
+    {
+        return $this->points() * $this->failures;
+    }
+
+    protected function points()
+    {
+        return 1;
+    }
+
     public function processPage()
     {
         $this->length = mb_strlen($this->page->get('title') ?? '');
