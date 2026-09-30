@@ -2,6 +2,7 @@
 import { ref, computed, getCurrentInstance } from 'vue';
 import StatusIcon from "./StatusIcon.vue";
 import { Icon } from '@statamic/cms/ui';
+import { NumberFormatter } from '@statamic/cms';
 
 const instance = getCurrentInstance();
 const { $axios } = instance.appContext.config.globalProperties;
@@ -49,7 +50,7 @@ if (! score.value) pollReport();
 	<div>
 		<div v-if="score" class="flex items-center">
 			<StatusIcon :status="statusByScore" class="inline-block ml-1 mr-3" />
-			{{ score }}%
+			{{ NumberFormatter.format(score / 100, 'percent') }}
 		</div>
 		<Icon v-else name="loading" />
 	</div>

@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePoll } from '@statamic/cms/inertia';
-import { DateFormatter } from '@statamic/cms';
+import { DateFormatter, NumberFormatter } from '@statamic/cms';
 import { Header, Button, DocsCallout, Icon, Panel, Card, Description, Listing, Badge, DropdownItem, Heading } from '@statamic/cms/ui';
 import StatusIcon from "../../components/reporting/StatusIcon.vue";
 import { computed, ref, watch, onBeforeUnmount } from 'vue';
@@ -21,6 +21,12 @@ const isCachedHeaderReady = computed(() => {
 	return props.report.date
 		&& props.report.pages_crawled
 		&& props.report.score;
+});
+
+const scoreColor = computed(() => {
+	if (props.report.score < 70) return 'red';
+	if (props.report.score < 90) return 'amber';
+	return 'green';
 });
 
 const additionalParameters = computed(() => {
@@ -104,12 +110,28 @@ watch(activeRule, (rule) => {
 					</div>
 					<div>
 						<Description class="mb-1" :text="__('seo-pro::messages.site_score')" />
-						<div class="text-lg" :class="{ 'text-red-500': report.score < 70, 'text-orange': report.score < 90, 'text-green-600': report.score >= 90 }">{{ report.score }}%</div>
+						<div
+							class="text-lg"
+							:class="{
+								'text-red-500': scoreColor === 'red',
+								'text-amber-500': scoreColor === 'amber',
+								'text-green-600': scoreColor === 'green',
+							}"
+							v-text="NumberFormatter.format(report.score / 100, 'percent')"
+						/>
 					</div>
 				</div>
 
 				<div class="bg-gray-300 dark:bg-gray-700 h-4 w-full rounded-2xl mr-2">
-					<div class="h-4 rounded-2xl" :style="`width: ${report.score}%`" :class="{ 'bg-red-500': report.score < 70, 'bg-orange': report.score < 90, 'bg-green-600': report.score >= 90 }" />
+					<div
+						class="h-4 rounded-2xl"
+						:style="`width: ${report.score}%`"
+						:class="{
+							'bg-red-500': scoreColor === 'red',
+							'bg-amber-500': scoreColor === 'amber',
+							'bg-green-600': scoreColor === 'green',
+						}"
+					/>
 				</div>
 
 				<table class="data-table">
@@ -125,15 +147,15 @@ watch(activeRule, (rule) => {
 							<td
 								class="w-8 text-center text-pretty"
 								:class="{
-									'!bg-blue-50 dark:!bg-blue-950 !border !border-s-4 !border-e-0 !border-blue-400 dark:!border-blue-700': isRuleActive(item),
+									'!bg-ui-accent-bg/10 !border-t-ui-accent-bg !border-s-ui-accent-bg !shadow-[inset_3px_-1px_0_var(--color-ui-accent-bg)]': isRuleActive(item),
 								}"
 							>
-								<StatusIcon :status="item.status" :class="{ '-ml-1': isRuleActive(item) }" />
+								<StatusIcon :status="item.status" />
 							</td>
 							<td
 								class="!pl-0"
 								:class="{
-								    '!bg-blue-50 dark:!bg-blue-950 !border !border-s-0 !border-blue-400 dark:!border-blue-700 !text-gray-800 dark:!text-gray-100': isRuleActive(item),
+								    '!bg-ui-accent-bg/10 !border-t-ui-accent-bg !border-e-ui-accent-bg !shadow-[inset_0_-1px_0_var(--color-ui-accent-bg)] !text-gray-800 dark:!text-gray-100': isRuleActive(item),
 								}"
 							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
@@ -157,7 +179,7 @@ watch(activeRule, (rule) => {
 		</Panel>
 
 		<template v-else>
-			<Heading :text="__('seo-pro::messages.page_details')" />
+			<Heading class="mb-3" :text="__('seo-pro::messages.page_details')" />
 
 			<Listing
 				:url="pagesUrl"
@@ -167,7 +189,7 @@ watch(activeRule, (rule) => {
 				:allow-customizing-columns="false"
 			>
 				<template #cell-status="{ row: page }">
-					<div class="flex items-center">
+					<div class="flex items-center whitespace-nowrap">
 						<StatusIcon :status="page.status" class="inline-block w-5" />
 						{{ __('seo-pro::messages.rules.'+page.status) }}
 					</div>
