@@ -174,6 +174,10 @@ return [
         'rules_passed' => '{1}1 rule passed|[0,*]:count rules passed',
         'pages' => '{1}1 page|[0,*]:count pages',
         'site_wide' => 'Site',
+        'all_passed' => 'All rules passed',
+        'hint_aria' => 'About the rules',
+        'hint_body' => 'Failed rules lower the SEO score, warnings do not. They just point out where a closer look pays off.',
+        'score_aria' => 'SEO score :score, view report',
         'rules' => [
             'site_name' => 'Site name',
             'unique_title' => 'Unique title',
