@@ -160,4 +160,33 @@ return [
         'meta_description_length_page_passing' => 'Die Meta-Beschreibung hat :length Zeichen.',
     ],
 
+    'widget' => [
+        'empty' => 'Noch kein Bericht vorhanden. Ein Bericht prüft Titel, Meta-Beschreibungen und URLs aller Seiten.',
+        'date' => 'Bericht vom :date',
+        'time_format' => 'H:mm',
+        'fresh_today' => 'Heute um :time erstellt.',
+        'fresh_yesterday' => 'Gestern um :time erstellt.',
+        'age_days' => '{1}Vor einem Tag erstellt.|[2,*]Vor :count Tagen erstellt.',
+        'age_stale' => ':Ago erstellt.',
+        'stale_detail' => 'Seither hat sich vermutlich einiges geändert.',
+        'changes' => '{0}Seither wurde nichts bearbeitet.|{1}Seither wurde ein Eintrag bearbeitet.|[2,*]Seither wurden :count Einträge bearbeitet.',
+        'rules_checked' => '{1}1 Regel geprüft|[0,*]:count Regeln geprüft',
+        'rules_passed' => '{1}1 Regel bestanden|[0,*]:count Regeln bestanden',
+        'pages' => '{1}1 Seite|[0,*]:count Seiten',
+        'site_wide' => 'Website',
+        'all_passed' => 'Alle Regeln bestanden',
+        'hint_aria' => 'Erklärung zu den Regeln',
+        'hint_body' => 'Nicht bestandene Regeln senken den SEO-Score, Warnungen nicht. Sie zeigen nur, wo sich ein Blick lohnt.',
+        'score_aria' => 'SEO-Score :score, zum Bericht',
+        'rules' => [
+            'site_name' => 'Website-Name',
+            'unique_title' => 'Eindeutiger Titel',
+            'title_length' => 'Länge des Titels',
+            'unique_description' => 'Eindeutige Meta-Beschreibung',
+            'description_length' => 'Länge der Meta-Beschreibung',
+            'no_underscores' => 'URL ohne Unterstriche',
+            'three_segments' => 'URL mit maximal 3 Segmenten',
+        ],
+    ],
+
 ];
