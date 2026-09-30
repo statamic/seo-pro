@@ -83,7 +83,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 83.0
+score: 86.0
 pages_crawled: 10
 pages_actionable: 10
 results:
@@ -207,7 +207,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 83.0
+score: 86.0
 pages_crawled: 10
 pages_actionable: 6
 results:
@@ -255,7 +255,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 83.0
+score: 86.0
 pages_crawled: 10
 pages_actionable: 10
 results:
@@ -299,7 +299,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 84.0
+score: 86.0
 pages_crawled: 9
 pages_actionable: 9
 results:
@@ -339,7 +339,7 @@ EXPECTED;
         $expected = <<<"EXPECTED"
 date: $now->timestamp
 status: fail
-score: 87.0
+score: 88.0
 pages_crawled: 4
 pages_actionable: 4
 results:
@@ -595,7 +595,29 @@ EXPECTED;
 
         $this->assertEquals(0, $report->results()['UniqueMetaDescription']);
         $this->assertEquals(['failures' => 5, 'warnings' => 0], $report->results()['IdealMetaDescriptionLength']);
-        $this->assertEquals(86, $report->score());
+        $this->assertEquals(88, $report->score());
+    }
+
+    #[Test]
+    public function it_does_not_score_100_when_urls_contain_underscores()
+    {
+        collect(range(1, 5))->each(function ($i) {
+            Entry::make()
+                ->collection('articles')
+                ->blueprint('article')
+                ->slug('test_entry_'.$i)
+                ->set('title', 'Test Entry '.$i)
+                ->set('seo', ['description' => "A unique meta description for test entry {$i}, written to be an ideal length so that search engines can display all of it in their results."])
+                ->save();
+        });
+
+        Report::create()->save()->generate();
+
+        $report = Report::find(1);
+
+        $this->assertEquals(5, $report->results()['NoUnderscoresInUrl']);
+        $this->assertEquals(['failures' => 0, 'warnings' => 0], $report->results()['IdealMetaDescriptionLength']);
+        $this->assertEquals(88, $report->score());
     }
 
     private function generateReportWithDuplicateTitles()
