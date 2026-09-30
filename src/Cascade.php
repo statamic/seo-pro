@@ -16,10 +16,12 @@ use Statamic\Facades\URL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fieldtypes\Bard;
+use Statamic\SeoPro\Fieldtypes\OpeningHoursFieldtype;
 use Statamic\Statamic;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\View\Cascade as ViewCascade;
+use Stringable;
 
 class Cascade
 {
@@ -636,7 +638,7 @@ class Cascade
     protected function jsonLd()
     {
         $snippets = collect();
-        $jsonLdEntity = $this->data->get('json_ld_entity', 'organization');
+        $jsonLdEntity = $this->jsonLdEntityString('json_ld_entity') ?: 'organization';
 
         if ($this->isHomePage() && $jsonLdEntity !== 'disabled') {
             if ($entity = $this->buildEntitySchema($jsonLdEntity)) {
@@ -678,7 +680,7 @@ class Cascade
             default => null,
         };
 
-        if (! $type || ! $name = $this->jsonLdEntityValue('json_ld_entity_name')) {
+        if (! $type || ! $name = $this->jsonLdEntityString('json_ld_entity_name')) {
             return null;
         }
 
@@ -689,49 +691,52 @@ class Cascade
             '@type' => $type,
             'name' => $name,
             '@id' => $this->homeUrl().'#'.Str::slug($type),
-            'url' => $this->jsonLdEntityValue('json_ld_entity_url') ?: $this->homeUrl(),
-            'alternateName' => $this->jsonLdEntityValue('json_ld_entity_alternate_name'),
-            'description' => $this->jsonLdEntityValue('json_ld_entity_description'),
+            'url' => $this->jsonLdEntityString('json_ld_entity_url') ?: $this->homeUrl(),
+            'alternateName' => $this->jsonLdEntityString('json_ld_entity_alternate_name'),
+            'description' => $this->jsonLdEntityString('json_ld_entity_description'),
             $imageKey => $this->jsonLdEntityImageUrl($this->resolveJsonLdEntityLogo()),
-            'telephone' => $this->jsonLdEntityValue('json_ld_entity_telephone'),
-            'email' => $this->jsonLdEntityValue('json_ld_entity_email'),
+            'telephone' => $this->jsonLdEntityString('json_ld_entity_telephone'),
+            'email' => $this->jsonLdEntityString('json_ld_entity_email'),
             'address' => $this->buildJsonLdEntityAddress(),
             'geo' => $this->buildJsonLdEntityGeo(),
             'sameAs' => $this->buildJsonLdEntitySameAs(),
         ];
 
         if ($entity === 'local_business') {
-            $schema['priceRange'] = $this->jsonLdEntityValue('json_ld_entity_price_range');
+            $schema['priceRange'] = $this->jsonLdEntityString('json_ld_entity_price_range');
             $schema['openingHoursSpecification'] = $this->buildJsonLdEntityOpeningHours();
         }
 
         if ($entity === 'corporation') {
-            $schema['tickerSymbol'] = $this->jsonLdEntityValue('json_ld_entity_ticker_symbol');
+            $schema['tickerSymbol'] = $this->jsonLdEntityString('json_ld_entity_ticker_symbol');
         }
 
         return array_filter($schema);
     }
 
-    protected function jsonLdEntityValue(string $key): string
+    protected function jsonLdEntityString(string $key): string
+    {
+        $value = $this->jsonLdEntityValue($key);
+
+        return is_scalar($value) || $value instanceof Stringable ? trim((string) $value) : '';
+    }
+
+    protected function jsonLdEntityValue(string $key): mixed
     {
         $value = $this->data->get($key);
 
-        if ($value instanceof Value) {
-            $value = $value->value();
-        }
-
-        return is_scalar($value) ? trim((string) $value) : '';
+        return $value instanceof Value ? $value->value() : $value;
     }
 
     protected function buildJsonLdEntityAddress(): ?array
     {
         $address = array_filter([
             '@type' => 'PostalAddress',
-            'streetAddress' => $this->jsonLdEntityValue('json_ld_entity_street_address'),
-            'addressLocality' => $this->jsonLdEntityValue('json_ld_entity_locality'),
-            'addressRegion' => $this->jsonLdEntityValue('json_ld_entity_region'),
-            'postalCode' => $this->jsonLdEntityValue('json_ld_entity_postal_code'),
-            'addressCountry' => $this->jsonLdEntityValue('json_ld_entity_country'),
+            'streetAddress' => $this->jsonLdEntityString('json_ld_entity_street_address'),
+            'addressLocality' => $this->jsonLdEntityString('json_ld_entity_locality'),
+            'addressRegion' => $this->jsonLdEntityString('json_ld_entity_region'),
+            'postalCode' => $this->jsonLdEntityString('json_ld_entity_postal_code'),
+            'addressCountry' => $this->jsonLdEntityString('json_ld_entity_country'),
         ]);
 
         return count($address) > 1 ? $address : null;
@@ -739,8 +744,8 @@ class Cascade
 
     protected function buildJsonLdEntityGeo(): ?array
     {
-        $latitude = $this->jsonLdEntityValue('json_ld_entity_latitude');
-        $longitude = $this->jsonLdEntityValue('json_ld_entity_longitude');
+        $latitude = $this->jsonLdEntityString('json_ld_entity_latitude');
+        $longitude = $this->jsonLdEntityString('json_ld_entity_longitude');
 
         if (! $latitude || ! $longitude) {
             return null;
@@ -755,46 +760,26 @@ class Cascade
 
     protected function buildJsonLdEntitySameAs(): array
     {
-        $sameAs = $this->data->get('json_ld_entity_same_as');
-
-        if ($sameAs instanceof Value) {
-            $sameAs = $sameAs->value();
-        }
-
-        return collect($sameAs)->filter()->values()->all();
+        return collect($this->jsonLdEntityValue('json_ld_entity_same_as'))->filter()->values()->all();
     }
 
     protected function buildJsonLdEntityOpeningHours(): array
     {
-        $hours = $this->data->get('json_ld_entity_opening_hours');
-
-        if ($hours instanceof Value) {
-            $hours = $hours->value();
-        }
+        $hours = $this->jsonLdEntityValue('json_ld_entity_opening_hours');
 
         if (! is_array($hours)) {
             return [];
         }
 
-        $days = [
-            'monday' => 'Monday',
-            'tuesday' => 'Tuesday',
-            'wednesday' => 'Wednesday',
-            'thursday' => 'Thursday',
-            'friday' => 'Friday',
-            'saturday' => 'Saturday',
-            'sunday' => 'Sunday',
-        ];
-
         return collect($hours)
-            ->map(function ($times, $day) use ($days) {
-                if (! isset($days[$day]) || empty($times['opening']) || empty($times['closing'])) {
+            ->map(function ($times, $day) {
+                if (! in_array($day, OpeningHoursFieldtype::DAYS) || empty($times['opening']) || empty($times['closing'])) {
                     return null;
                 }
 
                 return [
                     '@type' => 'OpeningHoursSpecification',
-                    'dayOfWeek' => 'https://schema.org/'.$days[$day],
+                    'dayOfWeek' => 'https://schema.org/'.Str::ucfirst($day),
                     'opens' => $times['opening'],
                     'closes' => $times['closing'],
                 ];
@@ -806,11 +791,7 @@ class Cascade
 
     protected function resolveJsonLdEntityLogo()
     {
-        $logo = $this->data->get('json_ld_entity_logo');
-
-        if ($logo instanceof Value) {
-            $logo = $logo->value();
-        }
+        $logo = $this->jsonLdEntityValue('json_ld_entity_logo');
 
         if ($logo instanceof Collection || $logo instanceof Builder) {
             $logo = $logo->first();

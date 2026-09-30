@@ -63,7 +63,7 @@ return [
     'json_ld_entity_price_range' => 'Price Range',
     'json_ld_entity_price_range_instruct' => 'The relative price range of the business.',
     'json_ld_entity_opening_hours' => 'Opening Hours',
-    'json_ld_entity_opening_hours_instruct' => 'Leave a day blank to mark it as closed.',
+    'json_ld_entity_opening_hours_instruct' => 'Set both an opening and a closing time for each day the business is open. Leave a day blank to mark it as closed.',
     'json_ld_entity_ticker_symbol' => 'Ticker Symbol',
     'json_ld_entity_ticker_symbol_instruct' => 'The stock exchange ticker symbol, e.g. `NASDAQ:AAPL`.',
 

@@ -110,9 +110,16 @@ description: "{{ content | strip_tags | truncate(250, '...') }}"
 
 ## JSON-LD
 
-You may configure data for the Organization/Person objects, as well as enable breadcrumb data from your Site Defaults:
+You may configure the entity your site represents, as well as enable breadcrumb data from your Site Defaults:
 
 ![JSON-LD Tab on Site Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-site-defaults-json-ld.png)
+
+The entity can be an [Organization](https://schema.org/Organization), [Person](https://schema.org/Person), [LocalBusiness](https://schema.org/LocalBusiness) or [Corporation](https://schema.org/Corporation). Its schema is only output on the homepage, as [recommended by Google](https://developers.google.com/search/docs/appearance/structured-data/organization).
+
+Every entity type supports a name, alternate name, description, URL (defaulting to your homepage), logo/image, telephone number, email address, "Same As" URLs (like social media profiles), a postal address and geo coordinates. On top of that:
+
+- **LocalBusiness** supports a price range and opening hours. Leave a day blank to mark it as closed.
+- **Corporation** supports a stock ticker symbol.
 
 You can then configure JSON-LD objects for your content via section defaults, which can be overridden on a per-entry/term basis.
 
@@ -122,7 +129,7 @@ You can even use Antlers to pull data from fields as necessary:
 
 If you want to use any tags or modifiers in your schema, you may need to [add them to an allowlist](https://statamic.dev/frontend/antlers#opting-into-tags-and-modifiers) in Statamic's `antlers.php` config.
 
-The "Organization Logo" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
+The entity's "Logo / Image" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
 
 ```php
 // config/statamic/seo-pro.php

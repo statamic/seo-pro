@@ -99,9 +99,13 @@ class SiteDefaults
 
     private static function migrateRenamedFields(array $values): array
     {
+        $legacyNameFields = match (Arr::get($values, 'json_ld_entity')) {
+            'person' => ['json_ld_person_name', 'json_ld_organization_name'],
+            default => ['json_ld_organization_name', 'json_ld_person_name'],
+        };
+
         $renamedFields = [
-            'json_ld_organization_name' => 'json_ld_entity_name',
-            'json_ld_person_name' => 'json_ld_entity_name',
+            ...array_fill_keys($legacyNameFields, 'json_ld_entity_name'),
             'json_ld_organization_logo' => 'json_ld_entity_logo',
         ];
 

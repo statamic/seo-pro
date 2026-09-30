@@ -596,9 +596,30 @@ class CascadeTest extends TestCase
     }
 
     #[Test]
+    public function it_outputs_an_image_rather_than_a_logo_for_a_person()
+    {
+        config(['statamic.seo-pro.json_ld.use_glide_for_logo' => false]);
+
+        $siteDefaults = SiteDefaults::in('default')->set([
+            'json_ld_entity' => 'person',
+            'json_ld_entity_name' => 'Derice Bannock',
+            'json_ld_entity_logo' => 'assets::img/stetson.jpg',
+        ]);
+
+        $data = (new Cascade)
+            ->with($siteDefaults->all())
+            ->get();
+
+        $person = json_decode($data['json_ld'][0], true);
+
+        $this->assertEquals('Person', $person['@type']);
+        $this->assertEquals('http://cool-runnings.com/assets/img/stetson.jpg', $person['image']);
+        $this->assertArrayNotHasKey('logo', $person);
+    }
+
+    #[Test]
     public function it_defaults_to_organization_when_entity_type_is_missing()
     {
-        // Legacy defaults that predate the entity type field won't have json_ld_entity set.
         $siteDefaults = SiteDefaults::in('default')->set([
             'json_ld_entity_name' => 'Cool Runnings Ltd',
         ]);
@@ -659,6 +680,31 @@ class CascadeTest extends TestCase
 
         $this->assertEquals('Derice Bannock', $values['json_ld_entity_name']);
         $this->assertArrayNotHasKey('json_ld_person_name', $values);
+    }
+
+    #[Test]
+    #[DataProvider('legacyEntityNameProvider')]
+    public function it_migrates_the_legacy_name_matching_the_entity_type($entity, $expectedName)
+    {
+        $this->setSeoInSiteDefaults([
+            'json_ld_entity' => $entity,
+            'json_ld_organization_name' => 'Cool Runnings Ltd',
+            'json_ld_person_name' => 'Derice Bannock',
+        ]);
+
+        $values = SiteDefaults::in('default')->all();
+
+        $this->assertEquals($expectedName, $values['json_ld_entity_name']);
+        $this->assertArrayNotHasKey('json_ld_organization_name', $values);
+        $this->assertArrayNotHasKey('json_ld_person_name', $values);
+    }
+
+    public static function legacyEntityNameProvider()
+    {
+        return [
+            'organization' => ['organization', 'Cool Runnings Ltd'],
+            'person' => ['person', 'Derice Bannock'],
+        ];
     }
 
     #[Test]

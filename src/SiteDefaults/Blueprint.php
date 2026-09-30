@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\SiteDefaults;
 
 use Statamic\SeoPro\Fieldtypes\Rules\ValidJsonLd;
+use Statamic\SeoPro\Fieldtypes\Rules\ValidUrls;
 use Statamic\SeoPro\HasAssetField;
 
 class Blueprint
@@ -157,6 +158,7 @@ class Blueprint
                                         'type' => 'text',
                                         'localizable' => true,
                                         'if' => ['json_ld_entity' => 'isnt disabled'],
+                                        'validate' => ['url'],
                                     ],
                                 ],
                                 [
@@ -189,6 +191,7 @@ class Blueprint
                                         'width' => 50,
                                         'localizable' => true,
                                         'if' => ['json_ld_entity' => 'isnt disabled'],
+                                        'validate' => ['email'],
                                     ],
                                 ],
                                 [
@@ -200,6 +203,7 @@ class Blueprint
                                         'type' => 'list',
                                         'localizable' => true,
                                         'if' => ['json_ld_entity' => 'isnt disabled'],
+                                        'validate' => [new ValidUrls],
                                     ],
                                 ],
                                 [
@@ -265,6 +269,7 @@ class Blueprint
                                         'width' => 50,
                                         'localizable' => true,
                                         'if' => ['json_ld_entity' => 'isnt disabled'],
+                                        'validate' => ['numeric', 'between:-90,90'],
                                     ],
                                 ],
                                 [
@@ -276,6 +281,7 @@ class Blueprint
                                         'width' => 50,
                                         'localizable' => true,
                                         'if' => ['json_ld_entity' => 'isnt disabled'],
+                                        'validate' => ['numeric', 'between:-180,180'],
                                     ],
                                 ],
                                 [
