@@ -76,7 +76,7 @@ return [
     'organization' => 'Organisation',
     'person' => 'Person',
     'local_business' => 'Lokales Unternehmen',
-    'corporation' => 'Unternehmen',
+    'corporation' => 'Konzern',
     'disabled' => 'Deaktiviert',
     'monday' => 'Montag',
     'tuesday' => 'Dienstag',
@@ -117,7 +117,7 @@ return [
     'rules' => [
         'pass' => 'Bestanden',
         'warning' => 'Warnung',
-        'fail' => 'Fehler',
+        'fail' => 'Nicht bestanden',
         'site_name' => 'Die Website benötigt einen Namen.',
         'site_name_multisite' => 'Jede Website benötigt einen Namen.',
         'unique_title_actionable_pill' => 'Titel',
