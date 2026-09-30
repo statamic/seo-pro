@@ -1,72 +1,62 @@
 <?php
 
 return [
-
     'enabled' => 'Ingeschakeld',
-    'enabled_instruct' => 'Het uitschakelen van dit gedeelte zorgt ervoor dat het niet meer voorkomt in rapporten en in de sitemap en voorkomt dat er iets wordt weergeven via de template tag.',
-
+    'enabled_instruct' => 'Het uitschakelen van dit gedeelte zorgt ervoor dat het niet meer voorkomt in rapporten en in de sitemap en voorkomt dat er iets wordt weergegeven via de template tag.',
     'meta_section' => 'Metadata',
-
     'title' => 'Metatitel',
     'title_instruct' => 'Kies een bestaand veld om te gebruiken als de **standaard** metatitel van dit gedeelte.',
-
     'description' => 'Meta-omschrijving',
     'description_instruct' => 'Kies een bestaand veld om te gebruiken als de **standaard** meta-omschrijving van dit gedeelte.',
-
     'site_name' => 'Sitenaam',
     'site_name_instruct' => 'Schakel optioneel de sitenaam uit voor dit gedeelte.',
-
     'site_name_position' => 'Sitenaam positie',
     'site_name_position_instruct' => 'Pas optioneel de positie aan voor dit gedeelte.',
-
     'site_name_separator' => 'Sitenaam scheidingsteken',
     'site_name_separator_instruct' => 'Pas optioneel het scheidingsteken aan voor dit gedeelte.',
-
-    'canonical_url' => 'Canonical URL',
-    'canonical_url_instruct' => 'Kies een bestaand veld om in te stellen als de **standaard** canonical URL van dit gedeelte.',
-
+    'canonical_url' => 'Canonieke URL',
+    'canonical_url_instruct' => 'Kies een bestaand veld om in te stellen als de **standaard** canonieke URL van dit gedeelte.',
     'robots_section' => 'Robots',
-    'robots_section_instruct' => 'Controleer hoe zoekmachines pagina\'s in deze sectie crawlen en indexeren.',
-
+    'robots_section_instruct' => "Controleer hoe zoekmachines pagina's in deze sectie crawlen en indexeren.",
     'robots_indexing' => 'Indexering',
-    'robots_indexing_instruct' => 'Controleer of zoekmachines pagina\'s in deze sectie kunnen indexeren.',
-
-    'robots_following' => 'Link Volgen',
-    'robots_following_instruct' => 'Controleer of zoekmachines links op pagina\'s in deze sectie kunnen volgen.',
-
-    'robots_noarchive' => 'Geen Archief',
-    'robots_noarchive_instruct' => 'Voorkomen dat zoekmachines gecachte links voor pagina\'s in deze sectie tonen.',
-
-    'robots_noimageindex' => 'Geen Afbeelding Index',
-    'robots_noimageindex_instruct' => 'Voorkomen dat zoekmachines afbeeldingen op pagina\'s in deze sectie indexeren.',
-
-    'robots_nosnippet' => 'Geen Snippet',
-    'robots_nosnippet_instruct' => 'Voorkomen dat zoekmachines tekstsnippets voor pagina\'s in deze sectie tonen.',
-
+    'robots_indexing_instruct' => "Controleer of zoekmachines pagina's in deze sectie kunnen indexeren.",
+    'robots_following' => 'Link volgen',
+    'robots_following_instruct' => "Controleer of zoekmachines links op pagina's in deze sectie kunnen volgen.",
+    'robots_noarchive' => 'Geen archief',
+    'robots_noarchive_instruct' => "Voorkomen dat zoekmachines gecachte links voor pagina's in deze sectie tonen.",
+    'robots_noimageindex' => 'Geen afbeeldingindex',
+    'robots_noimageindex_instruct' => "Voorkomen dat zoekmachines afbeeldingen op pagina's in deze sectie indexeren.",
+    'robots_nosnippet' => 'Geen snippet',
+    'robots_nosnippet_instruct' => "Voorkomen dat zoekmachines tekstsnippets voor pagina's in deze sectie tonen.",
     'og_section' => 'Open Graph',
-    'og_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van uw metadata en siteconfiguratie.',
-
+    'og_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van je metadata en siteconfiguratie.',
     'image' => 'Afbeelding',
     'image_instruct' => 'Kies een standaard afbeeldingenveld die bij het delen van iedere willekeurige URL op sociale netwerken gebruikt kan worden.',
-
     'twitter_handle' => 'Twitter-handle',
     'twitter_handle_instruct' => 'Kies een standaard twitter-handle die overeenkomt met dit gedeelte.',
-
     'sitemap_section' => 'Sitemap',
-
     'sitemap' => 'Sitemap',
     'sitemap_instruct' => 'Indien uitgeschakeld, worden items in dit gedeelte niet in de sitemap weergegeven.',
-
     'show_future' => 'Toon Toekomstige Inhoud',
     'show_future_instruct' => 'Indien uitgeschakeld, zal in de toekomst gedateerde inhoud niet in de sitemap voorkomen.',
-
     'show_past' => 'Toon Verouderde Inhoud',
     'show_past_instruct' => 'Indien uitgeschakeld, zal in het verleden gedateerde inhoud niet in de sitemap voorkomen.',
-
     'priority' => 'Prioriteit',
-    'priority_instruct' => "De prioriteit van deze URL ten opzichte van andere URL's op uw site. Geldige waarden zijn of zitten tussen '0.0' tot '1.0'.",
-
+    'priority_instruct' => "De prioriteit van deze URL ten opzichte van andere URL's op je site. Geldige waarden zijn of zitten tussen '0.0' tot '1.0'.",
     'change_frequency' => 'Updatefrequentie',
     'change_frequency_instruct' => "Een instructie voor zoekmachines over hoe vaak pagina's in dit gedeelte waarschijnlijk geüpdatet zullen worden.",
-
+    'json_ld' => 'JSON-LD',
+    'json_ld_instruct' => 'Configureer het JSON-LD-schema voor dit gedeelte.',
+    'json_ld_schema' => 'Schema',
+    'json_ld_schema_instruct' => 'Plak je aangepaste schema-objecten hier (`Recipe`, `Event`, enz.). Je kunt Antlers gebruiken om data uit het item uit te voeren. Deze worden in de juiste script-tag verpakt.',
+    'robots' => 'Robots',
+    'robots_instruct' => "Bepaal hoe zoekmachines pagina's in dit gedeelte crawlen en indexeren.",
+    'og_type' => 'Open Graph-type',
+    'og_type_instruct' => 'Het standaardtype inhoud voor dit gedeelte (bijv. website, article). [Meer informatie](https://ogp.me/#types)',
+    'og_title' => 'Open Graph-titel',
+    'og_title_instruct' => 'Kies een bestaand veld of aangepaste waarde om in te stellen als je Open Graph-titel.',
+    'twitter_title' => 'X-kaarttitel',
+    'twitter_title_instruct' => 'Kies een bestaand veld of aangepaste waarde om in te stellen als je X-kaarttitel.',
+    'twitter_description' => 'X-kaartomschrijving',
+    'twitter_description_instruct' => 'Kies een bestaand veld of aangepaste waarde om in te stellen als je X-kaartomschrijving.',
 ];

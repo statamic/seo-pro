@@ -109,6 +109,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/fr/about" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link rel="alternate" href="http://cool-runnings.com/fr/about" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="en" />
 <link rel="alternate" href="http://cool-runnings.com/about" hreflang="x-default" />
@@ -135,6 +136,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/fr" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link rel="alternate" href="http://cool-runnings.com/fr" hreflang="fr" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
@@ -161,6 +163,7 @@ EOT;
 
         $expectedAlternateHreflangMeta = <<<'EOT'
 <link href="http://cool-runnings.com/en-gb" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link rel="alternate" href="http://cool-runnings.com/en-gb" hreflang="en-gb" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="en-us" />
 <link rel="alternate" href="http://cool-runnings.com" hreflang="x-default" />
@@ -337,5 +340,19 @@ EOT;
 
         $this->assertStringContainsStringIgnoringLineEndings("<h1>{$viewType}</h1>", $content);
         $this->assertStringContainsStringIgnoringLineEndings('<title>Corse Fantastiche | Home</title>', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_doesnt_generate_multisite_meta_for_404_pages($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+        $this->assertStringNotContainsString('hreflang', $content);
     }
 }

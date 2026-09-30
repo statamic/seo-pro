@@ -6,10 +6,10 @@ return [
     'enabled_instruct' => 'Hvis du deaktiverer dette element, vil det blive udelukket fra rapporter og sitemap, og forhindre at noget bliver vist gennem skabelon-tagget.',
 
     'title' => 'Meta Titel',
-    'title_instruct' => 'Hver URL på din hjemmeside bør have en unik Meta Titel, ideelt set mindre end 60 tegn lang.',
+    'title_instruct' => 'Hver URL på din hjemmeside bør have en unik Meta Titel, ideelt set :min–:max tegn lang.',
 
     'description' => 'Meta Beskrivelse',
-    'description_instruct' => 'Hver URL på din hjemmeside bør have en unik Meta Beskrivelse, ideelt set mindre end 160 tegn lang.',
+    'description_instruct' => 'Hver URL på din hjemmeside bør have en unik Meta Beskrivelse, ideelt set :min–:max tegn lang.',
 
     'site_name' => 'Webstedsnavn',
     'site_name_instruct' => 'Deaktiver webstedsnavnet for denne side, hvis det ønskes.',

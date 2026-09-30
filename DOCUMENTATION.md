@@ -120,6 +120,8 @@ You can even use Antlers to pull data from fields as necessary:
 
 ![JSON-LD Schema field on Section Defaults page](https://raw.githubusercontent.com/statamic/seo-pro/refs/heads/7.x/docs-json-ld-schema.png)
 
+If you want to use any tags or modifiers in your schema, you may need to [add them to an allowlist](https://statamic.dev/frontend/antlers#opting-into-tags-and-modifiers) in Statamic's `antlers.php` config.
+
 The "Organization Logo" will be dynamically resized using Glide to comply with the [JSON-LD schema](https://developers.google.com/search/docs/appearance/structured-data/organization). If you'd prefer to disable this behaviour, you may disable the `json_ld.use_glide_for_logo` option in your config.
 
 ```php
@@ -311,6 +313,18 @@ You may customize the purge threshold in the config:
 'redirects' => [
     'errors' => [
         'purge_after_days' => 30,
+    ],
+],
+```
+
+On a public site, bots probing for unique URLs can create an unbounded number of errors between purges. To bound the total, set `max_errors` to a cap. When the purge runs and the number of errors exceeds the cap, the excess is purged: errors that have never been hit go first, then those with the fewest hits, then those hit least recently. Frequently-hit 404s, the best redirect candidates, survive longest. The default of `0` disables the cap.
+
+```php
+// config/statamic/seo-pro.php
+
+'redirects' => [
+    'errors' => [
+        'max_errors' => 1000,
     ],
 ],
 ```

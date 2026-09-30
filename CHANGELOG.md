@@ -1,5 +1,116 @@
 # Release Notes
 
+## 7.14.3 (2026-09-24)
+
+### What's fixed
+- Fix duplicate and contradictory messages in ideal length rules [#668](https://github.com/statamic/seo-pro/issues/668) by @helloDanuk
+- Skip redirects that resolve to the URL being visited [#673](https://github.com/statamic/seo-pro/issues/673) by @duncanmcclean
+
+
+
+## 7.14.2 (2026-09-17)
+
+### What's fixed
+- Fix dark mode colours in the report Page Details modal [#666](https://github.com/statamic/seo-pro/issues/666) by @duncanmcclean
+
+
+
+## 7.14.1 (2026-09-07)
+
+### What's fixed
+- Fall back to the raw asset URL when Glide can't generate a social image [#660](https://github.com/statamic/seo-pro/issues/660) by @edalzell
+
+
+
+## 7.14.0 (2026-09-03)
+
+### What's new
+- Add configurable cap on tracked 404 errors [#654](https://github.com/statamic/seo-pro/issues/654) by @duncanmcclean
+- Add delete action for tracked 404 errors [#656](https://github.com/statamic/seo-pro/issues/656) by @duncanmcclean
+- Add delete action for redirects [#657](https://github.com/statamic/seo-pro/issues/657) by @duncanmcclean
+
+### What's fixed
+- Fix errors with no `last_hit_at` never being purged [#655](https://github.com/statamic/seo-pro/issues/655) by @duncanmcclean
+
+
+
+## 7.13.3 (2026-08-25)
+
+### What's fixed
+- Keep canonical/prev/next independent of the noindex gate [#646](https://github.com/statamic/seo-pro/issues/646) by @lwekuiper
+
+
+
+## 7.13.2 (2026-08-13)
+
+### What's fixed
+- Fix alternate locale array serialization [#644](https://github.com/statamic/seo-pro/issues/644) by @infabo
+
+
+
+## 7.13.1 (2026-08-07)
+
+### What's fixed
+- Fix custom JSON-LD schema failing to save in Site Defaults [#642](https://github.com/statamic/seo-pro/issues/642) by @duncanmcclean
+- Bump slackapi/slack-github-action from 3.0.3 to 3.0.5 in the github-actions group [#638](https://github.com/statamic/seo-pro/issues/638) by @dependabot
+- Bump the github-actions group with 2 updates [#639](https://github.com/statamic/seo-pro/issues/639) by @dependabot
+
+
+
+## 7.13.0 (2026-07-20)
+
+### What's new
+- Support configurable file uploads disk [#590](https://github.com/statamic/seo-pro/issues/590) by @duncanmcclean
+
+### What's fixed
+- Fix Control Panel crash when SEO fields contain invalid Antlers [#631](https://github.com/statamic/seo-pro/issues/631) by @mynetx
+- Fix publish form freezing when the seo field has a condition [#634](https://github.com/statamic/seo-pro/issues/634) by @duncanmcclean
+- Prepend site URL when testing redirects [#635](https://github.com/statamic/seo-pro/issues/635) by @duncanmcclean
+- Noindex error pages instead of emitting canonical and hreflang meta [#636](https://github.com/statamic/seo-pro/issues/636) by @duncanmcclean
+- Mention allowlist for tags & modifiers in JSON-LD in docs [#637](https://github.com/statamic/seo-pro/issues/637) by @duncanmcclean
+
+
+
+## 7.12.3 (2026-07-02)
+
+### What's fixed
+- Fix Site Defaults save failing with "axios is not defined" [#623](https://github.com/statamic/seo-pro/issues/623) by @duncanmcclean
+- Improve Site Defaults performance with many sites [#624](https://github.com/statamic/seo-pro/issues/624) by @duncanmcclean
+- Use `application/ld+json` mode for JSON-LD code fields [#625](https://github.com/statamic/seo-pro/issues/625) by @duncanmcclean
+- Bump actions/checkout from 6.0.3 to 7.0.0 in the github-actions group [#621](https://github.com/statamic/seo-pro/issues/621) by @dependabot
+
+
+
+## 7.12.2 (2026-06-29)
+
+### What's fixed
+- Complete Dutch (nl) translations [#620](https://github.com/statamic/seo-pro/issues/620) by @lwekuiper
+
+
+
+## 7.12.1 (2026-06-23)
+
+### What's fixed
+- Fix PostgreSQL not-null violation when adding redirects [#619](https://github.com/statamic/seo-pro/issues/619) by @duncanmcclean
+
+
+
+## 7.12.0 (2026-06-22)
+
+### What's new
+- Ability to filter reports by rule [#614](https://github.com/statamic/seo-pro/issues/614) by @duncanmcclean
+
+### What's fixed
+- Handle trailing slashes when matching redirects [#610](https://github.com/statamic/seo-pro/issues/610) by @duncanmcclean
+- Fix invalid breadcrumb JSON-LD schema on taxonomy pages [#611](https://github.com/statamic/seo-pro/issues/611) by @duncanmcclean
+- Update pagination docs [#612](https://github.com/statamic/seo-pro/issues/612) by @duncanmcclean
+- Only output `Organization`/`Person` JSON-LD schemas on the homepage [#613](https://github.com/statamic/seo-pro/issues/613) by @duncanmcclean
+- Scope duplicate title & description checks to the current site [#615](https://github.com/statamic/seo-pro/issues/615) by @duncanmcclean
+- Retain current tab hash in URL when switching localization [#616](https://github.com/statamic/seo-pro/issues/616) by @duncanmcclean
+- Bump shivammathur/setup-php from 2.37.1 to 2.37.2 in the github-actions group [#606](https://github.com/statamic/seo-pro/issues/606) by @dependabot
+
+
+
 ## 7.11.0 (2026-06-12)
 
 ### What's new

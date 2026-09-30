@@ -52,7 +52,10 @@ class RedirectRepository extends StacheRepository implements RepositoryContract
     {
         $model = RedirectModel::find($redirect->id()) ?? new RedirectModel;
 
-        $model->id = $redirect->id();
+        if (! is_null($redirect->id())) {
+            $model->id = $redirect->id();
+        }
+
         $model->site = $redirect->site();
         $model->source = $redirect->source();
         $model->destination = $redirect->destination();

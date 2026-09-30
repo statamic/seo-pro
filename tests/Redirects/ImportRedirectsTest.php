@@ -206,6 +206,27 @@ class ImportRedirectsTest extends TestCase
     }
 
     #[Test]
+    public function import_reads_from_configured_disk_and_path()
+    {
+        config([
+            'statamic.system.file_uploads_disk' => 'uploads',
+            'statamic.system.file_uploads_path' => 'temp-uploads',
+        ]);
+
+        $uploadsDisk = Storage::fake('uploads');
+        $uploadsDisk->put('temp-uploads/import.csv', "source,destination\n/old,/new");
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.redirects.import'), ['file' => ['import.csv']])
+            ->assertOk()
+            ->assertJson(['created' => 1, 'updated' => 0]);
+
+        $this->assertNotNull(Facades\Redirect::query()->where('source', '/old')->first());
+        $uploadsDisk->assertMissing('temp-uploads/import.csv');
+    }
+
+    #[Test]
     public function import_uses_configured_default_response_code()
     {
         config(['statamic.seo-pro.redirects.default_response_code' => 302]);

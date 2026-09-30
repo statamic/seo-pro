@@ -76,8 +76,8 @@ class MetaTagTest extends TestCase
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home" />
 <meta name="twitter:description" content="I see a bad-ass mother." />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -105,8 +105,8 @@ EOT;
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -135,8 +135,8 @@ EOT;
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="The View" />
 <meta name="twitter:description" content="A wonderful view!" />
-<link href="http://cool-runnings.com" rel="home" />
 <link href="http://cool-runnings.com/the-view" rel="canonical" />
+<link href="http://cool-runnings.com" rel="home" />
 <link type="text/plain" rel="author" href="http://cool-runnings.com/humans.txt" />
 EOT;
 
@@ -404,6 +404,39 @@ EOT;
         $response->assertSee("<h1>{$viewType}</h1>", false);
         $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/img/stetson.jpg" />', false);
         $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/img/asset/YXNzZXRzL2ltZy9zdGV0c29uLmpwZw/stetson.jpg?p=seo_pro_twitter&s=095c80594c864bedc5c4c2cb2c83ee1c" />', false);
+    }
+
+    #[Test]
+    #[DataProvider('ungeneratableSocialImageProvider')]
+    public function it_falls_back_to_raw_asset_url_when_glide_cannot_generate_social_image($viewType, $image)
+    {
+        Config::set('statamic.seo-pro.assets.container', 'assets');
+
+        $this
+            ->prepareViews($viewType)
+            ->setSeoOnEntry(Entry::findByUri('/about'), [
+                'image' => $image,
+            ]);
+
+        $response = $this->get('/about');
+        $response->assertSee("<h1>{$viewType}</h1>", false);
+        $response->assertSee('<meta property="og:image" content="http://cool-runnings.com/assets/'.$image.'" />', false);
+        $response->assertSee('<meta name="twitter:image" content="http://cool-runnings.com/assets/'.$image.'" />', false);
+        $response->assertDontSee('/img/asset/', false);
+    }
+
+    public static function ungeneratableSocialImageProvider()
+    {
+        $images = [
+            'format unsupported by driver' => 'img/icon.svg',
+            'file fails to decode' => 'img/corrupt.jpg',
+        ];
+
+        foreach (static::viewScenarioProvider() as [$viewType]) {
+            foreach ($images as $reason => $image) {
+                yield "{$viewType}, {$reason}" => [$viewType, $image];
+            }
+        }
     }
 
     #[Test]
@@ -732,6 +765,37 @@ EOT;
 
     #[Test]
     #[DataProvider('viewScenarioProvider')]
+    public function it_noindexes_404_pages_and_omits_canonical_meta($viewType)
+    {
+        $this->prepareViews($viewType);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
+    public function it_noindexes_404_pages_even_when_site_defaults_allow_indexing($viewType)
+    {
+        $this
+            ->prepareViews($viewType)
+            ->setSeoInSiteDefaults([
+                'robots_indexing' => 'index',
+                'robots_following' => 'follow',
+            ]);
+
+        $content = $this->get('/non-existent-page')->content();
+
+        $this->assertStringContainsStringIgnoringLineEndings('<h2>404!</h2>', $content);
+        $this->assertStringContainsStringIgnoringLineEndings('<meta name="robots" content="noindex, follow" />', $content);
+        $this->assertStringNotContainsString('rel="canonical"', $content);
+    }
+
+    #[Test]
+    #[DataProvider('viewScenarioProvider')]
     public function it_hydrates_cascade_on_custom_routes_using_blade_directive($viewType)
     {
         if ($viewType === 'antlers') {
@@ -841,7 +905,7 @@ EOT);
     }
 
     #[Test]
-    public function it_doesnt_output_canonical_when_robots_noindex()
+    public function it_still_outputs_canonical_when_robots_noindex()
     {
         $this
             ->prepareViews('antlers')
@@ -850,7 +914,8 @@ EOT);
             ]);
 
         $response = $this->get('/about');
-        $response->assertDontSee('" rel="canonical"', false);
+        $response->assertSee('<link href="http://cool-runnings.com/about" rel="canonical" />', false);
+        $response->assertDontSee(' rel="home"', false);
     }
 
     #[Test]

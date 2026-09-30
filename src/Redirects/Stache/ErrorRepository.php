@@ -71,7 +71,7 @@ class ErrorRepository implements RepositoryContract
     private function generateId(string $url): string
     {
         if ($slug = Str::slug($url)) {
-            return $slug;
+            return Str::substr($slug, 0, 200);
         }
 
         return $this->stache->generateId();

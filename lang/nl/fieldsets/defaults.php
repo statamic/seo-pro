@@ -1,74 +1,76 @@
 <?php
 
 return [
-
     'meta_section' => 'Metadata',
-    'meta_section_instruct' => 'Iedere URL op uw website hoort een unieke metatitel en meta-omschrijving te hebben.',
-
+    'meta_section_instruct' => 'Iedere URL op je website hoort een unieke metatitel en meta-omschrijving te hebben.',
     'title' => 'Metatitel',
     'title_instruct' => 'Kies een bestaand veld om deze te gebruiken als de **standaard** metatitel. Iedere collectie en taxonomie kan zijn eigen standaardinstelling hebben.',
-
     'description' => 'Meta-omschrijving',
     'description_instruct' => 'Kies een bestaand veld om te gebruiken als de **standaard** meta-omschrijving. Iedere collectie en taxonomie kan zijn eigen standaardinstelling hebben.',
-
     'site_name' => 'Sitenaam',
-    'site_name_instruct' => 'Het is gebruikelijk om uw sitenaam te gebruiken in metatitels.',
-
+    'site_name_instruct' => 'Het is gebruikelijk om je sitenaam te gebruiken in metatitels.',
     'site_name_position' => 'Sitenaam positie',
     'site_name_position_instruct' => 'Voor of achter de metatitel.',
-
     'site_name_separator' => 'Sitenaam scheidingsteken',
     'site_name_separator_instruct' => 'Het teken / de tekens tussen de titel en de sitenaam.',
-
     'canonical_url' => 'Canonieke URL',
-    'canonical_url_instruct' => 'Kies een bestaand veld om in te stellen als uw **standaard** canonieke URL. Elke collectie en taxonomie kan ook zijn eigen standaard hebben.',
-
+    'canonical_url_instruct' => 'Kies een bestaand veld om in te stellen als je **standaard** canonieke URL. Elke collectie en taxonomie kan ook zijn eigen standaard hebben.',
     'robots_section' => 'Robots',
-    'robots_section_instruct' => 'Controleer hoe zoekmachines uw pagina\'s crawlen en indexeren.',
-
+    'robots_section_instruct' => "Controleer hoe zoekmachines je pagina's crawlen en indexeren.",
     'robots_indexing' => 'Indexering',
     'robots_indexing_instruct' => 'Controleer of zoekmachines deze pagina kunnen indexeren.',
-
-    'robots_following' => 'Link Volgen',
+    'robots_following' => 'Link volgen',
     'robots_following_instruct' => 'Controleer of zoekmachines links op deze pagina kunnen volgen.',
-
-    'robots_noarchive' => 'Geen Archief',
+    'robots_noarchive' => 'Geen archief',
     'robots_noarchive_instruct' => 'Voorkomen dat zoekmachines een gecachte link naar deze pagina tonen.',
-
-    'robots_noimageindex' => 'Geen Afbeelding Index',
+    'robots_noimageindex' => 'Geen afbeeldingindex',
     'robots_noimageindex_instruct' => 'Voorkomen dat zoekmachines afbeeldingen op deze pagina indexeren.',
-
-    'robots_nosnippet' => 'Geen Snippet',
+    'robots_nosnippet' => 'Geen snippet',
     'robots_nosnippet_instruct' => 'Voorkomen dat zoekmachines een tekstsnippet voor deze pagina tonen.',
-
     'image_section' => 'Open Graph',
-    'image_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van uw metadata en siteconfiguratie.',
-
+    'image_section_instruct' => 'We genereren automatisch de meeste Open Graph-velden op basis van je metadata en siteconfiguratie.',
     'image' => 'Afbeelding',
     'image_instruct' => 'Kies een standaard afbeeldingenveld die bij het delen van iedere willekeurige URL op sociale netwerken gebruikt kan worden.',
-
     'social_section' => 'Twitter',
-    'social_section_instruct' => 'We genereren automatisch de meeste Twitter kaartvelden op basis van uw metadata en siteconfiguratie.',
-
+    'social_section_instruct' => 'We genereren automatisch de meeste Twitter kaartvelden op basis van je metadata en siteconfiguratie.',
     'twitter_handle' => 'Twitter gebruikersnaam',
-    'twitter_handle_instruct' => '_(Optioneel)_ Stel de gebruikersnaam van Twitter in die bij uw site hoort..',
-
+    'twitter_handle_instruct' => '_(Optioneel)_ Stel de gebruikersnaam van Twitter in die bij je site hoort.',
     'sitemap_section' => 'Sitemap',
-    'sitemap_section_instruct' => 'Kies uw standaard sitemapinstellingen. Als uw het niet zeker weet, laat deze velden dan leeg en gebruik de standaardinstellingen.',
-
+    'sitemap_section_instruct' => 'Kies je standaard sitemapinstellingen. Als je het niet zeker weet, laat deze velden dan leeg en gebruik de standaardinstellingen.',
     'priority' => 'Prioriteit',
-    'priority_instruct' => "De prioriteit van deze URL ten opzichte van andere URL's op uw site. Geldige waarden zijn of zitten tussen '0.0' tot '1.0'.",
-
+    'priority_instruct' => "De prioriteit van deze URL ten opzichte van andere URL's op je site. Geldige waarden zijn of zitten tussen '0.0' tot '1.0'.",
     'change_frequency' => 'Updatefrequentie',
-    'change_frequency_instruct' => 'Een instructie voor zoekmachines over hoe vaak paginawaarschijnlijk geüpdatet zal worden.',
-
-    'search_section' =>'Search Engines',
-    'search_section_instruct' => 'Het verifiëren van uw site bij populaire zoekmachines helpt u bij het volgen van hoe goed ze uw site crawlen.',
-
+    'change_frequency_instruct' => 'Een instructie voor zoekmachines over hoe vaak de pagina waarschijnlijk geüpdatet zal worden.',
+    'search_section' => 'Zoekmachines',
+    'search_section_instruct' => 'Het verifiëren van je site bij populaire zoekmachines helpt je bij het volgen van hoe goed ze je site crawlen.',
     'bing_verification' => 'Bing Verificatiecode',
-    'bing_verification_instruct' => 'Haal uw Bing verificatiecode op in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
-
+    'bing_verification_instruct' => 'Haal je Bing verificatiecode op in [Bing Webmaster Tools](https://www.bing.com/toolbox/webmaster).',
     'google_verification' => 'Google Verificatiecode',
-    'google_verification_instruct' => 'Haal uw Google verificatiecode op in [Google Search Console](https://search.google.com/search-console).',
-
+    'google_verification_instruct' => 'Haal je Google verificatiecode op in [Google Search Console](https://search.google.com/search-console).',
+    'json_ld_section' => 'JSON-LD',
+    'json_ld_entity_section' => 'Entiteitsinformatie',
+    'json_ld_entity_section_instruct' => 'Basisgegevens over de organisatie of persoon die deze site vertegenwoordigt. Dit schema wordt alleen op de homepage uitgevoerd, zoals [aanbevolen door Google](https://developers.google.com/search/docs/appearance/structured-data/organization).',
+    'json_ld_entity' => 'Entiteit',
+    'json_ld_entity_instruct' => 'Dit helpt zoekmachines de gestructureerde data op je site te begrijpen en vergroot de kans dat deze met uitgebreide zoekresultaten verschijnt.',
+    'json_ld_organization_name' => 'Naam van de organisatie',
+    'json_ld_organization_name_instruct' => 'De naam van de organisatie die deze site vertegenwoordigt.',
+    'json_ld_organization_logo' => 'Logo van de organisatie',
+    'json_ld_organization_logo_instruct' => 'Het logo van de organisatie die deze site vertegenwoordigt.',
+    'json_ld_person_name' => 'Naam van de persoon',
+    'json_ld_person_name_instruct' => 'De volledige naam van de persoon die deze site vertegenwoordigt.',
+    'json_ld_custom_section' => 'Aangepast schema',
+    'json_ld_custom_section_instruct' => 'Voeg een aangepast JSON-LD-schema toe dat op elke pagina van je site wordt uitgevoerd.',
+    'json_ld_schema' => 'Schema',
+    'json_ld_schema_instruct' => 'Plak je aangepaste schema-objecten hier (`WebSite`, `SiteNavigationElement`, enz.). Deze worden in de juiste script-tag verpakt.',
+    'json_ld_breadcrumbs_section' => 'Broodkruimels',
+    'json_ld_breadcrumbs' => 'Broodkruimels',
+    'json_ld_breadcrumbs_instruct' => 'Schakel gestructureerde data voor broodkruimels in om de locatie van deze pagina in je sitehiërarchie in zoekresultaten te tonen. [Meer informatie](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb)',
+    'og_type' => 'Open Graph-type',
+    'og_type_instruct' => 'Het type inhoud (bijv. website, article). [Meer informatie](https://ogp.me/#types)',
+    'og_title' => 'Open Graph-titel',
+    'og_title_instruct' => 'Kies het veld voor je Open Graph-titels.',
+    'twitter_title' => 'Kaarttitel',
+    'twitter_title_instruct' => 'Kies het veld voor je X-kaarttitels.',
+    'twitter_description' => 'Kaartomschrijving',
+    'twitter_description_instruct' => 'Kies het veld of stel een aangepaste waarde in voor je standaard X-kaartomschrijvingen.',
 ];

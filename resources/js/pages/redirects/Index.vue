@@ -45,6 +45,7 @@ function requestComplete({ items: newItems, parameters }) {
 	<Listing
 		ref="listing"
 		:url="cp_url(`seo-pro/redirects`)"
+		:action-url="cp_url(`seo-pro/redirects/actions`)"
 		:columns
 		:allow-presets="false"
 		sort-column="source"
@@ -63,26 +64,12 @@ function requestComplete({ items: newItems, parameters }) {
 				<StatusIndicator v-if="!isColumnVisible('status')" :status="redirect.status" />
 				<span v-text="redirect.source" />
 			</span>
-
-			<resource-deleter
-				v-if="redirect.deletable"
-				:ref="`deleter_${redirect.id}`"
-				:resource="redirect"
-				@deleted="listing.refresh()"
-			/>
 		</template>
 		<template #cell-status="{ row: redirect }">
 			<StatusIndicator :status="redirect.status" show-label :show-dot="false" />
 		</template>
 		<template #prepended-row-actions="{ row: redirect }">
 			<DropdownItem v-if="redirect.editable" :text="__('Edit')" :href="redirect.edit_url" icon="edit" />
-			<DropdownItem
-				v-if="redirect.deletable"
-				:text="__('Delete')"
-				icon="trash"
-				variant="destructive"
-				@click="$refs[`deleter_${redirect.id}`].confirm()"
-			/>
 		</template>
 	</Listing>
 
