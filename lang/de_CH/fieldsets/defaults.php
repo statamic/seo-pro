@@ -45,7 +45,7 @@ return [
     'json_ld_entity_email_instruct' => 'Haupt-E-Mail-Adresse für Kontaktanfragen.',
     'json_ld_entity_same_as' => 'Weitere URLs (sameAs)',
     'json_ld_entity_same_as_add_row' => 'URL hinzufügen',
-    'json_ld_entity_same_as_instruct' => 'URLs zu Social-Media-Profilen und anderen Webpräsenzen, die auf die Entität verweisen',
+    'json_ld_entity_same_as_instruct' => 'URLs zu Social-Media-Profilen und anderen Webpräsenzen, die auf die Entität verweisen.',
     'json_ld_entity_street_address' => 'Strasse und Hausnummer',
     'json_ld_entity_street_address_instruct' => 'Strasse und Hausnummer der Entität, die diese Website betreibt.',
     'json_ld_entity_locality' => 'Ort',
