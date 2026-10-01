@@ -59,6 +59,17 @@ class LinkRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function can_find_link_by_url()
+    {
+        $link = DeadLink::make()->url('https://example.com/broken');
+
+        $this->repo->save($link);
+
+        $this->assertEquals($link->id(), $this->repo->findByUrl('https://example.com/broken')->id());
+        $this->assertNull($this->repo->findByUrl('https://example.com/unknown'));
+    }
+
+    #[Test]
     public function can_save_link()
     {
         $link = DeadLink::make()

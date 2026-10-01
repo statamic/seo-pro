@@ -12,6 +12,7 @@ use Statamic\SeoPro\DeadLinks\LinkRepository;
  * @method static \Illuminate\Support\Collection all()
  * @method static LinkQueryBuilder query()
  * @method static null|Link find($id)
+ * @method static null|Link findByUrl(string $url)
  * @method static Link make()
  * @method static void save(Link $link)
  * @method static void delete(Link $link)

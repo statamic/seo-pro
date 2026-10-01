@@ -37,6 +37,11 @@ class LinkRepository implements RepositoryContract
         return $this->query()->where('id', $id)->first();
     }
 
+    public function findByUrl(string $url): ?Link
+    {
+        return $this->query()->where('url', $url)->first();
+    }
+
     public function make(): Link
     {
         return app(Link::class);

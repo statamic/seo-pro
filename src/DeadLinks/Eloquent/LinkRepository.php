@@ -17,6 +17,13 @@ class LinkRepository extends StacheRepository implements RepositoryContract
         ]);
     }
 
+    public function findByUrl(string $url): ?Link
+    {
+        $model = LinkModel::query()->where('url_hash', hash('sha256', $url))->first();
+
+        return $model ? static::fromModel($model) : null;
+    }
+
     public function save(Link $link): void
     {
         if (! $link->site()) {

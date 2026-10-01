@@ -13,6 +13,8 @@ interface LinkRepository
 
     public function find($id): ?Link;
 
+    public function findByUrl(string $url): ?Link;
+
     public function make(): Link;
 
     public function save(Link $link): void;

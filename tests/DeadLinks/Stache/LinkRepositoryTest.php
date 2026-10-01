@@ -43,6 +43,15 @@ class LinkRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function can_find_link_by_url()
+    {
+        Facades\DeadLink::make()->id('abc')->url('https://cool-runnings.com/old-page')->save();
+
+        $this->assertEquals('abc', $this->repo->findByUrl('https://cool-runnings.com/old-page')->id());
+        $this->assertNull($this->repo->findByUrl('https://cool-runnings.com/unknown'));
+    }
+
+    #[Test]
     public function can_save_link()
     {
         $link = Facades\DeadLink::make()
