@@ -2,8 +2,11 @@
 
 namespace Tests\DeadLinks;
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Stache;
 use Statamic\SeoPro\DeadLinks\Link;
@@ -66,6 +69,43 @@ class LinkCheckerTest extends TestCase
 
         $this->assertEquals(Link::STATUS_OK, DeadLink::find('abc')->status());
         $this->assertNull(DeadLink::find('abc')->failingSince());
+    }
+
+    #[Test]
+    public function it_describes_the_response_a_link_returned()
+    {
+        Http::fake(['*' => Http::response(status: 404)]);
+
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->save();
+
+        LinkChecker::checkLinks(collect([DeadLink::find('abc')]));
+
+        $this->assertEquals('404 Not Found', DeadLink::find('abc')->response());
+    }
+
+    #[Test]
+    #[DataProvider('connectionErrorProvider')]
+    public function it_describes_why_a_link_could_not_be_reached(string $error, string $response)
+    {
+        Http::fake(['*' => fn ($request) => Create::rejectionFor(new ConnectException($error, $request->toPsrRequest()))]);
+
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->save();
+
+        LinkChecker::checkLinks(collect([DeadLink::find('abc')]));
+
+        $this->assertEquals(Link::STATUS_FAILING, DeadLink::find('abc')->status());
+        $this->assertEquals($response, DeadLink::find('abc')->response());
+    }
+
+    public static function connectionErrorProvider(): array
+    {
+        return [
+            'host not found' => ['cURL error 6: Could not resolve host: example.com', 'Host not found'],
+            'connection refused' => ['cURL error 7: Failed to connect to example.com port 443', 'Connection refused'],
+            'timed out' => ['cURL error 28: Operation timed out after 10001 milliseconds', 'Timed out'],
+            'ssl error' => ['cURL error 60: SSL certificate problem: certificate has expired', 'SSL error'],
+            'anything else' => ['cURL error 56: Recv failure: Connection reset by peer', "Couldn't connect"],
+        ];
     }
 
     #[Test]

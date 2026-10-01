@@ -7,7 +7,6 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Str;
 use Statamic\SeoPro\Facades\DeadLink;
 use Statamic\SeoPro\Notifications\DeadLinksDigest;
 use Throwable;
@@ -95,9 +94,7 @@ class LinkChecker
         } else {
             $ok = false;
             $link->statusCode(null);
-            $link->error($response instanceof Throwable
-                ? Str::limit($response->getMessage(), 250)
-                : 'Request failed');
+            $link->error(static::errorFor($response));
         }
 
         $link->status($ok ? Link::STATUS_OK : Link::STATUS_FAILING);
@@ -111,6 +108,21 @@ class LinkChecker
         }
 
         $link->save();
+    }
+
+    private static function errorFor($response): string
+    {
+        $message = $response instanceof Throwable ? $response->getMessage() : '';
+
+        preg_match('/cURL error (\d+)/', $message, $matches);
+
+        return match ((int) ($matches[1] ?? 0)) {
+            6 => 'host_not_found',
+            7 => 'connection_refused',
+            28 => 'timed_out',
+            35, 51, 53, 58, 60 => 'ssl_error',
+            default => 'unreachable',
+        };
     }
 
     protected static function frequencyInterval(): CarbonInterval

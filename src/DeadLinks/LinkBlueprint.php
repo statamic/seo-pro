@@ -28,11 +28,12 @@ class LinkBlueprint
                                     ],
                                 ],
                                 [
-                                    'handle' => 'status_code',
+                                    'handle' => 'response',
                                     'field' => [
                                         'type' => 'text',
-                                        'display' => __('seo-pro::messages.status_code'),
+                                        'display' => __('seo-pro::messages.response'),
                                         'listable' => true,
+                                        'sortable' => false,
                                         'read_only' => true,
                                     ],
                                 ],
@@ -43,15 +44,6 @@ class LinkBlueprint
                                         'display' => __('seo-pro::messages.last_checked_at'),
                                         'time_enabled' => true,
                                         'listable' => true,
-                                        'read_only' => true,
-                                    ],
-                                ],
-                                [
-                                    'handle' => 'error',
-                                    'field' => [
-                                        'type' => 'textarea',
-                                        'display' => __('seo-pro::messages.error'),
-                                        'listable' => 'hidden',
                                         'read_only' => true,
                                     ],
                                 ],

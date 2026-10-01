@@ -39,9 +39,8 @@ class ListedLink extends JsonResource
 
             $this->merge($this->values([
                 'url' => $link->url(),
-                'status_code' => $link->statusCode(),
+                'response' => $link->response(),
                 'checked_at' => $link->checkedAt(),
-                'error' => $link->error(),
             ])),
 
             'references' => $link->references()

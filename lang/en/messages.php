@@ -12,10 +12,8 @@ return [
     'dead_link' => 'Dead Link',
     'view_dead_links' => 'View Dead Links',
     'manage_dead_links' => 'Manage Dead Links',
-    'status_code' => 'Status Code',
+    'response' => 'Response',
     'last_checked_at' => 'Last Checked At',
-    'error' => 'Error',
-    'unreachable' => 'Unreachable',
     'found_in' => 'Found in',
     'recheck_all' => 'Recheck All',
     'dead_links_rechecked' => 'Dead links rechecked.',
@@ -166,6 +164,14 @@ return [
         'meta_description_length_page_failing_too_short' => 'Meta description is :length characters. Ideal length is ≥ :min.',
         'meta_description_length_page_failing_too_long' => 'Meta description is :length characters. Ideal length is < :max.',
         'meta_description_length_page_passing' => 'Meta description is :length characters (ideal length).',
+    ],
+
+    'dead_link_errors' => [
+        'host_not_found' => 'Host not found',
+        'connection_refused' => 'Connection refused',
+        'timed_out' => 'Timed out',
+        'ssl_error' => 'SSL error',
+        'unreachable' => 'Couldn\'t connect',
     ],
 
 ];

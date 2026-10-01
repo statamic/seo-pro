@@ -177,6 +177,19 @@ class ViewDeadLinksTest extends TestCase
     }
 
     #[Test]
+    public function the_listing_describes_the_response_each_link_returned()
+    {
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->statusCode(404)->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.dead-links.index'))
+            ->assertOk();
+
+        $this->assertEquals('404 Not Found', $response->json('data.0.response'));
+    }
+
+    #[Test]
     public function dead_links_can_be_searched_by_url()
     {
         DeadLink::make()->id('abc')->url('https://example.com/broken')->save();

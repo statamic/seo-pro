@@ -392,7 +392,7 @@ SEO_PRO_TRACK_DEAD_LINKS=true
 
 ### Managing Dead Links
 
-Head to `Tools > SEO Pro > Dead Links` to see every tracked link, along with its status, how long it's been failing, and its HTTP response code. You can filter the listing by status (and by site, on multi-site installs), and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
+Head to `Tools > SEO Pro > Dead Links` to see every tracked link, along with its status, how long it's been failing, and the response it got back (like `404 Not Found` or `Host not found`). You can filter the listing by status (and by site, on multi-site installs), and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
 
 ### How Links Are Tracked
 

@@ -35,7 +35,7 @@ class DeadLinksDigest extends Notification
             ));
 
         foreach ($this->links as $link) {
-            $message->line($link->url().' — '.($link->statusCode() ?? $link->error() ?? __('seo-pro::messages.unreachable')));
+            $message->line($link->url().' — '.$link->response());
 
             $references = $link->references()
                 ->map(fn ($reference) => $reference['title'] ?? $reference['subject_id'])

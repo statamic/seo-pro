@@ -17,6 +17,7 @@ use Statamic\SeoPro\Events\DeadLinkSaved;
 use Statamic\SeoPro\Facades\DeadLink as DeadLinkFacade;
 use Statamic\Support\Arr;
 use Statamic\Support\Traits\FluentlyGetsAndSets;
+use Symfony\Component\HttpFoundation\Response;
 
 class Link
 {
@@ -93,6 +94,19 @@ class Link
             ->fluentlyGetOrSet('failingSince')
             ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
+    }
+
+    public function response(): ?string
+    {
+        if ($this->statusCode()) {
+            return trim($this->statusCode().' '.(Response::$statusTexts[$this->statusCode()] ?? ''));
+        }
+
+        if ($this->error()) {
+            return __("seo-pro::messages.dead_link_errors.{$this->error()}");
+        }
+
+        return null;
     }
 
     public function checkedAt($checkedAt = null)
