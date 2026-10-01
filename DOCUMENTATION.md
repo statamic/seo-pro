@@ -484,33 +484,35 @@ Then run `php please seo-pro:database-dead-links` to publish the migration and i
 
 ### Tracking Additional Content
 
-If you use Runway (or any other Eloquent-backed models) and want them scanned for dead links too, hook into the same mechanism the built-in entry/term/global tracking uses, from your own model's saved/deleted events:
+Out of the box, SEO Pro scans entries, terms and global sets. If you have content stored elsewhere, like in your own Eloquent models, you can have it scanned too by syncing it whenever it's saved or deleted:
 
 ```php
 use Statamic\Facades\Site;
 use Statamic\SeoPro\DeadLinks\ContentScanner;
 
-Product::saved(function ($product) {
+Product::saved(function (Product $product) {
     ContentScanner::syncForSubject(
-        'runway-product',                 // a type key of your choosing
-        (string) $product->getKey(),
-        Site::default()->handle(),         // the site the links belong to
-        $product->toArray(),
-        $product->blueprint(),             // or null to scan every attribute
-        $product->title,
+        'product',                  // a type of your choosing
+        (string) $product->id,
+        Site::default()->handle(),  // the site the links belong to
+        $product->toArray(),        // the values to scan for links
+        null,                       // a blueprint to limit which fields are scanned, or null to scan everything
+        $product->name,             // shown in the listing and notification emails
     );
 });
 
-Product::deleted(function ($product) {
-    ContentScanner::deleteForSubject('runway-product', (string) $product->getKey(), Site::default()->handle());
+Product::deleted(function (Product $product) {
+    ContentScanner::deleteForSubject('product', (string) $product->id, Site::default()->handle());
 });
 ```
 
-To link to the product from the Dead Links listing, tell SEO Pro how to build its edit URL (in a service provider's `boot` method):
+To link to the product from the Dead Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method:
 
 ```php
-ContentScanner::resolveEditUrlsUsing('runway-product', function (string $id, string $site) {
-    return Product::find($id)?->editUrl();
+use Statamic\SeoPro\DeadLinks\EditUrls;
+
+EditUrls::resolveUsing('product', function (string $id, string $site) {
+    return route('products.edit', $id);
 });
 ```
 
