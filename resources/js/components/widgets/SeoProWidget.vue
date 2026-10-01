@@ -38,7 +38,7 @@ defineProps({
 				</div>
 
 				<div
-					class="flex items-center justify-center mt-2 mb-2 @2xl/widget:mb-0! @2xl/widget:w-64! @2xl/widget:shrink-0!"
+					class="flex items-center justify-center my-2 @2xl/widget:mt-0! @2xl/widget:mb-1! @2xl/widget:w-64! @2xl/widget:shrink-0!"
 					:class="{ '@2xl/widget:py-4!': !showRules }"
 				>
 					<ScoreRing :score="report.score" :href="report.url" :compact="!showRules" />
