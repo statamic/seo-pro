@@ -9,8 +9,6 @@ use function Statamic\trans as __;
 
 class DeadLinkStatus extends Filter
 {
-    // Not "status" - that's already used by Statamic's own entry status
-    // filter, and filter handles are registered in a single shared list.
     protected static $handle = 'dead_link_status';
 
     public $pinned = true;
