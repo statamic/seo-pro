@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Role;
 use Statamic\Facades\Scope;
+use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\SeoPro\Facades\DeadLink;
 use Statamic\SeoPro\Jobs\CheckDeadLinksJob;
@@ -70,6 +71,28 @@ class ViewDeadLinksTest extends TestCase
             ->assertOk();
 
         $this->assertCount(2, $response->json('data'));
+    }
+
+    #[Test]
+    public function only_dead_links_in_authorized_sites_are_listed()
+    {
+        $this->setSites();
+
+        DeadLink::make()->id('english')->site('default')->url('https://example.com/english')->save();
+        DeadLink::make()->id('french')->site('fr')->url('https://example.com/french')->save();
+
+        Role::make('test')
+            ->addPermission('access cp')
+            ->addPermission('view seo dead links')
+            ->addPermission('access fr site')
+            ->save();
+
+        $response = $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->getJson(cp_route('seo-pro.dead-links.index'))
+            ->assertOk();
+
+        $this->assertEquals(['french'], collect($response->json('data'))->pluck('id')->all());
     }
 
     #[Test]
@@ -138,6 +161,16 @@ class ViewDeadLinksTest extends TestCase
     }
 
     #[Test]
+    public function the_site_filter_is_offered_for_the_dead_links_listing_in_a_multisite()
+    {
+        $this->setSites();
+
+        $filters = Scope::filters('dead-links');
+
+        $this->assertTrue($filters->contains(fn ($filter) => $filter->handle() === 'seo_pro_site'));
+    }
+
+    #[Test]
     public function a_super_user_can_recheck_all_links()
     {
         Queue::fake();
@@ -165,5 +198,16 @@ class ViewDeadLinksTest extends TestCase
             ->actingAs(User::make()->assignRole('test')->save())
             ->postJson(cp_route('seo-pro.dead-links.recheck-all'))
             ->assertForbidden();
+    }
+
+    private function setSites(): void
+    {
+        config()->set('statamic.editions.pro', true);
+        config()->set('statamic.system.multisite', true);
+
+        Site::setSites([
+            'default' => ['url' => 'http://test.com', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.fr', 'locale' => 'fr_FR'],
+        ]);
     }
 }
