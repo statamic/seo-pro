@@ -7,6 +7,7 @@ use Statamic\Facades\Blueprint;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\GlobalSet;
+use Statamic\Facades\Site;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\SeoPro\Facades\DeadLink;
@@ -84,6 +85,43 @@ class ContentSubscriberTest extends TestCase
 
         $this->assertCount(1, DeadLink::all());
         $this->assertEquals('term', DeadLink::all()->first()->references()->first()['subject_type']);
+    }
+
+    #[Test]
+    public function it_syncs_links_in_every_term_localization_and_cleans_up_on_delete()
+    {
+        config()->set('statamic.system.multisite', true);
+
+        Site::setSites([
+            'default' => ['url' => 'http://test.com', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.fr', 'locale' => 'fr_FR'],
+        ]);
+
+        Blueprint::make('tag')->setContents([
+            'fields' => [
+                ['handle' => 'title', 'field' => ['type' => 'text']],
+                ['handle' => 'source', 'field' => ['type' => 'text']],
+            ],
+        ])->setNamespace('taxonomies.tags')->save();
+
+        Taxonomy::make('tags')->sites(['default', 'fr'])->save();
+
+        $term = tap(Term::make()
+            ->taxonomy('tags')
+            ->slug('news')
+            ->dataForLocale('default', ['title' => 'News', 'source' => 'https://example.com/news'])
+            ->dataForLocale('fr', ['title' => 'Nouvelles', 'source' => 'https://example.fr/nouvelles']))
+            ->save();
+
+        $references = DeadLink::all()->flatMap->references();
+
+        $this->assertCount(2, DeadLink::all());
+        $this->assertEquals(['default', 'fr'], $references->pluck('site')->sort()->values()->all());
+        $this->assertEquals(['News', 'Nouvelles'], $references->pluck('title')->sort()->values()->all());
+
+        $term->delete();
+
+        $this->assertCount(0, DeadLink::all());
     }
 
     #[Test]

@@ -8,6 +8,7 @@ use Statamic\Events\GlobalVariablesDeleted;
 use Statamic\Events\GlobalVariablesSaved;
 use Statamic\Events\TermDeleted;
 use Statamic\Events\TermSaved;
+use Statamic\Taxonomies\LocalizedTerm;
 
 class ContentSubscriber
 {
@@ -51,24 +52,24 @@ class ContentSubscriber
 
     public function handleTermSaved(TermSaved $event): void
     {
-        $term = $event->term;
-
-        ContentScanner::syncForSubject(
+        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::syncForSubject(
             'term',
             (string) $term->id(),
             (string) $term->locale(),
             $term->data()->all(),
             $term->blueprint(),
             (string) ($term->get('title') ?? $term->slug()),
-            method_exists($term, 'editUrl') ? $term->editUrl() : null
-        );
+            $term->editUrl()
+        ));
     }
 
     public function handleTermDeleted(TermDeleted $event): void
     {
-        $term = $event->term;
-
-        ContentScanner::deleteForSubject('term', (string) $term->id(), (string) $term->locale());
+        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::deleteForSubject(
+            'term',
+            (string) $term->id(),
+            (string) $term->locale()
+        ));
     }
 
     public function handleGlobalVariablesSaved(GlobalVariablesSaved $event): void
