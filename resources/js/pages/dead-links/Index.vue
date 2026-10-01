@@ -50,6 +50,7 @@ function recheckAll() {
 		:action-url="cp_url(`seo-pro/dead-links/actions`)"
 		:columns
 		:allow-presets="false"
+		:allow-customizing-columns="false"
 		:filters
 		sort-column="status"
 		sort-direction="asc"
