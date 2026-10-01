@@ -1,7 +1,7 @@
 <script setup>
 import { DateFormatter } from '@statamic/cms';
 import { Head } from '@statamic/cms/inertia';
-import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cms/ui';
+import { Header, Button, Listing, DropdownItem, DocsCallout, TimezoneHoverCard } from '@statamic/cms/ui';
 import StatusIndicator from '../../components/dead-links/StatusIndicator.vue';
 import { ref, useTemplateRef, getCurrentInstance } from 'vue';
 
@@ -63,20 +63,15 @@ function recheckAll() {
 			</a>
 		</template>
 		<template #cell-status="{ row: link }">
-			<StatusIndicator
-				:status="link.status"
-				:label="link.status_label"
-				show-label
-				:show-dot="false"
-				v-tooltip="link.failing_since ? DateFormatter.format(link.failing_since, 'datetime') : null"
-			/>
+			<TimezoneHoverCard v-if="link.failing_since" :date="link.failing_since">
+				<StatusIndicator :status="link.status" :label="link.status_label" show-label :show-dot="false" />
+			</TimezoneHoverCard>
+			<StatusIndicator v-else :status="link.status" :label="link.status_label" show-label :show-dot="false" />
 		</template>
 		<template #cell-checked_at="{ row: link }">
-			<span
-				v-if="link.checked_at"
-				v-text="DateFormatter.format(link.checked_at.date, { relative: true })"
-				v-tooltip="DateFormatter.format(link.checked_at.date, 'datetime')"
-			/>
+			<TimezoneHoverCard v-if="link.checked_at" :date="link.checked_at.date">
+				<span v-text="DateFormatter.format(link.checked_at.date, { relative: true })" />
+			</TimezoneHoverCard>
 		</template>
 		<template #prepended-row-actions="{ row: link }">
 			<DropdownItem
