@@ -30,7 +30,8 @@ class ContentScanner
         $found = LinkExtractor::extract($values, $blueprint)->groupBy('url');
 
         foreach ($found as $url => $rows) {
-            $link = DeadLink::findByUrl($url) ?? DeadLink::make()
+            $link = DeadLink::findByUrl($url, $site) ?? DeadLink::make()
+                ->site($site)
                 ->url($url)
                 ->status(Link::STATUS_PENDING)
                 ->nextCheckAt(now());

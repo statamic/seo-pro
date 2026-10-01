@@ -47,8 +47,9 @@ class LinkRepositoryTest extends TestCase
     {
         Facades\DeadLink::make()->id('abc')->url('https://cool-runnings.com/old-page')->save();
 
-        $this->assertEquals('abc', $this->repo->findByUrl('https://cool-runnings.com/old-page')->id());
-        $this->assertNull($this->repo->findByUrl('https://cool-runnings.com/unknown'));
+        $this->assertEquals('abc', $this->repo->findByUrl('https://cool-runnings.com/old-page', 'default')->id());
+        $this->assertNull($this->repo->findByUrl('https://cool-runnings.com/old-page', 'fr'));
+        $this->assertNull($this->repo->findByUrl('https://cool-runnings.com/unknown', 'default'));
     }
 
     #[Test]

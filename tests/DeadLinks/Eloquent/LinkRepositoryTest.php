@@ -65,8 +65,9 @@ class LinkRepositoryTest extends TestCase
 
         $this->repo->save($link);
 
-        $this->assertEquals($link->id(), $this->repo->findByUrl('https://example.com/broken')->id());
-        $this->assertNull($this->repo->findByUrl('https://example.com/unknown'));
+        $this->assertEquals($link->id(), $this->repo->findByUrl('https://example.com/broken', 'default')->id());
+        $this->assertNull($this->repo->findByUrl('https://example.com/broken', 'fr'));
+        $this->assertNull($this->repo->findByUrl('https://example.com/unknown', 'default'));
     }
 
     #[Test]

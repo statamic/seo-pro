@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('site');
             $table->text('url');
-            $table->char('url_hash', 64)->unique();
+            $table->char('url_hash', 64);
             $table->string('status')->default('pending');
             $table->unsignedSmallInteger('status_code')->nullable();
             $table->string('error')->nullable();
@@ -28,6 +28,7 @@ return new class extends Migration
             $table->json('data');
             $table->timestamps();
 
+            $table->unique(['site', 'url_hash']);
             $table->index(['site', 'status']);
         });
     }

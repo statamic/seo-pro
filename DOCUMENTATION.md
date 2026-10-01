@@ -485,13 +485,14 @@ Then run `php please seo-pro:database-dead-links` to publish the migration and i
 If you use Runway (or any other Eloquent-backed models) and want them scanned for dead links too, hook into the same mechanism the built-in entry/term/global tracking uses, from your own model's saved/deleted events:
 
 ```php
+use Statamic\Facades\Site;
 use Statamic\SeoPro\DeadLinks\ContentScanner;
 
 Product::saved(function ($product) {
     ContentScanner::syncForSubject(
         'runway-product',                 // a type key of your choosing
         (string) $product->getKey(),
-        '',                                // site handle, if relevant
+        Site::default()->handle(),         // the site the links belong to
         $product->toArray(),
         $product->blueprint(),             // or null to scan every attribute
         $product->title,
@@ -500,7 +501,7 @@ Product::saved(function ($product) {
 });
 
 Product::deleted(function ($product) {
-    ContentScanner::deleteForSubject('runway-product', (string) $product->getKey(), '');
+    ContentScanner::deleteForSubject('runway-product', (string) $product->getKey(), Site::default()->handle());
 });
 ```
 

@@ -32,6 +32,22 @@ class ContentScannerTest extends TestCase
     }
 
     #[Test]
+    public function it_tracks_the_same_url_separately_for_each_site()
+    {
+        ContentScanner::syncForSubject('entry', '1', 'en', [
+            'body' => 'See https://example.com/page for details.',
+        ], null, 'My Entry', null);
+
+        ContentScanner::syncForSubject('entry', '1-fr', 'fr', [
+            'body' => 'Voir https://example.com/page pour plus de détails.',
+        ], null, 'Mon Entrée', null);
+
+        $this->assertEquals(['en', 'fr'], DeadLink::all()->map->site()->sort()->values()->all());
+        $this->assertEquals('My Entry', DeadLink::query()->where('site', 'en')->first()->references()->first()['title']);
+        $this->assertEquals('Mon Entrée', DeadLink::query()->where('site', 'fr')->first()->references()->first()['title']);
+    }
+
+    #[Test]
     public function it_removes_stale_references_and_orphaned_links_when_content_changes()
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
