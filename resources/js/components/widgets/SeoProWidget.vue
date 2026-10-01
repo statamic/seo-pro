@@ -1,6 +1,7 @@
 <script setup>
 import { Widget, Button, Badge, Description, Heading, HoverCard, Icon, Table, TableRows, TableRow, TableCell } from '@statamic/cms/ui';
 import { Link } from '@statamic/cms/inertia';
+import { ref } from 'vue';
 import ScoreRing from './ScoreRing.vue';
 
 defineProps({
@@ -11,6 +12,9 @@ defineProps({
 	showRules: Boolean,
 	report: Object,
 });
+
+// Rule names that are currently cut off, measured on hover.
+const truncated = ref({});
 </script>
 
 <template>
@@ -82,7 +86,12 @@ defineProps({
 												<Icon v-if="rule.status === 'fail'" name="x" class="size-4 shrink-0 text-red-600 dark:text-red-400!" aria-hidden="true" />
 												<Icon v-else name="alert-warning-exclamation-mark" class="size-4 shrink-0 text-amber-500 dark:text-amber-300!" aria-hidden="true" />
 												<span class="sr-only">{{ __(`seo-pro::messages.rules.${rule.status}`) }}:</span>
-												<span class="truncate antialiased text-gray-900 dark:text-gray-200!" v-text="rule.label" />
+												<span
+													v-tooltip="truncated[rule.handle] ? rule.label : null"
+													class="truncate antialiased text-gray-900 dark:text-gray-200!"
+													@mouseenter="truncated[rule.handle] = $event.currentTarget.scrollWidth > $event.currentTarget.clientWidth"
+													v-text="rule.label"
+												/>
 											</span>
 											<Badge pill :text="rule.badge" />
 										</component>
