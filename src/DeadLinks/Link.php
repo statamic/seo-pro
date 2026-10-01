@@ -65,11 +65,6 @@ class Link
             ->args(func_get_args());
     }
 
-    public function host(): ?string
-    {
-        return parse_url($this->url() ?? '', PHP_URL_HOST) ?: null;
-    }
-
     public function status($status = null)
     {
         return $this
@@ -234,7 +229,7 @@ class Link
     private function queryableMethods(): array
     {
         return [
-            'id', 'site', 'url', 'host', 'status', 'statusCode', 'error',
+            'id', 'site', 'url', 'status', 'statusCode', 'error',
             'consecutiveFailures', 'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
         ];
     }
