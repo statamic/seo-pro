@@ -2,8 +2,11 @@
 
 namespace Statamic\SeoPro\DeadLinks;
 
+use Statamic\Contracts\Entries\Entry;
+use Statamic\Contracts\Globals\Variables;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Facades\DeadLink;
+use Statamic\Taxonomies\LocalizedTerm;
 
 class ContentScanner
 {
@@ -49,6 +52,45 @@ class ContentScanner
         }
 
         self::removeStaleReferences($subjectType, $subjectId, $site, except: $found->keys()->all());
+    }
+
+    public static function syncEntry(Entry $entry): void
+    {
+        self::syncForSubject(
+            'entry',
+            (string) $entry->id(),
+            (string) $entry->locale(),
+            $entry->data()->all(),
+            $entry->blueprint(),
+            (string) ($entry->get('title') ?? $entry->id()),
+            $entry->editUrl()
+        );
+    }
+
+    public static function syncTerm(LocalizedTerm $term): void
+    {
+        self::syncForSubject(
+            'term',
+            (string) $term->id(),
+            (string) $term->locale(),
+            $term->data()->all(),
+            $term->blueprint(),
+            (string) ($term->get('title') ?? $term->slug()),
+            $term->editUrl()
+        );
+    }
+
+    public static function syncGlobalVariables(Variables $variables): void
+    {
+        self::syncForSubject(
+            'global',
+            (string) $variables->handle(),
+            (string) $variables->locale(),
+            $variables->data()->all(),
+            $variables->blueprint(),
+            (string) $variables->title(),
+            $variables->editUrl()
+        );
     }
 
     /**

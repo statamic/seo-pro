@@ -30,17 +30,7 @@ class ContentSubscriber
 
     public function handleEntrySaved(EntrySaved $event): void
     {
-        $entry = $event->entry;
-
-        ContentScanner::syncForSubject(
-            'entry',
-            (string) $entry->id(),
-            (string) $entry->locale(),
-            $entry->data()->all(),
-            $entry->blueprint(),
-            (string) ($entry->get('title') ?? $entry->id()),
-            method_exists($entry, 'editUrl') ? $entry->editUrl() : null
-        );
+        ContentScanner::syncEntry($event->entry);
     }
 
     public function handleEntryDeleted(EntryDeleted $event): void
@@ -52,15 +42,7 @@ class ContentSubscriber
 
     public function handleTermSaved(TermSaved $event): void
     {
-        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::syncForSubject(
-            'term',
-            (string) $term->id(),
-            (string) $term->locale(),
-            $term->data()->all(),
-            $term->blueprint(),
-            (string) ($term->get('title') ?? $term->slug()),
-            $term->editUrl()
-        ));
+        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::syncTerm($term));
     }
 
     public function handleTermDeleted(TermDeleted $event): void
@@ -74,17 +56,7 @@ class ContentSubscriber
 
     public function handleGlobalVariablesSaved(GlobalVariablesSaved $event): void
     {
-        $variables = $event->variables;
-
-        ContentScanner::syncForSubject(
-            'global',
-            (string) $variables->handle(),
-            (string) $variables->locale(),
-            $variables->data()->all(),
-            $variables->blueprint(),
-            (string) $variables->title(),
-            method_exists($variables, 'editUrl') ? $variables->editUrl() : null
-        );
+        ContentScanner::syncGlobalVariables($event->variables);
     }
 
     public function handleGlobalVariablesDeleted(GlobalVariablesDeleted $event): void

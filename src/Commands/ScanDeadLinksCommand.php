@@ -44,15 +44,7 @@ class ScanDeadLinksCommand extends Command
                     ->get();
 
                 foreach ($entries as $entry) {
-                    ContentScanner::syncForSubject(
-                        'entry',
-                        (string) $entry->id(),
-                        (string) $entry->locale(),
-                        $entry->data()->all(),
-                        $entry->blueprint(),
-                        (string) ($entry->get('title') ?? $entry->id()),
-                        method_exists($entry, 'editUrl') ? $entry->editUrl() : null
-                    );
+                    ContentScanner::syncEntry($entry);
 
                     $count++;
                 }
@@ -74,15 +66,7 @@ class ScanDeadLinksCommand extends Command
                     ->get();
 
                 foreach ($terms as $term) {
-                    ContentScanner::syncForSubject(
-                        'term',
-                        (string) $term->id(),
-                        (string) $term->locale(),
-                        $term->data()->all(),
-                        $term->blueprint(),
-                        (string) ($term->get('title') ?? $term->slug()),
-                        method_exists($term, 'editUrl') ? $term->editUrl() : null
-                    );
+                    ContentScanner::syncTerm($term);
 
                     $count++;
                 }
@@ -102,15 +86,7 @@ class ScanDeadLinksCommand extends Command
                     continue;
                 }
 
-                ContentScanner::syncForSubject(
-                    'global',
-                    (string) $globalSet->handle(),
-                    (string) $siteHandle,
-                    $variables->data()->all(),
-                    $globalSet->blueprint(),
-                    (string) $globalSet->title(),
-                    method_exists($variables, 'editUrl') ? $variables->editUrl() : null
-                );
+                ContentScanner::syncGlobalVariables($variables);
 
                 $count++;
             }
