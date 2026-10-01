@@ -161,7 +161,6 @@ return [
     ],
 
     'widget' => [
-        'empty' => 'Noch kein Bericht vorhanden. Ein Bericht prüft Titel, Meta-Beschreibungen und URLs aller Seiten.',
         'date' => 'Bericht vom :date',
         'time_format' => 'H:mm',
         'fresh_today' => 'Heute um :time erstellt.',

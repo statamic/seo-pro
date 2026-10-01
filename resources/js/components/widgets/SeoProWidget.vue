@@ -122,8 +122,7 @@ defineProps({
 			</template>
 
 			<div v-else class="flex flex-col items-center gap-3 px-8 py-6 text-center">
-				<Icon name="search-magnifying-glass" class="size-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
-				<p class="max-w-sm text-pretty text-gray-600 dark:text-gray-300" v-text="__('seo-pro::messages.widget.empty')" />
+				<p class="max-w-sm text-pretty text-gray-600 dark:text-gray-300" v-text="__('seo-pro::messages.report_no_results_text')" />
 				<Button variant="primary" size="sm" :href="createUrl" :text="__('seo-pro::messages.generate_your_first_report')" />
 			</div>
 		</div>

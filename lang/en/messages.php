@@ -161,7 +161,6 @@ return [
     ],
 
     'widget' => [
-        'empty' => 'No report yet. A report checks the titles, meta descriptions and URLs of all pages.',
         'date' => 'Report from :date',
         'time_format' => 'h:mm A',
         'fresh_today' => 'Generated today at :time.',
