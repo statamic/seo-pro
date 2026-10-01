@@ -92,7 +92,10 @@ class DeadLinkController extends CpController
     {
         $this->authorize('manage', Link::class);
 
-        CheckDeadLinksJob::dispatch();
+        Facades\DeadLink::query()
+            ->pluck('id')
+            ->chunk(config('statamic.seo-pro.dead_links.check.batch_size', 100))
+            ->each(fn ($ids) => CheckDeadLinksJob::dispatch($ids->values()->all()));
 
         return response()->json(['message' => __('seo-pro::messages.dead_links_queued_for_rechecking')]);
     }

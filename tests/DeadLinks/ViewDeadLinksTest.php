@@ -2,11 +2,13 @@
 
 namespace Tests\DeadLinks;
 
+use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Role;
 use Statamic\Facades\Scope;
 use Statamic\Facades\User;
 use Statamic\SeoPro\Facades\DeadLink;
+use Statamic\SeoPro\Jobs\CheckDeadLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -138,10 +140,20 @@ class ViewDeadLinksTest extends TestCase
     #[Test]
     public function a_super_user_can_recheck_all_links()
     {
+        Queue::fake();
+
+        config()->set('statamic.seo-pro.dead_links.check.batch_size', 2);
+
+        DeadLink::make()->id('one')->url('https://example.com/one')->save();
+        DeadLink::make()->id('two')->url('https://example.com/two')->save();
+        DeadLink::make()->id('three')->url('https://example.com/three')->save();
+
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->postJson(cp_route('seo-pro.dead-links.recheck-all'))
             ->assertOk();
+
+        Queue::assertPushed(CheckDeadLinksJob::class, 2);
     }
 
     #[Test]
