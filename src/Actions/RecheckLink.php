@@ -3,8 +3,8 @@
 namespace Statamic\SeoPro\Actions;
 
 use Statamic\Actions\Action;
-use Statamic\SeoPro\DeadLinks\Link;
-use Statamic\SeoPro\Jobs\CheckDeadLinksJob;
+use Statamic\SeoPro\BrokenLinks\ExternalLink;
+use Statamic\SeoPro\Jobs\CheckExternalLinksJob;
 
 class RecheckLink extends Action
 {
@@ -13,12 +13,12 @@ class RecheckLink extends Action
 
     public function visibleTo($item): bool
     {
-        return $item instanceof Link;
+        return $item instanceof ExternalLink;
     }
 
     public function authorize($user, $item): bool
     {
-        return $user->can('view seo dead links');
+        return $user->can('view seo broken links');
     }
 
     public function buttonText()
@@ -29,7 +29,7 @@ class RecheckLink extends Action
 
     public function run($items, $values)
     {
-        CheckDeadLinksJob::dispatch($items->map->id()->all());
+        CheckExternalLinksJob::dispatch($items->map->id()->all());
 
         return trans_choice('Link queued for rechecking|Links queued for rechecking', $items->count());
     }

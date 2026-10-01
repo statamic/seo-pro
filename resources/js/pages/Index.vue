@@ -6,7 +6,7 @@ defineProps({
 	icon: String,
 	canViewReports: Boolean,
 	canViewRedirects: Boolean,
-	canViewDeadLinks: Boolean,
+	canViewBrokenLinks: Boolean,
 	canEditSiteDefaults: Boolean,
 	canEditSectionDefaults: Boolean,
 });
@@ -57,14 +57,14 @@ defineProps({
 				</Link>
 
 				<Link
-					v-if="canViewDeadLinks"
-					:href="cp_url('seo-pro/dead-links')"
+					v-if="canViewBrokenLinks"
+					:href="cp_url('seo-pro/broken-links')"
 					class="group w-full items-start rounded-md border border-transparent p-4 hover:bg-gray-100 dark:hover:bg-gray-800 md:flex lg:w-1/2"
 				>
 					<Icon name="external-link" class="size-6 text-gray-400 mt-1 mb-2 me-4" />
 					<div class="mb-4 flex-1 md:mb-0 md:me-6">
-						<Heading size="lg" :text="__('seo-pro::messages.dead_links')" />
-						<Subheading v-text="__('seo-pro::messages.dead_links_description')" />
+						<Heading size="lg" :text="__('seo-pro::messages.broken_links')" />
+						<Subheading v-text="__('seo-pro::messages.broken_links_description')" />
 					</div>
 				</Link>
 

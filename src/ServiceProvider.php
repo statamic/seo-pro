@@ -18,13 +18,13 @@ use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
-use Statamic\SeoPro\Commands\CheckDeadLinksCommand;
+use Statamic\SeoPro\BrokenLinks\ContentSubscriber as BrokenLinksContentSubscriber;
+use Statamic\SeoPro\BrokenLinks\ExternalLink;
+use Statamic\SeoPro\BrokenLinks\ExternalLinkRepository;
+use Statamic\SeoPro\BrokenLinks\Stache\ExternalLinksStore;
+use Statamic\SeoPro\Commands\CheckBrokenLinksCommand;
 use Statamic\SeoPro\Commands\GenerateReportCommand;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
-use Statamic\SeoPro\DeadLinks\ContentSubscriber as DeadLinksContentSubscriber;
-use Statamic\SeoPro\DeadLinks\Link;
-use Statamic\SeoPro\DeadLinks\LinkRepository;
-use Statamic\SeoPro\DeadLinks\Stache\LinksStore;
 use Statamic\SeoPro\Events\RedirectSaved;
 use Statamic\SeoPro\GraphQL\AlternateLocaleType;
 use Statamic\SeoPro\GraphQL\SeoProType;
@@ -58,7 +58,7 @@ class ServiceProvider extends AddonServiceProvider
     protected $policies = [
         Error::class => Policies\ErrorPolicy::class,
         Redirect::class => Policies\RedirectPolicy::class,
-        Link::class => Policies\DeadLinkPolicy::class,
+        ExternalLink::class => Policies\ExternalLinkPolicy::class,
     ];
 
     protected $config = false;
@@ -71,7 +71,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->registerSerializableClasses([
             Error::class,
-            Link::class,
+            ExternalLink::class,
             Page::class,
             Redirect::class,
             Report::class,
@@ -89,7 +89,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootRedirects()
-            ->bootDeadLinks()
+            ->bootBrokenLinks()
             ->bootRouteBindings()
             ->bootGit()
             ->bootAddonScheduledCommands()
@@ -151,7 +151,7 @@ class ServiceProvider extends AddonServiceProvider
             })->label(__('seo-pro::messages.view_reports'));
             Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
             Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
-            Permission::register('view seo dead links')->label(__('seo-pro::messages.view_dead_links'));
+            Permission::register('view seo broken links')->label(__('seo-pro::messages.view_broken_links'));
         });
 
         return $this;
@@ -169,7 +169,7 @@ class ServiceProvider extends AddonServiceProvider
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
                             $nav->item(__('seo-pro::messages.redirects'))->route('seo-pro.redirects.index')->can('view seo redirects'),
                             $nav->item(__('seo-pro::messages.errors'))->route('seo-pro.errors.index')->can('view seo redirects'),
-                            $nav->item(__('seo-pro::messages.dead_links'))->route('seo-pro.dead-links.index')->can('view seo dead links'),
+                            $nav->item(__('seo-pro::messages.broken_links'))->route('seo-pro.broken-links.index')->can('view seo broken links'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
                         ];
@@ -188,8 +188,8 @@ class ServiceProvider extends AddonServiceProvider
             Event::subscribe(Redirects\AutomaticRedirectSubscriber::class);
         }
 
-        if (config('statamic.seo-pro.dead_links.enabled')) {
-            Event::subscribe(DeadLinksContentSubscriber::class);
+        if (config('statamic.seo-pro.broken_links.enabled')) {
+            Event::subscribe(BrokenLinksContentSubscriber::class);
         }
 
         return $this;
@@ -248,22 +248,22 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootDeadLinks()
+    protected function bootBrokenLinks()
     {
         $this->app['stache']->registerStores([
-            (new LinksStore)->directory(config('statamic.seo-pro.dead_links.directory')),
+            (new ExternalLinksStore)->directory(config('statamic.seo-pro.broken_links.directory')),
         ]);
 
-        $this->app->bind(DeadLinks\Stache\LinkQueryBuilder::class, function () {
-            return new DeadLinks\Stache\LinkQueryBuilder($this->app->make(Stache::class)->store('seo_pro_dead_links'));
+        $this->app->bind(BrokenLinks\Stache\ExternalLinkQueryBuilder::class, function () {
+            return new BrokenLinks\Stache\ExternalLinkQueryBuilder($this->app->make(Stache::class)->store('seo_pro_external_links'));
         });
 
-        Statamic::repository(LinkRepository::class, DeadLinks\Stache\LinkRepository::class);
+        Statamic::repository(ExternalLinkRepository::class, BrokenLinks\Stache\ExternalLinkRepository::class);
 
-        if (config('statamic.seo-pro.dead_links.driver') === 'database') {
-            $this->app['stache']->exclude('seo_pro_dead_links');
+        if (config('statamic.seo-pro.broken_links.driver') === 'database') {
+            $this->app['stache']->exclude('seo_pro_external_links');
 
-            Statamic::repository(LinkRepository::class, DeadLinks\Eloquent\LinkRepository::class);
+            Statamic::repository(ExternalLinkRepository::class, BrokenLinks\Eloquent\ExternalLinkRepository::class);
         }
 
         return $this;
@@ -329,8 +329,8 @@ class ServiceProvider extends AddonServiceProvider
             $this->app->make(Schedule::class)->command(PurgeErrorsCommand::class)->daily();
         }
 
-        if (config('statamic.seo-pro.dead_links.enabled')) {
-            $this->app->make(Schedule::class)->command(CheckDeadLinksCommand::class)->everyFifteenMinutes()->withoutOverlapping();
+        if (config('statamic.seo-pro.broken_links.enabled')) {
+            $this->app->make(Schedule::class)->command(CheckBrokenLinksCommand::class)->everyFifteenMinutes()->withoutOverlapping();
         }
 
         return $this;
@@ -419,7 +419,7 @@ class ServiceProvider extends AddonServiceProvider
 
         return $user->can('view seo reports')
             || $user->can('view seo redirects')
-            || $user->can('view seo dead links')
+            || $user->can('view seo broken links')
             || $user->can('edit seo site defaults')
             || $user->can('edit seo section defaults');
     }

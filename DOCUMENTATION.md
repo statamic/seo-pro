@@ -380,19 +380,19 @@ You can add a recent errors widget to your dashboard to see the latest 404s at a
 ],
 ```
 
-## Dead Links
+## Broken Links
 
 SEO Pro can track external links found in your content and periodically check them for broken links, so you can find and fix them before your visitors do.
 
-To enable dead link tracking, set the `SEO_PRO_TRACK_DEAD_LINKS` environment variable:
+To enable broken link tracking, set the `SEO_PRO_TRACK_BROKEN_LINKS` environment variable:
 
 ```env
-SEO_PRO_TRACK_DEAD_LINKS=true
+SEO_PRO_TRACK_BROKEN_LINKS=true
 ```
 
-### Managing Dead Links
+### Managing Broken Links
 
-Head to `Tools > SEO Pro > Dead Links` to see every tracked link, along with its status, how long it's been failing, and the response it got back (like `404 Not Found` or `Host not found`). You can filter the listing by status (and by site, on multi-site installs), and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
+Head to `Tools > SEO Pro > Broken Links` to see every tracked link, along with its status, how long it's been failing, and the response it got back (like `404 Not Found` or `Host not found`). You can filter the listing by status (and by site, on multi-site installs), and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
 
 ### How Links Are Tracked
 
@@ -403,7 +403,7 @@ On multi-site installs, links are tracked per site. If the same URL appears in c
 To scan your existing content for the first time (or re-scan everything), run:
 
 ```
-php please seo-pro:scan-dead-links
+php please seo-pro:scan-broken-links
 ```
 
 ### Checking Links
@@ -415,7 +415,7 @@ You can configure how often links are checked, along with the request timeout an
 ```php
 // config/statamic/seo-pro.php
 
-'dead_links' => [
+'broken_links' => [
     'check' => [
         'frequency' => 'hourly', // every_15_minutes, every_30_minutes, hourly, every_6_hours, every_12_hours, daily, weekly
         'timeout' => 10,
@@ -430,7 +430,7 @@ You may exclude specific hosts from being tracked at all — your own site's dom
 ```php
 // config/statamic/seo-pro.php
 
-'dead_links' => [
+'broken_links' => [
     'excluded_hosts' => ['staging.example.com'],
 ],
 ```
@@ -438,7 +438,7 @@ You may exclude specific hosts from being tracked at all — your own site's dom
 Checks run automatically on your server's scheduler (make sure `php artisan schedule:run` is in your crontab), or you can trigger one manually:
 
 ```
-php please seo-pro:check-dead-links
+php please seo-pro:check-broken-links
 ```
 
 ### Notifications
@@ -448,7 +448,7 @@ SEO Pro can send a collated email whenever a check finds links that are newly br
 ```php
 // config/statamic/seo-pro.php
 
-'dead_links' => [
+'broken_links' => [
     'notifications' => [
         'recipients' => ['you@example.com'],
     ],
@@ -459,28 +459,28 @@ You won't be notified again about an ongoing failure until it recovers and then 
 
 ### Storage
 
-By default, dead links are stored as YAML files in the `storage/statamic/seopro/dead-links` directory:
+By default, tracked links are stored as YAML files in the `storage/statamic/seopro/external-links` directory:
 
 ```php
 // config/statamic/seo-pro.php
 
-'dead_links' => [
+'broken_links' => [
     'driver' => 'file',
-    'directory' => storage_path('statamic/seopro/dead-links'),
+    'directory' => storage_path('statamic/seopro/external-links'),
 ],
 ```
 
-Alternatively, you may store dead links in the database by changing the driver:
+Alternatively, you may store tracked links in the database by changing the driver:
 
 ```php
 // config/statamic/seo-pro.php
 
-'dead_links' => [
+'broken_links' => [
     'driver' => 'database',
 ],
 ```
 
-Then run `php please seo-pro:database-dead-links` to publish the migration and import any existing dead links.
+Then run `php please seo-pro:database-broken-links` to publish the migration and import any existing tracked links.
 
 ### Tracking Additional Content
 
@@ -488,7 +488,7 @@ Out of the box, SEO Pro scans entries, terms and global sets. If you have conten
 
 ```php
 use Statamic\Facades\Site;
-use Statamic\SeoPro\DeadLinks\ContentScanner;
+use Statamic\SeoPro\BrokenLinks\ContentScanner;
 
 Product::saved(function (Product $product) {
     ContentScanner::syncForSubject(
@@ -506,10 +506,10 @@ Product::deleted(function (Product $product) {
 });
 ```
 
-To link to the product from the Dead Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method:
+To link to the product from the Broken Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method:
 
 ```php
-use Statamic\SeoPro\DeadLinks\EditUrls;
+use Statamic\SeoPro\BrokenLinks\EditUrls;
 
 EditUrls::resolveUsing('product', function (string $id, string $site) {
     return route('products.edit', $id);

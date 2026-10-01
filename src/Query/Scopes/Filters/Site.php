@@ -52,7 +52,7 @@ class Site extends Filter
 
     public function visibleTo($key)
     {
-        return in_array($key, ['redirects', 'errors', 'dead-links']) && Facades\Site::hasMultiple();
+        return in_array($key, ['redirects', 'errors', 'broken-links']) && Facades\Site::hasMultiple();
     }
 
     protected function options()
