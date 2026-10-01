@@ -5,10 +5,16 @@ namespace Tests\DeadLinks;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
+use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Role;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
+use Statamic\Facades\Taxonomy;
+use Statamic\Facades\Term;
 use Statamic\Facades\User;
+use Statamic\SeoPro\DeadLinks\ContentScanner;
 use Statamic\SeoPro\Facades\DeadLink;
 use Statamic\SeoPro\Jobs\CheckDeadLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -94,6 +100,52 @@ class ViewDeadLinksTest extends TestCase
             ->assertOk();
 
         $this->assertEquals(['french'], collect($response->json('data'))->pluck('id')->all());
+    }
+
+    #[Test]
+    public function references_include_edit_urls()
+    {
+        Collection::make('blog')->save();
+        Taxonomy::make('tags')->save();
+
+        $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
+        $term = tap(Term::make()->taxonomy('tags')->slug('news')->data([]))->save();
+        $globalSet = tap(GlobalSet::make('footer'))->save();
+        $globalSet->makeLocalization('default')->save();
+
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->references([
+            ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
+            ['subject_type' => 'term', 'subject_id' => $term->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'News'],
+            ['subject_type' => 'global', 'subject_id' => 'footer', 'site' => 'default', 'field_path' => 'body', 'title' => 'Footer'],
+        ])->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.dead-links.index'))
+            ->assertOk();
+
+        $this->assertEquals([
+            $entry->editUrl(),
+            $term->inDefaultLocale()->editUrl(),
+            $globalSet->in('default')->editUrl(),
+        ], $response->json('data.0.references.*.edit_url'));
+    }
+
+    #[Test]
+    public function references_to_custom_subjects_use_the_registered_edit_url_resolver()
+    {
+        ContentScanner::resolveEditUrlsUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
+
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->references([
+            ['subject_type' => 'product', 'subject_id' => '123', 'site' => 'default', 'field_path' => 'description', 'title' => 'Bobsleigh'],
+        ])->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.dead-links.index'))
+            ->assertOk();
+
+        $this->assertEquals('/cp/products/123/default', $response->json('data.0.references.0.edit_url'));
     }
 
     #[Test]

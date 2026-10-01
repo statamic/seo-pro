@@ -98,7 +98,7 @@ class LinkRepositoryTest extends TestCase
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home', 'edit_url' => '/cp/x'],
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home'],
             ]);
 
         $this->repo->save($link);
@@ -116,7 +116,7 @@ class LinkRepositoryTest extends TestCase
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home', 'edit_url' => '/cp/x'],
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home'],
             ])
             ->save();
 
@@ -124,7 +124,7 @@ class LinkRepositoryTest extends TestCase
             ->id('def')
             ->url('https://cool-runnings.com/other-page')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About', 'edit_url' => '/cp/y'],
+                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About'],
             ])
             ->save();
 

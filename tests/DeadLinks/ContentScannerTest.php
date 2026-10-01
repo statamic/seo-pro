@@ -17,7 +17,7 @@ class ContentScannerTest extends TestCase
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'See https://example.com/page for details.',
-        ], null, 'My Entry', '/cp/collections/blog/entries/1');
+        ], null, 'My Entry');
 
         $this->assertCount(1, DeadLink::all());
 
@@ -29,6 +29,7 @@ class ContentScannerTest extends TestCase
         $this->assertEquals('entry', $reference['subject_type']);
         $this->assertEquals('1', $reference['subject_id']);
         $this->assertEquals('My Entry', $reference['title']);
+        $this->assertArrayNotHasKey('edit_url', $reference);
     }
 
     #[Test]
@@ -36,11 +37,11 @@ class ContentScannerTest extends TestCase
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'See https://example.com/page for details.',
-        ], null, 'My Entry', null);
+        ], null, 'My Entry');
 
         ContentScanner::syncForSubject('entry', '1-fr', 'fr', [
             'body' => 'Voir https://example.com/page pour plus de détails.',
-        ], null, 'Mon Entrée', null);
+        ], null, 'Mon Entrée');
 
         $this->assertEquals(['en', 'fr'], DeadLink::all()->map->site()->sort()->values()->all());
         $this->assertEquals('My Entry', DeadLink::query()->where('site', 'en')->first()->references()->first()['title']);
@@ -52,11 +53,11 @@ class ContentScannerTest extends TestCase
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'See https://example.com/page for details.',
-        ], null, 'My Entry', null);
+        ], null, 'My Entry');
 
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'No links here any more.',
-        ], null, 'My Entry', null);
+        ], null, 'My Entry');
 
         $this->assertCount(0, DeadLink::all());
     }
@@ -66,15 +67,15 @@ class ContentScannerTest extends TestCase
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'https://shared.example.com',
-        ], null, 'Entry One', null);
+        ], null, 'Entry One');
 
         ContentScanner::syncForSubject('entry', '2', 'en', [
             'body' => 'https://shared.example.com',
-        ], null, 'Entry Two', null);
+        ], null, 'Entry Two');
 
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'No links.',
-        ], null, 'Entry One', null);
+        ], null, 'Entry One');
 
         $this->assertCount(1, DeadLink::all());
 
@@ -88,7 +89,7 @@ class ContentScannerTest extends TestCase
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'https://example.com/gone',
-        ], null, 'My Entry', null);
+        ], null, 'My Entry');
 
         ContentScanner::deleteForSubject('entry', '1', 'en');
 
@@ -96,20 +97,19 @@ class ContentScannerTest extends TestCase
     }
 
     #[Test]
-    public function it_updates_the_reference_title_and_edit_url_without_duplicating_it()
+    public function it_updates_the_reference_title_without_duplicating_it()
     {
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'https://example.com/page',
-        ], null, 'Old Title', '/old-url');
+        ], null, 'Old Title');
 
         ContentScanner::syncForSubject('entry', '1', 'en', [
             'body' => 'https://example.com/page',
-        ], null, 'New Title', '/new-url');
+        ], null, 'New Title');
 
         $link = DeadLink::all()->first();
 
         $this->assertCount(1, $link->references());
         $this->assertEquals('New Title', $link->references()->first()['title']);
-        $this->assertEquals('/new-url', $link->references()->first()['edit_url']);
     }
 }

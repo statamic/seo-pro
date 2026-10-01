@@ -2,14 +2,18 @@
 
 namespace Statamic\SeoPro\DeadLinks;
 
+use Closure;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Globals\Variables;
+use Statamic\Facades;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Facades\DeadLink;
 use Statamic\Taxonomies\LocalizedTerm;
 
 class ContentScanner
 {
+    private static array $editUrlResolvers = [];
+
     /**
      * Extract links from the given subject's field values, and reconcile
      * stored references so they match reality: for every link still found,
@@ -24,8 +28,7 @@ class ContentScanner
         string $site,
         array $values,
         ?Blueprint $blueprint,
-        string $title,
-        ?string $editUrl
+        string $title
     ): void {
         $found = LinkExtractor::extract($values, $blueprint)->groupBy('url');
 
@@ -46,7 +49,6 @@ class ContentScanner
                 'site' => $site,
                 'field_path' => $row['field_path'],
                 'title' => $title,
-                'edit_url' => $editUrl,
             ]);
 
             $link->references($otherSubjectsReferences->concat($thisSubjectsReferences)->values()->all())->save();
@@ -63,8 +65,7 @@ class ContentScanner
             (string) $entry->locale(),
             $entry->data()->all(),
             $entry->blueprint(),
-            (string) ($entry->get('title') ?? $entry->id()),
-            $entry->editUrl()
+            (string) ($entry->get('title') ?? $entry->id())
         );
     }
 
@@ -76,8 +77,7 @@ class ContentScanner
             (string) $term->locale(),
             $term->data()->all(),
             $term->blueprint(),
-            (string) ($term->get('title') ?? $term->slug()),
-            $term->editUrl()
+            (string) ($term->get('title') ?? $term->slug())
         );
     }
 
@@ -89,8 +89,7 @@ class ContentScanner
             (string) $variables->locale(),
             $variables->data()->all(),
             $variables->blueprint(),
-            (string) $variables->title(),
-            $variables->editUrl()
+            (string) $variables->title()
         );
     }
 
@@ -122,6 +121,24 @@ class ContentScanner
 
                 $link->references($remaining->values()->all())->save();
             });
+    }
+
+    public static function resolveEditUrlsUsing(string $subjectType, Closure $resolver): void
+    {
+        self::$editUrlResolvers[$subjectType] = $resolver;
+    }
+
+    public static function editUrl(array $reference): ?string
+    {
+        $id = $reference['subject_id'];
+        $site = $reference['site'];
+
+        return match ($reference['subject_type']) {
+            'entry' => Facades\Entry::find($id)?->editUrl(),
+            'term' => Facades\Term::find($id)?->in($site)->editUrl(),
+            'global' => Facades\GlobalSet::find($id)?->in($site)?->editUrl(),
+            default => (self::$editUrlResolvers[$reference['subject_type']] ?? fn () => null)($id, $site),
+        };
     }
 
     protected static function referencesSubject(array $reference, string $subjectType, string $subjectId, string $site): bool

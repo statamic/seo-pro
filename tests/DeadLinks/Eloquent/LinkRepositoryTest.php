@@ -108,7 +108,7 @@ class LinkRepositoryTest extends TestCase
         $link = DeadLink::make()
             ->url('https://example.com/broken')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home', 'edit_url' => '/cp/x'],
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home'],
             ]);
 
         $this->repo->save($link);
@@ -125,7 +125,7 @@ class LinkRepositoryTest extends TestCase
         $link = DeadLink::make()
             ->url('https://example.com/broken')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home', 'edit_url' => '/cp/x'],
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home'],
             ]);
 
         $this->repo->save($link);
@@ -133,7 +133,7 @@ class LinkRepositoryTest extends TestCase
         $this->repo->save(DeadLink::make()
             ->url('https://example.com/other')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About', 'edit_url' => '/cp/y'],
+                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About'],
             ]));
 
         $links = $this->repo->query()->whereJsonContains('subjects', Link::subjectKey('entry', '1', 'en'))->get();

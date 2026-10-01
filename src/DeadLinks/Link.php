@@ -120,7 +120,7 @@ class Link
     }
 
     /**
-     * Every place this link has been found: [['subject_type', 'subject_id', 'site', 'field_path', 'title', 'edit_url']].
+     * Every place this link has been found: [['subject_type', 'subject_id', 'site', 'field_path', 'title']].
      */
     public function references($references = null)
     {

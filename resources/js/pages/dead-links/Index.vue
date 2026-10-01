@@ -67,7 +67,7 @@ function recheckAll() {
 		<template #prepended-row-actions="{ row: link }">
 			<DropdownItem
 				v-for="reference in link.references"
-				:key="reference.edit_url ?? reference.title"
+				:key="reference.edit_url"
 				:text="__('Edit :title', { title: reference.title })"
 				:href="reference.edit_url"
 				icon="edit"

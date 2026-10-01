@@ -498,12 +498,19 @@ Product::saved(function ($product) {
         $product->toArray(),
         $product->blueprint(),             // or null to scan every attribute
         $product->title,
-        $product->editUrl(),
     );
 });
 
 Product::deleted(function ($product) {
     ContentScanner::deleteForSubject('runway-product', (string) $product->getKey(), Site::default()->handle());
+});
+```
+
+To link to the product from the Dead Links listing, tell SEO Pro how to build its edit URL (in a service provider's `boot` method):
+
+```php
+ContentScanner::resolveEditUrlsUsing('runway-product', function (string $id, string $site) {
+    return Product::find($id)?->editUrl();
 });
 ```
 
