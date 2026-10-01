@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\DeadLinks;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Statamic\Data\ContainsData;
 use Statamic\Data\ExistsAsFile;
@@ -103,6 +104,7 @@ class Link
     {
         return $this
             ->fluentlyGetOrSet('checkedAt')
+            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -110,6 +112,7 @@ class Link
     {
         return $this
             ->fluentlyGetOrSet('nextCheckAt')
+            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -117,6 +120,7 @@ class Link
     {
         return $this
             ->fluentlyGetOrSet('notifiedAt')
+            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
