@@ -3,6 +3,7 @@
 namespace Tests\Redirects;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -311,6 +312,37 @@ class HandleRedirectsTest extends TestCase
         $this->get('/nonexistent-url')->assertNotFound();
 
         Queue::assertPushed(RecordError::class, fn ($job) => $job->url === '/nonexistent-url' && $job->site === 'default');
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/685
+     */
+    #[Test]
+    #[DataProvider('deferredQueueDriverProvider')]
+    public function it_dispatches_a_record_error_job_after_the_response_when_using_a_deferred_queue_driver(string $driver)
+    {
+        Bus::fake();
+
+        config([
+            'queue.default' => $driver,
+            "queue.connections.{$driver}" => ['driver' => $driver],
+            'statamic.seo-pro.redirects.errors.enabled' => true,
+        ]);
+
+        $this->get('/nonexistent-url')->assertNotFound();
+
+        Bus::assertDispatchedAfterResponse(
+            RecordError::class,
+            fn ($job) => $job->url === '/nonexistent-url' && $job->site === 'default'
+        );
+    }
+
+    public static function deferredQueueDriverProvider(): array
+    {
+        return [
+            'deferred' => ['deferred'],
+            'background' => ['background'],
+        ];
     }
 
     #[Test]

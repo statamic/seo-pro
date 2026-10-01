@@ -89,9 +89,19 @@ class HandleRedirects
 
     private function recordError(string $path, string $siteHandle): void
     {
-        if (config('statamic.seo-pro.redirects.errors.enabled')) {
-            RecordError::dispatch($path, $siteHandle);
+        if (! config('statamic.seo-pro.redirects.errors.enabled')) {
+            return;
         }
+
+        RecordError::dispatch($path, $siteHandle)
+            ->afterResponse($this->usingDeferredQueueDriver());
+    }
+
+    private function usingDeferredQueueDriver(): bool
+    {
+        $driver = config('queue.connections.'.config('queue.default').'.driver');
+
+        return in_array($driver, ['deferred', 'background']);
     }
 
     private function resolveDestination(Redirect $redirect, string $path, Request $request): string
