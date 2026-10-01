@@ -392,11 +392,13 @@ SEO_PRO_TRACK_DEAD_LINKS=true
 
 ### Managing Dead Links
 
-Head to `Tools > SEO Pro > Dead Links` to see every tracked link, along with its status, HTTP response code, and how many times in a row it's failed. You can filter the listing by status, and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
+Head to `Tools > SEO Pro > Dead Links` to see every tracked link, along with its status, HTTP response code, and how many times in a row it's failed. You can filter the listing by status (and by site, on multi-site installs), and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
 
 ### How Links Are Tracked
 
 Whenever an entry, term, or global set is saved, SEO Pro scans every field on its blueprint for external URLs and keeps a record of each one, along with exactly where it was found. If a link is later removed from your content, it's removed from that item's list of references automatically — and cleaned up entirely once nothing references it any more.
+
+On multi-site installs, links are tracked per site. If the same URL appears in content on two sites, it'll be listed (and checked) once for each.
 
 To scan your existing content for the first time (or re-scan everything), run:
 
