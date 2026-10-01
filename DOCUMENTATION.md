@@ -441,14 +441,13 @@ php please seo-pro:check-dead-links
 
 ### Notifications
 
-SEO Pro can send a collated email whenever a check finds links that are newly broken:
+SEO Pro can send a collated email whenever a check finds links that are newly broken. Add the email addresses that should receive it:
 
 ```php
 // config/statamic/seo-pro.php
 
 'dead_links' => [
     'notifications' => [
-        'enabled' => true,
         'recipients' => ['you@example.com'],
     ],
 ],

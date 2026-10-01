@@ -97,8 +97,9 @@ return [
             'user_agent' => 'Mozilla/5.0 (compatible; SeoProDeadLinkChecker/1.0; +https://statamic.com)',
         ],
         'notifications' => [
-            'enabled' => false,
-            'recipients' => [],
+            'recipients' => [
+                // 'you@example.com',
+            ],
         ],
     ],
 

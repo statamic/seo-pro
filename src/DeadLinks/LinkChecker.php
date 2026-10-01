@@ -135,10 +135,6 @@ class LinkChecker
      */
     public static function notifyIfNeeded(): void
     {
-        if (! config('statamic.seo-pro.dead_links.notifications.enabled', false)) {
-            return;
-        }
-
         $recipients = config('statamic.seo-pro.dead_links.notifications.recipients', []);
 
         if (empty($recipients)) {
