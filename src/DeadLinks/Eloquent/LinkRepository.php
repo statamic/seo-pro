@@ -69,6 +69,7 @@ class LinkRepository extends StacheRepository implements RepositoryContract
         $model->next_check_at = $link->nextCheckAt();
         $model->notified_at = $link->notifiedAt();
         $model->references = $link->references()->all();
+        $model->subjects = $link->subjects();
         $model->data = $link->data();
 
         return $model;

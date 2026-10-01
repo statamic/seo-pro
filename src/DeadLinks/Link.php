@@ -136,6 +136,20 @@ class Link
             ->args(func_get_args());
     }
 
+    public function subjects(): array
+    {
+        return $this->references()
+            ->map(fn ($reference) => self::subjectKey($reference['subject_type'], $reference['subject_id'], $reference['site']))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public static function subjectKey(string $subjectType, string $subjectId, string $site): string
+    {
+        return "{$subjectType}::{$subjectId}::{$site}";
+    }
+
     public function isFailing(): bool
     {
         return $this->status() === self::STATUS_FAILING;
@@ -221,7 +235,7 @@ class Link
     {
         return [
             'id', 'site', 'url', 'host', 'status', 'statusCode', 'error',
-            'consecutiveFailures', 'checkedAt', 'nextCheckAt', 'notifiedAt',
+            'consecutiveFailures', 'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
         ];
     }
 }

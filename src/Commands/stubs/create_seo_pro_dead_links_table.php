@@ -24,6 +24,7 @@ return new class extends Migration
             $table->dateTime('next_check_at')->nullable()->index();
             $table->dateTime('notified_at')->nullable();
             $table->json('references');
+            $table->json('subjects');
             $table->json('data');
             $table->timestamps();
 

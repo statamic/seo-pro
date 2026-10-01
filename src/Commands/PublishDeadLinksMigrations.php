@@ -112,6 +112,7 @@ class PublishDeadLinksMigrations extends Command
                         'next_check_at' => $link->nextCheckAt(),
                         'notified_at' => $link->notifiedAt(),
                         'references' => $link->references()->all(),
+                        'subjects' => $link->subjects(),
                         'data' => $link->data(),
                     ]
                 );

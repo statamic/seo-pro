@@ -112,6 +112,30 @@ class LinkRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function can_query_links_by_referenced_subject()
+    {
+        Facades\DeadLink::make()
+            ->id('abc')
+            ->url('https://cool-runnings.com/old-page')
+            ->references([
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home', 'edit_url' => '/cp/x'],
+            ])
+            ->save();
+
+        Facades\DeadLink::make()
+            ->id('def')
+            ->url('https://cool-runnings.com/other-page')
+            ->references([
+                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About', 'edit_url' => '/cp/y'],
+            ])
+            ->save();
+
+        $links = $this->repo->query()->whereJsonContains('subjects', Link::subjectKey('entry', '1', 'en'))->get();
+
+        $this->assertEquals(['abc'], $links->map->id()->all());
+    }
+
+    #[Test]
     public function can_delete_link()
     {
         $link = Facades\DeadLink::make()

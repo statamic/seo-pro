@@ -24,6 +24,7 @@ class LinkModel extends Model
             'next_check_at' => 'datetime',
             'notified_at' => 'datetime',
             'references' => 'json',
+            'subjects' => 'json',
             'data' => 'json',
         ];
     }

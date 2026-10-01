@@ -62,11 +62,10 @@ class ContentScanner
 
     protected static function removeStaleReferences(string $subjectType, string $subjectId, string $site, array $except): void
     {
-        DeadLink::query()->get()
+        DeadLink::query()
+            ->whereJsonContains('subjects', Link::subjectKey($subjectType, $subjectId, $site))
+            ->get()
             ->reject(fn (Link $link) => in_array($link->url(), $except))
-            ->filter(fn (Link $link) => $link->references()->contains(
-                fn ($reference) => self::referencesSubject($reference, $subjectType, $subjectId, $site)
-            ))
             ->each(function (Link $link) use ($subjectType, $subjectId, $site) {
                 $remaining = $link->references()->reject(
                     fn ($reference) => self::referencesSubject($reference, $subjectType, $subjectId, $site)

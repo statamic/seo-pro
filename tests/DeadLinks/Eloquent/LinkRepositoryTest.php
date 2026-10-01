@@ -45,6 +45,7 @@ class LinkRepositoryTest extends TestCase
             'status_code' => 404,
             'consecutive_failures' => 3,
             'references' => [],
+            'subjects' => [],
             'data' => [],
         ]);
 
@@ -104,6 +105,28 @@ class LinkRepositoryTest extends TestCase
 
         $this->assertCount(1, $fresh->references());
         $this->assertEquals('entry', $fresh->references()->first()['subject_type']);
+    }
+
+    #[Test]
+    public function can_query_links_by_referenced_subject()
+    {
+        $link = DeadLink::make()
+            ->url('https://example.com/broken')
+            ->references([
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home', 'edit_url' => '/cp/x'],
+            ]);
+
+        $this->repo->save($link);
+
+        $this->repo->save(DeadLink::make()
+            ->url('https://example.com/other')
+            ->references([
+                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About', 'edit_url' => '/cp/y'],
+            ]));
+
+        $links = $this->repo->query()->whereJsonContains('subjects', Link::subjectKey('entry', '1', 'en'))->get();
+
+        $this->assertEquals([$link->id()], $links->map->id()->all());
     }
 
     #[Test]
