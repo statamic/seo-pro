@@ -43,7 +43,7 @@ class LinkRepositoryTest extends TestCase
             'url' => 'https://example.com/broken',
             'status' => 'failing',
             'status_code' => 404,
-            'consecutive_failures' => 3,
+            'failing_since' => '2026-09-01 12:00:00',
             'references' => [],
             'subjects' => [],
             'data' => [],
@@ -55,7 +55,7 @@ class LinkRepositoryTest extends TestCase
         $this->assertEquals('https://example.com/broken', $link->url());
         $this->assertEquals('failing', $link->status());
         $this->assertEquals(404, $link->statusCode());
-        $this->assertEquals(3, $link->consecutiveFailures());
+        $this->assertEquals('2026-09-01 12:00:00', $link->failingSince()->toDateTimeString());
     }
 
     #[Test]

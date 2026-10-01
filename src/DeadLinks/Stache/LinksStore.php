@@ -45,7 +45,7 @@ class LinksStore extends BasicStore
             ->status(Arr::pull($data, 'status', Link::STATUS_PENDING))
             ->statusCode(Arr::pull($data, 'status_code'))
             ->error(Arr::pull($data, 'error'))
-            ->consecutiveFailures(Arr::pull($data, 'consecutive_failures', 0))
+            ->failingSince(Arr::pull($data, 'failing_since'))
             ->checkedAt(Arr::pull($data, 'checked_at'))
             ->nextCheckAt(Arr::pull($data, 'next_check_at'))
             ->notifiedAt(Arr::pull($data, 'notified_at'))

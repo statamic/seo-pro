@@ -53,7 +53,7 @@ class LinkRepository extends StacheRepository implements RepositoryContract
             ->status($model->status)
             ->statusCode($model->status_code)
             ->error($model->error)
-            ->consecutiveFailures($model->consecutive_failures)
+            ->failingSince($model->failing_since)
             ->checkedAt($model->checked_at)
             ->nextCheckAt($model->next_check_at)
             ->notifiedAt($model->notified_at)
@@ -74,7 +74,7 @@ class LinkRepository extends StacheRepository implements RepositoryContract
         $model->status = $link->status();
         $model->status_code = $link->statusCode();
         $model->error = $link->error();
-        $model->consecutive_failures = $link->consecutiveFailures();
+        $model->failing_since = $link->failingSince();
         $model->checked_at = $link->checkedAt();
         $model->next_check_at = $link->nextCheckAt();
         $model->notified_at = $link->notifiedAt();

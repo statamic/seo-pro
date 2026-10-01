@@ -37,8 +37,7 @@ class DeadLinks extends ResourceCollection
             ->listable(true)
             ->visible(true)
             ->defaultVisibility(true)
-            ->defaultOrder(0)
-            ->sortable(false);
+            ->defaultOrder(0);
 
         $columns->put('status', $status);
 

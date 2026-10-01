@@ -19,7 +19,7 @@ class LinkModel extends Model
     {
         return [
             'status_code' => 'integer',
-            'consecutive_failures' => 'integer',
+            'failing_since' => 'datetime',
             'checked_at' => 'datetime',
             'next_check_at' => 'datetime',
             'notified_at' => 'datetime',

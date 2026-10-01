@@ -107,7 +107,7 @@ class PublishDeadLinksMigrations extends Command
                         'status' => $link->status(),
                         'status_code' => $link->statusCode(),
                         'error' => $link->error(),
-                        'consecutive_failures' => $link->consecutiveFailures(),
+                        'failing_since' => $link->failingSince(),
                         'checked_at' => $link->checkedAt(),
                         'next_check_at' => $link->nextCheckAt(),
                         'notified_at' => $link->notifiedAt(),

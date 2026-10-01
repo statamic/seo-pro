@@ -88,8 +88,6 @@ class LinkChecker
 
     protected static function applyResult(Link $link, $response): void
     {
-        $wasFailing = $link->isFailing();
-
         if ($response instanceof Response) {
             $ok = $response->status() >= 200 && $response->status() < 400;
             $link->statusCode($response->status());
@@ -103,12 +101,13 @@ class LinkChecker
         }
 
         $link->status($ok ? Link::STATUS_OK : Link::STATUS_FAILING);
-        $link->consecutiveFailures($ok ? 0 : $link->consecutiveFailures() + 1);
         $link->checkedAt(now());
         $link->nextCheckAt(now()->add(static::frequencyInterval()));
 
-        if ($ok && $wasFailing) {
-            $link->notifiedAt(null);
+        if ($ok) {
+            $link->failingSince(null)->notifiedAt(null);
+        } elseif (! $link->failingSince()) {
+            $link->failingSince(now());
         }
 
         $link->save();

@@ -2,6 +2,7 @@
 
 namespace Statamic\SeoPro\Http\Resources\DeadLinks;
 
+use Carbon\CarbonInterface;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Statamic\SeoPro\DeadLinks\ContentScanner;
 use Statamic\SeoPro\DeadLinks\Link;
@@ -33,11 +34,12 @@ class ListedLink extends JsonResource
         return [
             'id' => $link->id(),
             'status' => $link->status(),
+            'status_label' => $this->statusLabel(),
+            'failing_since' => $link->failingSince(),
 
             $this->merge($this->values([
                 'url' => $link->url(),
                 'status_code' => $link->statusCode(),
-                'consecutive_failures' => $link->consecutiveFailures(),
                 'checked_at' => $link->checkedAt(),
                 'error' => $link->error(),
             ])),
@@ -49,6 +51,19 @@ class ListedLink extends JsonResource
                 ->values()
                 ->all(),
         ];
+    }
+
+    private function statusLabel(): string
+    {
+        $link = $this->resource;
+
+        return match ($link->status()) {
+            Link::STATUS_FAILING => __('seo-pro::messages.failing_for', [
+                'duration' => $link->failingSince()?->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE),
+            ]),
+            Link::STATUS_OK => __('seo-pro::messages.ok'),
+            default => __('seo-pro::messages.pending'),
+        };
     }
 
     protected function values($extra = [])

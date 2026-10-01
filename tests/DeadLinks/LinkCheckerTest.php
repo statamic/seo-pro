@@ -35,6 +35,40 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
+    public function it_records_when_a_link_started_failing()
+    {
+        Http::fake(['*' => Http::response(status: 404)]);
+
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->save();
+
+        $this->travelTo('2026-09-01 12:00:00');
+        LinkChecker::checkLinks(collect([DeadLink::find('abc')]));
+
+        $this->travelTo('2026-09-02 12:00:00');
+        LinkChecker::checkLinks(collect([DeadLink::find('abc')]));
+
+        $this->assertEquals('2026-09-01 12:00:00', DeadLink::find('abc')->failingSince()->toDateTimeString());
+    }
+
+    #[Test]
+    public function it_clears_when_a_link_started_failing_once_it_recovers()
+    {
+        Http::fake(['*' => Http::response()]);
+
+        DeadLink::make()
+            ->id('abc')
+            ->url('https://example.com/fixed')
+            ->status(Link::STATUS_FAILING)
+            ->failingSince(now()->subDay())
+            ->save();
+
+        LinkChecker::checkLinks(collect([DeadLink::find('abc')]));
+
+        $this->assertEquals(Link::STATUS_OK, DeadLink::find('abc')->status());
+        $this->assertNull(DeadLink::find('abc')->failingSince());
+    }
+
+    #[Test]
     public function it_sends_a_digest_of_failing_links_to_recipients()
     {
         Notification::fake();

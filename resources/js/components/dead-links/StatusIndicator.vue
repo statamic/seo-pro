@@ -8,6 +8,7 @@ const props = defineProps({
 		default: 'pending',
 		validator: (value) => ['ok', 'failing', 'pending'].includes(value),
 	},
+	label: { type: String, required: true },
 	showDot: { type: Boolean, default: true },
 	showLabel: { type: Boolean, default: false },
 });
@@ -16,12 +17,6 @@ const statusClass = computed(() => ({
 	ok: 'bg-green-400',
 	failing: 'bg-red-400',
 	pending: 'bg-gray-300 dark:bg-gray-200',
-}[props.status]));
-
-const label = computed(() => ({
-	ok: __('seo-pro::messages.ok'),
-	failing: __('seo-pro::messages.failing'),
-	pending: __('seo-pro::messages.pending'),
 }[props.status]));
 </script>
 

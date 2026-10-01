@@ -37,16 +37,6 @@ class LinkBlueprint
                                     ],
                                 ],
                                 [
-                                    'handle' => 'consecutive_failures',
-                                    'field' => [
-                                        'type' => 'integer',
-                                        'display' => __('seo-pro::messages.consecutive_failures'),
-                                        'default' => 0,
-                                        'listable' => true,
-                                        'read_only' => true,
-                                    ],
-                                ],
-                                [
                                     'handle' => 'checked_at',
                                     'field' => [
                                         'type' => 'date',

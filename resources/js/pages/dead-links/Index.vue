@@ -1,4 +1,5 @@
 <script setup>
+import { DateFormatter } from '@statamic/cms';
 import { Head } from '@statamic/cms/inertia';
 import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cms/ui';
 import StatusIndicator from '../../components/dead-links/StatusIndicator.vue';
@@ -50,19 +51,25 @@ function recheckAll() {
 		:columns
 		:allow-presets="false"
 		:filters
-		sort-column="consecutive_failures"
-		sort-direction="desc"
+		sort-column="status"
+		sort-direction="asc"
 		preferences-prefix="seo-pro.dead-links"
 		push-query
 	>
 		<template #cell-url="{ row: link }">
 			<a class="title-index-field" :href="link.url" target="_blank" rel="noopener noreferrer">
-				<StatusIndicator :status="link.status" />
+				<StatusIndicator :status="link.status" :label="link.status_label" />
 				<span v-text="link.url" />
 			</a>
 		</template>
 		<template #cell-status="{ row: link }">
-			<StatusIndicator :status="link.status" show-label :show-dot="false" />
+			<StatusIndicator
+				:status="link.status"
+				:label="link.status_label"
+				show-label
+				:show-dot="false"
+				v-tooltip="link.failing_since ? DateFormatter.format(link.failing_since, 'datetime') : null"
+			/>
 		</template>
 		<template #prepended-row-actions="{ row: link }">
 			<DropdownItem

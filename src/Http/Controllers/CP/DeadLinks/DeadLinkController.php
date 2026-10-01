@@ -33,12 +33,15 @@ class DeadLinkController extends CpController
             $sortDirection = request('order', 'asc');
 
             if (! $sortField && ! request('search')) {
-                $sortField = 'consecutive_failures';
-                $sortDirection = 'desc';
+                $sortField = 'status';
             }
 
             if ($sortField) {
                 $query->orderBy($sortField, $sortDirection);
+            }
+
+            if ($sortField === 'status') {
+                $query->orderBy('failing_since', $sortDirection);
             }
 
             $links = $query->paginate(request('perPage'));
@@ -59,8 +62,7 @@ class DeadLinkController extends CpController
                 ->listable(true)
                 ->visible(true)
                 ->defaultVisibility(true)
-                ->defaultOrder(0)
-                ->sortable(false))
+                ->defaultOrder(0))
             ->setPreferred('seo-pro.dead-links.columns')
             ->rejectUnlisted()
             ->values();

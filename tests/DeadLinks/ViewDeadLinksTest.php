@@ -149,20 +149,31 @@ class ViewDeadLinksTest extends TestCase
     }
 
     #[Test]
-    public function dead_links_are_sorted_by_consecutive_failures_descending_by_default()
+    public function dead_links_are_sorted_with_the_longest_failing_first_by_default()
     {
-        DeadLink::make()->id('low')->url('https://example.com/low')->status('failing')->consecutiveFailures(1)->save();
-        DeadLink::make()->id('high')->url('https://example.com/high')->status('failing')->consecutiveFailures(5)->save();
+        DeadLink::make()->id('ok')->url('https://example.com/ok')->status('ok')->save();
+        DeadLink::make()->id('recent')->url('https://example.com/recent')->status('failing')->failingSince(now()->subDay())->save();
+        DeadLink::make()->id('oldest')->url('https://example.com/oldest')->status('failing')->failingSince(now()->subWeek())->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
             ->getJson(cp_route('seo-pro.dead-links.index'))
             ->assertOk();
 
-        $data = $response->json('data');
+        $this->assertEquals(['oldest', 'recent', 'ok'], collect($response->json('data'))->pluck('id')->all());
+    }
 
-        $this->assertEquals('high', $data[0]['id']);
-        $this->assertEquals('low', $data[1]['id']);
+    #[Test]
+    public function failing_links_say_how_long_they_have_been_failing()
+    {
+        DeadLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->failingSince(now()->subWeeks(3))->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.dead-links.index'))
+            ->assertOk();
+
+        $this->assertEquals('Failing for 3 weeks', $response->json('data.0.status_label'));
     }
 
     #[Test]

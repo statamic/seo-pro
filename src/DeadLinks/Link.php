@@ -32,7 +32,7 @@ class Link
     protected $status;
     protected $statusCode;
     protected $error;
-    protected $consecutiveFailures = 0;
+    protected $failingSince;
     protected $checkedAt;
     protected $nextCheckAt;
     protected $notifiedAt;
@@ -87,11 +87,11 @@ class Link
             ->args(func_get_args());
     }
 
-    public function consecutiveFailures($consecutiveFailures = null)
+    public function failingSince($failingSince = null)
     {
         return $this
-            ->fluentlyGetOrSet('consecutiveFailures')
-            ->getter(fn ($value) => $value ?? 0)
+            ->fluentlyGetOrSet('failingSince')
+            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -143,11 +143,6 @@ class Link
     public static function subjectKey(string $subjectType, string $subjectId, string $site): string
     {
         return "{$subjectType}::{$subjectId}::{$site}";
-    }
-
-    public function isFailing(): bool
-    {
-        return $this->status() === self::STATUS_FAILING;
     }
 
     public function blueprint(): Blueprint
@@ -203,7 +198,7 @@ class Link
             'status' => $this->status(),
             'status_code' => $this->statusCode(),
             'error' => $this->error(),
-            'consecutive_failures' => $this->consecutiveFailures() ?: null,
+            'failing_since' => $this->failingSince(),
             'checked_at' => $this->checkedAt(),
             'next_check_at' => $this->nextCheckAt(),
             'notified_at' => $this->notifiedAt(),
@@ -230,7 +225,7 @@ class Link
     {
         return [
             'id', 'site', 'url', 'status', 'statusCode', 'error',
-            'consecutiveFailures', 'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
+            'failingSince', 'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
         ];
     }
 }
