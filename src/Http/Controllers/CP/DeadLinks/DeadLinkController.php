@@ -102,6 +102,10 @@ class DeadLinkController extends CpController
             ->chunk(config('statamic.seo-pro.dead_links.check.batch_size', 100))
             ->each(fn ($ids) => CheckDeadLinksJob::dispatch($ids->values()->all()));
 
-        return response()->json(['message' => __('seo-pro::messages.dead_links_queued_for_rechecking')]);
+        $message = config('queue.default') === 'sync'
+            ? __('seo-pro::messages.dead_links_rechecked')
+            : __('seo-pro::messages.dead_links_queued_for_rechecking');
+
+        return response()->json(['message' => $message]);
     }
 }

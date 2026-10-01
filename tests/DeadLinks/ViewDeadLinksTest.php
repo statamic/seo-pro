@@ -3,6 +3,7 @@
 namespace Tests\DeadLinks;
 
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Role;
 use Statamic\Facades\Scope;
@@ -187,6 +188,29 @@ class ViewDeadLinksTest extends TestCase
             ->assertOk();
 
         Queue::assertPushed(CheckDeadLinksJob::class, 2);
+    }
+
+    #[Test]
+    #[DataProvider('recheckMessageProvider')]
+    public function rechecking_all_links_sets_expectations_based_on_the_queue_connection(string $connection, string $message)
+    {
+        config()->set('queue.default', $connection);
+
+        Queue::fake();
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.dead-links.recheck-all'))
+            ->assertOk()
+            ->assertJson(['message' => __($message)]);
+    }
+
+    public static function recheckMessageProvider(): array
+    {
+        return [
+            'sync' => ['sync', 'seo-pro::messages.dead_links_rechecked'],
+            'queued' => ['redis', 'seo-pro::messages.dead_links_queued_for_rechecking'],
+        ];
     }
 
     #[Test]

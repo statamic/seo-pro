@@ -22,9 +22,11 @@ function recheckAll() {
 	rechecking.value = true;
 
 	$axios.post(props.recheckAllUrl)
+		.then((response) => Statamic.$toast.success(response.data.message))
+		.catch(() => Statamic.$toast.error(__('Something went wrong')))
 		.finally(() => {
 			rechecking.value = false;
-			listing.refresh();
+			listing.value.refresh();
 		});
 }
 </script>
