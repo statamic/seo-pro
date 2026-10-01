@@ -86,7 +86,7 @@ class LinkExtractor
     protected static function internalHosts(): array
     {
         return Site::all()
-            ->map(fn ($site) => parse_url($site->url(), PHP_URL_HOST))
+            ->map(fn ($site) => parse_url($site->absoluteUrl(), PHP_URL_HOST))
             ->filter()
             ->map(fn ($host) => strtolower($host))
             ->unique()

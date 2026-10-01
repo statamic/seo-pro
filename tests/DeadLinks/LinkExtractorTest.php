@@ -70,6 +70,16 @@ class LinkExtractorTest extends TestCase
     }
 
     #[Test]
+    public function it_excludes_links_to_the_sites_own_host_when_the_site_url_is_relative()
+    {
+        $found = LinkExtractor::extract([
+            'body' => 'See http://cool-runnings.com/about and https://example.com/page.',
+        ], null);
+
+        $this->assertEquals(['https://example.com/page'], $found->pluck('url')->all());
+    }
+
+    #[Test]
     public function it_excludes_hosts_passed_as_excluded_including_subdomains()
     {
         $this->assertFalse(LinkExtractor::isExternal('https://sub.blocked.com/path', ['blocked.com']));
