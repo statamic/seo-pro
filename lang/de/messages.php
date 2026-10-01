@@ -169,6 +169,7 @@ return [
         'age_days' => '{1}Vor einem Tag erstellt.|[2,*]Vor :count Tagen erstellt.',
         'age_stale' => ':Ago erstellt.',
         'stale_detail' => 'Seither hat sich vermutlich einiges geändert.',
+        'new_report' => 'Neuer Bericht',
         'changes' => '{0}Seither wurde nichts bearbeitet.|{1}Seither wurde ein Eintrag bearbeitet.|[2,*]Seither wurden :count Einträge bearbeitet.',
         'rules_checked' => '{1}1 Regel geprüft|[0,*]:count Regeln geprüft',
         'rules_passed' => '{1}1 Regel bestanden|[0,*]:count Regeln bestanden',

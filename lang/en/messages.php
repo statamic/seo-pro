@@ -169,6 +169,7 @@ return [
         'age_days' => '{1}Generated one day ago.|[2,*]Generated :count days ago.',
         'age_stale' => 'Generated :ago.',
         'stale_detail' => 'A lot has probably changed since.',
+        'new_report' => 'New Report',
         'changes' => '{0}Nothing has been edited since.|{1}One entry has been edited since.|[2,*]:count entries have been edited since.',
         'rules_checked' => '{1}1 rule checked|[0,*]:count rules checked',
         'rules_passed' => '{1}1 rule passed|[0,*]:count rules passed',
