@@ -71,6 +71,13 @@ function recheckAll() {
 				v-tooltip="link.failing_since ? DateFormatter.format(link.failing_since, 'datetime') : null"
 			/>
 		</template>
+		<template #cell-checked_at="{ row: link }">
+			<span
+				v-if="link.checked_at"
+				v-text="DateFormatter.format(link.checked_at.date, { relative: true })"
+				v-tooltip="DateFormatter.format(link.checked_at.date, 'datetime')"
+			/>
+		</template>
 		<template #prepended-row-actions="{ row: link }">
 			<DropdownItem
 				v-for="reference in link.references"

@@ -13,7 +13,7 @@ return [
     'view_dead_links' => 'View Dead Links',
     'manage_dead_links' => 'Manage Dead Links',
     'response' => 'Response',
-    'last_checked_at' => 'Last Checked At',
+    'last_checked_at' => 'Last Checked',
     'found_in' => 'Found in',
     'recheck_all' => 'Recheck All',
     'dead_links_rechecked' => 'Dead links rechecked.',
