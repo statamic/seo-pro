@@ -68,17 +68,33 @@ class ViewBrokenLinksTest extends TestCase
     }
 
     #[Test]
-    public function can_view_broken_links_as_json()
+    public function only_broken_links_are_listed()
     {
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->save();
-        Facades\ExternalLink::make()->id('def')->url('https://example.com/fine')->status('ok')->save();
+        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status('failing')->save();
+        Facades\ExternalLink::make()->id('fine')->url('https://example.com/fine')->status('ok')->save();
+        Facades\ExternalLink::make()->id('unchecked')->url('https://example.com/unchecked')->status('pending')->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
             ->getJson(cp_route('seo-pro.broken-links.index'))
             ->assertOk();
 
-        $this->assertCount(2, $response->json('data'));
+        $this->assertEquals(['broken'], collect($response->json('data'))->pluck('id')->all());
+    }
+
+    #[Test]
+    public function the_listing_counts_links_that_have_not_been_checked_yet()
+    {
+        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status('failing')->save();
+        Facades\ExternalLink::make()->id('one')->url('https://example.com/one')->status('pending')->save();
+        Facades\ExternalLink::make()->id('two')->url('https://example.com/two')->status('pending')->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals(2, $response->json('meta.uncheckedCount'));
     }
 
     #[Test]
@@ -86,8 +102,8 @@ class ViewBrokenLinksTest extends TestCase
     {
         $this->setSites();
 
-        Facades\ExternalLink::make()->id('english')->site('default')->url('https://example.com/english')->save();
-        Facades\ExternalLink::make()->id('french')->site('fr')->url('https://example.com/french')->save();
+        Facades\ExternalLink::make()->id('english')->site('default')->url('https://example.com/english')->status('failing')->save();
+        Facades\ExternalLink::make()->id('french')->site('fr')->url('https://example.com/french')->status('failing')->save();
 
         Role::make('test')
             ->addPermission('access cp')
@@ -114,7 +130,7 @@ class ViewBrokenLinksTest extends TestCase
         $globalSet = tap(GlobalSet::make('footer'))->save();
         $globalSet->makeLocalization('default')->save();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->references([
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->references([
             ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
             ['subject_type' => 'term', 'subject_id' => $term->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'News'],
             ['subject_type' => 'global', 'subject_id' => 'footer', 'site' => 'default', 'field_path' => 'body', 'title' => 'Footer'],
@@ -137,7 +153,7 @@ class ViewBrokenLinksTest extends TestCase
     {
         EditUrls::resolveUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->references([
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->references([
             ['subject_type' => 'product', 'subject_id' => '123', 'site' => 'default', 'field_path' => 'description', 'title' => 'Bobsleigh'],
         ])->save();
 
@@ -150,9 +166,8 @@ class ViewBrokenLinksTest extends TestCase
     }
 
     #[Test]
-    public function broken_links_are_sorted_with_the_longest_failing_first_by_default()
+    public function broken_links_are_sorted_with_the_longest_broken_first_by_default()
     {
-        Facades\ExternalLink::make()->id('ok')->url('https://example.com/ok')->status('ok')->save();
         Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->status('failing')->failingSince(now()->subDay())->save();
         Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->status('failing')->failingSince(now()->subWeek())->save();
 
@@ -161,20 +176,7 @@ class ViewBrokenLinksTest extends TestCase
             ->getJson(cp_route('seo-pro.broken-links.index'))
             ->assertOk();
 
-        $this->assertEquals(['oldest', 'recent', 'ok'], collect($response->json('data'))->pluck('id')->all());
-    }
-
-    #[Test]
-    public function failing_links_say_how_long_they_have_been_failing()
-    {
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->failingSince(now()->subWeeks(3))->save();
-
-        $response = $this
-            ->actingAs(User::make()->makeSuper()->save())
-            ->getJson(cp_route('seo-pro.broken-links.index'))
-            ->assertOk();
-
-        $this->assertEquals('Failing for 3 weeks', $response->json('data.0.status_label'));
+        $this->assertEquals(['oldest', 'recent'], collect($response->json('data'))->pluck('id')->all());
     }
 
     #[Test]
@@ -193,8 +195,8 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function broken_links_can_be_searched_by_url()
     {
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->save();
-        Facades\ExternalLink::make()->id('def')->url('https://example.com/fine')->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->save();
+        Facades\ExternalLink::make()->id('def')->url('https://example.com/fine')->status('failing')->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -205,37 +207,6 @@ class ViewBrokenLinksTest extends TestCase
 
         $this->assertCount(1, $data);
         $this->assertEquals('abc', $data[0]['id']);
-    }
-
-    #[Test]
-    public function broken_links_can_be_filtered_by_status()
-    {
-        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status('failing')->save();
-        Facades\ExternalLink::make()->id('fine')->url('https://example.com/fine')->status('ok')->save();
-
-        // The real Listing component sends `filters` as a single base64-encoded
-        // JSON string (see Statamic\Http\Requests\FilteredRequest), not nested
-        // query params.
-        $filters = base64_encode(json_encode(['broken_link_status' => ['status' => 'failing']]));
-
-        $response = $this
-            ->actingAs(User::make()->makeSuper()->save())
-            ->getJson(cp_route('seo-pro.broken-links.index', ['filters' => $filters]))
-            ->assertOk();
-
-        $data = $response->json('data');
-
-        $this->assertCount(1, $data);
-        $this->assertEquals('broken', $data[0]['id']);
-        $this->assertEquals(['broken_link_status' => 'Failing'], $response->json('meta.activeFilterBadges'));
-    }
-
-    #[Test]
-    public function the_status_filter_is_offered_for_the_broken_links_listing()
-    {
-        $filters = Scope::filters('broken-links');
-
-        $this->assertTrue($filters->contains(fn ($filter) => $filter->handle() === 'broken_link_status'));
     }
 
     #[Test]

@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\Http\Controllers\CP\BrokenLinks;
 
 use Inertia\Inertia;
-use Statamic\CP\Column;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
@@ -23,23 +22,21 @@ class BrokenLinkController extends CpController
         $this->authorize('index', ExternalLink::class);
 
         if ($request->wantsJson()) {
-            $query = $this->indexQuery();
+            $query = $this->indexQuery()->where('status', ExternalLink::STATUS_FAILING);
+            $unchecked = $this->indexQuery()->where('status', ExternalLink::STATUS_PENDING);
 
             $activeFilterBadges = $this->queryFilters($query, $request->filters);
+            $this->queryFilters($unchecked, $request->filters);
 
             $sortField = OrderBy::column(request('sort'));
             $sortDirection = request('order', 'asc');
 
             if (! $sortField && ! request('search')) {
-                $sortField = 'status';
+                $sortField = 'failing_since';
             }
 
             if ($sortField) {
                 $query->orderBy($sortField, $sortDirection);
-            }
-
-            if ($sortField === 'status') {
-                $query->orderBy('failing_since', $sortDirection);
             }
 
             $links = $query->paginate(request('perPage'));
@@ -49,6 +46,7 @@ class BrokenLinkController extends CpController
                 ->columnPreferenceKey('seo-pro.broken-links.columns')
                 ->additional(['meta' => [
                     'activeFilterBadges' => $activeFilterBadges,
+                    'uncheckedCount' => $unchecked->count(),
                 ]]);
         }
 
@@ -56,11 +54,6 @@ class BrokenLinkController extends CpController
 
         $columns = $blueprint
             ->columns()
-            ->put('status', Column::make('status')
-                ->listable(true)
-                ->visible(true)
-                ->defaultVisibility(true)
-                ->defaultOrder(0))
             ->setPreferred('seo-pro.broken-links.columns')
             ->rejectUnlisted()
             ->values();

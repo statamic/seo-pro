@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\Http\Resources\BrokenLinks;
 
-use Carbon\CarbonInterface;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Statamic\SeoPro\BrokenLinks\EditUrls;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
@@ -33,12 +32,10 @@ class ListedLink extends JsonResource
 
         return [
             'id' => $link->id(),
-            'status' => $link->status(),
-            'status_label' => $this->statusLabel(),
-            'failing_since' => $link->failingSince(),
 
             $this->merge($this->values([
                 'url' => $link->url(),
+                'failing_since' => $link->failingSince(),
                 'response' => $link->response(),
                 'checked_at' => $link->checkedAt(),
             ])),
@@ -50,19 +47,6 @@ class ListedLink extends JsonResource
                 ->values()
                 ->all(),
         ];
-    }
-
-    private function statusLabel(): string
-    {
-        $link = $this->resource;
-
-        return match ($link->status()) {
-            ExternalLink::STATUS_FAILING => __('seo-pro::messages.failing_for', [
-                'duration' => $link->failingSince()?->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE),
-            ]),
-            ExternalLink::STATUS_OK => __('seo-pro::messages.ok'),
-            default => __('seo-pro::messages.pending'),
-        };
     }
 
     protected function values($extra = [])

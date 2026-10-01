@@ -1,8 +1,7 @@
 <script setup>
 import { DateFormatter } from '@statamic/cms';
 import { Head } from '@statamic/cms/inertia';
-import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cms/ui';
-import StatusIndicator from '../../components/broken-links/StatusIndicator.vue';
+import { Header, Button, Listing, DropdownItem, DocsCallout, Alert } from '@statamic/cms/ui';
 import { ref, useTemplateRef, getCurrentInstance } from 'vue';
 
 const props = defineProps({
@@ -16,7 +15,12 @@ const instance = getCurrentInstance();
 const { $axios } = instance.appContext.config.globalProperties;
 
 const rechecking = ref(false);
+const uncheckedCount = ref(0);
 const listing = useTemplateRef('listing');
+
+function requestCompleted({ response }) {
+	uncheckedCount.value = response.data.meta.uncheckedCount;
+}
 
 function recheckAll() {
 	rechecking.value = true;
@@ -42,6 +46,13 @@ function recheckAll() {
 		/>
 	</Header>
 
+	<Alert
+		v-if="uncheckedCount"
+		class="mb-4"
+		icon="info"
+		:text="__n('seo-pro::messages.links_not_yet_checked', uncheckedCount, { count: uncheckedCount })"
+	/>
+
 	<Listing
 		ref="listing"
 		:url="cp_url(`seo-pro/broken-links`)"
@@ -50,24 +61,20 @@ function recheckAll() {
 		:allow-presets="false"
 		:allow-customizing-columns="false"
 		:filters
-		sort-column="status"
+		sort-column="failing_since"
 		sort-direction="asc"
 		preferences-prefix="seo-pro.broken-links"
 		push-query
+		@request-completed="requestCompleted"
 	>
 		<template #cell-url="{ row: link }">
-			<a class="title-index-field" :href="link.url" target="_blank" rel="noopener noreferrer">
-				<StatusIndicator :status="link.status" :label="link.status_label" />
-				<span v-text="link.url" />
-			</a>
+			<a class="title-index-field" :href="link.url" target="_blank" rel="noopener noreferrer" v-text="link.url" />
 		</template>
-		<template #cell-status="{ row: link }">
-			<StatusIndicator
-				:status="link.status"
-				:label="link.status_label"
-				show-label
-				:show-dot="false"
-				v-tooltip="link.failing_since ? DateFormatter.format(link.failing_since, { preset: 'datetime', timeZoneName: 'short' }) : null"
+		<template #cell-failing_since="{ row: link }">
+			<span
+				v-if="link.failing_since"
+				v-text="DateFormatter.format(link.failing_since.date, { relative: true })"
+				v-tooltip="DateFormatter.format(link.failing_since.date, { preset: 'datetime', timeZoneName: 'short' })"
 			/>
 		</template>
 		<template #cell-checked_at="{ row: link }">

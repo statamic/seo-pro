@@ -28,6 +28,16 @@ class ExternalLinkBlueprint
                                     ],
                                 ],
                                 [
+                                    'handle' => 'failing_since',
+                                    'field' => [
+                                        'type' => 'date',
+                                        'display' => __('seo-pro::messages.broken_since'),
+                                        'time_enabled' => true,
+                                        'listable' => true,
+                                        'read_only' => true,
+                                    ],
+                                ],
+                                [
                                     'handle' => 'response',
                                     'field' => [
                                         'type' => 'text',

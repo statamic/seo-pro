@@ -392,7 +392,11 @@ SEO_PRO_TRACK_BROKEN_LINKS=true
 
 ### Managing Broken Links
 
-Head to `Tools > SEO Pro > Broken Links` to see every tracked link, along with its status, how long it's been failing, and the response it got back (like `404 Not Found` or `Host not found`). You can filter the listing by status (and by site, on multi-site installs), and recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
+Head to `Tools > SEO Pro > Broken Links` to see every broken link, along with when it broke and the response it got back (like `404 Not Found` or `Host not found`). Once a broken link is fixed, it'll drop off the listing after its next check.
+
+Links that haven't been checked yet aren't listed, but you'll see a note letting you know how many are still waiting to be checked.
+
+You can recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button. On multi-site installs, you can filter the listing by site.
 
 ### How Links Are Tracked
 
