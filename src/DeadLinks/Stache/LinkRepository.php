@@ -9,7 +9,6 @@ use Statamic\SeoPro\DeadLinks\LinkBlueprint;
 use Statamic\SeoPro\DeadLinks\LinkQueryBuilder;
 use Statamic\SeoPro\DeadLinks\LinkRepository as RepositoryContract;
 use Statamic\Stache\Stache;
-use Statamic\Support\Str;
 
 class LinkRepository implements RepositoryContract
 {
@@ -50,14 +49,7 @@ class LinkRepository implements RepositoryContract
     public function save(Link $link): void
     {
         if (! $link->id()) {
-            $id = $slug = $this->generateId($link->url());
-            $suffix = 1;
-
-            while ($this->query()->where('id', $id)->first()) {
-                $id = $slug.'-'.$suffix++;
-            }
-
-            $link->id($id);
+            $link->id($this->stache->generateId());
         }
 
         $this->store->save($link);
@@ -66,15 +58,6 @@ class LinkRepository implements RepositoryContract
     public function delete(Link $link): void
     {
         $this->store->delete($link);
-    }
-
-    private function generateId(string $url): string
-    {
-        if ($slug = Str::slug($url)) {
-            return Str::substr($slug, 0, 200);
-        }
-
-        return $this->stache->generateId();
     }
 
     public function blueprint(): Blueprint

@@ -7,6 +7,7 @@ use Statamic\Facades\YAML;
 use Statamic\SeoPro\DeadLinks\Link;
 use Statamic\SeoPro\DeadLinks\Stache\LinkRepository;
 use Statamic\SeoPro\Facades;
+use Statamic\Support\Str;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -71,36 +72,23 @@ class LinkRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function it_generates_id_from_url_when_saving_without_id()
+    public function it_generates_a_uuid_when_saving_without_id()
     {
         $link = Facades\DeadLink::make()->url('https://cool-runnings.com/old-page');
 
         $this->repo->save($link);
 
-        $this->assertNotEmpty($link->id());
+        $this->assertTrue(Str::isUuid($link->id()));
     }
 
     #[Test]
-    public function it_truncates_generated_id_when_url_is_too_long()
+    public function can_save_link_with_a_long_url()
     {
         $link = Facades\DeadLink::make()->url('https://example.com/'.str_repeat('a', 300));
 
         $this->repo->save($link);
 
-        $this->assertEquals(200, strlen($link->id()));
         $this->assertFileExists($link->path());
-    }
-
-    #[Test]
-    public function it_appends_suffix_when_generated_id_already_exists()
-    {
-        Facades\DeadLink::make()->id('page')->url('https://a.com/page')->save();
-
-        $link = Facades\DeadLink::make()->url('https://b.com/page');
-
-        $this->repo->save($link);
-
-        $this->assertNotEquals('page', $link->id());
     }
 
     #[Test]
