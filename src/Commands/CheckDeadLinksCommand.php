@@ -12,7 +12,7 @@ class CheckDeadLinksCommand extends Command
 
     protected $signature = 'statamic:seo-pro:check-dead-links';
 
-    protected $description = 'Check any dead links that are due for a recheck, and email a digest of failures if enabled';
+    protected $description = 'Check any dead links that are due for a recheck';
 
     public function handle(): int
     {
