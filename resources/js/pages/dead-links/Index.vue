@@ -4,9 +4,6 @@ import { Header, Button, Listing, DropdownItem, DocsCallout } from '@statamic/cm
 import StatusIndicator from '../../components/dead-links/StatusIndicator.vue';
 import { ref, useTemplateRef, getCurrentInstance } from 'vue';
 
-const instance = getCurrentInstance();
-const { $axios } = instance.appContext.config.globalProperties;
-
 const props = defineProps({
 	blueprint: Object,
 	columns: Array,
@@ -15,17 +12,11 @@ const props = defineProps({
 	recheckAllUrl: String,
 });
 
-const items = ref(null);
-const page = ref(null);
-const perPage = ref(null);
+const instance = getCurrentInstance();
+const { $axios } = instance.appContext.config.globalProperties;
+
 const rechecking = ref(false);
 const listing = useTemplateRef('listing');
-
-function requestComplete({ items: newItems, parameters }) {
-	items.value = newItems;
-	page.value = parameters.page;
-	perPage.value = parameters.perPage;
-}
 
 function recheckAll() {
 	rechecking.value = true;
@@ -61,7 +52,6 @@ function recheckAll() {
 		sort-direction="desc"
 		preferences-prefix="seo-pro.dead-links"
 		push-query
-		@request-completed="requestComplete"
 	>
 		<template #cell-url="{ row: link }">
 			<a class="title-index-field" :href="link.url" target="_blank" rel="noopener noreferrer">
