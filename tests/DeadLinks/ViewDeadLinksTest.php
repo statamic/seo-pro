@@ -14,7 +14,7 @@ use Statamic\Facades\Site;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\Facades\User;
-use Statamic\SeoPro\DeadLinks\ContentScanner;
+use Statamic\SeoPro\DeadLinks\EditUrls;
 use Statamic\SeoPro\Facades\DeadLink;
 use Statamic\SeoPro\Jobs\CheckDeadLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -135,7 +135,7 @@ class ViewDeadLinksTest extends TestCase
     #[Test]
     public function references_to_custom_subjects_use_the_registered_edit_url_resolver()
     {
-        ContentScanner::resolveEditUrlsUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
+        EditUrls::resolveUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
 
         DeadLink::make()->id('abc')->url('https://example.com/broken')->references([
             ['subject_type' => 'product', 'subject_id' => '123', 'site' => 'default', 'field_path' => 'description', 'title' => 'Bobsleigh'],

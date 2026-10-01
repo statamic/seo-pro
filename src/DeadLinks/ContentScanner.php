@@ -2,18 +2,14 @@
 
 namespace Statamic\SeoPro\DeadLinks;
 
-use Closure;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Globals\Variables;
-use Statamic\Facades;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Facades\DeadLink;
 use Statamic\Taxonomies\LocalizedTerm;
 
 class ContentScanner
 {
-    private static array $editUrlResolvers = [];
-
     /**
      * Extract links from the given subject's field values, and reconcile
      * stored references so they match reality: for every link still found,
@@ -121,24 +117,6 @@ class ContentScanner
 
                 $link->references($remaining->values()->all())->save();
             });
-    }
-
-    public static function resolveEditUrlsUsing(string $subjectType, Closure $resolver): void
-    {
-        self::$editUrlResolvers[$subjectType] = $resolver;
-    }
-
-    public static function editUrl(array $reference): ?string
-    {
-        $id = $reference['subject_id'];
-        $site = $reference['site'];
-
-        return match ($reference['subject_type']) {
-            'entry' => Facades\Entry::find($id)?->editUrl(),
-            'term' => Facades\Term::find($id)?->in($site)->editUrl(),
-            'global' => Facades\GlobalSet::find($id)?->in($site)?->editUrl(),
-            default => (self::$editUrlResolvers[$reference['subject_type']] ?? fn () => null)($id, $site),
-        };
     }
 
     protected static function referencesSubject(array $reference, string $subjectType, string $subjectId, string $site): bool

@@ -4,7 +4,7 @@ namespace Statamic\SeoPro\Http\Resources\DeadLinks;
 
 use Carbon\CarbonInterface;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Statamic\SeoPro\DeadLinks\ContentScanner;
+use Statamic\SeoPro\DeadLinks\EditUrls;
 use Statamic\SeoPro\DeadLinks\Link;
 
 class ListedLink extends JsonResource
@@ -45,7 +45,7 @@ class ListedLink extends JsonResource
 
             'references' => $link->references()
                 ->unique(fn ($reference) => Link::subjectKey($reference['subject_type'], $reference['subject_id'], $reference['site']))
-                ->map(fn ($reference) => [...$reference, 'edit_url' => ContentScanner::editUrl($reference)])
+                ->map(fn ($reference) => [...$reference, 'edit_url' => EditUrls::for($reference)])
                 ->filter(fn ($reference) => $reference['edit_url'])
                 ->values()
                 ->all(),
