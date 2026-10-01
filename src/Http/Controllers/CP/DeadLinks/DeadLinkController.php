@@ -6,7 +6,6 @@ use Inertia\Inertia;
 use Statamic\CP\Column;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
-use Statamic\Facades\User;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\OrderBy;
@@ -70,7 +69,6 @@ class DeadLinkController extends CpController
             'blueprint' => $blueprint,
             'columns' => $columns,
             'filters' => Scope::filters('dead-links'),
-            'canManage' => User::current()->can('manage seo dead links'),
             'recheckAllUrl' => cp_route('seo-pro.dead-links.recheck-all'),
         ]);
     }

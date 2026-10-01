@@ -11,7 +11,6 @@ return [
     'dead_links_description' => 'Tracks external links in your content and polls them for broken links.',
     'dead_link' => 'Dead Link',
     'view_dead_links' => 'View Dead Links',
-    'manage_dead_links' => 'Manage Dead Links',
     'response' => 'Response',
     'last_checked_at' => 'Last Checked',
     'found_in' => 'Found in',

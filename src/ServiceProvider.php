@@ -151,13 +151,7 @@ class ServiceProvider extends AddonServiceProvider
             })->label(__('seo-pro::messages.view_reports'));
             Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
             Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
-            Permission::register('view seo dead links', function ($permission) {
-                $permission
-                    ->label(__('seo-pro::messages.view_dead_links'))
-                    ->children([
-                        Permission::make('manage seo dead links')->label(__('seo-pro::messages.manage_dead_links')),
-                    ]);
-            });
+            Permission::register('view seo dead links')->label(__('seo-pro::messages.view_dead_links'));
         });
 
         return $this;

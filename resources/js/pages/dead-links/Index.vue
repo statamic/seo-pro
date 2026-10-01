@@ -9,7 +9,6 @@ const props = defineProps({
 	blueprint: Object,
 	columns: Array,
 	filters: Array,
-	canManage: Boolean,
 	recheckAllUrl: String,
 });
 
@@ -37,7 +36,6 @@ function recheckAll() {
 
 	<Header :title="__('seo-pro::messages.dead_links')" icon="external-link">
 		<Button
-			v-if="canManage"
 			:text="__('seo-pro::messages.recheck_all')"
 			:loading="rechecking"
 			@click="recheckAll"

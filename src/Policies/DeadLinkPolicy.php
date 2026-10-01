@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\Policies;
 
 use Statamic\Facades\User;
-use Statamic\SeoPro\DeadLinks\Link;
 
 class DeadLinkPolicy
 {
@@ -24,10 +23,5 @@ class DeadLinkPolicy
     public function view($user): bool
     {
         return User::fromUser($user)->hasPermission('view seo dead links');
-    }
-
-    public function manage($user, ?Link $link = null): bool
-    {
-        return User::fromUser($user)->hasPermission('manage seo dead links');
     }
 }

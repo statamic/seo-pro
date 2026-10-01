@@ -18,7 +18,7 @@ class RecheckLink extends Action
 
     public function authorize($user, $item): bool
     {
-        return $user->can('manage seo dead links');
+        return $user->can('view seo dead links');
     }
 
     public function buttonText()

@@ -11,7 +11,7 @@ class RecheckAllDeadLinksController extends CpController
 {
     public function __invoke()
     {
-        $this->authorize('manage', Link::class);
+        $this->authorize('index', Link::class);
 
         Facades\DeadLink::query()
             ->pluck('id')

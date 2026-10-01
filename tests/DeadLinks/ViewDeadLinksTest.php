@@ -291,9 +291,20 @@ class ViewDeadLinksTest extends TestCase
     }
 
     #[Test]
-    public function a_user_without_the_manage_permission_cannot_recheck_all_links()
+    public function a_user_who_can_view_dead_links_can_recheck_all_links()
     {
         Role::make('test')->addPermission('access cp')->addPermission('view seo dead links')->save();
+
+        $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->postJson(cp_route('seo-pro.dead-links.recheck-all'))
+            ->assertOk();
+    }
+
+    #[Test]
+    public function a_user_who_cannot_view_dead_links_cannot_recheck_all_links()
+    {
+        Role::make('test')->addPermission('access cp')->save();
 
         $this
             ->actingAs(User::make()->assignRole('test')->save())
