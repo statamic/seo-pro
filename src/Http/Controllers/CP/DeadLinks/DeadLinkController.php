@@ -14,7 +14,6 @@ use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\DeadLinks\Link;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Http\Resources\DeadLinks\DeadLinks;
-use Statamic\SeoPro\Jobs\CheckDeadLinksJob;
 
 class DeadLinkController extends CpController
 {
@@ -89,21 +88,5 @@ class DeadLinkController extends CpController
         }
 
         return $query;
-    }
-
-    public function recheckAll()
-    {
-        $this->authorize('manage', Link::class);
-
-        Facades\DeadLink::query()
-            ->pluck('id')
-            ->chunk(config('statamic.seo-pro.dead_links.check.batch_size', 100))
-            ->each(fn ($ids) => CheckDeadLinksJob::dispatch($ids->values()->all()));
-
-        $message = config('queue.default') === 'sync'
-            ? __('seo-pro::messages.dead_links_rechecked')
-            : __('seo-pro::messages.dead_links_queued_for_rechecking');
-
-        return response()->json(['message' => $message]);
     }
 }
