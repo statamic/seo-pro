@@ -10,7 +10,6 @@ return [
     'dead_links' => 'Dead Links',
     'dead_links_description' => 'Tracks external links in your content and polls them for broken links.',
     'dead_link' => 'Dead Link',
-    'dead_link_saved' => 'Dead link saved',
     'view_dead_links' => 'View Dead Links',
     'manage_dead_links' => 'Manage Dead Links',
     'status_code' => 'Status Code',
