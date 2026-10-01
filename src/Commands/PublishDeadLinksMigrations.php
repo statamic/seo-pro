@@ -101,7 +101,10 @@ class PublishDeadLinksMigrations extends Command
         $query->chunk(50, function (Collection $links) use ($progress) {
             $links->each(function (Link $link) use ($progress) {
                 LinkModel::updateOrCreate(
-                    ['site' => $link->site(), 'url_hash' => hash('sha256', $link->url())],
+                    [
+                        'site' => $link->site(),
+                        'url_hash' => hash('sha256', $link->url()),
+                    ],
                     [
                         'url' => $link->url(),
                         'status' => $link->status(),
