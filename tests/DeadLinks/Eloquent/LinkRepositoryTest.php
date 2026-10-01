@@ -77,6 +77,19 @@ class LinkRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function can_save_link_with_url_longer_than_255_characters()
+    {
+        $url = 'https://example.com/'.str_repeat('a', 300);
+
+        $link = DeadLink::make()->url($url);
+
+        $this->repo->save($link);
+
+        $this->assertEquals($url, $this->repo->find($link->id())->url());
+        $this->assertEquals(hash('sha256', $url), LinkModel::find($link->id())->url_hash);
+    }
+
+    #[Test]
     public function can_save_and_retrieve_references()
     {
         $link = DeadLink::make()

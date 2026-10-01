@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('seo_pro_dead_links', function (Blueprint $table) {
             $table->id();
             $table->string('site');
-            $table->string('url')->unique();
+            $table->text('url');
+            $table->char('url_hash', 64)->unique();
             $table->string('status')->default('pending');
             $table->unsignedSmallInteger('status_code')->nullable();
             $table->string('error')->nullable();

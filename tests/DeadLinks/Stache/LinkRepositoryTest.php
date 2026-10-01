@@ -71,6 +71,17 @@ class LinkRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_truncates_generated_id_when_url_is_too_long()
+    {
+        $link = Facades\DeadLink::make()->url('https://example.com/'.str_repeat('a', 300));
+
+        $this->repo->save($link);
+
+        $this->assertEquals(200, strlen($link->id()));
+        $this->assertFileExists($link->path());
+    }
+
+    #[Test]
     public function it_appends_suffix_when_generated_id_already_exists()
     {
         Facades\DeadLink::make()->id('page')->url('https://a.com/page')->save();

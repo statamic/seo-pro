@@ -10,6 +10,11 @@ class LinkModel extends Model
 
     protected $guarded = [];
 
+    protected static function booted(): void
+    {
+        static::saving(fn (LinkModel $model) => $model->url_hash = hash('sha256', $model->url));
+    }
+
     public function casts(): array
     {
         return [
