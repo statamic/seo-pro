@@ -141,13 +141,14 @@ watch(activeRule, (rule) => {
 							:key="item.handle"
 							:class="{
 								'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800': item.is_filterable,
+								'[&+tr>td]:!border-t-ui-accent-bg': isRuleActive(item),
 							}"
 							@click="selectRule(item)"
 						>
 							<td
 								class="w-8 text-center text-pretty"
 								:class="{
-									'!bg-ui-accent-bg/10 !border-t-ui-accent-bg !border-s-ui-accent-bg !shadow-[inset_3px_-1px_0_var(--color-ui-accent-bg)]': isRuleActive(item),
+									'!bg-ui-accent-bg/10 !border-y-ui-accent-bg !border-s-ui-accent-bg !shadow-[inset_3px_0_0_var(--color-ui-accent-bg)]': isRuleActive(item),
 								}"
 							>
 								<StatusIcon :status="item.status" />
@@ -155,7 +156,7 @@ watch(activeRule, (rule) => {
 							<td
 								class="!pl-0"
 								:class="{
-								    '!bg-ui-accent-bg/10 !border-t-ui-accent-bg !border-e-ui-accent-bg !shadow-[inset_0_-1px_0_var(--color-ui-accent-bg)] !text-gray-800 dark:!text-gray-100': isRuleActive(item),
+								    '!bg-ui-accent-bg/10 !border-y-ui-accent-bg !border-e-ui-accent-bg !text-gray-800 dark:!text-gray-100': isRuleActive(item),
 								}"
 							>
 								<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
