@@ -30,7 +30,8 @@ class ViewDeadLinksTest extends TestCase
         $this
             ->actingAs(User::make()->makeSuper()->save())
             ->get(cp_route('seo-pro.dead-links.index'))
-            ->assertOk();
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('seo-pro::DeadLinks/Index'));
     }
 
     #[Test]

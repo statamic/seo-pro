@@ -18,8 +18,6 @@ return [
     'recheck_all' => 'Recheck All',
     'dead_links_rechecked' => 'Dead links rechecked.',
     'dead_links_queued_for_rechecking' => 'Dead links queued for rechecking. Their statuses will update once they\'ve been checked.',
-    'no_dead_links_found' => 'No dead links have been found yet.',
-    'no_dead_links_found_description' => 'External links found in your content will appear here once tracked. Run `php artisan statamic:seo-pro:scan-dead-links` to scan your existing content.',
     'ok' => 'OK',
     'failing' => 'Failing',
     'failing_for' => 'Failing for :duration',

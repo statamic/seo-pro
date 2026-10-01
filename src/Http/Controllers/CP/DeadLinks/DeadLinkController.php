@@ -67,10 +67,6 @@ class DeadLinkController extends CpController
             ->rejectUnlisted()
             ->values();
 
-        if (Facades\DeadLink::query()->count() === 0) {
-            return Inertia::render('seo-pro::DeadLinks/Empty');
-        }
-
         return Inertia::render('seo-pro::DeadLinks/Index', [
             'blueprint' => $blueprint,
             'columns' => $columns,
