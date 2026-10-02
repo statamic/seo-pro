@@ -123,7 +123,18 @@ class ExternalLink
         return $this
             ->fluentlyGetOrSet('references')
             ->getter(fn ($references) => collect($references))
-            ->setter(fn ($references) => collect($references)->values()->all())
+            ->setter(function ($references) {
+                return collect($references)
+                    ->map(fn ($reference) => $reference instanceof Reference ? $reference : new Reference(
+                        type: $reference['type'],
+                        id: $reference['id'],
+                        site: $reference['site'],
+                        title: $reference['title'] ?? null,
+                        field: $reference['field'] ?? null,
+                    ))
+                    ->values()
+                    ->all();
+            })
             ->args(func_get_args());
     }
 

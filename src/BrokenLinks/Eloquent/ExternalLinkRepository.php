@@ -5,7 +5,6 @@ namespace Statamic\SeoPro\BrokenLinks\Eloquent;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkQueryBuilder;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkRepository as RepositoryContract;
-use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\BrokenLinks\Stache\ExternalLinkRepository as StacheRepository;
 
 class ExternalLinkRepository extends StacheRepository implements RepositoryContract
@@ -53,7 +52,7 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
             ->checkedAt($model->checked_at)
             ->nextCheckAt($model->next_check_at)
             ->notifiedAt($model->notified_at)
-            ->references(collect($model->references)->map(Reference::fromArray(...)));
+            ->references($model->references);
     }
 
     private function toModel(ExternalLink $link): ExternalLinkModel

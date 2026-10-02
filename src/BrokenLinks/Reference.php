@@ -25,11 +25,6 @@ class Reference
         self::$editUrlResolvers[$type] = $resolver;
     }
 
-    public static function fromArray(array $reference): self
-    {
-        return new self(...$reference);
-    }
-
     public function toArray(): array
     {
         return [
