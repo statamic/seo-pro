@@ -19,9 +19,9 @@ class LinkExtractor
         }
 
         return collect(Arr::flatten($values))
-            ->filter(fn ($value) => is_string($value))
-            ->flatMap(fn (string $value) => $this->urlsIn($value))
-            ->filter(fn (string $url) => $this->isExternal($url))
+            ->filter(fn ($value): bool => is_string($value))
+            ->flatMap(fn (string $value): array => $this->urlsIn($value))
+            ->filter(fn (string $url): string => $this->isExternal($url))
             ->unique()
             ->values();
     }
@@ -30,7 +30,7 @@ class LinkExtractor
     {
         preg_match_all(self::URL_REGEX, $text, $matches);
 
-        return array_map(fn ($url) => $this->trimTrailingPunctuation($url), $matches[0]);
+        return array_map(fn (string $url): string => $this->trimTrailingPunctuation($url), $matches[0]);
     }
 
     private function trimTrailingPunctuation(string $url): string
@@ -53,9 +53,9 @@ class LinkExtractor
         }
 
         return collect(config('statamic.seo-pro.broken_links.excluded_hosts', []))
-            ->map(fn ($excluded) => strtolower(ltrim($excluded, '.')))
+            ->map(fn ($excluded): string => strtolower(ltrim($excluded, '.')))
             ->filter()
-            ->doesntContain(fn ($excluded) => $host === $excluded || str_ends_with($host, ".{$excluded}"));
+            ->doesntContain(fn ($excluded): bool => $host === $excluded || str_ends_with($host, ".{$excluded}"));
     }
 
     private function isPublicHost(string $host): bool

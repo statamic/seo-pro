@@ -46,18 +46,22 @@ class ContentSubscriber
 
     public function handleTermSaved(TermSaved $event): void
     {
-        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::scan(
-            type: 'term',
-            id: $term->id(),
-            values: $term->data()->all(),
-            site: $term->locale(),
-            blueprint: $term->blueprint(),
-        ));
+        $event->term->localizations()->each(function (LocalizedTerm $term): void {
+            ContentScanner::scan(
+                type: 'term',
+                id: $term->id(),
+                values: $term->data()->all(),
+                site: $term->locale(),
+                blueprint: $term->blueprint(),
+            );
+        });
     }
 
     public function handleTermDeleted(TermDeleted $event): void
     {
-        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::forget('term', $term->id(), $term->locale()));
+        $event->term->localizations()->each(function (LocalizedTerm $term): void {
+            ContentScanner::forget('term', $term->id(), $term->locale());
+        });
     }
 
     public function handleGlobalVariablesSaved(GlobalVariablesSaved $event): void

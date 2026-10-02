@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\BrokenLinks;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Statamic\Contracts\Query\ContainsQueryableValues;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
@@ -41,7 +42,7 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('site')
-            ->getter(fn ($site) => $site ?? Site::default()->handle())
+            ->getter(fn (?string $site): string => $site ?? Site::default()->handle())
             ->args(func_get_args());
     }
 
@@ -70,7 +71,7 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('brokenSince')
-            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
+            ->setter(fn ($value): ?Carbon => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -78,7 +79,7 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('checkedAt')
-            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
+            ->setter(fn ($value): ?Carbon => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -86,7 +87,7 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('nextCheckAt')
-            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
+            ->setter(fn ($value): ?Carbon => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -94,7 +95,7 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('notifiedAt')
-            ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
+            ->setter(fn ($value): ?Carbon => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
 
@@ -115,10 +116,10 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('references')
-            ->getter(fn ($references) => collect($references))
-            ->setter(function ($references) {
+            ->getter(fn (array $references): Collection => collect($references))
+            ->setter(function ($references): array {
                 return collect($references)
-                    ->map(fn ($reference) => $reference instanceof Reference ? $reference : Reference::fromKey($reference))
+                    ->map(fn (Reference|string $reference): Reference => $reference instanceof Reference ? $reference : Reference::fromKey($reference))
                     ->values()
                     ->all();
             })

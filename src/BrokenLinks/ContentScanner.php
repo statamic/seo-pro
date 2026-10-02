@@ -25,7 +25,7 @@ class ContentScanner
                 ->url($url)
                 ->nextCheckAt(now());
 
-            if ($link->references()->contains(fn (Reference $reference) => $reference->is($item))) {
+            if ($link->references()->contains(fn (Reference $reference): bool => $reference->is($item))) {
                 continue;
             }
 
@@ -45,9 +45,9 @@ class ContentScanner
         Facades\ExternalLink::query()
             ->whereJsonContains('references', $item->key())
             ->get()
-            ->reject(fn (ExternalLink $link) => in_array($link->url(), $except))
-            ->each(function (ExternalLink $link) use ($item) {
-                $remaining = $link->references()->reject(fn (Reference $reference) => $reference->is($item));
+            ->reject(fn (ExternalLink $link): bool => in_array($link->url(), $except))
+            ->each(function (ExternalLink $link) use ($item): void {
+                $remaining = $link->references()->reject(fn (Reference $reference): bool => $reference->is($item));
 
                 if ($remaining->isEmpty()) {
                     $link->delete();

@@ -60,6 +60,6 @@ class CheckBrokenLinksCommand extends Command
 
         Notification::route('mail', $recipients)->notify(new BrokenLinksDigest($links));
 
-        $links->each(fn (ExternalLink $link) => $link->notifiedAt(now())->save());
+        $links->each(fn (ExternalLink $link): bool => $link->notifiedAt(now())->save());
     }
 }

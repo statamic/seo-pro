@@ -2,6 +2,8 @@
 
 namespace Statamic\SeoPro\BrokenLinks\Stache;
 
+use Illuminate\Support\Collection;
+use Statamic\Query\OrderBy;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkQueryBuilder as QueryBuilder;
 use Statamic\Stache\Query\Builder;
 
@@ -18,7 +20,7 @@ class ExternalLinkQueryBuilder extends Builder implements QueryBuilder
 
     protected function getKeysWithWheres($wheres)
     {
-        return collect($wheres)->reduce(function ($ids, $where) {
+        return collect($wheres)->reduce(function (?Collection $ids, array $where): Collection {
             $keys = $where['type'] == 'Nested'
                 ? $this->getKeysWithWheres($where['query']->wheres)
                 : $this->getKeysWithWhere($where);
@@ -40,7 +42,7 @@ class ExternalLinkQueryBuilder extends Builder implements QueryBuilder
 
     protected function getOrderKeyValuesByIndex()
     {
-        return collect($this->orderBys)->mapWithKeys(function ($orderBy) {
+        return collect($this->orderBys)->mapWithKeys(function (OrderBy $orderBy): array {
             $items = $this->store->index($orderBy->sort)->items()->all();
 
             return [$orderBy->sort => $items];

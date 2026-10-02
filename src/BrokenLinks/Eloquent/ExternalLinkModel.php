@@ -12,7 +12,7 @@ class ExternalLinkModel extends Model
 
     protected static function booted(): void
     {
-        static::saving(fn (ExternalLinkModel $model) => $model->url_hash = hash('sha256', $model->url));
+        static::saving(fn (ExternalLinkModel $model): string => $model->url_hash = hash('sha256', $model->url));
     }
 
     public function casts(): array

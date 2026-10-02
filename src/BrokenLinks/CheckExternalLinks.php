@@ -15,7 +15,7 @@ class CheckExternalLinks implements ShouldQueue
     public function handle(LinkChecker $checker): void
     {
         $links = collect($this->linkIds)
-            ->map(fn ($id) => Facades\ExternalLink::find($id))
+            ->map(fn (int|string $id): ?ExternalLink => Facades\ExternalLink::find($id))
             ->filter()
             ->values();
 

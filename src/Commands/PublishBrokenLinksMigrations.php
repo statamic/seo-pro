@@ -55,7 +55,7 @@ class PublishBrokenLinksMigrations extends Command
 
         $existingMigration = collect(File::allFiles(database_path('migrations')))
             ->map->getFilename()
-            ->filter(fn (string $filename) => Str::contains($filename, $name))
+            ->filter(fn (string $filename): bool => Str::contains($filename, $name))
             ->first();
 
         if ($existingMigration) {
@@ -98,8 +98,8 @@ class PublishBrokenLinksMigrations extends Command
 
         $progress->start();
 
-        $query->chunk(50, function (Collection $links) use ($progress) {
-            $links->each(function (ExternalLink $link) use ($progress) {
+        $query->chunk(50, function (Collection $links) use ($progress): void {
+            $links->each(function (ExternalLink $link) use ($progress): void {
                 ExternalLinkModel::updateOrCreate(
                     [
                         'site' => $link->site(),

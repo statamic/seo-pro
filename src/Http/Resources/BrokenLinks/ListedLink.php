@@ -18,11 +18,11 @@ class ListedLink extends JsonResource
             'response' => $link->response(),
             'checked_at' => $link->checkedAt(),
             'references' => $link->references()
-                ->map(fn (Reference $reference) => [
+                ->map(fn (Reference $reference): array => [
                     'title' => $reference->title(),
                     'edit_url' => $reference->editUrl(),
                 ])
-                ->filter(fn ($reference) => $reference['edit_url'])
+                ->filter(fn (array $reference): bool => ! is_null($reference['edit_url']))
                 ->values()
                 ->all(),
         ];
