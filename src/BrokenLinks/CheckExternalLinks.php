@@ -12,11 +12,10 @@ class CheckExternalLinks implements ShouldQueue
 
     public function __construct(protected array $linkIds) {}
 
-    public function handle(): void
+    public function handle(LinkChecker $checker): void
     {
         $links = collect($this->linkIds)->map(fn ($id) => Facades\ExternalLink::find($id))->filter()->values();
 
-        LinkChecker::checkLinks($links);
-        LinkChecker::notifyIfNeeded();
+        $checker->check($links);
     }
 }

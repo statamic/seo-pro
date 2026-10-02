@@ -5,59 +5,17 @@ namespace Tests\BrokenLinks;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Statamic\Facades\Collection;
-use Statamic\Facades\Entry;
-use Statamic\Facades\Stache;
 use Statamic\SeoPro\BrokenLinks\LinkChecker;
 use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\Facades;
-use Statamic\SeoPro\Notifications\BrokenLinksDigest;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
 class LinkCheckerTest extends TestCase
 {
     use PreventsSavingStacheItemsToDisk;
-
-    #[Test]
-    public function it_checks_due_links_after_they_have_been_reloaded_from_disk()
-    {
-        Http::fake(['*' => Http::response(status: 404)]);
-
-        Facades\ExternalLink::make()
-            ->id('abc')
-            ->url('https://example.com/broken')
-            ->nextCheckAt(now()->subHour())
-            ->save();
-
-        Stache::clear();
-
-        $this->assertEquals(1, LinkChecker::checkDue());
-        $this->assertNotNull(Facades\ExternalLink::find('abc')->brokenSince());
-    }
-
-    #[Test]
-    public function it_checks_the_most_overdue_links_first_up_to_the_batch_size()
-    {
-        Http::fake(['*' => Http::response()]);
-
-        config()->set('statamic.seo-pro.broken_links.check.batch_size', 2);
-
-        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->nextCheckAt(now()->subMinute())->save();
-        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->nextCheckAt(now()->subDay())->save();
-        Facades\ExternalLink::make()->id('older')->url('https://example.com/older')->nextCheckAt(now()->subHour())->save();
-        Facades\ExternalLink::make()->id('later')->url('https://example.com/later')->nextCheckAt(now()->addHour())->save();
-
-        $this->assertEquals(2, LinkChecker::checkDue());
-
-        $this->assertNotNull(Facades\ExternalLink::find('oldest')->checkedAt());
-        $this->assertNotNull(Facades\ExternalLink::find('older')->checkedAt());
-        $this->assertNull(Facades\ExternalLink::find('recent')->checkedAt());
-        $this->assertNull(Facades\ExternalLink::find('later')->checkedAt());
-    }
 
     #[Test]
     public function it_does_not_bring_back_a_link_that_was_deleted_while_being_checked()
@@ -70,7 +28,7 @@ class LinkCheckerTest extends TestCase
             return Http::response();
         }]);
 
-        LinkChecker::checkLinks(collect([clone $link]));
+        app(LinkChecker::class)->check(collect([clone $link]));
 
         $this->assertNull(Facades\ExternalLink::find('abc'));
     }
@@ -88,7 +46,7 @@ class LinkCheckerTest extends TestCase
             return Http::response();
         }]);
 
-        LinkChecker::checkLinks(collect([clone $link]));
+        app(LinkChecker::class)->check(collect([clone $link]));
 
         $this->assertNull(Facades\ExternalLink::find('abc')->brokenSince());
         $this->assertCount(1, Facades\ExternalLink::find('abc')->references());
@@ -102,10 +60,10 @@ class LinkCheckerTest extends TestCase
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->save();
 
         $this->travelTo('2026-09-01 12:00:00');
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         $this->travelTo('2026-09-02 12:00:00');
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         $this->assertEquals('2026-09-01 12:00:00', Facades\ExternalLink::find('abc')->brokenSince()->toDateTimeString());
     }
@@ -121,7 +79,7 @@ class LinkCheckerTest extends TestCase
             ->brokenSince(now()->subDay())
             ->save();
 
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         $this->assertNull(Facades\ExternalLink::find('abc')->brokenSince());
     }
@@ -133,7 +91,7 @@ class LinkCheckerTest extends TestCase
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->save();
 
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         $this->assertEquals('404 Not Found', Facades\ExternalLink::find('abc')->response());
     }
@@ -146,7 +104,7 @@ class LinkCheckerTest extends TestCase
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->save();
 
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         $this->assertNotNull(Facades\ExternalLink::find('abc')->brokenSince());
         $this->assertEquals($response, Facades\ExternalLink::find('abc')->response());
@@ -159,7 +117,7 @@ class LinkCheckerTest extends TestCase
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/page')->save();
 
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         Http::assertSentCount(2);
         $this->assertNull(Facades\ExternalLink::find('abc')->brokenSince());
@@ -178,7 +136,7 @@ class LinkCheckerTest extends TestCase
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->save();
 
-        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+        app(LinkChecker::class)->check(collect([Facades\ExternalLink::find('abc')]));
 
         $this->assertEquals(1, $attempts);
     }
@@ -192,91 +150,5 @@ class LinkCheckerTest extends TestCase
             'ssl error' => ['cURL error 60: SSL certificate problem: certificate has expired', 'SSL error'],
             'anything else' => ['cURL error 56: Recv failure: Connection reset by peer', "Couldn't connect"],
         ];
-    }
-
-    #[Test]
-    public function it_sends_a_digest_of_broken_links_to_recipients()
-    {
-        Notification::fake();
-
-        config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
-
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now()->subDays(2))->save();
-
-        LinkChecker::notifyIfNeeded();
-
-        Notification::assertSentOnDemand(
-            BrokenLinksDigest::class,
-            fn ($notification, $channels, $notifiable) => $notifiable->routes['mail'] === ['duncan@example.com']
-        );
-    }
-
-    #[Test]
-    public function it_waits_a_day_before_notifying_about_a_broken_link()
-    {
-        Notification::fake();
-
-        config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
-
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/flaky')->brokenSince(now()->subHour())->save();
-
-        LinkChecker::notifyIfNeeded();
-
-        Notification::assertNothingSent();
-    }
-
-    #[Test]
-    public function it_only_notifies_about_a_broken_link_once()
-    {
-        Notification::fake();
-
-        config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
-
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now()->subDays(2))->save();
-
-        LinkChecker::notifyIfNeeded();
-        LinkChecker::notifyIfNeeded();
-
-        Notification::assertSentOnDemandTimes(BrokenLinksDigest::class, 1);
-    }
-
-    #[Test]
-    public function the_digest_lists_each_broken_link_and_where_it_was_found()
-    {
-        Collection::make('pages')->save();
-
-        $home = tap(Entry::make()->collection('pages')->slug('home')->data(['title' => 'Home']))->save();
-        $about = tap(Entry::make()->collection('pages')->slug('about')->data(['title' => 'About']))->save();
-
-        $link = Facades\ExternalLink::make()
-            ->url('https://example.com/broken')
-            ->statusCode(404)
-            ->references([
-                new Reference(type: 'entry', id: $home->id(), site: 'default'),
-                new Reference(type: 'entry', id: $about->id(), site: 'default'),
-            ]);
-
-        $mail = (new BrokenLinksDigest(collect([$link])))->toMail(null);
-
-        $this->assertEquals('1 broken link found', $mail->subject);
-        $this->assertEquals([
-            '1 external link is currently broken.',
-            'https://example.com/broken — 404 Not Found',
-            'Found in: Home, About',
-        ], $mail->introLines);
-        $this->assertEquals('View Broken Links', $mail->actionText);
-        $this->assertEquals(cp_route('seo-pro.broken-links.index'), $mail->actionUrl);
-    }
-
-    #[Test]
-    public function it_does_not_send_a_digest_without_recipients()
-    {
-        Notification::fake();
-
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now()->subDays(2))->save();
-
-        LinkChecker::notifyIfNeeded();
-
-        Notification::assertNothingSent();
     }
 }

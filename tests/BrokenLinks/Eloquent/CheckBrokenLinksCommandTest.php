@@ -6,11 +6,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
-use Statamic\SeoPro\BrokenLinks\LinkChecker;
 use Statamic\SeoPro\Facades;
 use Tests\TestCase;
 
-class LinkCheckerTest extends TestCase
+class CheckBrokenLinksCommandTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -18,6 +17,7 @@ class LinkCheckerTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
+        $app['config']->set('statamic.seo-pro.broken_links.enabled', true);
         $app['config']->set('statamic.seo-pro.broken_links.driver', 'database');
     }
 
@@ -38,7 +38,7 @@ class LinkCheckerTest extends TestCase
         $older = $this->createLink('https://example.com/older', now()->subHour());
         $later = $this->createLink('https://example.com/later', now()->addHour());
 
-        $this->assertEquals(2, LinkChecker::checkDue());
+        $this->artisan('statamic:seo-pro:check-broken-links')->expectsOutputToContain('Checked 2 link(s).');
 
         $this->assertNotNull(Facades\ExternalLink::find($oldest->id())->checkedAt());
         $this->assertNotNull(Facades\ExternalLink::find($older->id())->checkedAt());

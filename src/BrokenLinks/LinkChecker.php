@@ -6,57 +6,33 @@ use Carbon\CarbonInterval;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
 use Statamic\SeoPro\Facades;
-use Statamic\SeoPro\Notifications\BrokenLinksDigest;
 use Throwable;
 
 class LinkChecker
 {
-    /**
-     * Check the most overdue links, then send a digest email of anything
-     * newly broken (if there are recipients). Returns how many links were checked.
-     */
-    public static function checkDue(): int
-    {
-        $links = Facades\ExternalLink::query()
-            ->where('next_check_at', '<=', now())
-            ->orderBy('next_check_at')
-            ->limit(config('statamic.seo-pro.broken_links.check.batch_size', 100))
-            ->get();
-
-        if ($links->isEmpty()) {
-            return 0;
-        }
-
-        self::checkLinks($links);
-        self::notifyIfNeeded();
-
-        return $links->count();
-    }
-
-    public static function checkLinks(Collection $links): void
+    public function check(Collection $links): void
     {
         $timeout = config('statamic.seo-pro.broken_links.check.timeout', 10);
         $userAgent = config('statamic.seo-pro.broken_links.check.user_agent', 'Mozilla/5.0 (compatible; SeoProLinkChecker/1.0; +https://statamic.com)');
         $concurrency = max(1, (int) config('statamic.seo-pro.broken_links.check.concurrency', 10));
 
         $links->chunk($concurrency)->each(function (Collection $chunk) use ($timeout, $userAgent) {
-            $results = self::request($chunk, 'head', $timeout, $userAgent);
+            $results = $this->request($chunk, 'head', $timeout, $userAgent);
 
-            $needsRetry = $chunk->filter(fn ($link) => self::shouldRetryWithGet($results[(string) $link->id()] ?? null))->values();
+            $needsRetry = $chunk->filter(fn ($link) => $this->shouldRetryWithGet($results[(string) $link->id()] ?? null))->values();
 
             if ($needsRetry->isNotEmpty()) {
-                $results = $results->merge(self::request($needsRetry, 'get', $timeout, $userAgent));
+                $results = $results->merge($this->request($needsRetry, 'get', $timeout, $userAgent));
             }
 
             foreach ($chunk as $link) {
-                self::applyResult($link, $results[(string) $link->id()] ?? null);
+                $this->applyResult($link, $results[(string) $link->id()] ?? null);
             }
         });
     }
 
-    private static function request(Collection $links, string $method, int $timeout, string $userAgent): Collection
+    private function request(Collection $links, string $method, int $timeout, string $userAgent): Collection
     {
         $responses = Http::pool(function ($pool) use ($links, $method, $timeout, $userAgent) {
             return $links->map(function ($link) use ($pool, $method, $timeout, $userAgent) {
@@ -72,12 +48,12 @@ class LinkChecker
         return collect($responses);
     }
 
-    private static function shouldRetryWithGet($response): bool
+    private function shouldRetryWithGet($response): bool
     {
         return $response instanceof Response && in_array($response->status(), [403, 405, 501]);
     }
 
-    private static function applyResult(ExternalLink $link, $response): void
+    private function applyResult(ExternalLink $link, $response): void
     {
         if (! $link = Facades\ExternalLink::find($link->id())) {
             return;
@@ -90,11 +66,11 @@ class LinkChecker
         } else {
             $ok = false;
             $link->statusCode(null);
-            $link->error(self::errorFor($response));
+            $link->error($this->errorFor($response));
         }
 
         $link->checkedAt(now());
-        $link->nextCheckAt(now()->add(self::frequencyInterval()));
+        $link->nextCheckAt(now()->add($this->frequencyInterval()));
 
         if ($ok) {
             $link->brokenSince(null)->notifiedAt(null);
@@ -105,7 +81,7 @@ class LinkChecker
         $link->save();
     }
 
-    private static function errorFor($response): string
+    private function errorFor($response): string
     {
         $message = $response instanceof Throwable ? $response->getMessage() : '';
 
@@ -120,7 +96,7 @@ class LinkChecker
         };
     }
 
-    private static function frequencyInterval(): CarbonInterval
+    private function frequencyInterval(): CarbonInterval
     {
         $minutes = [
             'every_15_minutes' => 15,
@@ -133,31 +109,5 @@ class LinkChecker
         ][config('statamic.seo-pro.broken_links.check.frequency', 'hourly')] ?? 60;
 
         return CarbonInterval::minutes($minutes);
-    }
-
-    /**
-     * Email a single collated digest of every link that has been broken
-     * for at least a day, and hasn't already been notified about.
-     */
-    public static function notifyIfNeeded(): void
-    {
-        $recipients = config('statamic.seo-pro.broken_links.notifications.recipients', []);
-
-        if (empty($recipients)) {
-            return;
-        }
-
-        $links = Facades\ExternalLink::query()
-            ->where('broken_since', '<=', now()->subDay())
-            ->whereNull('notified_at')
-            ->get();
-
-        if ($links->isEmpty()) {
-            return;
-        }
-
-        Notification::route('mail', $recipients)->notify(new BrokenLinksDigest($links));
-
-        $links->each(fn (ExternalLink $link) => $link->notifiedAt(now())->save());
     }
 }
