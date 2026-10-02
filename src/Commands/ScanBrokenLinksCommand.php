@@ -41,7 +41,7 @@ class ScanBrokenLinksCommand extends Command
                 $entries = Entry::query()
                     ->where('collection', $collection->handle())
                     ->where('site', $siteHandle)
-                    ->get();
+                    ->lazy();
 
                 foreach ($entries as $entry) {
                     ContentScanner::scan(
@@ -69,7 +69,7 @@ class ScanBrokenLinksCommand extends Command
                 $terms = Term::query()
                     ->where('taxonomy', $taxonomy->handle())
                     ->where('site', $siteHandle)
-                    ->get();
+                    ->lazy();
 
                 foreach ($terms as $term) {
                     ContentScanner::scan(
