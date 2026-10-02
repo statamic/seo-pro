@@ -5,7 +5,6 @@ namespace Tests\BrokenLinks\Stache;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
-use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\BrokenLinks\Stache\ExternalLinkRepository;
 use Statamic\SeoPro\Facades;
@@ -32,7 +31,7 @@ class ExternalLinkRepositoryTest extends TestCase
         Facades\ExternalLink::make()
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
-            ->status(LinkStatus::Broken)
+            ->brokenSince(now())
             ->statusCode(404)
             ->save();
 
@@ -41,7 +40,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $this->assertInstanceOf(ExternalLink::class, $link);
         $this->assertEquals('abc', $link->id());
         $this->assertEquals('https://cool-runnings.com/old-page', $link->url());
-        $this->assertEquals(LinkStatus::Broken, $link->status());
+        $this->assertNotNull($link->brokenSince());
         $this->assertEquals(404, $link->statusCode());
     }
 
@@ -61,7 +60,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $link = Facades\ExternalLink::make()
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
-            ->status(LinkStatus::Ok);
+            ->checkedAt(now());
 
         $this->repo->save($link);
 
@@ -70,7 +69,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $yaml = YAML::file($link->path())->parse();
 
         $this->assertEquals('https://cool-runnings.com/old-page', $yaml['url']);
-        $this->assertEquals('ok', $yaml['status']);
+        $this->assertArrayHasKey('checked_at', $yaml);
     }
 
     #[Test]

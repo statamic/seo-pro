@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\BrokenLinks\LinkChecker;
-use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
 use Tests\TestCase;
 
@@ -41,10 +40,10 @@ class LinkCheckerTest extends TestCase
 
         $this->assertEquals(2, LinkChecker::checkDue());
 
-        $this->assertEquals(LinkStatus::Ok, Facades\ExternalLink::find($oldest->id())->status());
-        $this->assertEquals(LinkStatus::Ok, Facades\ExternalLink::find($older->id())->status());
-        $this->assertEquals(LinkStatus::Pending, Facades\ExternalLink::find($recent->id())->status());
-        $this->assertEquals(LinkStatus::Pending, Facades\ExternalLink::find($later->id())->status());
+        $this->assertNotNull(Facades\ExternalLink::find($oldest->id())->checkedAt());
+        $this->assertNotNull(Facades\ExternalLink::find($older->id())->checkedAt());
+        $this->assertNull(Facades\ExternalLink::find($recent->id())->checkedAt());
+        $this->assertNull(Facades\ExternalLink::find($later->id())->checkedAt());
     }
 
     private function createLink(string $url, $nextCheckAt): ExternalLink

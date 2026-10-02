@@ -7,7 +7,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Role;
 use Statamic\Facades\User;
 use Statamic\SeoPro\BrokenLinks\CheckExternalLinks;
-use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
@@ -21,8 +20,8 @@ class RecheckLinkTest extends TestCase
     {
         Queue::fake();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/one')->status(LinkStatus::Broken)->save();
-        Facades\ExternalLink::make()->id('def')->url('https://example.com/two')->status(LinkStatus::Broken)->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/one')->brokenSince(now())->save();
+        Facades\ExternalLink::make()->id('def')->url('https://example.com/two')->brokenSince(now())->save();
 
         $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -42,7 +41,7 @@ class RecheckLinkTest extends TestCase
     {
         Queue::fake();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/one')->status(LinkStatus::Broken)->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/one')->brokenSince(now())->save();
 
         Role::make('test')->addPermission('access cp')->save();
 

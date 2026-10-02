@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('site');
             $table->text('url');
             $table->char('url_hash', 64);
-            $table->string('status')->default('pending');
             $table->unsignedSmallInteger('status_code')->nullable();
             $table->string('error')->nullable();
             $table->dateTime('broken_since')->nullable();
@@ -28,7 +27,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['site', 'url_hash']);
-            $table->index(['site', 'status']);
+            $table->index(['site', 'broken_since']);
         });
     }
 

@@ -11,7 +11,6 @@ use Statamic\Http\Requests\FilteredRequest;
 use Statamic\Query\OrderBy;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
-use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Http\Resources\BrokenLinks\ListedLink;
 
@@ -24,8 +23,8 @@ class BrokenLinkController extends CpController
         $this->authorize('index', ExternalLink::class);
 
         if ($request->wantsJson()) {
-            $query = $this->indexQuery()->where('status', LinkStatus::Broken->value);
-            $unchecked = $this->indexQuery()->where('status', LinkStatus::Pending->value);
+            $query = $this->indexQuery()->whereNotNull('broken_since');
+            $unchecked = $this->indexQuery()->whereNull('checked_at');
 
             $activeFilterBadges = $this->queryFilters($query, $request->filters);
             $this->queryFilters($unchecked, $request->filters);

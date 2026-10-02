@@ -20,7 +20,6 @@ class ExternalLink
     protected $id;
     protected $site;
     protected $url;
-    protected $status;
     protected $statusCode;
     protected $error;
     protected $brokenSince;
@@ -48,14 +47,6 @@ class ExternalLink
     {
         return $this
             ->fluentlyGetOrSet('url')
-            ->args(func_get_args());
-    }
-
-    public function status($status = null)
-    {
-        return $this
-            ->fluentlyGetOrSet('status')
-            ->getter(fn ($status) => $status ?? LinkStatus::Pending)
             ->args(func_get_args());
     }
 
@@ -175,7 +166,6 @@ class ExternalLink
     {
         return Arr::removeNullValues([
             'url' => $this->url(),
-            'status' => $this->status()->value,
             'status_code' => $this->statusCode(),
             'error' => $this->error(),
             'broken_since' => $this->brokenSince(),

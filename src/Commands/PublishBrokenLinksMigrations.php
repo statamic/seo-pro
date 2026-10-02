@@ -107,7 +107,6 @@ class PublishBrokenLinksMigrations extends Command
                     ],
                     [
                         'url' => $link->url(),
-                        'status' => $link->status(),
                         'status_code' => $link->statusCode(),
                         'error' => $link->error(),
                         'broken_since' => $link->brokenSince(),

@@ -93,7 +93,6 @@ class LinkChecker
             $link->error(self::errorFor($response));
         }
 
-        $link->status($ok ? LinkStatus::Ok : LinkStatus::Broken);
         $link->checkedAt(now());
         $link->nextCheckAt(now()->add(self::frequencyInterval()));
 
