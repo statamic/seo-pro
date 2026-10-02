@@ -129,7 +129,7 @@ class ExternalLinkRepositoryTest extends TestCase
             ])
             ->save();
 
-        $links = $this->repo->query()->whereJsonContains('subjects', (new Reference(type: 'entry', id: '1', site: 'en'))->key())->get();
+        $links = $this->repo->query()->whereJsonContains('references', (new Reference(type: 'entry', id: '1', site: 'en'))->key())->get();
 
         $this->assertEquals(['abc'], $links->map->id()->all());
     }

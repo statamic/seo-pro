@@ -43,7 +43,7 @@ class ContentScanner
     private static function removeReferences(Reference $item, array $except = []): void
     {
         Facades\ExternalLink::query()
-            ->whereJsonContains('subjects', $item->key())
+            ->whereJsonContains('references', $item->key())
             ->get()
             ->reject(fn (ExternalLink $link) => in_array($link->url(), $except))
             ->each(function (ExternalLink $link) use ($item) {

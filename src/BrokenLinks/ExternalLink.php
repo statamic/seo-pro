@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\BrokenLinks;
 
 use Illuminate\Support\Carbon;
+use Statamic\Contracts\Query\ContainsQueryableValues;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
@@ -10,10 +11,11 @@ use Statamic\Facades\Site;
 use Statamic\Facades\Stache;
 use Statamic\SeoPro\Facades\ExternalLink as ExternalLinkFacade;
 use Statamic\Support\Arr;
+use Statamic\Support\Str;
 use Statamic\Support\Traits\FluentlyGetsAndSets;
 use Symfony\Component\HttpFoundation\Response;
 
-class ExternalLink
+class ExternalLink implements ContainsQueryableValues
 {
     use ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
 
@@ -116,20 +118,20 @@ class ExternalLink
             ->getter(fn ($references) => collect($references))
             ->setter(function ($references) {
                 return collect($references)
-                    ->map(fn ($reference) => $reference instanceof Reference ? $reference : new Reference(
-                        type: $reference['type'],
-                        id: $reference['id'],
-                        site: $reference['site'],
-                    ))
+                    ->map(fn ($reference) => $reference instanceof Reference ? $reference : Reference::fromKey($reference))
                     ->values()
                     ->all();
             })
             ->args(func_get_args());
     }
 
-    public function subjects(): array
+    public function getQueryableValue(string $field)
     {
-        return $this->references()->map->key()->unique()->values()->all();
+        if ($field === 'references') {
+            return $this->references()->map->key()->all();
+        }
+
+        return $this->{Str::camel($field)}();
     }
 
     public function save(): bool
@@ -172,7 +174,7 @@ class ExternalLink
             'checked_at' => $this->checkedAt(),
             'next_check_at' => $this->nextCheckAt(),
             'notified_at' => $this->notifiedAt(),
-            'references' => $this->references()->map->toArray()->all() ?: null,
+            'references' => $this->references()->map->key()->all() ?: null,
         ]);
     }
 }

@@ -70,8 +70,7 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
         $model->checked_at = $link->checkedAt();
         $model->next_check_at = $link->nextCheckAt();
         $model->notified_at = $link->notifiedAt();
-        $model->references = $link->references()->map->toArray()->all();
-        $model->subjects = $link->subjects();
+        $model->references = $link->references()->map->key()->all();
 
         return $model;
     }

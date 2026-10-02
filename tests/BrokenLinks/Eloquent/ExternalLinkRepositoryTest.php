@@ -45,7 +45,6 @@ class ExternalLinkRepositoryTest extends TestCase
             'status_code' => 404,
             'broken_since' => '2026-09-01 12:00:00',
             'references' => [],
-            'subjects' => [],
         ]);
 
         $link = $this->repo->find(1);
@@ -134,7 +133,7 @@ class ExternalLinkRepositoryTest extends TestCase
                 new Reference(type: 'entry', id: '2', site: 'en'),
             ]));
 
-        $links = $this->repo->query()->whereJsonContains('subjects', (new Reference(type: 'entry', id: '1', site: 'en'))->key())->get();
+        $links = $this->repo->query()->whereJsonContains('references', (new Reference(type: 'entry', id: '1', site: 'en'))->key())->get();
 
         $this->assertEquals([$link->id()], $links->map->id()->all());
     }

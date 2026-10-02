@@ -7,6 +7,7 @@ use Statamic\Facades\Entry;
 use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Term;
 use Statamic\Facades\User;
+use Statamic\Support\Str;
 
 class Reference
 {
@@ -25,13 +26,13 @@ class Reference
         self::$resolvers[$type] = ['title' => $title, 'editUrl' => $editUrl];
     }
 
-    public function toArray(): array
+    public static function fromKey(string $key): self
     {
-        return [
-            'type' => $this->type,
-            'id' => $this->id,
-            'site' => $this->site,
-        ];
+        return new self(
+            type: Str::before($key, '::'),
+            id: Str::of($key)->after('::')->beforeLast('::')->toString(),
+            site: Str::afterLast($key, '::'),
+        );
     }
 
     public function key(): string
