@@ -10,17 +10,21 @@ use Statamic\Console\Commands\Multisite;
 use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Addon;
 use Statamic\Facades\CP\Nav;
+use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Git;
+use Statamic\Facades\GlobalSet;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
+use Statamic\Facades\Term;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\SeoPro\BrokenLinks\ContentSubscriber as BrokenLinksContentSubscriber;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkRepository;
+use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\BrokenLinks\Stache\ExternalLinksStore;
 use Statamic\SeoPro\Commands\CheckBrokenLinksCommand;
 use Statamic\SeoPro\Commands\GenerateReportCommand;
@@ -266,7 +270,42 @@ class ServiceProvider extends AddonServiceProvider
             Statamic::repository(ExternalLinkRepository::class, BrokenLinks\Eloquent\ExternalLinkRepository::class);
         }
 
+        $this->registerBrokenLinkReferences();
+
         return $this;
+    }
+
+    private function registerBrokenLinkReferences(): void
+    {
+        Reference::resolveUsing(
+            type: 'entry',
+            title: fn (Reference $reference): ?string => Entry::find($reference->id)?->value('title'),
+            editUrl: function (Reference $reference): ?string {
+                $entry = Entry::find($reference->id);
+
+                return $entry && User::current()->can('edit', $entry) ? $entry->editUrl() : null;
+            },
+        );
+
+        Reference::resolveUsing(
+            type: 'term',
+            title: fn (Reference $reference): ?string => Term::find($reference->id)?->in($reference->site)?->title(),
+            editUrl: function (Reference $reference): ?string {
+                $term = Term::find($reference->id)?->in($reference->site);
+
+                return $term && User::current()->can('edit', $term) ? $term->editUrl() : null;
+            },
+        );
+
+        Reference::resolveUsing(
+            type: 'global',
+            title: fn (Reference $reference): ?string => GlobalSet::find($reference->id)?->in($reference->site)?->title(),
+            editUrl: function (Reference $reference): ?string {
+                $variables = GlobalSet::find($reference->id)?->in($reference->site);
+
+                return $variables && User::current()->can('edit', $variables) ? $variables->editUrl() : null;
+            },
+        );
     }
 
     protected function bootRouteBindings(): static
