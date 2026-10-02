@@ -30,7 +30,13 @@ class ContentSubscriber
 
     public function handleEntrySaved(EntrySaved $event): void
     {
-        ContentScanner::scanEntry($event->entry);
+        ContentScanner::scan(
+            type: 'entry',
+            id: $event->entry->id(),
+            values: $event->entry->data()->all(),
+            site: $event->entry->locale(),
+            blueprint: $event->entry->blueprint(),
+        );
     }
 
     public function handleEntryDeleted(EntryDeleted $event): void
@@ -40,7 +46,13 @@ class ContentSubscriber
 
     public function handleTermSaved(TermSaved $event): void
     {
-        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::scanTerm($term));
+        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::scan(
+            type: 'term',
+            id: $term->id(),
+            values: $term->data()->all(),
+            site: $term->locale(),
+            blueprint: $term->blueprint(),
+        ));
     }
 
     public function handleTermDeleted(TermDeleted $event): void
@@ -50,7 +62,13 @@ class ContentSubscriber
 
     public function handleGlobalVariablesSaved(GlobalVariablesSaved $event): void
     {
-        ContentScanner::scanGlobal($event->variables);
+        ContentScanner::scan(
+            type: 'global',
+            id: $event->variables->handle(),
+            values: $event->variables->data()->all(),
+            site: $event->variables->locale(),
+            blueprint: $event->variables->blueprint(),
+        );
     }
 
     public function handleGlobalVariablesDeleted(GlobalVariablesDeleted $event): void

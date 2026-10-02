@@ -44,7 +44,13 @@ class ScanBrokenLinksCommand extends Command
                     ->get();
 
                 foreach ($entries as $entry) {
-                    ContentScanner::scanEntry($entry);
+                    ContentScanner::scan(
+                        type: 'entry',
+                        id: $entry->id(),
+                        values: $entry->data()->all(),
+                        site: $entry->locale(),
+                        blueprint: $entry->blueprint(),
+                    );
 
                     $count++;
                 }
@@ -66,7 +72,13 @@ class ScanBrokenLinksCommand extends Command
                     ->get();
 
                 foreach ($terms as $term) {
-                    ContentScanner::scanTerm($term);
+                    ContentScanner::scan(
+                        type: 'term',
+                        id: $term->id(),
+                        values: $term->data()->all(),
+                        site: $term->locale(),
+                        blueprint: $term->blueprint(),
+                    );
 
                     $count++;
                 }
@@ -86,7 +98,13 @@ class ScanBrokenLinksCommand extends Command
                     continue;
                 }
 
-                ContentScanner::scanGlobal($variables);
+                ContentScanner::scan(
+                    type: 'global',
+                    id: $variables->handle(),
+                    values: $variables->data()->all(),
+                    site: $variables->locale(),
+                    blueprint: $variables->blueprint(),
+                );
 
                 $count++;
             }
