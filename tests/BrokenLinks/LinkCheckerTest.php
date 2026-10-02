@@ -152,6 +152,37 @@ class LinkCheckerTest extends TestCase
         $this->assertEquals($response, Facades\ExternalLink::find('abc')->response());
     }
 
+    #[Test]
+    public function it_retries_with_a_get_request_when_head_requests_are_not_allowed()
+    {
+        Http::fake(fn ($request) => $request->method() === 'HEAD' ? Http::response(status: 405) : Http::response());
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/page')->save();
+
+        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+
+        Http::assertSentCount(2);
+        $this->assertEquals(ExternalLink::STATUS_OK, Facades\ExternalLink::find('abc')->status());
+    }
+
+    #[Test]
+    public function it_does_not_retry_links_that_could_not_be_reached()
+    {
+        $attempts = 0;
+
+        Http::fake(['*' => function ($request) use (&$attempts) {
+            $attempts++;
+
+            return Create::rejectionFor(new ConnectException('cURL error 6: Could not resolve host', $request->toPsrRequest()));
+        }]);
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->save();
+
+        LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
+
+        $this->assertEquals(1, $attempts);
+    }
+
     public static function connectionErrorProvider(): array
     {
         return [

@@ -74,11 +74,7 @@ class LinkChecker
 
     private static function shouldRetryWithGet($response): bool
     {
-        if ($response instanceof Response) {
-            return in_array($response->status(), [403, 405, 501]);
-        }
-
-        return true;
+        return $response instanceof Response && in_array($response->status(), [403, 405, 501]);
     }
 
     private static function applyResult(ExternalLink $link, $response): void
