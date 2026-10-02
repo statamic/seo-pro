@@ -96,19 +96,6 @@ class ExternalLink
             ->args(func_get_args());
     }
 
-    public function response(): ?string
-    {
-        if ($this->statusCode()) {
-            return trim($this->statusCode().' '.(Response::$statusTexts[$this->statusCode()] ?? ''));
-        }
-
-        if ($this->error()) {
-            return __("seo-pro::messages.broken_link_errors.{$this->error()}");
-        }
-
-        return null;
-    }
-
     public function checkedAt($checkedAt = null)
     {
         return $this
@@ -131,6 +118,19 @@ class ExternalLink
             ->fluentlyGetOrSet('notifiedAt')
             ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
+    }
+
+    public function response(): ?string
+    {
+        if ($this->statusCode()) {
+            return trim($this->statusCode().' '.(Response::$statusTexts[$this->statusCode()] ?? ''));
+        }
+
+        if ($this->error()) {
+            return __("seo-pro::messages.broken_link_errors.{$this->error()}");
+        }
+
+        return null;
     }
 
     /**
