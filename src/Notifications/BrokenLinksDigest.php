@@ -23,22 +23,15 @@ class BrokenLinksDigest extends Notification
         $count = $this->links->count();
 
         $message = (new MailMessage)
-            ->subject(trans_choice(
-                '{1} 1 broken link found|[2,*] :count broken links found',
-                $count,
-                ['count' => $count]
-            ))
-            ->line(trans_choice(
-                '{1} 1 external link is currently broken.|[2,*] :count external links are currently broken.',
-                $count,
-                ['count' => $count]
-            ));
+            ->subject(trans_choice('seo-pro::messages.broken_links_digest_subject', $count, ['count' => $count]))
+            ->line(trans_choice('seo-pro::messages.broken_links_digest_intro', $count, ['count' => $count]));
 
         foreach ($this->links as $link) {
             $message->line($link->url().' — '.$link->response());
 
             $references = $link->references()
                 ->map(fn ($reference) => $reference['title'] ?? $reference['subject_id'])
+                ->unique()
                 ->implode(', ');
 
             if ($references) {

@@ -181,6 +181,42 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
+    public function it_only_notifies_about_a_broken_link_once()
+    {
+        Notification::fake();
+
+        config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->save();
+
+        LinkChecker::notifyIfNeeded();
+        LinkChecker::notifyIfNeeded();
+
+        Notification::assertSentOnDemandTimes(BrokenLinksDigest::class, 1);
+    }
+
+    #[Test]
+    public function the_digest_lists_each_broken_link_and_where_it_was_found()
+    {
+        $link = Facades\ExternalLink::make()
+            ->url('https://example.com/broken')
+            ->statusCode(404)
+            ->references([
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'default', 'field_path' => 'body', 'title' => 'Home'],
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'default', 'field_path' => 'sidebar', 'title' => 'Home'],
+            ]);
+
+        $mail = (new BrokenLinksDigest(collect([$link])))->toMail(null);
+
+        $this->assertEquals('1 broken link found', $mail->subject);
+        $this->assertEquals([
+            '1 external link is currently broken.',
+            'https://example.com/broken — 404 Not Found',
+            'Found in: Home',
+        ], $mail->introLines);
+    }
+
+    #[Test]
     public function it_does_not_send_a_digest_without_recipients()
     {
         Notification::fake();

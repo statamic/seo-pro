@@ -14,6 +14,8 @@ return [
     'response' => 'Response',
     'last_checked_at' => 'Last Checked',
     'found_in' => 'Found in',
+    'broken_links_digest_subject' => ':count broken link found|:count broken links found',
+    'broken_links_digest_intro' => ':count external link is currently broken.|:count external links are currently broken.',
     'recheck_all' => 'Recheck All',
     'broken_links_rechecked' => 'Broken links rechecked.',
     'broken_links_queued_for_rechecking' => 'Broken links queued for rechecking. Their statuses will update once they\'ve been checked.',
