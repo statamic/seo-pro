@@ -83,6 +83,10 @@ class LinkChecker
 
     private static function applyResult(ExternalLink $link, $response): void
     {
+        if (! $link = Facades\ExternalLink::find($link->id())) {
+            return;
+        }
+
         if ($response instanceof Response) {
             $ok = $response->status() >= 200 && $response->status() < 400;
             $link->statusCode($response->status());

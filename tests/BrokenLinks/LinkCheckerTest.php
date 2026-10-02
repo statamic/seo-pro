@@ -58,6 +58,41 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
+    public function it_does_not_bring_back_a_link_that_was_deleted_while_being_checked()
+    {
+        $link = tap(Facades\ExternalLink::make()->id('abc')->url('https://example.com/removed'))->save();
+
+        Http::fake(['*' => function () use ($link) {
+            $link->delete();
+
+            return Http::response();
+        }]);
+
+        LinkChecker::checkLinks(collect([clone $link]));
+
+        $this->assertNull(Facades\ExternalLink::find('abc'));
+    }
+
+    #[Test]
+    public function it_keeps_references_added_while_a_link_was_being_checked()
+    {
+        $link = tap(Facades\ExternalLink::make()->id('abc')->url('https://example.com/page'))->save();
+
+        Http::fake(['*' => function () {
+            Facades\ExternalLink::find('abc')->references([
+                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'default', 'field_path' => 'body', 'title' => 'Home'],
+            ])->save();
+
+            return Http::response();
+        }]);
+
+        LinkChecker::checkLinks(collect([clone $link]));
+
+        $this->assertEquals(ExternalLink::STATUS_OK, Facades\ExternalLink::find('abc')->status());
+        $this->assertCount(1, Facades\ExternalLink::find('abc')->references());
+    }
+
+    #[Test]
     public function it_records_when_a_link_started_failing()
     {
         Http::fake(['*' => Http::response(status: 404)]);
