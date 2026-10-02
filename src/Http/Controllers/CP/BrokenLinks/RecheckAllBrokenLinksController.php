@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\Http\Controllers\CP\BrokenLinks;
 
-use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Collection;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\SeoPro\BrokenLinks\CheckExternalLinks;
