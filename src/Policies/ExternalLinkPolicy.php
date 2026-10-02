@@ -17,11 +17,6 @@ class ExternalLinkPolicy
 
     public function index($user): bool
     {
-        return $this->view($user);
-    }
-
-    public function view($user): bool
-    {
         return User::fromUser($user)->hasPermission('view seo broken links');
     }
 }
