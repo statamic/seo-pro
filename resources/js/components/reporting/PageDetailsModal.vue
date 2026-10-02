@@ -36,7 +36,7 @@ const close = () => {
 				    <Description
 				        v-if="item.comment"
 				        :class="{
-				            '!text-red-500 dark:!text-red-400': item.status === 'fail',
+				            '!text-red-600 dark:!text-red-400': item.status === 'fail',
 				            '!text-amber-700 dark:!text-amber-300': item.status === 'warning',
 				        }"
 				        :text="item.comment"

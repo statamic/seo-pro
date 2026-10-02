@@ -113,9 +113,9 @@ watch(activeRule, (rule) => {
 						<div
 							class="text-lg"
 							:class="{
-								'text-red-500': scoreColor === 'red',
-								'text-amber-500': scoreColor === 'amber',
-								'text-green-600': scoreColor === 'green',
+								'text-red-600 dark:!text-red-400': scoreColor === 'red',
+								'text-amber-500 dark:!text-amber-300': scoreColor === 'amber',
+								'text-green-600 dark:!text-green-400': scoreColor === 'green',
 							}"
 							v-text="NumberFormatter.format(report.score / 100, 'percent')"
 						/>
@@ -128,8 +128,8 @@ watch(activeRule, (rule) => {
 						:style="`width: ${report.score}%`"
 						:class="{
 							'bg-red-500': scoreColor === 'red',
-							'bg-amber-500': scoreColor === 'amber',
-							'bg-green-600': scoreColor === 'green',
+							'bg-amber-400 dark:!bg-amber-300': scoreColor === 'amber',
+							'bg-green-500': scoreColor === 'green',
 						}"
 					/>
 				</div>

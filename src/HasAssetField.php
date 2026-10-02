@@ -33,9 +33,9 @@ trait HasAssetField
         return [
             'type' => 'html',
             'html' => <<<'HTML'
-<div class="mt-2 text-sm text-red-500">
+<div class="mt-2 text-sm text-red-600 [&_a]:underline [&_a:hover]:text-red-700 dark:[&_a:hover]:text-red-300">
     Asset container not configured.
-    <a class="text-red-500 underline" href="https://statamic.com/addons/statamic/seo-pro/docs#advanced-configuration" target="_blank">
+    <a href="https://statamic.com/addons/statamic/seo-pro/docs#advanced-configuration" target="_blank">
         Learn more
     </a>
 </div>
