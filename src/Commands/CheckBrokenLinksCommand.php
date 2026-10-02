@@ -16,7 +16,7 @@ class CheckBrokenLinksCommand extends Command
 
     public function handle(): int
     {
-        if (! config('statamic.seo-pro.broken_links.enabled', true)) {
+        if (! config('statamic.seo-pro.broken_links.enabled', false)) {
             $this->components->info('Broken link checking is disabled in config, skipping.');
 
             return self::SUCCESS;
