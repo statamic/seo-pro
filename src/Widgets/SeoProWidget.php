@@ -20,7 +20,7 @@ use Statamic\Widgets\Widget;
  * - title: widget title (default "SEO Pro")
  * - show_rules: list the open rules below the score (default true)
  * - stale_after_days: after how many days the report is considered outdated
- *   and a "Generate Report" button is shown (default 30)
+ *   and a "New Report" button is shown (default 30)
  */
 class SeoProWidget extends Widget
 {
