@@ -71,7 +71,7 @@ const rings = computed(() => [
 	<Link
 		:href
 		:aria-label="__('seo-pro::messages.widget.score_aria', { score: formatted })"
-		class="group relative block size-32 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+		class="group relative block size-32 rounded-full focus-visible:outline-offset-4"
 		:class="compact ? '@2xl/widget:size-36!' : '@2xl/widget:size-44!'"
 	>
 		<svg
