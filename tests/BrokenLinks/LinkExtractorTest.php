@@ -70,6 +70,20 @@ class LinkExtractorTest extends TestCase
     }
 
     #[Test]
+    public function it_keeps_parentheses_that_are_part_of_the_url()
+    {
+        $found = LinkExtractor::extract([
+            'body' => 'See https://en.wikipedia.org/wiki/Foo_(bar) and [this](https://example.com/page) (or https://example.com/other).',
+        ], null);
+
+        $this->assertEquals([
+            'https://en.wikipedia.org/wiki/Foo_(bar)',
+            'https://example.com/page',
+            'https://example.com/other',
+        ], $found->pluck('url')->all());
+    }
+
+    #[Test]
     public function it_excludes_links_to_the_sites_own_host_when_the_site_url_is_relative()
     {
         $found = LinkExtractor::extract([

@@ -8,7 +8,7 @@ use Statamic\Fields\Blueprint;
 
 class LinkExtractor
 {
-    const URL_REGEX = '/\bhttps?:\/\/[^\s"\'<>\)\]]+/i';
+    const URL_REGEX = '/\bhttps?:\/\/[^\s"\'<>\]]+/i';
 
     /**
      * Walk every field defined on the blueprint (recursing into whatever
@@ -59,7 +59,18 @@ class LinkExtractor
     {
         preg_match_all(self::URL_REGEX, $text, $matches);
 
-        return array_map(fn ($url) => rtrim($url, '.,;:!?)"\''), $matches[0] ?? []);
+        return array_map(fn ($url) => self::trimTrailingPunctuation($url), $matches[0] ?? []);
+    }
+
+    private static function trimTrailingPunctuation(string $url): string
+    {
+        $url = rtrim($url, '.,;:!?"\'');
+
+        while (str_ends_with($url, ')') && substr_count($url, '(') < substr_count($url, ')')) {
+            $url = rtrim(substr($url, 0, -1), '.,;:!?"\'');
+        }
+
+        return $url;
     }
 
     public static function isExternal(string $url, array $excludedHosts = []): bool
