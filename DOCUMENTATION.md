@@ -390,21 +390,27 @@ To enable broken link tracking, set the `SEO_PRO_TRACK_BROKEN_LINKS` environment
 SEO_PRO_TRACK_BROKEN_LINKS=true
 ```
 
+Then, scan your existing content for external links, so SEO Pro can start checking them right away:
+
+```
+php please seo-pro:scan-broken-links
+```
+
 ### Managing Broken Links
 
 Head to `Tools > SEO Pro > Broken Links` to see every broken link, along with when it broke and the response it got back (like `404 Not Found` or `Host not found`). Once a broken link is fixed, it'll drop off the listing after its next check.
 
 Links that haven't been checked yet aren't listed, but you'll see a note letting you know how many are still waiting to be checked.
 
-You can recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button. On multi-site installs, you can filter the listing by site.
+You can recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
 
 ### How Links Are Tracked
 
-Whenever an entry, term, or global set is saved, SEO Pro scans every field on its blueprint for external URLs and keeps a record of each one, along with exactly where it was found. If a link is later removed from your content, it's removed from that item's list of references automatically — and cleaned up entirely once nothing references it any more.
+Whenever an entry, term, or global set is saved, SEO Pro scans its fields for external URLs and keeps track of where each one was found. If you remove a link from your content, SEO Pro will stop tracking it.
 
 On multi-site installs, links are tracked per site. If the same URL appears in content on two sites, it'll be listed (and checked) once for each.
 
-To scan your existing content for the first time (or re-scan everything), run:
+To re-scan all of your content, run:
 
 ```
 php please seo-pro:scan-broken-links
@@ -441,7 +447,7 @@ You may exclude specific hosts from being tracked at all. Your own site's domain
 
 Excluded hosts are applied as content is scanned, so after changing them, run `php please seo-pro:scan-broken-links` to clean up any links that are already being tracked.
 
-Checks run automatically on your server's scheduler (make sure `php artisan schedule:run` is in your crontab), or you can trigger one manually:
+Checks run automatically using your server's scheduler (as long as the [scheduler](https://statamic.dev/scheduling) is configured), or you can trigger one manually:
 
 ```
 php please seo-pro:check-broken-links
@@ -449,7 +455,9 @@ php please seo-pro:check-broken-links
 
 ### Notifications
 
-SEO Pro can send a collated email of any links that have been broken for at least a day, so a site that's only briefly down won't trigger an email. Add the email addresses that should receive it:
+SEO Pro can email you a summary of your broken links. To avoid emailing you about sites that are only down briefly, links are only included once they've been broken for at least a day.
+
+Add the email addresses that should receive it:
 
 ```php
 // config/statamic/seo-pro.php
@@ -461,7 +469,7 @@ SEO Pro can send a collated email of any links that have been broken for at leas
 ],
 ```
 
-You won't be notified again about an ongoing failure until it recovers and then fails again.
+You'll only be emailed about a broken link once. If it recovers and then breaks again, you'll be emailed about it again.
 
 ### Storage
 
@@ -499,7 +507,6 @@ Product::saved(function (Product $product) {
     ContentScanner::scan(
         type: 'product',
         id: $product->id,
-        title: $product->name,
         values: $product->toArray(),
     );
 });
@@ -511,14 +518,16 @@ Product::deleted(function (Product $product) {
 
 On multi-site installs, you may also pass the `site` the links belong to. Otherwise, the default site is used.
 
-To link to the product from the Broken Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method. Return `null` when the current user isn't allowed to edit it:
+To show the product in the Broken Links listing and email, you'll also need to tell SEO Pro what it's called and where to link. Return `null` from `editUrl` when the current user isn't authorized to edit it:
 
 ```php
 use Statamic\SeoPro\BrokenLinks\Reference;
 
-Reference::resolveEditUrlsUsing('product', function (Reference $reference) {
-    return auth()->user()->can('edit products') ? route('products.edit', $reference->id) : null;
-});
+Reference::resolveUsing(
+    'product',
+    title: fn (Reference $reference) => Product::find($reference->id)?->name,
+    editUrl: fn (Reference $reference) => auth()->user()->can('edit products') ? route('products.edit', $reference->id) : null,
+);
 ```
 
 ## Advanced Configuration
