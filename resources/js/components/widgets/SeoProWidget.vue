@@ -125,7 +125,7 @@ const truncated = ref({});
 
 					<div class="flex flex-wrap items-center gap-2 mb-1">
 						<Button variant="default" size="sm" :text="__('seo-pro::messages.view_report')" :href="report.url" />
-						<Button v-if="report.freshness.stale" variant="ghost" size="sm" icon="plus" :text="__('seo-pro::messages.widget.new_report')" :href="createUrl" />
+						<Button v-if="report.freshness.stale" variant="ghost" size="sm" :text="__('seo-pro::messages.widget.new_report')" :href="createUrl" />
 					</div>
 				</div>
 			</template>
