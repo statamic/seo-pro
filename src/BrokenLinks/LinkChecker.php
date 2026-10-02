@@ -14,27 +14,23 @@ use Throwable;
 class LinkChecker
 {
     /**
-     * Check every link that is due, then send a digest email of anything
-     * newly broken (if enabled). Returns how many links were checked.
+     * Check the most overdue links, then send a digest email of anything
+     * newly broken (if there are recipients). Returns how many links were checked.
      */
     public static function checkDue(): int
     {
-        $batchSize = config('statamic.seo-pro.broken_links.check.batch_size', 100);
-
         $links = Facades\ExternalLink::query()
             ->where('next_check_at', '<=', now())
-            ->orWhereNull('next_check_at')
-            ->get()
-            ->sortBy(fn (ExternalLink $link) => $link->nextCheckAt() ?? now())
-            ->take($batchSize)
-            ->values();
+            ->orderBy('next_check_at')
+            ->limit(config('statamic.seo-pro.broken_links.check.batch_size', 100))
+            ->get();
 
         if ($links->isEmpty()) {
             return 0;
         }
 
-        static::checkLinks($links);
-        static::notifyIfNeeded();
+        self::checkLinks($links);
+        self::notifyIfNeeded();
 
         return $links->count();
     }
@@ -46,21 +42,21 @@ class LinkChecker
         $concurrency = max(1, (int) config('statamic.seo-pro.broken_links.check.concurrency', 10));
 
         $links->chunk($concurrency)->each(function (Collection $chunk) use ($timeout, $userAgent) {
-            $results = static::request($chunk, 'head', $timeout, $userAgent);
+            $results = self::request($chunk, 'head', $timeout, $userAgent);
 
-            $needsRetry = $chunk->filter(fn ($link) => static::shouldRetryWithGet($results[(string) $link->id()] ?? null))->values();
+            $needsRetry = $chunk->filter(fn ($link) => self::shouldRetryWithGet($results[(string) $link->id()] ?? null))->values();
 
             if ($needsRetry->isNotEmpty()) {
-                $results = $results->merge(static::request($needsRetry, 'get', $timeout, $userAgent));
+                $results = $results->merge(self::request($needsRetry, 'get', $timeout, $userAgent));
             }
 
             foreach ($chunk as $link) {
-                static::applyResult($link, $results[(string) $link->id()] ?? null);
+                self::applyResult($link, $results[(string) $link->id()] ?? null);
             }
         });
     }
 
-    protected static function request(Collection $links, string $method, int $timeout, string $userAgent): Collection
+    private static function request(Collection $links, string $method, int $timeout, string $userAgent): Collection
     {
         $responses = Http::pool(function ($pool) use ($links, $method, $timeout, $userAgent) {
             return $links->map(function ($link) use ($pool, $method, $timeout, $userAgent) {
@@ -76,7 +72,7 @@ class LinkChecker
         return collect($responses);
     }
 
-    protected static function shouldRetryWithGet($response): bool
+    private static function shouldRetryWithGet($response): bool
     {
         if ($response instanceof Response) {
             return in_array($response->status(), [403, 405, 501]);
@@ -85,7 +81,7 @@ class LinkChecker
         return true;
     }
 
-    protected static function applyResult(ExternalLink $link, $response): void
+    private static function applyResult(ExternalLink $link, $response): void
     {
         if ($response instanceof Response) {
             $ok = $response->status() >= 200 && $response->status() < 400;
@@ -94,12 +90,12 @@ class LinkChecker
         } else {
             $ok = false;
             $link->statusCode(null);
-            $link->error(static::errorFor($response));
+            $link->error(self::errorFor($response));
         }
 
         $link->status($ok ? ExternalLink::STATUS_OK : ExternalLink::STATUS_FAILING);
         $link->checkedAt(now());
-        $link->nextCheckAt(now()->add(static::frequencyInterval()));
+        $link->nextCheckAt(now()->add(self::frequencyInterval()));
 
         if ($ok) {
             $link->failingSince(null)->notifiedAt(null);
@@ -125,7 +121,7 @@ class LinkChecker
         };
     }
 
-    protected static function frequencyInterval(): CarbonInterval
+    private static function frequencyInterval(): CarbonInterval
     {
         $minutes = [
             'every_15_minutes' => 15,

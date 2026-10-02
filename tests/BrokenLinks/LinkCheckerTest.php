@@ -38,6 +38,26 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
+    public function it_checks_the_most_overdue_links_first_up_to_the_batch_size()
+    {
+        Http::fake(['*' => Http::response()]);
+
+        config()->set('statamic.seo-pro.broken_links.check.batch_size', 2);
+
+        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->nextCheckAt(now()->subMinute())->save();
+        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->nextCheckAt(now()->subDay())->save();
+        Facades\ExternalLink::make()->id('older')->url('https://example.com/older')->nextCheckAt(now()->subHour())->save();
+        Facades\ExternalLink::make()->id('later')->url('https://example.com/later')->nextCheckAt(now()->addHour())->save();
+
+        $this->assertEquals(2, LinkChecker::checkDue());
+
+        $this->assertEquals(ExternalLink::STATUS_OK, Facades\ExternalLink::find('oldest')->status());
+        $this->assertEquals(ExternalLink::STATUS_OK, Facades\ExternalLink::find('older')->status());
+        $this->assertEquals(ExternalLink::STATUS_PENDING, Facades\ExternalLink::find('recent')->status());
+        $this->assertEquals(ExternalLink::STATUS_PENDING, Facades\ExternalLink::find('later')->status());
+    }
+
+    #[Test]
     public function it_records_when_a_link_started_failing()
     {
         Http::fake(['*' => Http::response(status: 404)]);
