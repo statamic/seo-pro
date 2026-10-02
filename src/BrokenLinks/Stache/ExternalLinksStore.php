@@ -8,6 +8,7 @@ use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
+use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\Facades;
 use Statamic\Stache\Stores\BasicStore;
 use Statamic\Support\Arr;
@@ -50,7 +51,7 @@ class ExternalLinksStore extends BasicStore
             ->checkedAt(Arr::get($data, 'checked_at'))
             ->nextCheckAt(Arr::get($data, 'next_check_at'))
             ->notifiedAt(Arr::get($data, 'notified_at'))
-            ->references(Arr::get($data, 'references', []));
+            ->references(collect(Arr::get($data, 'references', []))->map(Reference::fromArray(...)));
     }
 
     protected function extractSiteFromPath(string $path): string

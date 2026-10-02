@@ -114,7 +114,7 @@ class PublishBrokenLinksMigrations extends Command
                         'checked_at' => $link->checkedAt(),
                         'next_check_at' => $link->nextCheckAt(),
                         'notified_at' => $link->notifiedAt(),
-                        'references' => $link->references()->all(),
+                        'references' => $link->references()->map->toArray()->all(),
                         'subjects' => $link->subjects(),
                     ]
                 );

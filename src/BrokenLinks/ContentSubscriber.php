@@ -30,39 +30,31 @@ class ContentSubscriber
 
     public function handleEntrySaved(EntrySaved $event): void
     {
-        ContentScanner::syncEntry($event->entry);
+        ContentScanner::scanEntry($event->entry);
     }
 
     public function handleEntryDeleted(EntryDeleted $event): void
     {
-        $entry = $event->entry;
-
-        ContentScanner::deleteForSubject('entry', (string) $entry->id(), (string) $entry->locale());
+        ContentScanner::forget('entry', $event->entry->id(), $event->entry->locale());
     }
 
     public function handleTermSaved(TermSaved $event): void
     {
-        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::syncTerm($term));
+        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::scanTerm($term));
     }
 
     public function handleTermDeleted(TermDeleted $event): void
     {
-        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::deleteForSubject(
-            'term',
-            (string) $term->id(),
-            (string) $term->locale()
-        ));
+        $event->term->localizations()->each(fn (LocalizedTerm $term) => ContentScanner::forget('term', $term->id(), $term->locale()));
     }
 
     public function handleGlobalVariablesSaved(GlobalVariablesSaved $event): void
     {
-        ContentScanner::syncGlobalVariables($event->variables);
+        ContentScanner::scanGlobal($event->variables);
     }
 
     public function handleGlobalVariablesDeleted(GlobalVariablesDeleted $event): void
     {
-        $variables = $event->variables;
-
-        ContentScanner::deleteForSubject('global', (string) $variables->handle(), (string) $variables->locale());
+        ContentScanner::forget('global', $event->variables->handle(), $event->variables->locale());
     }
 }

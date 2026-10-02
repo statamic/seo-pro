@@ -490,35 +490,34 @@ Then run `php please seo-pro:database-broken-links` to publish the migration and
 
 ### Tracking Additional Content
 
-Out of the box, SEO Pro scans entries, terms and global sets. If you have content stored elsewhere, like in your own Eloquent models, you can have it scanned too by syncing it whenever it's saved or deleted:
+Out of the box, SEO Pro scans entries, terms and global sets. If you have content stored elsewhere, like in your own Eloquent models, you can have it scanned too whenever it's saved, and forgotten when it's deleted:
 
 ```php
-use Statamic\Facades\Site;
 use Statamic\SeoPro\BrokenLinks\ContentScanner;
 
 Product::saved(function (Product $product) {
-    ContentScanner::syncForSubject(
-        'product',                  // a type of your choosing
-        (string) $product->id,
-        Site::default()->handle(),  // the site the links belong to
-        $product->toArray(),        // the values to scan for links
-        null,                       // a blueprint to limit which fields are scanned, or null to scan everything
-        $product->name,             // shown in the listing and notification emails
+    ContentScanner::scan(
+        type: 'product',
+        id: $product->id,
+        title: $product->name,
+        values: $product->toArray(),
     );
 });
 
 Product::deleted(function (Product $product) {
-    ContentScanner::deleteForSubject('product', (string) $product->id, Site::default()->handle());
+    ContentScanner::forget(type: 'product', id: $product->id);
 });
 ```
+
+On multi-site installs, you may also pass the `site` the links belong to. Otherwise, the default site is used.
 
 To link to the product from the Broken Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method. Return `null` when the current user isn't allowed to edit it:
 
 ```php
-use Statamic\SeoPro\BrokenLinks\EditUrls;
+use Statamic\SeoPro\BrokenLinks\Reference;
 
-EditUrls::resolveUsing('product', function (string $id, string $site) {
-    return auth()->user()->can('edit products') ? route('products.edit', $id) : null;
+Reference::resolveEditUrlsUsing('product', function (Reference $reference) {
+    return auth()->user()->can('edit products') ? route('products.edit', $reference->id) : null;
 });
 ```
 

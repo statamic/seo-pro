@@ -14,8 +14,8 @@ use Statamic\Facades\Site;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\Facades\User;
-use Statamic\SeoPro\BrokenLinks\EditUrls;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
+use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Jobs\CheckExternalLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -132,9 +132,9 @@ class ViewBrokenLinksTest extends TestCase
         $globalSet->makeLocalization('default')->save();
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
-            ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
-            ['subject_type' => 'term', 'subject_id' => $term->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'News'],
-            ['subject_type' => 'global', 'subject_id' => 'footer', 'site' => 'default', 'field_path' => 'body', 'title' => 'Footer'],
+            new Reference(type: 'entry', id: $entry->id(), site: 'default', title: 'Hello World', field: 'body'),
+            new Reference(type: 'term', id: $term->id(), site: 'default', title: 'News', field: 'body'),
+            new Reference(type: 'global', id: 'footer', site: 'default', title: 'Footer', field: 'body'),
         ])->save();
 
         $response = $this
@@ -157,7 +157,7 @@ class ViewBrokenLinksTest extends TestCase
         $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
-            ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
+            new Reference(type: 'entry', id: $entry->id(), site: 'default', title: 'Hello World', field: 'body'),
         ])->save();
 
         Role::make('test')
@@ -175,12 +175,12 @@ class ViewBrokenLinksTest extends TestCase
     }
 
     #[Test]
-    public function references_to_custom_subjects_use_the_registered_edit_url_resolver()
+    public function references_to_custom_content_use_the_registered_edit_url_resolver()
     {
-        EditUrls::resolveUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
+        Reference::resolveEditUrlsUsing('product', fn (Reference $reference) => "/cp/products/{$reference->id}/{$reference->site}");
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
-            ['subject_type' => 'product', 'subject_id' => '123', 'site' => 'default', 'field_path' => 'description', 'title' => 'Bobsleigh'],
+            new Reference(type: 'product', id: '123', site: 'default', title: 'Bobsleigh', field: 'description'),
         ])->save();
 
         $response = $this

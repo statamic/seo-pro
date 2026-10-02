@@ -4,6 +4,7 @@ namespace Statamic\SeoPro\BrokenLinks;
 
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Contracts\Globals\Variables;
+use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Facades;
 use Statamic\Taxonomies\LocalizedTerm;
@@ -11,102 +12,90 @@ use Statamic\Taxonomies\LocalizedTerm;
 class ContentScanner
 {
     /**
-     * Extract links from the given subject's field values, and reconcile
-     * stored references so they match reality: for every link still found,
-     * this subject's references on it are rebuilt from scratch; for every
-     * link that *was* referenced by this subject but no longer is, the
-     * reference is dropped (and the link deleted entirely if that was its
-     * last reference anywhere).
+     * Find the external links in the given values, and make sure each one
+     * references this item, removing any references to links it no longer
+     * contains (and deleting links that are no longer referenced at all).
      */
-    public static function syncForSubject(
-        string $subjectType,
-        string $subjectId,
-        string $site,
+    public static function scan(
+        string $type,
+        string $id,
+        string $title,
         array $values,
-        ?Blueprint $blueprint,
-        string $title
+        ?string $site = null,
+        ?Blueprint $blueprint = null,
     ): void {
+        $item = new Reference($type, $id, $site ?? Site::default()->handle(), $title);
+
         $found = LinkExtractor::extract($values, $blueprint)->groupBy('url');
 
         foreach ($found as $url => $rows) {
-            $link = Facades\ExternalLink::findByUrl($url, $site) ?? Facades\ExternalLink::make()
-                ->site($site)
+            $link = Facades\ExternalLink::findByUrl($url, $item->site) ?? Facades\ExternalLink::make()
+                ->site($item->site)
                 ->url($url)
                 ->nextCheckAt(now());
 
-            $otherSubjectsReferences = $link->references()->reject(
-                fn ($reference) => self::referencesSubject($reference, $subjectType, $subjectId, $site)
-            );
-
-            $thisSubjectsReferences = $rows->map(fn ($row) => [
-                'subject_type' => $subjectType,
-                'subject_id' => $subjectId,
-                'site' => $site,
-                'field_path' => $row['field_path'],
-                'title' => $title,
-            ]);
-
-            $link->references($otherSubjectsReferences->concat($thisSubjectsReferences)->values()->all())->save();
+            $link->references($link->references()
+                ->reject(fn (Reference $reference) => $reference->is($item))
+                ->concat($rows->map(fn ($row) => $item->withField($row['field_path']))))
+                ->save();
         }
 
-        self::removeStaleReferences($subjectType, $subjectId, $site, except: $found->keys()->all());
+        self::removeReferences($item, except: $found->keys()->all());
     }
 
-    public static function syncEntry(Entry $entry): void
+    public static function scanEntry(Entry $entry): void
     {
-        self::syncForSubject(
-            'entry',
-            (string) $entry->id(),
-            (string) $entry->locale(),
-            $entry->data()->all(),
-            $entry->blueprint(),
-            (string) ($entry->get('title') ?? $entry->id())
+        self::scan(
+            type: 'entry',
+            id: $entry->id(),
+            title: $entry->get('title') ?? $entry->id(),
+            values: $entry->data()->all(),
+            site: $entry->locale(),
+            blueprint: $entry->blueprint(),
         );
     }
 
-    public static function syncTerm(LocalizedTerm $term): void
+    public static function scanTerm(LocalizedTerm $term): void
     {
-        self::syncForSubject(
-            'term',
-            (string) $term->id(),
-            (string) $term->locale(),
-            $term->data()->all(),
-            $term->blueprint(),
-            (string) ($term->get('title') ?? $term->slug())
+        self::scan(
+            type: 'term',
+            id: $term->id(),
+            title: $term->get('title') ?? $term->slug(),
+            values: $term->data()->all(),
+            site: $term->locale(),
+            blueprint: $term->blueprint(),
         );
     }
 
-    public static function syncGlobalVariables(Variables $variables): void
+    public static function scanGlobal(Variables $variables): void
     {
-        self::syncForSubject(
-            'global',
-            (string) $variables->handle(),
-            (string) $variables->locale(),
-            $variables->data()->all(),
-            $variables->blueprint(),
-            (string) $variables->title()
+        self::scan(
+            type: 'global',
+            id: $variables->handle(),
+            title: $variables->title(),
+            values: $variables->data()->all(),
+            site: $variables->locale(),
+            blueprint: $variables->blueprint(),
         );
     }
 
     /**
-     * Remove every reference belonging to a deleted subject, cleaning up
-     * any link that's now unreferenced anywhere.
+     * Remove every reference to the given item, deleting any links that
+     * are no longer referenced at all.
      */
-    public static function deleteForSubject(string $subjectType, string $subjectId, string $site): void
+    public static function forget(string $type, string $id, ?string $site = null): void
     {
-        self::removeStaleReferences($subjectType, $subjectId, $site, except: []);
+        self::removeReferences(new Reference($type, $id, $site ?? Site::default()->handle()), except: []);
     }
 
-    private static function removeStaleReferences(string $subjectType, string $subjectId, string $site, array $except): void
+    private static function removeReferences(Reference $item, array $except): void
     {
         Facades\ExternalLink::query()
-            ->whereJsonContains('subjects', ExternalLink::subjectKey($subjectType, $subjectId, $site))
+            ->whereJsonContains('subjects', $item->key())
             ->get()
             ->reject(fn (ExternalLink $link) => in_array($link->url(), $except))
-            ->each(function (ExternalLink $link) use ($subjectType, $subjectId, $site) {
-                $remaining = $link->references()->reject(
-                    fn ($reference) => self::referencesSubject($reference, $subjectType, $subjectId, $site)
-                );
+            ->each(function (ExternalLink $link) use ($item) {
+                $remaining = $link->references()->reject(fn (Reference $reference) => $reference->is($item));
 
                 if ($remaining->isEmpty()) {
                     $link->delete();
@@ -114,14 +103,7 @@ class ContentScanner
                     return;
                 }
 
-                $link->references($remaining->values()->all())->save();
+                $link->references($remaining)->save();
             });
-    }
-
-    private static function referencesSubject(array $reference, string $subjectType, string $subjectId, string $site): bool
-    {
-        return $reference['subject_type'] === $subjectType
-            && $reference['subject_id'] === $subjectId
-            && $reference['site'] === $site;
     }
 }

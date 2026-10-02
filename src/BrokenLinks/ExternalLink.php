@@ -118,30 +118,18 @@ class ExternalLink
         return null;
     }
 
-    /**
-     * Every place this link has been found: [['subject_type', 'subject_id', 'site', 'field_path', 'title']].
-     */
     public function references($references = null)
     {
         return $this
             ->fluentlyGetOrSet('references')
-            ->getter(fn ($value) => collect($value ?? []))
-            ->setter(fn ($value) => collect($value)->values()->all())
+            ->getter(fn ($references) => collect($references))
+            ->setter(fn ($references) => collect($references)->values()->all())
             ->args(func_get_args());
     }
 
     public function subjects(): array
     {
-        return $this->references()
-            ->map(fn ($reference) => self::subjectKey($reference['subject_type'], $reference['subject_id'], $reference['site']))
-            ->unique()
-            ->values()
-            ->all();
-    }
-
-    public static function subjectKey(string $subjectType, string $subjectId, string $site): string
-    {
-        return "{$subjectType}::{$subjectId}::{$site}";
+        return $this->references()->map->key()->unique()->values()->all();
     }
 
     public function save(): bool
@@ -185,7 +173,7 @@ class ExternalLink
             'checked_at' => $this->checkedAt(),
             'next_check_at' => $this->nextCheckAt(),
             'notified_at' => $this->notifiedAt(),
-            'references' => $this->references()->isEmpty() ? null : $this->references()->all(),
+            'references' => $this->references()->map->toArray()->all() ?: null,
         ]);
     }
 }

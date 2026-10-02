@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Stache;
 use Statamic\SeoPro\BrokenLinks\LinkChecker;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
+use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Notifications\BrokenLinksDigest;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -80,7 +81,7 @@ class LinkCheckerTest extends TestCase
 
         Http::fake(['*' => function () {
             Facades\ExternalLink::find('abc')->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'default', 'field_path' => 'body', 'title' => 'Home'],
+                new Reference(type: 'entry', id: '1', site: 'default', title: 'Home', field: 'body'),
             ])->save();
 
             return Http::response();
@@ -247,8 +248,8 @@ class LinkCheckerTest extends TestCase
             ->url('https://example.com/broken')
             ->statusCode(404)
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'default', 'field_path' => 'body', 'title' => 'Home'],
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'default', 'field_path' => 'sidebar', 'title' => 'Home'],
+                new Reference(type: 'entry', id: '1', site: 'default', title: 'Home', field: 'body'),
+                new Reference(type: 'entry', id: '1', site: 'default', title: 'Home', field: 'sidebar'),
             ]);
 
         $mail = (new BrokenLinksDigest(collect([$link])))->toMail(null);

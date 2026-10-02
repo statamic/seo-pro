@@ -55,7 +55,7 @@ class ContentSubscriberTest extends TestCase
 
         $this->assertCount(1, Facades\ExternalLink::all());
         $this->assertEquals('https://example.com/hello', Facades\ExternalLink::all()->first()->url());
-        $this->assertEquals($entry->id(), Facades\ExternalLink::all()->first()->references()->first()['subject_id']);
+        $this->assertEquals($entry->id(), Facades\ExternalLink::all()->first()->references()->first()->id);
 
         $entry->delete();
 
@@ -84,7 +84,7 @@ class ContentSubscriberTest extends TestCase
             ->save();
 
         $this->assertCount(1, Facades\ExternalLink::all());
-        $this->assertEquals('term', Facades\ExternalLink::all()->first()->references()->first()['subject_type']);
+        $this->assertEquals('term', Facades\ExternalLink::all()->first()->references()->first()->type);
     }
 
     #[Test]
@@ -140,6 +140,6 @@ class ContentSubscriberTest extends TestCase
             ->save();
 
         $this->assertCount(1, Facades\ExternalLink::all());
-        $this->assertEquals('global', Facades\ExternalLink::all()->first()->references()->first()['subject_type']);
+        $this->assertEquals('global', Facades\ExternalLink::all()->first()->references()->first()->type);
     }
 }

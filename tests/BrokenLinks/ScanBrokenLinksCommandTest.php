@@ -68,7 +68,7 @@ class ScanBrokenLinksCommandTest extends TestCase
 
         $this->assertEquals(
             ['entry', 'global', 'term'],
-            Facades\ExternalLink::all()->flatMap->references()->pluck('subject_type')->sort()->values()->all()
+            Facades\ExternalLink::all()->flatMap->references()->pluck('type')->sort()->values()->all()
         );
     }
 }

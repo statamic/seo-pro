@@ -44,7 +44,7 @@ class ScanBrokenLinksCommand extends Command
                     ->get();
 
                 foreach ($entries as $entry) {
-                    ContentScanner::syncEntry($entry);
+                    ContentScanner::scanEntry($entry);
 
                     $count++;
                 }
@@ -66,7 +66,7 @@ class ScanBrokenLinksCommand extends Command
                     ->get();
 
                 foreach ($terms as $term) {
-                    ContentScanner::syncTerm($term);
+                    ContentScanner::scanTerm($term);
 
                     $count++;
                 }
@@ -86,7 +86,7 @@ class ScanBrokenLinksCommand extends Command
                     continue;
                 }
 
-                ContentScanner::syncGlobalVariables($variables);
+                ContentScanner::scanGlobal($variables);
 
                 $count++;
             }

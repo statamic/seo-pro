@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Statamic\SeoPro\BrokenLinks\Reference;
 
 class BrokenLinksDigest extends Notification
 {
@@ -30,7 +31,7 @@ class BrokenLinksDigest extends Notification
             $message->line($link->url().' — '.$link->response());
 
             $references = $link->references()
-                ->map(fn ($reference) => $reference['title'] ?? $reference['subject_id'])
+                ->map(fn (Reference $reference) => $reference->title)
                 ->unique()
                 ->implode(', ');
 

@@ -8,6 +8,7 @@ use Statamic\SeoPro\BrokenLinks\Eloquent\ExternalLinkModel;
 use Statamic\SeoPro\BrokenLinks\Eloquent\ExternalLinkRepository;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
+use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\Facades;
 use Tests\TestCase;
 
@@ -108,7 +109,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $link = Facades\ExternalLink::make()
             ->url('https://example.com/broken')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home'],
+                new Reference(type: 'entry', id: '1', site: 'en', title: 'Home', field: 'body'),
             ]);
 
         $this->repo->save($link);
@@ -116,16 +117,16 @@ class ExternalLinkRepositoryTest extends TestCase
         $fresh = $this->repo->find($link->id());
 
         $this->assertCount(1, $fresh->references());
-        $this->assertEquals('entry', $fresh->references()->first()['subject_type']);
+        $this->assertEquals('entry', $fresh->references()->first()->type);
     }
 
     #[Test]
-    public function can_query_links_by_referenced_subject()
+    public function can_query_links_by_the_items_referencing_them()
     {
         $link = Facades\ExternalLink::make()
             ->url('https://example.com/broken')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '1', 'site' => 'en', 'field_path' => 'body', 'title' => 'Home'],
+                new Reference(type: 'entry', id: '1', site: 'en', title: 'Home', field: 'body'),
             ]);
 
         $this->repo->save($link);
@@ -133,10 +134,10 @@ class ExternalLinkRepositoryTest extends TestCase
         $this->repo->save(Facades\ExternalLink::make()
             ->url('https://example.com/other')
             ->references([
-                ['subject_type' => 'entry', 'subject_id' => '2', 'site' => 'en', 'field_path' => 'body', 'title' => 'About'],
+                new Reference(type: 'entry', id: '2', site: 'en', title: 'About', field: 'body'),
             ]));
 
-        $links = $this->repo->query()->whereJsonContains('subjects', ExternalLink::subjectKey('entry', '1', 'en'))->get();
+        $links = $this->repo->query()->whereJsonContains('subjects', (new Reference(type: 'entry', id: '1', site: 'en'))->key())->get();
 
         $this->assertEquals([$link->id()], $links->map->id()->all());
     }

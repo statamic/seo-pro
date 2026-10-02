@@ -13,11 +13,11 @@ class ContentScannerTest extends TestCase
     use PreventsSavingStacheItemsToDisk;
 
     #[Test]
-    public function it_creates_a_link_and_reference_when_scanning_a_subject()
+    public function it_creates_a_link_and_reference_when_scanning_an_item()
     {
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
             'body' => 'See https://example.com/page for details.',
-        ], null, 'My Entry');
+        ]);
 
         $this->assertCount(1, Facades\ExternalLink::all());
 
@@ -26,72 +26,71 @@ class ContentScannerTest extends TestCase
         $this->assertCount(1, $link->references());
 
         $reference = $link->references()->first();
-        $this->assertEquals('entry', $reference['subject_type']);
-        $this->assertEquals('1', $reference['subject_id']);
-        $this->assertEquals('My Entry', $reference['title']);
-        $this->assertArrayNotHasKey('edit_url', $reference);
+        $this->assertEquals('entry', $reference->type);
+        $this->assertEquals('1', $reference->id);
+        $this->assertEquals('My Entry', $reference->title);
     }
 
     #[Test]
     public function it_tracks_the_same_url_separately_for_each_site()
     {
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
             'body' => 'See https://example.com/page for details.',
-        ], null, 'My Entry');
+        ]);
 
-        ContentScanner::syncForSubject('entry', '1-fr', 'fr', [
+        ContentScanner::scan(type: 'entry', id: '1-fr', site: 'fr', title: 'Mon Entrée', values: [
             'body' => 'Voir https://example.com/page pour plus de détails.',
-        ], null, 'Mon Entrée');
+        ]);
 
         $this->assertEquals(['en', 'fr'], Facades\ExternalLink::all()->map->site()->sort()->values()->all());
-        $this->assertEquals('My Entry', Facades\ExternalLink::query()->where('site', 'en')->first()->references()->first()['title']);
-        $this->assertEquals('Mon Entrée', Facades\ExternalLink::query()->where('site', 'fr')->first()->references()->first()['title']);
+        $this->assertEquals('My Entry', Facades\ExternalLink::query()->where('site', 'en')->first()->references()->first()->title);
+        $this->assertEquals('Mon Entrée', Facades\ExternalLink::query()->where('site', 'fr')->first()->references()->first()->title);
     }
 
     #[Test]
     public function it_removes_stale_references_and_orphaned_links_when_content_changes()
     {
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
             'body' => 'See https://example.com/page for details.',
-        ], null, 'My Entry');
+        ]);
 
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
             'body' => 'No links here any more.',
-        ], null, 'My Entry');
+        ]);
 
         $this->assertCount(0, Facades\ExternalLink::all());
     }
 
     #[Test]
-    public function it_keeps_a_link_when_another_subject_still_references_it()
+    public function it_keeps_a_link_when_another_item_still_references_it()
     {
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'Entry One', values: [
             'body' => 'https://shared.example.com',
-        ], null, 'Entry One');
+        ]);
 
-        ContentScanner::syncForSubject('entry', '2', 'en', [
+        ContentScanner::scan(type: 'entry', id: '2', site: 'en', title: 'Entry Two', values: [
             'body' => 'https://shared.example.com',
-        ], null, 'Entry Two');
+        ]);
 
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'Entry One', values: [
             'body' => 'No links.',
-        ], null, 'Entry One');
+        ]);
 
         $this->assertCount(1, Facades\ExternalLink::all());
 
         $link = Facades\ExternalLink::all()->first();
         $this->assertCount(1, $link->references());
-        $this->assertEquals('2', $link->references()->first()['subject_id']);
+        $this->assertEquals('2', $link->references()->first()->id);
     }
 
     #[Test]
-    public function it_removes_all_references_and_orphaned_links_when_a_subject_is_deleted()
+    public function it_removes_all_references_and_orphaned_links_when_an_item_is_forgotten()
     {
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
             'body' => 'https://example.com/gone',
-        ], null, 'My Entry');
+        ]);
 
-        ContentScanner::deleteForSubject('entry', '1', 'en');
+        ContentScanner::forget(type: 'entry', id: '1', site: 'en');
 
         $this->assertCount(0, Facades\ExternalLink::all());
     }
@@ -99,17 +98,17 @@ class ContentScannerTest extends TestCase
     #[Test]
     public function it_updates_the_reference_title_without_duplicating_it()
     {
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'Old Title', values: [
             'body' => 'https://example.com/page',
-        ], null, 'Old Title');
+        ]);
 
-        ContentScanner::syncForSubject('entry', '1', 'en', [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'New Title', values: [
             'body' => 'https://example.com/page',
-        ], null, 'New Title');
+        ]);
 
         $link = Facades\ExternalLink::all()->first();
 
         $this->assertCount(1, $link->references());
-        $this->assertEquals('New Title', $link->references()->first()['title']);
+        $this->assertEquals('New Title', $link->references()->first()->title);
     }
 }
