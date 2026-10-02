@@ -42,7 +42,7 @@ class ExternalLink implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('site')
-            ->getter(fn (?string $site): string => $site ?? Site::default()->handle())
+            ->getter(fn ($site): string => $site ?? Site::default()->handle())
             ->args(func_get_args());
     }
 
@@ -119,7 +119,13 @@ class ExternalLink implements ContainsQueryableValues
             ->getter(fn (array $references): Collection => collect($references))
             ->setter(function ($references): array {
                 return collect($references)
-                    ->map(fn (Reference|string $reference): Reference => $reference instanceof Reference ? $reference : Reference::fromKey($reference))
+                    ->map(function (Reference|string $reference): Reference {
+                        if (is_string($reference)) {
+                            $reference = Reference::fromKey($reference);
+                        }
+
+                        return $reference;
+                    })
                     ->values()
                     ->all();
             })

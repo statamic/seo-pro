@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seo_pro_external_links', function (Blueprint $table): void {
+        Schema::create('seo_pro_external_links', function (Blueprint $table) {
             $table->id();
             $table->string('site');
             $table->text('url');

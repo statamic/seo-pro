@@ -18,7 +18,7 @@ class RecheckAllBrokenLinksController extends CpController
         Facades\ExternalLink::query()
             ->pluck('id')
             ->chunk(config('statamic.seo-pro.broken_links.check.batch_size', 100))
-            ->each(fn (Collection $ids): PendingDispatch => CheckExternalLinks::dispatch($ids->values()->all()));
+            ->each(fn (Collection $ids) => CheckExternalLinks::dispatch($ids->values()->all()));
 
         $message = config('queue.default') === 'sync'
             ? __('seo-pro::messages.broken_links_rechecked')
