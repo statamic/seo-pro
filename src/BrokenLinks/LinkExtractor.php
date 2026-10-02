@@ -5,6 +5,7 @@ namespace Statamic\SeoPro\BrokenLinks;
 use Illuminate\Support\Collection;
 use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint;
+use Statamic\Support\Str;
 
 class LinkExtractor
 {
@@ -83,6 +84,10 @@ class LinkExtractor
 
         $host = strtolower($parts['host']);
 
+        if (! self::isPublicHost($host)) {
+            return false;
+        }
+
         foreach (array_merge(self::internalHosts(), $excludedHosts) as $blocked) {
             $blocked = strtolower(ltrim((string) $blocked, '.'));
 
@@ -92,6 +97,17 @@ class LinkExtractor
         }
 
         return true;
+    }
+
+    private static function isPublicHost(string $host): bool
+    {
+        $host = trim($host, '[]');
+
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return (bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        }
+
+        return str_contains($host, '.') && ! Str::endsWith($host, ['.local', '.localhost', '.internal']);
     }
 
     private static function internalHosts(): array

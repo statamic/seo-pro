@@ -84,6 +84,26 @@ class LinkExtractorTest extends TestCase
     }
 
     #[Test]
+    public function it_excludes_links_to_private_and_internal_hosts()
+    {
+        $found = LinkExtractor::extract([
+            'body' => implode(' ', [
+                'http://127.0.0.1/admin',
+                'http://169.254.169.254/latest/meta-data',
+                'http://10.0.0.5:8080',
+                'http://[::1]/',
+                'http://localhost:3000',
+                'http://redis:6379',
+                'http://printer.local',
+                'http://app.internal',
+                'https://example.com/page',
+            ]),
+        ], null);
+
+        $this->assertEquals(['https://example.com/page'], $found->pluck('url')->all());
+    }
+
+    #[Test]
     public function it_excludes_links_to_the_sites_own_host_when_the_site_url_is_relative()
     {
         $found = LinkExtractor::extract([

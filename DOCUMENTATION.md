@@ -429,7 +429,7 @@ You can configure how often links are checked, along with the request timeout an
 ],
 ```
 
-You may exclude specific hosts from being tracked at all — your own site's domain(s) are already excluded automatically:
+You may exclude specific hosts from being tracked at all. Your own site's domain(s) are already excluded automatically, along with `localhost`, private IP addresses and internal hostnames:
 
 ```php
 // config/statamic/seo-pro.php
