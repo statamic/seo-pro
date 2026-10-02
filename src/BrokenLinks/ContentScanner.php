@@ -17,7 +17,7 @@ class ContentScanner
     ): void {
         $item = new Reference($type, $id, $site ?? Site::default()->handle());
 
-        $urls = LinkExtractor::extract($values, $blueprint)->pluck('url')->unique();
+        $urls = app(LinkExtractor::class)->extract($values, $blueprint);
 
         foreach ($urls as $url) {
             $link = Facades\ExternalLink::findByUrl($url, $item->site) ?? Facades\ExternalLink::make()

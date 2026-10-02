@@ -3,6 +3,7 @@
 namespace Tests\BrokenLinks;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Blueprint;
 use Statamic\SeoPro\BrokenLinks\LinkExtractor;
 use Tests\TestCase;
 
@@ -11,22 +12,22 @@ class LinkExtractorTest extends TestCase
     #[Test]
     public function it_finds_external_links_in_flat_field_values()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'title' => 'Hello world',
             'body' => 'Check out https://example.com/page for more.',
             'link' => 'https://another-example.org',
-        ], null);
+        ]);
 
         $this->assertEquals([
             'https://example.com/page',
             'https://another-example.org',
-        ], $found->pluck('url')->all());
+        ], $found->all());
     }
 
     #[Test]
     public function it_finds_links_nested_inside_arrays_like_bard_grid_values()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'content' => [
                 ['type' => 'paragraph', 'content' => [
                     ['type' => 'text', 'text' => 'link', 'marks' => [
@@ -34,17 +35,34 @@ class LinkExtractorTest extends TestCase
                     ]],
                 ]],
             ],
-        ], null);
+        ]);
 
-        $this->assertEquals(['https://nested.example.com'], $found->pluck('url')->all());
+        $this->assertEquals(['https://nested.example.com'], $found->all());
+    }
+
+    #[Test]
+    public function it_only_looks_in_fields_on_the_blueprint_when_given_one()
+    {
+        $blueprint = Blueprint::make()->setContents([
+            'fields' => [
+                ['handle' => 'body', 'field' => ['type' => 'textarea']],
+            ],
+        ]);
+
+        $found = (new LinkExtractor)->extract([
+            'body' => 'https://example.com/page',
+            'internal_notes' => 'https://example.com/elsewhere',
+        ], $blueprint);
+
+        $this->assertEquals(['https://example.com/page'], $found->all());
     }
 
     #[Test]
     public function it_ignores_non_http_schemes_and_relative_paths()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'body' => 'mailto:test@example.com tel:+123456 javascript:alert(1) /relative/path #anchor',
-        ], null);
+        ]);
 
         $this->assertTrue($found->isEmpty());
     }
@@ -52,9 +70,9 @@ class LinkExtractorTest extends TestCase
     #[Test]
     public function it_deduplicates_the_same_url_found_twice_in_the_same_field()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'body' => 'https://example.com and again https://example.com',
-        ], null);
+        ]);
 
         $this->assertCount(1, $found);
     }
@@ -62,31 +80,31 @@ class LinkExtractorTest extends TestCase
     #[Test]
     public function it_trims_trailing_sentence_punctuation_off_matched_urls()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'body' => 'See https://example.com/page.',
-        ], null);
+        ]);
 
-        $this->assertEquals('https://example.com/page', $found->first()['url']);
+        $this->assertEquals('https://example.com/page', $found->first());
     }
 
     #[Test]
     public function it_keeps_parentheses_that_are_part_of_the_url()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'body' => 'See https://en.wikipedia.org/wiki/Foo_(bar) and [this](https://example.com/page) (or https://example.com/other).',
-        ], null);
+        ]);
 
         $this->assertEquals([
             'https://en.wikipedia.org/wiki/Foo_(bar)',
             'https://example.com/page',
             'https://example.com/other',
-        ], $found->pluck('url')->all());
+        ], $found->all());
     }
 
     #[Test]
     public function it_excludes_links_to_private_and_internal_hosts()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'body' => implode(' ', [
                 'http://127.0.0.1/admin',
                 'http://169.254.169.254/latest/meta-data',
@@ -98,26 +116,30 @@ class LinkExtractorTest extends TestCase
                 'http://app.internal',
                 'https://example.com/page',
             ]),
-        ], null);
+        ]);
 
-        $this->assertEquals(['https://example.com/page'], $found->pluck('url')->all());
+        $this->assertEquals(['https://example.com/page'], $found->all());
     }
 
     #[Test]
     public function it_excludes_links_to_the_sites_own_host_when_the_site_url_is_relative()
     {
-        $found = LinkExtractor::extract([
+        $found = (new LinkExtractor)->extract([
             'body' => 'See http://cool-runnings.com/about and https://example.com/page.',
-        ], null);
+        ]);
 
-        $this->assertEquals(['https://example.com/page'], $found->pluck('url')->all());
+        $this->assertEquals(['https://example.com/page'], $found->all());
     }
 
     #[Test]
-    public function it_excludes_hosts_passed_as_excluded_including_subdomains()
+    public function it_excludes_hosts_listed_in_the_config_including_their_subdomains()
     {
-        $this->assertFalse(LinkExtractor::isExternal('https://sub.blocked.com/path', ['blocked.com']));
-        $this->assertFalse(LinkExtractor::isExternal('https://blocked.com', ['blocked.com']));
-        $this->assertTrue(LinkExtractor::isExternal('https://example.com', ['blocked.com']));
+        config()->set('statamic.seo-pro.broken_links.excluded_hosts', ['blocked.com']);
+
+        $found = (new LinkExtractor)->extract([
+            'body' => 'https://sub.blocked.com/path https://blocked.com https://example.com',
+        ]);
+
+        $this->assertEquals(['https://example.com'], $found->all());
     }
 }
