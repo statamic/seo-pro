@@ -3,6 +3,7 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
 use Statamic\SeoPro\Cascade;
@@ -43,6 +44,24 @@ class CascadeTest extends LocalizedTestCase
 
         $this->assertSame([0], array_keys($data['alternate_locales']));
         $this->assertSame('it', $data['alternate_locales'][0]['hreflang']);
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/687
+     */
+    #[Test]
+    public function it_excludes_alternate_locales_without_urls()
+    {
+        $collection = tap(Collection::make('snippets')->sites(['default', 'french']))->save();
+        $entry = tap(Entry::make()->collection($collection)->locale('default')->slug('banner'))->save();
+        $entry->makeLocalization('french')->save();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->withCurrent($entry)
+            ->get();
+
+        $this->assertEmpty($data['alternate_locales']);
     }
 
     #[Test]
