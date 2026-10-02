@@ -2,7 +2,6 @@
 
 namespace Statamic\SeoPro\BrokenLinks\Eloquent;
 
-use Statamic\Facades\Site;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkQueryBuilder;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkRepository as RepositoryContract;
@@ -29,10 +28,6 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
 
     public function save(ExternalLink $link): void
     {
-        if (! $link->site()) {
-            $link->site(Site::default()->handle());
-        }
-
         $model = $this->toModel($link);
         $model->save();
 
