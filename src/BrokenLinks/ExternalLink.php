@@ -11,9 +11,6 @@ use Statamic\Data\TracksQueriedRelations;
 use Statamic\Facades\Site;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Blueprint;
-use Statamic\SeoPro\Events\ExternalLinkCreated;
-use Statamic\SeoPro\Events\ExternalLinkDeleted;
-use Statamic\SeoPro\Events\ExternalLinkSaved;
 use Statamic\SeoPro\Facades\ExternalLink as ExternalLinkFacade;
 use Statamic\Support\Arr;
 use Statamic\Support\Traits\FluentlyGetsAndSets;
@@ -166,15 +163,7 @@ class ExternalLink
 
     public function save(): bool
     {
-        $isNew = is_null(ExternalLinkFacade::find($this->id()));
-
         ExternalLinkFacade::save($this);
-
-        if ($isNew) {
-            ExternalLinkCreated::dispatch($this);
-        }
-
-        ExternalLinkSaved::dispatch($this);
 
         return true;
     }
@@ -182,8 +171,6 @@ class ExternalLink
     public function delete(): bool
     {
         ExternalLinkFacade::delete($this);
-
-        ExternalLinkDeleted::dispatch($this);
 
         return true;
     }
