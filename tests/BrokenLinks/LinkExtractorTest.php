@@ -10,7 +10,7 @@ use Tests\TestCase;
 class LinkExtractorTest extends TestCase
 {
     #[Test]
-    public function it_finds_external_links_in_flat_field_values()
+    public function it_finds_external_links_in_values()
     {
         $found = (new LinkExtractor)->extract([
             'title' => 'Hello world',
@@ -25,7 +25,7 @@ class LinkExtractorTest extends TestCase
     }
 
     #[Test]
-    public function it_finds_links_nested_inside_arrays_like_bard_grid_values()
+    public function it_finds_links_inside_nested_fields()
     {
         $found = (new LinkExtractor)->extract([
             'content' => [

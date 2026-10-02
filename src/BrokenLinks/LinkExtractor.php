@@ -10,7 +10,7 @@ use Statamic\Support\Str;
 
 class LinkExtractor
 {
-    const URL_REGEX = '/\bhttps?:\/\/[^\s"\'<>\]]+/i';
+    const string URL_REGEX = '/\bhttps?:\/\/[^\s"\'<>\]]+/i';
 
     public function extract(array $values, ?Blueprint $blueprint = null): Collection
     {

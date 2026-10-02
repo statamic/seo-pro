@@ -270,13 +270,6 @@ class ServiceProvider extends AddonServiceProvider
             Statamic::repository(ExternalLinkRepository::class, BrokenLinks\Eloquent\ExternalLinkRepository::class);
         }
 
-        $this->registerBrokenLinkReferences();
-
-        return $this;
-    }
-
-    private function registerBrokenLinkReferences(): void
-    {
         Reference::resolveUsing(
             type: 'entry',
             title: fn (Reference $reference): ?string => Entry::find($reference->id)?->value('title'),
@@ -306,6 +299,8 @@ class ServiceProvider extends AddonServiceProvider
                 return $variables && User::current()->can('edit', $variables) ? $variables->editUrl() : null;
             },
         );
+
+        return $this;
     }
 
     protected function bootRouteBindings(): static

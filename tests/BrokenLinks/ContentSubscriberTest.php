@@ -22,12 +22,6 @@ class ContentSubscriberTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        // Setting only `enabled` here would work fine on its own, but since
-        // ServiceProvider::bootAddonConfig() later merges config/seo-pro.php
-        // with array_merge (not recursive), whichever keys we *don't* also
-        // set here get dropped from the whole `broken_links` array - notably
-        // `directory`, which the Stache store needs to be configured before
-        // PreventsSavingStacheItemsToDisk redirects it for this test.
         $app['config']->set('statamic.seo-pro.broken_links.enabled', true);
         $app['config']->set('statamic.seo-pro.broken_links.directory', storage_path('statamic/seopro/external-links'));
     }
