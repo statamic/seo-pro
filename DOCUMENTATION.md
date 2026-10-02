@@ -155,13 +155,29 @@ Depending on the size of your site, generating a report may take a while. To pre
 
 ### Widget
 
-You may add a reports widget to your dashboard to get a quick insight into your site's SEO status. Add the following to your `widgets` array within `config/statamic/cp.php` to show the latest report's score:
+You may add a reports widget to your dashboard to get a quick insight into your site's SEO status. It shows when the latest report was generated, its score, and the rules that didn't pass. Each rule links to the report, filtered by that rule, except for the site name, which links to the site defaults (if you have permission to edit them).
+
+Add the following to your `widgets` array within `config/statamic/cp.php`:
 
 ```php
 'widgets' => [
     [
         'type' => 'seo_pro',
         'width' => 50,
+    ]
+],
+```
+
+The widget is only shown to users who are allowed to view reports. You may customize it with the following options:
+
+```php
+'widgets' => [
+    [
+        'type' => 'seo_pro',
+        'width' => 50,
+        'title' => 'SEO Check', // Defaults to "SEO Pro".
+        'show_rules' => false, // Defaults to true. Set to false to only show the date and the score.
+        'stale_after_days' => 60, // Defaults to 30. After this many days, the widget suggests generating a new report.
     ]
 ],
 ```
@@ -413,7 +429,7 @@ You may also override the default `meta.antlers.html` view, though it is not pub
 
 A `sitemap.xml` route is automatically generated for you.
 
-When using multi-site, SEO Pro creates unique sitemaps for each _domain_. If you use multi-site with one domain, a _single_ sitemap gets created and the [`hreflang` attribute](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) is getting added to the XML making it easier for search engines to discover localizations of content across your sites. 
+When using multi-site, SEO Pro creates unique sitemaps for each _domain_. If you use multi-site with one domain, a _single_ sitemap gets created and the [`hreflang` attribute](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) is getting added to the XML making it easier for search engines to discover localizations of content across your sites.
 
 Probably easier to understand with an example:
 
