@@ -465,7 +465,9 @@ class Cascade
                 && (! $this->taxonomy->collection() || $this->taxonomy->collection()->sites()->contains($locale));
         }
 
-        return $this->model->in($locale)?->status() === 'published';
+        $localization = $this->model->in($locale);
+
+        return $localization?->status() === 'published' && $localization->url();
     }
 
     private function absoluteUrlIn(SiteInstance $site): string
