@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\BrokenLinks;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
@@ -17,10 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 class ExternalLink
 {
     use ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
-
-    const STATUS_PENDING = 'pending';
-    const STATUS_OK = 'ok';
-    const STATUS_FAILING = 'failing';
 
     protected $id;
     protected $site;
@@ -60,7 +55,7 @@ class ExternalLink
     {
         return $this
             ->fluentlyGetOrSet('status')
-            ->getter(fn ($status) => $status ?? self::STATUS_PENDING)
+            ->getter(fn ($status) => $status ?? LinkStatus::Pending)
             ->args(func_get_args());
     }
 
@@ -183,7 +178,7 @@ class ExternalLink
     {
         return Arr::removeNullValues([
             'url' => $this->url(),
-            'status' => $this->status(),
+            'status' => $this->status()->value,
             'status_code' => $this->statusCode(),
             'error' => $this->error(),
             'failing_since' => $this->failingSince(),
@@ -192,22 +187,5 @@ class ExternalLink
             'notified_at' => $this->notifiedAt(),
             'references' => $this->references()->isEmpty() ? null : $this->references()->all(),
         ]);
-    }
-
-    public function getQueryableValue(string $field)
-    {
-        if (! in_array($method = Str::camel($field), $this->queryableMethods())) {
-            return null;
-        }
-
-        return $this->{$method}();
-    }
-
-    private function queryableMethods(): array
-    {
-        return [
-            'id', 'site', 'url', 'status', 'failingSince',
-            'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
-        ];
     }
 }

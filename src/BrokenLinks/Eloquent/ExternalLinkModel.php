@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\BrokenLinks\Eloquent;
 
 use Illuminate\Database\Eloquent\Model;
+use Statamic\SeoPro\BrokenLinks\LinkStatus;
 
 class ExternalLinkModel extends Model
 {
@@ -18,6 +19,7 @@ class ExternalLinkModel extends Model
     public function casts(): array
     {
         return [
+            'status' => LinkStatus::class,
             'status_code' => 'integer',
             'failing_since' => 'datetime',
             'checked_at' => 'datetime',

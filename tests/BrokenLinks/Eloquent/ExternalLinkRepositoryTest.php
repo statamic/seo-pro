@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Statamic\SeoPro\BrokenLinks\Eloquent\ExternalLinkModel;
 use Statamic\SeoPro\BrokenLinks\Eloquent\ExternalLinkRepository;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
+use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
 use Tests\TestCase;
 
@@ -41,7 +42,7 @@ class ExternalLinkRepositoryTest extends TestCase
         ExternalLinkModel::create([
             'site' => 'default',
             'url' => 'https://example.com/broken',
-            'status' => 'failing',
+            'status' => 'broken',
             'status_code' => 404,
             'failing_since' => '2026-09-01 12:00:00',
             'references' => [],
@@ -52,7 +53,7 @@ class ExternalLinkRepositoryTest extends TestCase
 
         $this->assertInstanceOf(ExternalLink::class, $link);
         $this->assertEquals('https://example.com/broken', $link->url());
-        $this->assertEquals('failing', $link->status());
+        $this->assertEquals(LinkStatus::Broken, $link->status());
         $this->assertEquals(404, $link->statusCode());
         $this->assertEquals('2026-09-01 12:00:00', $link->failingSince()->toDateTimeString());
     }
@@ -74,14 +75,14 @@ class ExternalLinkRepositoryTest extends TestCase
     {
         $link = Facades\ExternalLink::make()
             ->url('https://example.com/broken')
-            ->status(ExternalLink::STATUS_FAILING)
+            ->status(LinkStatus::Broken)
             ->statusCode(500);
 
         $this->repo->save($link);
 
         $this->assertDatabaseHas('seo_pro_external_links', [
             'url' => 'https://example.com/broken',
-            'status' => 'failing',
+            'status' => 'broken',
             'status_code' => 500,
         ]);
 
@@ -154,13 +155,13 @@ class ExternalLinkRepositoryTest extends TestCase
     #[Test]
     public function saving_an_existing_link_updates_it_rather_than_duplicating()
     {
-        $link = Facades\ExternalLink::make()->url('https://example.com/broken')->status(ExternalLink::STATUS_OK);
+        $link = Facades\ExternalLink::make()->url('https://example.com/broken')->status(LinkStatus::Ok);
         $this->repo->save($link);
 
-        $link->status(ExternalLink::STATUS_FAILING);
+        $link->status(LinkStatus::Broken);
         $this->repo->save($link);
 
         $this->assertEquals(1, ExternalLinkModel::count());
-        $this->assertEquals('failing', ExternalLinkModel::first()->status);
+        $this->assertEquals(LinkStatus::Broken, ExternalLinkModel::first()->status);
     }
 }

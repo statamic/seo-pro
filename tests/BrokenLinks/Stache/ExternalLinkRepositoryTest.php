@@ -5,6 +5,7 @@ namespace Tests\BrokenLinks\Stache;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
+use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\BrokenLinks\Stache\ExternalLinkRepository;
 use Statamic\SeoPro\Facades;
 use Statamic\Support\Str;
@@ -30,7 +31,7 @@ class ExternalLinkRepositoryTest extends TestCase
         Facades\ExternalLink::make()
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
-            ->status(ExternalLink::STATUS_FAILING)
+            ->status(LinkStatus::Broken)
             ->statusCode(404)
             ->save();
 
@@ -39,7 +40,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $this->assertInstanceOf(ExternalLink::class, $link);
         $this->assertEquals('abc', $link->id());
         $this->assertEquals('https://cool-runnings.com/old-page', $link->url());
-        $this->assertEquals(ExternalLink::STATUS_FAILING, $link->status());
+        $this->assertEquals(LinkStatus::Broken, $link->status());
         $this->assertEquals(404, $link->statusCode());
     }
 
@@ -59,7 +60,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $link = Facades\ExternalLink::make()
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
-            ->status(ExternalLink::STATUS_OK);
+            ->status(LinkStatus::Ok);
 
         $this->repo->save($link);
 

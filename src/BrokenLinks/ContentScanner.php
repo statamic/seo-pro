@@ -32,7 +32,6 @@ class ContentScanner
             $link = Facades\ExternalLink::findByUrl($url, $site) ?? Facades\ExternalLink::make()
                 ->site($site)
                 ->url($url)
-                ->status(ExternalLink::STATUS_PENDING)
                 ->nextCheckAt(now());
 
             $otherSubjectsReferences = $link->references()->reject(

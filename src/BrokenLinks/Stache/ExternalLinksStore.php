@@ -7,6 +7,7 @@ use Statamic\Entries\GetSlugFromPath;
 use Statamic\Facades\Site;
 use Statamic\Facades\YAML;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
+use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
 use Statamic\Stache\Stores\BasicStore;
 use Statamic\Support\Arr;
@@ -42,7 +43,7 @@ class ExternalLinksStore extends BasicStore
             ->id((new GetSlugFromPath)($path))
             ->site($site)
             ->url(Arr::get($data, 'url'))
-            ->status(Arr::get($data, 'status', ExternalLink::STATUS_PENDING))
+            ->status(LinkStatus::from(Arr::get($data, 'status', LinkStatus::Pending->value)))
             ->statusCode(Arr::get($data, 'status_code'))
             ->error(Arr::get($data, 'error'))
             ->failingSince(Arr::get($data, 'failing_since'))

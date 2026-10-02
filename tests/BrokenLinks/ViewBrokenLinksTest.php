@@ -15,6 +15,7 @@ use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\Facades\User;
 use Statamic\SeoPro\BrokenLinks\EditUrls;
+use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Jobs\CheckExternalLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
@@ -70,9 +71,9 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function only_broken_links_are_listed()
     {
-        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status('failing')->save();
-        Facades\ExternalLink::make()->id('fine')->url('https://example.com/fine')->status('ok')->save();
-        Facades\ExternalLink::make()->id('unchecked')->url('https://example.com/unchecked')->status('pending')->save();
+        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status(LinkStatus::Broken)->save();
+        Facades\ExternalLink::make()->id('fine')->url('https://example.com/fine')->status(LinkStatus::Ok)->save();
+        Facades\ExternalLink::make()->id('unchecked')->url('https://example.com/unchecked')->status(LinkStatus::Pending)->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -85,9 +86,9 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function the_listing_counts_links_that_have_not_been_checked_yet()
     {
-        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status('failing')->save();
-        Facades\ExternalLink::make()->id('one')->url('https://example.com/one')->status('pending')->save();
-        Facades\ExternalLink::make()->id('two')->url('https://example.com/two')->status('pending')->save();
+        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->status(LinkStatus::Broken)->save();
+        Facades\ExternalLink::make()->id('one')->url('https://example.com/one')->status(LinkStatus::Pending)->save();
+        Facades\ExternalLink::make()->id('two')->url('https://example.com/two')->status(LinkStatus::Pending)->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -102,8 +103,8 @@ class ViewBrokenLinksTest extends TestCase
     {
         $this->setSites();
 
-        Facades\ExternalLink::make()->id('english')->site('default')->url('https://example.com/english')->status('failing')->save();
-        Facades\ExternalLink::make()->id('french')->site('fr')->url('https://example.com/french')->status('failing')->save();
+        Facades\ExternalLink::make()->id('english')->site('default')->url('https://example.com/english')->status(LinkStatus::Broken)->save();
+        Facades\ExternalLink::make()->id('french')->site('fr')->url('https://example.com/french')->status(LinkStatus::Broken)->save();
 
         Role::make('test')
             ->addPermission('access cp')
@@ -130,7 +131,7 @@ class ViewBrokenLinksTest extends TestCase
         $globalSet = tap(GlobalSet::make('footer'))->save();
         $globalSet->makeLocalization('default')->save();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->references([
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
             ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
             ['subject_type' => 'term', 'subject_id' => $term->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'News'],
             ['subject_type' => 'global', 'subject_id' => 'footer', 'site' => 'default', 'field_path' => 'body', 'title' => 'Footer'],
@@ -155,7 +156,7 @@ class ViewBrokenLinksTest extends TestCase
 
         $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->references([
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
             ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
         ])->save();
 
@@ -178,7 +179,7 @@ class ViewBrokenLinksTest extends TestCase
     {
         EditUrls::resolveUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->references([
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
             ['subject_type' => 'product', 'subject_id' => '123', 'site' => 'default', 'field_path' => 'description', 'title' => 'Bobsleigh'],
         ])->save();
 
@@ -193,8 +194,8 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function broken_links_are_sorted_with_the_longest_broken_first_by_default()
     {
-        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->status('failing')->failingSince(now()->subDay())->save();
-        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->status('failing')->failingSince(now()->subWeek())->save();
+        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->status(LinkStatus::Broken)->failingSince(now()->subDay())->save();
+        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->status(LinkStatus::Broken)->failingSince(now()->subWeek())->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -207,7 +208,7 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function the_listing_describes_the_response_each_link_returned()
     {
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->statusCode(404)->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->statusCode(404)->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
@@ -220,8 +221,8 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function broken_links_can_be_searched_by_url()
     {
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->save();
-        Facades\ExternalLink::make()->id('def')->url('https://example.com/fine')->status('failing')->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->save();
+        Facades\ExternalLink::make()->id('def')->url('https://example.com/fine')->status(LinkStatus::Broken)->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())
