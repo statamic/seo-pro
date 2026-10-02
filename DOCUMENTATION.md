@@ -524,7 +524,7 @@ To show the product in the Broken Links listing and email, you'll also need to t
 use Statamic\SeoPro\BrokenLinks\Reference;
 
 Reference::resolveUsing(
-    'product',
+    type: 'product',
     title: fn (Reference $reference) => Product::find($reference->id)?->name,
     editUrl: fn (Reference $reference) => auth()->user()->can('edit products') ? route('products.edit', $reference->id) : null,
 );

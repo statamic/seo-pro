@@ -177,7 +177,7 @@ class ViewBrokenLinksTest extends TestCase
     public function references_to_custom_content_use_the_registered_resolver()
     {
         Reference::resolveUsing(
-            'product',
+            type: 'product',
             title: fn (Reference $reference) => "Product {$reference->id}",
             editUrl: fn (Reference $reference) => "/cp/products/{$reference->id}/{$reference->site}",
         );
