@@ -26,16 +26,6 @@ class CheckBrokenLinksCommand extends Command
             return self::FAILURE;
         }
 
-        $this->checkLinks();
-        $this->sendDigest();
-
-        $this->components->info("Checked {$links->count()} link(s).");
-
-        return self::SUCCESS;
-    }
-
-    private function checkLinks(): void
-    {
         $links = Facades\ExternalLink::query()
             ->where('next_check_at', '<=', now())
             ->orderBy('next_check_at')
@@ -43,6 +33,12 @@ class CheckBrokenLinksCommand extends Command
             ->get();
 
         $checker->check($links);
+
+        $this->sendDigest();
+
+        $this->components->info("Checked {$links->count()} link(s).");
+
+        return self::SUCCESS;
     }
 
     private function sendDigest(): void
@@ -54,6 +50,7 @@ class CheckBrokenLinksCommand extends Command
         }
 
         $links = Facades\ExternalLink::query()
+            ->whereNotNull('broken_since')
             ->where('broken_since', '<=', now()->subDay())
             ->whereNull('notified_at')
             ->get();

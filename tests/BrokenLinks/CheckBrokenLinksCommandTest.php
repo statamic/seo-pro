@@ -110,6 +110,20 @@ class CheckBrokenLinksCommandTest extends TestCase
     }
 
     #[Test]
+    public function it_does_not_notify_about_links_that_are_not_broken()
+    {
+        Notification::fake();
+
+        config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/fine')->checkedAt(now())->nextCheckAt(now()->addHour())->save();
+
+        $this->artisan('statamic:seo-pro:check-broken-links');
+
+        Notification::assertNothingSent();
+    }
+
+    #[Test]
     public function it_only_notifies_about_a_broken_link_once()
     {
         Notification::fake();
