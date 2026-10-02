@@ -510,13 +510,13 @@ Product::deleted(function (Product $product) {
 });
 ```
 
-To link to the product from the Broken Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method:
+To link to the product from the Broken Links listing, tell SEO Pro how to build its edit URL in a service provider's `boot` method. Return `null` when the current user isn't allowed to edit it:
 
 ```php
 use Statamic\SeoPro\BrokenLinks\EditUrls;
 
 EditUrls::resolveUsing('product', function (string $id, string $site) {
-    return route('products.edit', $id);
+    return auth()->user()->can('edit products') ? route('products.edit', $id) : null;
 });
 ```
 

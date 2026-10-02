@@ -20,10 +20,19 @@ class EditUrls
         $site = $reference['site'];
 
         return match ($reference['subject_type']) {
-            'entry' => Facades\Entry::find($id)?->editUrl(),
-            'term' => Facades\Term::find($id)?->in($site)->editUrl(),
-            'global' => Facades\GlobalSet::find($id)?->in($site)?->editUrl(),
+            'entry' => self::editUrl(Facades\Entry::find($id)),
+            'term' => self::editUrl(Facades\Term::find($id)?->in($site)),
+            'global' => self::editUrl(Facades\GlobalSet::find($id)?->in($site)),
             default => (self::$resolvers[$reference['subject_type']] ?? fn () => null)($id, $site),
         };
+    }
+
+    private static function editUrl($item): ?string
+    {
+        if (! $item || ! Facades\User::current()->can('edit', $item)) {
+            return null;
+        }
+
+        return $item->editUrl();
     }
 }

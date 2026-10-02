@@ -149,6 +149,31 @@ class ViewBrokenLinksTest extends TestCase
     }
 
     #[Test]
+    public function references_are_only_editable_by_users_who_can_edit_them()
+    {
+        Collection::make('blog')->save();
+
+        $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status('failing')->references([
+            ['subject_type' => 'entry', 'subject_id' => $entry->id(), 'site' => 'default', 'field_path' => 'body', 'title' => 'Hello World'],
+        ])->save();
+
+        Role::make('test')
+            ->addPermission('access cp')
+            ->addPermission('view seo broken links')
+            ->addPermission('view blog entries')
+            ->save();
+
+        $response = $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals([], $response->json('data.0.references'));
+    }
+
+    #[Test]
     public function references_to_custom_subjects_use_the_registered_edit_url_resolver()
     {
         EditUrls::resolveUsing('product', fn (string $id, string $site) => "/cp/products/{$id}/{$site}");
