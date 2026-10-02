@@ -121,20 +121,20 @@ class ViewBrokenLinksTest extends TestCase
     }
 
     #[Test]
-    public function references_include_edit_urls()
+    public function references_include_titles_and_edit_urls()
     {
         Collection::make('blog')->save();
         Taxonomy::make('tags')->save();
 
-        $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
-        $term = tap(Term::make()->taxonomy('tags')->slug('news')->data([]))->save();
-        $globalSet = tap(GlobalSet::make('footer'))->save();
+        $entry = tap(Entry::make()->collection('blog')->slug('hello-world')->data(['title' => 'Hello World']))->save();
+        $term = tap(Term::make()->taxonomy('tags')->slug('news')->data(['title' => 'News']))->save();
+        $globalSet = tap(GlobalSet::make('footer')->title('Footer'))->save();
         $globalSet->makeLocalization('default')->save();
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
-            new Reference(type: 'entry', id: $entry->id(), site: 'default', title: 'Hello World', field: 'body'),
-            new Reference(type: 'term', id: $term->id(), site: 'default', title: 'News', field: 'body'),
-            new Reference(type: 'global', id: 'footer', site: 'default', title: 'Footer', field: 'body'),
+            new Reference(type: 'entry', id: $entry->id(), site: 'default'),
+            new Reference(type: 'term', id: $term->id(), site: 'default'),
+            new Reference(type: 'global', id: 'footer', site: 'default'),
         ])->save();
 
         $response = $this
@@ -143,10 +143,10 @@ class ViewBrokenLinksTest extends TestCase
             ->assertOk();
 
         $this->assertEquals([
-            $entry->editUrl(),
-            $term->inDefaultLocale()->editUrl(),
-            $globalSet->in('default')->editUrl(),
-        ], $response->json('data.0.references.*.edit_url'));
+            ['title' => 'Hello World', 'edit_url' => $entry->editUrl()],
+            ['title' => 'News', 'edit_url' => $term->inDefaultLocale()->editUrl()],
+            ['title' => 'Footer', 'edit_url' => $globalSet->in('default')->editUrl()],
+        ], $response->json('data.0.references'));
     }
 
     #[Test]
@@ -157,7 +157,7 @@ class ViewBrokenLinksTest extends TestCase
         $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
-            new Reference(type: 'entry', id: $entry->id(), site: 'default', title: 'Hello World', field: 'body'),
+            new Reference(type: 'entry', id: $entry->id(), site: 'default'),
         ])->save();
 
         Role::make('test')
@@ -175,12 +175,16 @@ class ViewBrokenLinksTest extends TestCase
     }
 
     #[Test]
-    public function references_to_custom_content_use_the_registered_edit_url_resolver()
+    public function references_to_custom_content_use_the_registered_resolver()
     {
-        Reference::resolveEditUrlsUsing('product', fn (Reference $reference) => "/cp/products/{$reference->id}/{$reference->site}");
+        Reference::resolveUsing(
+            'product',
+            title: fn (Reference $reference) => "Product {$reference->id}",
+            editUrl: fn (Reference $reference) => "/cp/products/{$reference->id}/{$reference->site}",
+        );
 
         Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->references([
-            new Reference(type: 'product', id: '123', site: 'default', title: 'Bobsleigh', field: 'description'),
+            new Reference(type: 'product', id: '123', site: 'default'),
         ])->save();
 
         $response = $this
@@ -188,7 +192,9 @@ class ViewBrokenLinksTest extends TestCase
             ->getJson(cp_route('seo-pro.broken-links.index'))
             ->assertOk();
 
-        $this->assertEquals('/cp/products/123/default', $response->json('data.0.references.0.edit_url'));
+        $this->assertEquals([
+            ['title' => 'Product 123', 'edit_url' => '/cp/products/123/default'],
+        ], $response->json('data.0.references'));
     }
 
     #[Test]

@@ -10,19 +10,19 @@ use Statamic\Facades\User;
 
 class Reference
 {
-    private static array $editUrlResolvers = [];
+    private static array $resolvers = [];
+
+    private $content;
 
     public function __construct(
         public readonly string $type,
         public readonly string $id,
         public readonly string $site,
-        public readonly ?string $title = null,
-        public readonly ?string $field = null,
     ) {}
 
-    public static function resolveEditUrlsUsing(string $type, Closure $resolver): void
+    public static function resolveUsing(string $type, Closure $title, Closure $editUrl): void
     {
-        self::$editUrlResolvers[$type] = $resolver;
+        self::$resolvers[$type] = ['title' => $title, 'editUrl' => $editUrl];
     }
 
     public function toArray(): array
@@ -31,14 +31,7 @@ class Reference
             'type' => $this->type,
             'id' => $this->id,
             'site' => $this->site,
-            'title' => $this->title,
-            'field' => $this->field,
         ];
-    }
-
-    public function withField(string $field): self
-    {
-        return new self($this->type, $this->id, $this->site, $this->title, $field);
     }
 
     public function key(): string
@@ -51,23 +44,41 @@ class Reference
         return $this->key() === $reference->key();
     }
 
-    public function editUrl(): ?string
+    public function title(): ?string
     {
-        if (isset(self::$editUrlResolvers[$this->type])) {
-            return (self::$editUrlResolvers[$this->type])($this);
+        if (isset(self::$resolvers[$this->type])) {
+            return self::$resolvers[$this->type]['title']($this);
         }
 
-        $item = match ($this->type) {
+        return match ($this->type) {
+            'entry' => $this->content()?->value('title'),
+            'term', 'global' => $this->content()?->title(),
+            default => null,
+        };
+    }
+
+    public function editUrl(): ?string
+    {
+        if (isset(self::$resolvers[$this->type])) {
+            return self::$resolvers[$this->type]['editUrl']($this);
+        }
+
+        $content = $this->content();
+
+        if (! $content || ! User::current()->can('edit', $content)) {
+            return null;
+        }
+
+        return $content->editUrl();
+    }
+
+    private function content()
+    {
+        return $this->content ??= match ($this->type) {
             'entry' => Entry::find($this->id),
             'term' => Term::find($this->id)?->in($this->site),
             'global' => GlobalSet::find($this->id)?->in($this->site),
             default => null,
         };
-
-        if (! $item || ! User::current()->can('edit', $item)) {
-            return null;
-        }
-
-        return $item->editUrl();
     }
 }

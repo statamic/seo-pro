@@ -100,7 +100,7 @@ class ExternalLinkRepositoryTest extends TestCase
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
             ->references([
-                new Reference(type: 'entry', id: '1', site: 'en', title: 'Home', field: 'body'),
+                new Reference(type: 'entry', id: '1', site: 'en'),
             ]);
 
         $this->repo->save($link);
@@ -118,7 +118,7 @@ class ExternalLinkRepositoryTest extends TestCase
             ->id('abc')
             ->url('https://cool-runnings.com/old-page')
             ->references([
-                new Reference(type: 'entry', id: '1', site: 'en', title: 'Home', field: 'body'),
+                new Reference(type: 'entry', id: '1', site: 'en'),
             ])
             ->save();
 
@@ -126,7 +126,7 @@ class ExternalLinkRepositoryTest extends TestCase
             ->id('def')
             ->url('https://cool-runnings.com/other-page')
             ->references([
-                new Reference(type: 'entry', id: '2', site: 'en', title: 'About', field: 'body'),
+                new Reference(type: 'entry', id: '2', site: 'en'),
             ])
             ->save();
 

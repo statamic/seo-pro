@@ -109,7 +109,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $link = Facades\ExternalLink::make()
             ->url('https://example.com/broken')
             ->references([
-                new Reference(type: 'entry', id: '1', site: 'en', title: 'Home', field: 'body'),
+                new Reference(type: 'entry', id: '1', site: 'en'),
             ]);
 
         $this->repo->save($link);
@@ -126,7 +126,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $link = Facades\ExternalLink::make()
             ->url('https://example.com/broken')
             ->references([
-                new Reference(type: 'entry', id: '1', site: 'en', title: 'Home', field: 'body'),
+                new Reference(type: 'entry', id: '1', site: 'en'),
             ]);
 
         $this->repo->save($link);
@@ -134,7 +134,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $this->repo->save(Facades\ExternalLink::make()
             ->url('https://example.com/other')
             ->references([
-                new Reference(type: 'entry', id: '2', site: 'en', title: 'About', field: 'body'),
+                new Reference(type: 'entry', id: '2', site: 'en'),
             ]));
 
         $links = $this->repo->query()->whereJsonContains('subjects', (new Reference(type: 'entry', id: '1', site: 'en'))->key())->get();

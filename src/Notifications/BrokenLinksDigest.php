@@ -31,8 +31,8 @@ class BrokenLinksDigest extends Notification
             $message->line($link->url().' — '.$link->response());
 
             $references = $link->references()
-                ->map(fn (Reference $reference) => $reference->title)
-                ->unique()
+                ->map(fn (Reference $reference) => $reference->title())
+                ->filter()
                 ->implode(', ');
 
             if ($references) {

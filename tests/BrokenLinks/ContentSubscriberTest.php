@@ -117,7 +117,7 @@ class ContentSubscriberTest extends TestCase
 
         $this->assertCount(2, Facades\ExternalLink::all());
         $this->assertEquals(['default', 'fr'], $references->pluck('site')->sort()->values()->all());
-        $this->assertEquals(['News', 'Nouvelles'], $references->pluck('title')->sort()->values()->all());
+        $this->assertEquals(['News', 'Nouvelles'], $references->map->title()->sort()->values()->all());
 
         $term->delete();
 

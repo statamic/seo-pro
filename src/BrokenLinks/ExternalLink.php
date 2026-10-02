@@ -129,8 +129,6 @@ class ExternalLink
                         type: $reference['type'],
                         id: $reference['id'],
                         site: $reference['site'],
-                        title: $reference['title'] ?? null,
-                        field: $reference['field'] ?? null,
                     ))
                     ->values()
                     ->all();

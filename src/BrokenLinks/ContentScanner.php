@@ -19,28 +19,28 @@ class ContentScanner
     public static function scan(
         string $type,
         string $id,
-        string $title,
         array $values,
         ?string $site = null,
         ?Blueprint $blueprint = null,
     ): void {
-        $item = new Reference($type, $id, $site ?? Site::default()->handle(), $title);
+        $item = new Reference($type, $id, $site ?? Site::default()->handle());
 
-        $found = LinkExtractor::extract($values, $blueprint)->groupBy('url');
+        $urls = LinkExtractor::extract($values, $blueprint)->pluck('url')->unique();
 
-        foreach ($found as $url => $rows) {
+        foreach ($urls as $url) {
             $link = Facades\ExternalLink::findByUrl($url, $item->site) ?? Facades\ExternalLink::make()
                 ->site($item->site)
                 ->url($url)
                 ->nextCheckAt(now());
 
-            $link->references($link->references()
-                ->reject(fn (Reference $reference) => $reference->is($item))
-                ->concat($rows->map(fn ($row) => $item->withField($row['field_path']))))
-                ->save();
+            if ($link->references()->contains(fn (Reference $reference) => $reference->is($item))) {
+                continue;
+            }
+
+            $link->references($link->references()->push($item))->save();
         }
 
-        self::removeReferences($item, except: $found->keys()->all());
+        self::removeReferences($item, except: $urls->all());
     }
 
     public static function scanEntry(Entry $entry): void
@@ -48,7 +48,6 @@ class ContentScanner
         self::scan(
             type: 'entry',
             id: $entry->id(),
-            title: $entry->get('title') ?? $entry->id(),
             values: $entry->data()->all(),
             site: $entry->locale(),
             blueprint: $entry->blueprint(),
@@ -60,7 +59,6 @@ class ContentScanner
         self::scan(
             type: 'term',
             id: $term->id(),
-            title: $term->get('title') ?? $term->slug(),
             values: $term->data()->all(),
             site: $term->locale(),
             blueprint: $term->blueprint(),
@@ -72,7 +70,6 @@ class ContentScanner
         self::scan(
             type: 'global',
             id: $variables->handle(),
-            title: $variables->title(),
             values: $variables->data()->all(),
             site: $variables->locale(),
             blueprint: $variables->blueprint(),

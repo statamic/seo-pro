@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Stache;
 use Statamic\SeoPro\BrokenLinks\LinkChecker;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
@@ -81,7 +83,7 @@ class LinkCheckerTest extends TestCase
 
         Http::fake(['*' => function () {
             Facades\ExternalLink::find('abc')->references([
-                new Reference(type: 'entry', id: '1', site: 'default', title: 'Home', field: 'body'),
+                new Reference(type: 'entry', id: '1', site: 'default'),
             ])->save();
 
             return Http::response();
@@ -244,12 +246,17 @@ class LinkCheckerTest extends TestCase
     #[Test]
     public function the_digest_lists_each_broken_link_and_where_it_was_found()
     {
+        Collection::make('pages')->save();
+
+        $home = tap(Entry::make()->collection('pages')->slug('home')->data(['title' => 'Home']))->save();
+        $about = tap(Entry::make()->collection('pages')->slug('about')->data(['title' => 'About']))->save();
+
         $link = Facades\ExternalLink::make()
             ->url('https://example.com/broken')
             ->statusCode(404)
             ->references([
-                new Reference(type: 'entry', id: '1', site: 'default', title: 'Home', field: 'body'),
-                new Reference(type: 'entry', id: '1', site: 'default', title: 'Home', field: 'sidebar'),
+                new Reference(type: 'entry', id: $home->id(), site: 'default'),
+                new Reference(type: 'entry', id: $about->id(), site: 'default'),
             ]);
 
         $mail = (new BrokenLinksDigest(collect([$link])))->toMail(null);
@@ -258,7 +265,7 @@ class LinkCheckerTest extends TestCase
         $this->assertEquals([
             '1 external link is currently broken.',
             'https://example.com/broken — 404 Not Found',
-            'Found in: Home',
+            'Found in: Home, About',
         ], $mail->introLines);
         $this->assertEquals('View Broken Links', $mail->actionText);
         $this->assertEquals(cp_route('seo-pro.broken-links.index'), $mail->actionUrl);

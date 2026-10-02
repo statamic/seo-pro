@@ -15,7 +15,7 @@ class ContentScannerTest extends TestCase
     #[Test]
     public function it_creates_a_link_and_reference_when_scanning_an_item()
     {
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'See https://example.com/page for details.',
         ]);
 
@@ -28,33 +28,33 @@ class ContentScannerTest extends TestCase
         $reference = $link->references()->first();
         $this->assertEquals('entry', $reference->type);
         $this->assertEquals('1', $reference->id);
-        $this->assertEquals('My Entry', $reference->title);
+        $this->assertEquals('en', $reference->site);
     }
 
     #[Test]
     public function it_tracks_the_same_url_separately_for_each_site()
     {
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'See https://example.com/page for details.',
         ]);
 
-        ContentScanner::scan(type: 'entry', id: '1-fr', site: 'fr', title: 'Mon Entrée', values: [
+        ContentScanner::scan(type: 'entry', id: '1-fr', site: 'fr', values: [
             'body' => 'Voir https://example.com/page pour plus de détails.',
         ]);
 
         $this->assertEquals(['en', 'fr'], Facades\ExternalLink::all()->map->site()->sort()->values()->all());
-        $this->assertEquals('My Entry', Facades\ExternalLink::query()->where('site', 'en')->first()->references()->first()->title);
-        $this->assertEquals('Mon Entrée', Facades\ExternalLink::query()->where('site', 'fr')->first()->references()->first()->title);
+        $this->assertEquals('1', Facades\ExternalLink::query()->where('site', 'en')->first()->references()->first()->id);
+        $this->assertEquals('1-fr', Facades\ExternalLink::query()->where('site', 'fr')->first()->references()->first()->id);
     }
 
     #[Test]
     public function it_removes_stale_references_and_orphaned_links_when_content_changes()
     {
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'See https://example.com/page for details.',
         ]);
 
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'No links here any more.',
         ]);
 
@@ -64,15 +64,15 @@ class ContentScannerTest extends TestCase
     #[Test]
     public function it_keeps_a_link_when_another_item_still_references_it()
     {
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'Entry One', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'https://shared.example.com',
         ]);
 
-        ContentScanner::scan(type: 'entry', id: '2', site: 'en', title: 'Entry Two', values: [
+        ContentScanner::scan(type: 'entry', id: '2', site: 'en', values: [
             'body' => 'https://shared.example.com',
         ]);
 
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'Entry One', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'No links.',
         ]);
 
@@ -86,7 +86,7 @@ class ContentScannerTest extends TestCase
     #[Test]
     public function it_removes_all_references_and_orphaned_links_when_an_item_is_forgotten()
     {
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'My Entry', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'https://example.com/gone',
         ]);
 
@@ -96,19 +96,16 @@ class ContentScannerTest extends TestCase
     }
 
     #[Test]
-    public function it_updates_the_reference_title_without_duplicating_it()
+    public function it_does_not_duplicate_references_when_rescanning_an_item()
     {
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'Old Title', values: [
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
             'body' => 'https://example.com/page',
         ]);
 
-        ContentScanner::scan(type: 'entry', id: '1', site: 'en', title: 'New Title', values: [
-            'body' => 'https://example.com/page',
+        ContentScanner::scan(type: 'entry', id: '1', site: 'en', values: [
+            'body' => 'https://example.com/page and again https://example.com/page',
         ]);
 
-        $link = Facades\ExternalLink::all()->first();
-
-        $this->assertCount(1, $link->references());
-        $this->assertEquals('New Title', $link->references()->first()->title);
+        $this->assertCount(1, Facades\ExternalLink::all()->first()->references());
     }
 }
