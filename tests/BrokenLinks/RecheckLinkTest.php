@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Role;
 use Statamic\Facades\User;
+use Statamic\SeoPro\BrokenLinks\CheckExternalLinks;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\Facades;
-use Statamic\SeoPro\Jobs\CheckExternalLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -34,7 +34,7 @@ class RecheckLinkTest extends TestCase
             ->assertOk()
             ->assertJson(['success' => true]);
 
-        Queue::assertPushed(CheckExternalLinksJob::class, 1);
+        Queue::assertPushed(CheckExternalLinks::class, 1);
     }
 
     #[Test]
@@ -55,6 +55,6 @@ class RecheckLinkTest extends TestCase
             ])
             ->assertForbidden();
 
-        Queue::assertNotPushed(CheckExternalLinksJob::class);
+        Queue::assertNotPushed(CheckExternalLinks::class);
     }
 }

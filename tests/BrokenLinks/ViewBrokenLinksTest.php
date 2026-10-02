@@ -14,10 +14,10 @@ use Statamic\Facades\Site;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\Facades\User;
+use Statamic\SeoPro\BrokenLinks\CheckExternalLinks;
 use Statamic\SeoPro\BrokenLinks\LinkStatus;
 use Statamic\SeoPro\BrokenLinks\Reference;
 use Statamic\SeoPro\Facades;
-use Statamic\SeoPro\Jobs\CheckExternalLinksJob;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Tests\TestCase;
 
@@ -261,7 +261,7 @@ class ViewBrokenLinksTest extends TestCase
             ->postJson(cp_route('seo-pro.broken-links.recheck-all'))
             ->assertOk();
 
-        Queue::assertPushed(CheckExternalLinksJob::class, 2);
+        Queue::assertPushed(CheckExternalLinks::class, 2);
     }
 
     #[Test]
