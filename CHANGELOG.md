@@ -1,5 +1,16 @@
 # Release Notes
 
+## 7.15.1 (2026-10-02)
+
+### What's fixed
+- Fix broken corners on the selected rule row in the report [#684](https://github.com/statamic/seo-pro/issues/684) by @duncanmcclean
+- Record errors when using the deferred or background queue drivers [#686](https://github.com/statamic/seo-pro/issues/686) by @duncanmcclean
+- Fix error when editing entries without URLs in multisite [#688](https://github.com/statamic/seo-pro/issues/688) by @duncanmcclean
+- Align the report's status colors with the CP and add dark mode values [#690](https://github.com/statamic/seo-pro/issues/690) by @helloDanuk
+- Improve German translations [#682](https://github.com/statamic/seo-pro/issues/682) by @helloDanuk
+
+
+
 ## 7.15.0 (2026-09-30)
 
 ### What's new
