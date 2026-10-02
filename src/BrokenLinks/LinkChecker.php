@@ -3,6 +3,8 @@
 namespace Statamic\SeoPro\BrokenLinks;
 
 use Carbon\CarbonInterval;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -14,13 +16,13 @@ class LinkChecker
     public function check(Collection $links): void
     {
         $timeout = config('statamic.seo-pro.broken_links.check.timeout', 10);
-        $userAgent = config('statamic.seo-pro.broken_links.check.user_agent', 'Mozilla/5.0 (compatible; SeoProLinkChecker/1.0; +https://statamic.com)');
         $concurrency = max(1, (int) config('statamic.seo-pro.broken_links.check.concurrency', 10));
+        $userAgent = config('statamic.seo-pro.broken_links.check.user_agent', 'Mozilla/5.0 (compatible; SeoProLinkChecker/1.0; +https://statamic.com)');
 
-        $links->chunk($concurrency)->each(function (Collection $chunk) use ($timeout, $userAgent) {
+        $links->chunk($concurrency)->each(function (Collection $chunk) use ($timeout, $userAgent): void {
             $results = $this->request($chunk, 'head', $timeout, $userAgent);
 
-            $needsRetry = $chunk->filter(fn ($link) => $this->shouldRetryWithGet($results[(string) $link->id()] ?? null))->values();
+            $needsRetry = $chunk->filter(fn (ExternalLink $link): bool => $this->shouldRetryWithGet($results[(string) $link->id()] ?? null))->values();
 
             if ($needsRetry->isNotEmpty()) {
                 $results = $results->merge($this->request($needsRetry, 'get', $timeout, $userAgent));
@@ -34,8 +36,8 @@ class LinkChecker
 
     private function request(Collection $links, string $method, int $timeout, string $userAgent): Collection
     {
-        $responses = Http::pool(function ($pool) use ($links, $method, $timeout, $userAgent) {
-            return $links->map(function ($link) use ($pool, $method, $timeout, $userAgent) {
+        $responses = Http::pool(function (Pool $pool) use ($links, $method, $timeout, $userAgent): array {
+            return $links->map(function (ExternalLink $link) use ($pool, $method, $timeout, $userAgent): PromiseInterface {
                 return $pool->as((string) $link->id())
                     ->withHeaders(['User-Agent' => $userAgent])
                     ->timeout($timeout)
