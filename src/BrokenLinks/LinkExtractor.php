@@ -30,15 +30,25 @@ class LinkExtractor
     {
         preg_match_all(self::URL_REGEX, $text, $matches);
 
-        return array_map(fn (string $url): string => $this->trimTrailingPunctuation($url), $matches[0]);
+        return array_map(fn (string $url): string => rtrim($this->trimUnmatchedParentheses($url), '.,;:!?"\''), $matches[0]);
     }
 
-    private function trimTrailingPunctuation(string $url): string
+    private function trimUnmatchedParentheses(string $url): string
     {
-        $url = rtrim($url, '.,;:!?"\'');
+        $depth = 0;
 
-        while (str_ends_with($url, ')') && substr_count($url, '(') < substr_count($url, ')')) {
-            $url = rtrim(substr($url, 0, -1), '.,;:!?"\'');
+        foreach (str_split($url) as $position => $character) {
+            if ($character === '(') {
+                $depth++;
+            }
+
+            if ($character === ')') {
+                if ($depth === 0) {
+                    return substr($url, 0, $position);
+                }
+
+                $depth--;
+            }
         }
 
         return $url;

@@ -102,6 +102,16 @@ class LinkExtractorTest extends TestCase
     }
 
     #[Test]
+    public function it_stops_at_a_closing_parenthesis_that_does_not_belong_to_the_url()
+    {
+        $found = (new LinkExtractor)->extract([
+            'body' => 'We [hurled](https://example.com/page)our bodies towards the pedestal.',
+        ]);
+
+        $this->assertEquals(['https://example.com/page'], $found->all());
+    }
+
+    #[Test]
     public function it_excludes_links_to_private_and_internal_hosts()
     {
         $found = (new LinkExtractor)->extract([
