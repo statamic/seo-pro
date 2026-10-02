@@ -3,9 +3,7 @@
 namespace Statamic\SeoPro\BrokenLinks\Stache;
 
 use Illuminate\Support\Collection;
-use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
-use Statamic\SeoPro\BrokenLinks\ExternalLinkBlueprint;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkQueryBuilder;
 use Statamic\SeoPro\BrokenLinks\ExternalLinkRepository as RepositoryContract;
 use Statamic\Stache\Stache;
@@ -58,11 +56,6 @@ class ExternalLinkRepository implements RepositoryContract
     public function delete(ExternalLink $link): void
     {
         $this->store->delete($link);
-    }
-
-    public function blueprint(): Blueprint
-    {
-        return (new ExternalLinkBlueprint)();
     }
 
     public static function bindings(): array

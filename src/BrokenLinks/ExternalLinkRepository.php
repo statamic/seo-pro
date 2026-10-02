@@ -3,7 +3,6 @@
 namespace Statamic\SeoPro\BrokenLinks;
 
 use Illuminate\Support\Collection;
-use Statamic\Fields\Blueprint;
 
 interface ExternalLinkRepository
 {
@@ -20,8 +19,6 @@ interface ExternalLinkRepository
     public function save(ExternalLink $link): void;
 
     public function delete(ExternalLink $link): void;
-
-    public function blueprint(): Blueprint;
 
     public static function bindings(): array;
 }

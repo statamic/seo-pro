@@ -10,7 +10,6 @@ use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
 use Statamic\Facades\Site;
 use Statamic\Facades\Stache;
-use Statamic\Fields\Blueprint;
 use Statamic\SeoPro\Facades\ExternalLink as ExternalLinkFacade;
 use Statamic\Support\Arr;
 use Statamic\Support\Traits\FluentlyGetsAndSets;
@@ -156,11 +155,6 @@ class ExternalLink
         return "{$subjectType}::{$subjectId}::{$site}";
     }
 
-    public function blueprint(): Blueprint
-    {
-        return ExternalLinkFacade::blueprint();
-    }
-
     public function save(): bool
     {
         ExternalLinkFacade::save($this);
@@ -209,24 +203,18 @@ class ExternalLink
 
     public function getQueryableValue(string $field)
     {
-        if (in_array($method = Str::camel($field), $this->queryableMethods())) {
-            return $this->{$method}();
+        if (! in_array($method = Str::camel($field), $this->queryableMethods())) {
+            return null;
         }
 
-        $value = $this->get($field);
-
-        if (! $field = $this->blueprint()->field($field)) {
-            return $value;
-        }
-
-        return $field->fieldtype()->toQueryableValue($value);
+        return $this->{$method}();
     }
 
     private function queryableMethods(): array
     {
         return [
-            'id', 'site', 'url', 'status', 'statusCode', 'error',
-            'failingSince', 'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
+            'id', 'site', 'url', 'status', 'failingSince',
+            'checkedAt', 'nextCheckAt', 'notifiedAt', 'subjects',
         ];
     }
 }

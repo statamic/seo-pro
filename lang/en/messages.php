@@ -9,7 +9,6 @@ return [
     'errors_description' => 'View 404 errors across your site. Create redirects for the important ones.',
     'broken_links' => 'Broken Links',
     'broken_links_description' => 'Tracks external links in your content and polls them for broken links.',
-    'broken_link' => 'Broken Link',
     'view_broken_links' => 'View Broken Links',
     'response' => 'Response',
     'last_checked_at' => 'Last Checked',

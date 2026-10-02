@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Http\Controllers\CP\BrokenLinks;
 
 use Inertia\Inertia;
+use Statamic\CP\Column;
 use Statamic\Facades\Scope;
 use Statamic\Facades\Site;
 use Statamic\Http\Controllers\CP\CpController;
@@ -11,7 +12,7 @@ use Statamic\Query\OrderBy;
 use Statamic\Query\Scopes\Filters\Concerns\QueriesFilters;
 use Statamic\SeoPro\BrokenLinks\ExternalLink;
 use Statamic\SeoPro\Facades;
-use Statamic\SeoPro\Http\Resources\BrokenLinks\BrokenLinks;
+use Statamic\SeoPro\Http\Resources\BrokenLinks\ListedLink;
 
 class BrokenLinkController extends CpController
 {
@@ -41,29 +42,28 @@ class BrokenLinkController extends CpController
 
             $links = $query->paginate(request('perPage'));
 
-            return (new BrokenLinks($links))
-                ->blueprint(Facades\ExternalLink::blueprint())
-                ->columnPreferenceKey('seo-pro.broken-links.columns')
-                ->additional(['meta' => [
-                    'activeFilterBadges' => $activeFilterBadges,
-                    'uncheckedCount' => $unchecked->count(),
-                ]]);
+            return ListedLink::collection($links)->additional(['meta' => [
+                'columns' => $this->columns(),
+                'activeFilterBadges' => $activeFilterBadges,
+                'uncheckedCount' => $unchecked->count(),
+            ]]);
         }
 
-        $blueprint = Facades\ExternalLink::blueprint();
-
-        $columns = $blueprint
-            ->columns()
-            ->setPreferred('seo-pro.broken-links.columns')
-            ->rejectUnlisted()
-            ->values();
-
         return Inertia::render('seo-pro::BrokenLinks/Index', [
-            'blueprint' => $blueprint,
-            'columns' => $columns,
+            'columns' => $this->columns(),
             'filters' => Scope::filters('broken-links'),
             'recheckAllUrl' => cp_route('seo-pro.broken-links.recheck-all'),
         ]);
+    }
+
+    private function columns(): array
+    {
+        return [
+            Column::make('url')->label(__('URL')),
+            Column::make('failing_since')->label(__('seo-pro::messages.broken_since')),
+            Column::make('response')->label(__('seo-pro::messages.response'))->sortable(false),
+            Column::make('checked_at')->label(__('seo-pro::messages.last_checked_at')),
+        ];
     }
 
     protected function indexQuery()

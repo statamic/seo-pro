@@ -5,7 +5,6 @@ import { Header, Button, Listing, DropdownItem, DocsCallout, Alert } from '@stat
 import { ref, useTemplateRef, getCurrentInstance } from 'vue';
 
 const props = defineProps({
-	blueprint: Object,
 	columns: Array,
 	filters: Array,
 	recheckAllUrl: String,
@@ -73,15 +72,15 @@ function recheckAll() {
 		<template #cell-failing_since="{ row: link }">
 			<span
 				v-if="link.failing_since"
-				v-text="DateFormatter.format(link.failing_since.date, { relative: true })"
-				v-tooltip="DateFormatter.format(link.failing_since.date, { preset: 'datetime', timeZoneName: 'short' })"
+				v-text="DateFormatter.format(link.failing_since, { relative: true })"
+				v-tooltip="DateFormatter.format(link.failing_since, { preset: 'datetime', timeZoneName: 'short' })"
 			/>
 		</template>
 		<template #cell-checked_at="{ row: link }">
 			<span
 				v-if="link.checked_at"
-				v-text="DateFormatter.format(link.checked_at.date, { relative: true })"
-				v-tooltip="DateFormatter.format(link.checked_at.date, { preset: 'datetime', timeZoneName: 'short' })"
+				v-text="DateFormatter.format(link.checked_at, { relative: true })"
+				v-tooltip="DateFormatter.format(link.checked_at, { preset: 'datetime', timeZoneName: 'short' })"
 			/>
 		</template>
 		<template #prepended-row-actions="{ row: link }">
