@@ -439,6 +439,8 @@ You may exclude specific hosts from being tracked at all. Your own site's domain
 ],
 ```
 
+Excluded hosts are applied as content is scanned, so after changing them, run `php please seo-pro:scan-broken-links` to clean up any links that are already being tracked.
+
 Checks run automatically on your server's scheduler (make sure `php artisan schedule:run` is in your crontab), or you can trigger one manually:
 
 ```
