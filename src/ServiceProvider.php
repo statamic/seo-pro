@@ -408,6 +408,22 @@ class ServiceProvider extends AddonServiceProvider
                     }
                 );
             }
+
+            if (config('statamic.seo-pro.broken_links.driver') === 'file') {
+                $this->components->task(
+                    description: 'Updating broken links',
+                    task: function () {
+                        $base = app(Stache::class)->store('seo_pro_external_links')->directory();
+
+                        File::makeDirectory("{$base}/{$this->siteHandle}");
+
+                        File::getFiles($base)->each(function ($file) use ($base) {
+                            $filename = pathinfo($file, PATHINFO_BASENAME);
+                            File::move($file, "{$base}/{$this->siteHandle}/{$filename}");
+                        });
+                    }
+                );
+            }
         });
 
         return $this;

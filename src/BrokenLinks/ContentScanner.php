@@ -37,10 +37,10 @@ class ContentScanner
 
     public static function forget(string $type, string $id, ?string $site = null): void
     {
-        self::removeReferences(new Reference($type, $id, $site ?? Site::default()->handle()), except: []);
+        self::removeReferences(new Reference($type, $id, $site ?? Site::default()->handle()));
     }
 
-    private static function removeReferences(Reference $item, array $except): void
+    private static function removeReferences(Reference $item, array $except = []): void
     {
         Facades\ExternalLink::query()
             ->whereJsonContains('subjects', $item->key())
