@@ -38,7 +38,7 @@ class LinkChecker
     public static function checkLinks(Collection $links): void
     {
         $timeout = config('statamic.seo-pro.broken_links.check.timeout', 10);
-        $userAgent = config('statamic.seo-pro.broken_links.check.user_agent');
+        $userAgent = config('statamic.seo-pro.broken_links.check.user_agent', 'Mozilla/5.0 (compatible; SeoProLinkChecker/1.0; +https://statamic.com)');
         $concurrency = max(1, (int) config('statamic.seo-pro.broken_links.check.concurrency', 10));
 
         $links->chunk($concurrency)->each(function (Collection $chunk) use ($timeout, $userAgent) {
