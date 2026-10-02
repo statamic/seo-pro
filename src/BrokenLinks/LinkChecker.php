@@ -141,8 +141,8 @@ class LinkChecker
     }
 
     /**
-     * Email a single collated digest of every link that is currently
-     * failing and hasn't already been notified about since it last failed.
+     * Email a single collated digest of every link that has been broken
+     * for at least a day, and hasn't already been notified about.
      */
     public static function notifyIfNeeded(): void
     {
@@ -153,7 +153,7 @@ class LinkChecker
         }
 
         $links = Facades\ExternalLink::query()
-            ->where('status', ExternalLink::STATUS_FAILING)
+            ->where('failing_since', '<=', now()->subDay())
             ->whereNull('notified_at')
             ->get();
 

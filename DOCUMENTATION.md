@@ -447,7 +447,7 @@ php please seo-pro:check-broken-links
 
 ### Notifications
 
-SEO Pro can send a collated email whenever a check finds links that are newly broken. Add the email addresses that should receive it:
+SEO Pro can send a collated email of any links that have been broken for at least a day, so a site that's only briefly down won't trigger an email. Add the email addresses that should receive it:
 
 ```php
 // config/statamic/seo-pro.php

@@ -170,7 +170,7 @@ class LinkCheckerTest extends TestCase
 
         config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->failingSince(now()->subDays(2))->save();
 
         LinkChecker::notifyIfNeeded();
 
@@ -181,13 +181,27 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
+    public function it_waits_a_day_before_notifying_about_a_broken_link()
+    {
+        Notification::fake();
+
+        config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/flaky')->status(ExternalLink::STATUS_FAILING)->failingSince(now()->subHour())->save();
+
+        LinkChecker::notifyIfNeeded();
+
+        Notification::assertNothingSent();
+    }
+
+    #[Test]
     public function it_only_notifies_about_a_broken_link_once()
     {
         Notification::fake();
 
         config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->failingSince(now()->subDays(2))->save();
 
         LinkChecker::notifyIfNeeded();
         LinkChecker::notifyIfNeeded();
@@ -221,7 +235,7 @@ class LinkCheckerTest extends TestCase
     {
         Notification::fake();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(ExternalLink::STATUS_FAILING)->failingSince(now()->subDays(2))->save();
 
         LinkChecker::notifyIfNeeded();
 
