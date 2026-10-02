@@ -412,7 +412,7 @@ php please seo-pro:scan-broken-links
 
 ### Checking Links
 
-SEO Pro periodically checks each tracked link with an HTTP request, and marks it as failing if it returns a status outside the 200-399 range (or times out, or can't be reached at all).
+SEO Pro periodically checks each tracked link with an HTTP request, and marks it as broken if it returns a status outside the 200-399 range (or times out, or can't be reached at all).
 
 You can configure how often links are checked, along with the request timeout and concurrency:
 

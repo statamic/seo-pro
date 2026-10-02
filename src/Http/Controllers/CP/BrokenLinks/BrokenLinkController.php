@@ -34,7 +34,7 @@ class BrokenLinkController extends CpController
             $sortDirection = request('order', 'asc');
 
             if (! $sortField && ! request('search')) {
-                $sortField = 'failing_since';
+                $sortField = 'broken_since';
             }
 
             if ($sortField) {
@@ -61,7 +61,7 @@ class BrokenLinkController extends CpController
     {
         return [
             Column::make('url')->label(__('URL')),
-            Column::make('failing_since')->label(__('seo-pro::messages.broken_since')),
+            Column::make('broken_since')->label(__('seo-pro::messages.broken_since')),
             Column::make('response')->label(__('seo-pro::messages.response'))->sortable(false),
             Column::make('checked_at')->label(__('seo-pro::messages.last_checked_at')),
         ];

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->unsignedSmallInteger('status_code')->nullable();
             $table->string('error')->nullable();
-            $table->dateTime('failing_since')->nullable();
+            $table->dateTime('broken_since')->nullable();
             $table->dateTime('checked_at')->nullable();
             $table->dateTime('next_check_at')->nullable()->index();
             $table->dateTime('notified_at')->nullable();

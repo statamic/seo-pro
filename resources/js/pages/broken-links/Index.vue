@@ -60,7 +60,7 @@ function recheckAll() {
 		:allow-presets="false"
 		:allow-customizing-columns="false"
 		:filters
-		sort-column="failing_since"
+		sort-column="broken_since"
 		sort-direction="asc"
 		preferences-prefix="seo-pro.broken-links"
 		push-query
@@ -69,11 +69,11 @@ function recheckAll() {
 		<template #cell-url="{ row: link }">
 			<a class="title-index-field" :href="link.url" target="_blank" rel="noopener noreferrer" v-text="link.url" />
 		</template>
-		<template #cell-failing_since="{ row: link }">
+		<template #cell-broken_since="{ row: link }">
 			<span
-				v-if="link.failing_since"
-				v-text="DateFormatter.format(link.failing_since, { relative: true })"
-				v-tooltip="DateFormatter.format(link.failing_since, { preset: 'datetime', timeZoneName: 'short' })"
+				v-if="link.broken_since"
+				v-text="DateFormatter.format(link.broken_since, { relative: true })"
+				v-tooltip="DateFormatter.format(link.broken_since, { preset: 'datetime', timeZoneName: 'short' })"
 			/>
 		</template>
 		<template #cell-checked_at="{ row: link }">

@@ -48,7 +48,7 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
             ->status($model->status)
             ->statusCode($model->status_code)
             ->error($model->error)
-            ->failingSince($model->failing_since)
+            ->brokenSince($model->broken_since)
             ->checkedAt($model->checked_at)
             ->nextCheckAt($model->next_check_at)
             ->notifiedAt($model->notified_at)
@@ -68,7 +68,7 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
         $model->status = $link->status();
         $model->status_code = $link->statusCode();
         $model->error = $link->error();
-        $model->failing_since = $link->failingSince();
+        $model->broken_since = $link->brokenSince();
         $model->checked_at = $link->checkedAt();
         $model->next_check_at = $link->nextCheckAt();
         $model->notified_at = $link->notifiedAt();

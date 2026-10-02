@@ -98,9 +98,9 @@ class LinkChecker
         $link->nextCheckAt(now()->add(self::frequencyInterval()));
 
         if ($ok) {
-            $link->failingSince(null)->notifiedAt(null);
-        } elseif (! $link->failingSince()) {
-            $link->failingSince(now());
+            $link->brokenSince(null)->notifiedAt(null);
+        } elseif (! $link->brokenSince()) {
+            $link->brokenSince(now());
         }
 
         $link->save();
@@ -149,7 +149,7 @@ class LinkChecker
         }
 
         $links = Facades\ExternalLink::query()
-            ->where('failing_since', '<=', now()->subDay())
+            ->where('broken_since', '<=', now()->subDay())
             ->whereNull('notified_at')
             ->get();
 

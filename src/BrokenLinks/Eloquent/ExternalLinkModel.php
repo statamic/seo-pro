@@ -21,7 +21,7 @@ class ExternalLinkModel extends Model
         return [
             'status' => LinkStatus::class,
             'status_code' => 'integer',
-            'failing_since' => 'datetime',
+            'broken_since' => 'datetime',
             'checked_at' => 'datetime',
             'next_check_at' => 'datetime',
             'notified_at' => 'datetime',

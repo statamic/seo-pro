@@ -194,8 +194,8 @@ class ViewBrokenLinksTest extends TestCase
     #[Test]
     public function broken_links_are_sorted_with_the_longest_broken_first_by_default()
     {
-        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->status(LinkStatus::Broken)->failingSince(now()->subDay())->save();
-        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->status(LinkStatus::Broken)->failingSince(now()->subWeek())->save();
+        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->status(LinkStatus::Broken)->brokenSince(now()->subDay())->save();
+        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->status(LinkStatus::Broken)->brokenSince(now()->subWeek())->save();
 
         $response = $this
             ->actingAs(User::make()->makeSuper()->save())

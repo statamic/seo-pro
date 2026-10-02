@@ -46,7 +46,7 @@ class ExternalLinksStore extends BasicStore
             ->status(LinkStatus::from(Arr::get($data, 'status', LinkStatus::Pending->value)))
             ->statusCode(Arr::get($data, 'status_code'))
             ->error(Arr::get($data, 'error'))
-            ->failingSince(Arr::get($data, 'failing_since'))
+            ->brokenSince(Arr::get($data, 'broken_since'))
             ->checkedAt(Arr::get($data, 'checked_at'))
             ->nextCheckAt(Arr::get($data, 'next_check_at'))
             ->notifiedAt(Arr::get($data, 'notified_at'))

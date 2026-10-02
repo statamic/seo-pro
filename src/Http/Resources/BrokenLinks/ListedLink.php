@@ -15,7 +15,7 @@ class ListedLink extends JsonResource
         return [
             'id' => $link->id(),
             'url' => $link->url(),
-            'failing_since' => $link->failingSince(),
+            'broken_since' => $link->brokenSince(),
             'response' => $link->response(),
             'checked_at' => $link->checkedAt(),
             'references' => $link->references()

@@ -44,7 +44,7 @@ class ExternalLinkRepositoryTest extends TestCase
             'url' => 'https://example.com/broken',
             'status' => 'broken',
             'status_code' => 404,
-            'failing_since' => '2026-09-01 12:00:00',
+            'broken_since' => '2026-09-01 12:00:00',
             'references' => [],
             'subjects' => [],
         ]);
@@ -55,7 +55,7 @@ class ExternalLinkRepositoryTest extends TestCase
         $this->assertEquals('https://example.com/broken', $link->url());
         $this->assertEquals(LinkStatus::Broken, $link->status());
         $this->assertEquals(404, $link->statusCode());
-        $this->assertEquals('2026-09-01 12:00:00', $link->failingSince()->toDateTimeString());
+        $this->assertEquals('2026-09-01 12:00:00', $link->brokenSince()->toDateTimeString());
     }
 
     #[Test]

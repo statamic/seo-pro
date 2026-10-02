@@ -93,7 +93,7 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
-    public function it_records_when_a_link_started_failing()
+    public function it_records_when_a_link_broke()
     {
         Http::fake(['*' => Http::response(status: 404)]);
 
@@ -105,11 +105,11 @@ class LinkCheckerTest extends TestCase
         $this->travelTo('2026-09-02 12:00:00');
         LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
 
-        $this->assertEquals('2026-09-01 12:00:00', Facades\ExternalLink::find('abc')->failingSince()->toDateTimeString());
+        $this->assertEquals('2026-09-01 12:00:00', Facades\ExternalLink::find('abc')->brokenSince()->toDateTimeString());
     }
 
     #[Test]
-    public function it_clears_when_a_link_started_failing_once_it_recovers()
+    public function it_clears_when_a_link_broke_once_it_recovers()
     {
         Http::fake(['*' => Http::response()]);
 
@@ -117,13 +117,13 @@ class LinkCheckerTest extends TestCase
             ->id('abc')
             ->url('https://example.com/fixed')
             ->status(LinkStatus::Broken)
-            ->failingSince(now()->subDay())
+            ->brokenSince(now()->subDay())
             ->save();
 
         LinkChecker::checkLinks(collect([Facades\ExternalLink::find('abc')]));
 
         $this->assertEquals(LinkStatus::Ok, Facades\ExternalLink::find('abc')->status());
-        $this->assertNull(Facades\ExternalLink::find('abc')->failingSince());
+        $this->assertNull(Facades\ExternalLink::find('abc')->brokenSince());
     }
 
     #[Test]
@@ -195,13 +195,13 @@ class LinkCheckerTest extends TestCase
     }
 
     #[Test]
-    public function it_sends_a_digest_of_failing_links_to_recipients()
+    public function it_sends_a_digest_of_broken_links_to_recipients()
     {
         Notification::fake();
 
         config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->failingSince(now()->subDays(2))->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->brokenSince(now()->subDays(2))->save();
 
         LinkChecker::notifyIfNeeded();
 
@@ -218,7 +218,7 @@ class LinkCheckerTest extends TestCase
 
         config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/flaky')->status(LinkStatus::Broken)->failingSince(now()->subHour())->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/flaky')->status(LinkStatus::Broken)->brokenSince(now()->subHour())->save();
 
         LinkChecker::notifyIfNeeded();
 
@@ -232,7 +232,7 @@ class LinkCheckerTest extends TestCase
 
         config()->set('statamic.seo-pro.broken_links.notifications.recipients', ['duncan@example.com']);
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->failingSince(now()->subDays(2))->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->brokenSince(now()->subDays(2))->save();
 
         LinkChecker::notifyIfNeeded();
         LinkChecker::notifyIfNeeded();
@@ -266,7 +266,7 @@ class LinkCheckerTest extends TestCase
     {
         Notification::fake();
 
-        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->failingSince(now()->subDays(2))->save();
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->status(LinkStatus::Broken)->brokenSince(now()->subDays(2))->save();
 
         LinkChecker::notifyIfNeeded();
 

@@ -23,7 +23,7 @@ class ExternalLink
     protected $status;
     protected $statusCode;
     protected $error;
-    protected $failingSince;
+    protected $brokenSince;
     protected $checkedAt;
     protected $nextCheckAt;
     protected $notifiedAt;
@@ -73,10 +73,10 @@ class ExternalLink
             ->args(func_get_args());
     }
 
-    public function failingSince($failingSince = null)
+    public function brokenSince($brokenSince = null)
     {
         return $this
-            ->fluentlyGetOrSet('failingSince')
+            ->fluentlyGetOrSet('brokenSince')
             ->setter(fn ($value) => $value ? Carbon::parse($value) : null)
             ->args(func_get_args());
     }
@@ -181,7 +181,7 @@ class ExternalLink
             'status' => $this->status()->value,
             'status_code' => $this->statusCode(),
             'error' => $this->error(),
-            'failing_since' => $this->failingSince(),
+            'broken_since' => $this->brokenSince(),
             'checked_at' => $this->checkedAt(),
             'next_check_at' => $this->nextCheckAt(),
             'notified_at' => $this->notifiedAt(),
