@@ -38,7 +38,7 @@ class LinkExtractor
             ->values();
     }
 
-    protected static function walkValue($value, string $path, Collection $found): void
+    private static function walkValue($value, string $path, Collection $found): void
     {
         if (is_string($value)) {
             foreach (self::urlsIn($value) as $url) {
@@ -55,7 +55,7 @@ class LinkExtractor
         }
     }
 
-    protected static function urlsIn(string $text): array
+    private static function urlsIn(string $text): array
     {
         preg_match_all(self::URL_REGEX, $text, $matches);
 
@@ -83,7 +83,7 @@ class LinkExtractor
         return true;
     }
 
-    protected static function internalHosts(): array
+    private static function internalHosts(): array
     {
         return Site::all()
             ->map(fn ($site) => parse_url($site->absoluteUrl(), PHP_URL_HOST))

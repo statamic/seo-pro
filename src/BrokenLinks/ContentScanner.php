@@ -98,7 +98,7 @@ class ContentScanner
         self::removeStaleReferences($subjectType, $subjectId, $site, except: []);
     }
 
-    protected static function removeStaleReferences(string $subjectType, string $subjectId, string $site, array $except): void
+    private static function removeStaleReferences(string $subjectType, string $subjectId, string $site, array $except): void
     {
         Facades\ExternalLink::query()
             ->whereJsonContains('subjects', ExternalLink::subjectKey($subjectType, $subjectId, $site))
@@ -119,7 +119,7 @@ class ContentScanner
             });
     }
 
-    protected static function referencesSubject(array $reference, string $subjectType, string $subjectId, string $site): bool
+    private static function referencesSubject(array $reference, string $subjectType, string $subjectId, string $site): bool
     {
         return $reference['subject_type'] === $subjectType
             && $reference['subject_id'] === $subjectId

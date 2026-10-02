@@ -32,7 +32,7 @@ class ScanBrokenLinksCommand extends Command
         return self::SUCCESS;
     }
 
-    protected function scanEntries(): int
+    private function scanEntries(): int
     {
         $count = 0;
 
@@ -54,7 +54,7 @@ class ScanBrokenLinksCommand extends Command
         return $count;
     }
 
-    protected function scanTerms(): int
+    private function scanTerms(): int
     {
         $count = 0;
 
@@ -76,7 +76,7 @@ class ScanBrokenLinksCommand extends Command
         return $count;
     }
 
-    protected function scanGlobals(): int
+    private function scanGlobals(): int
     {
         $count = 0;
 
