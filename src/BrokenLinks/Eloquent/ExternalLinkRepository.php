@@ -52,8 +52,7 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
             ->checkedAt($model->checked_at)
             ->nextCheckAt($model->next_check_at)
             ->notifiedAt($model->notified_at)
-            ->references($model->references ?? [])
-            ->data($model->data ?? []);
+            ->references($model->references ?? []);
     }
 
     private function toModel(ExternalLink $link): ExternalLinkModel
@@ -75,7 +74,6 @@ class ExternalLinkRepository extends StacheRepository implements RepositoryContr
         $model->notified_at = $link->notifiedAt();
         $model->references = $link->references()->all();
         $model->subjects = $link->subjects();
-        $model->data = $link->data();
 
         return $model;
     }

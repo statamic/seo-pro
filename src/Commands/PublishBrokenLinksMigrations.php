@@ -116,7 +116,6 @@ class PublishBrokenLinksMigrations extends Command
                         'notified_at' => $link->notifiedAt(),
                         'references' => $link->references()->all(),
                         'subjects' => $link->subjects(),
-                        'data' => $link->data(),
                     ]
                 );
 

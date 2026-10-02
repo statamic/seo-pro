@@ -4,7 +4,6 @@ namespace Statamic\SeoPro\BrokenLinks;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Statamic\Data\ContainsData;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
@@ -17,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExternalLink
 {
-    use ContainsData, ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
+    use ExistsAsFile, FluentlyGetsAndSets, TracksQueriedColumns, TracksQueriedRelations;
 
     const STATUS_PENDING = 'pending';
     const STATUS_OK = 'ok';
@@ -34,11 +33,6 @@ class ExternalLink
     protected $nextCheckAt;
     protected $notifiedAt;
     protected $references = [];
-
-    public function __construct()
-    {
-        $this->data = collect();
-    }
 
     public function id($id = null)
     {
@@ -188,7 +182,6 @@ class ExternalLink
     public function fileData(): array
     {
         return Arr::removeNullValues([
-            ...$this->data->all(),
             'url' => $this->url(),
             'status' => $this->status(),
             'status_code' => $this->statusCode(),

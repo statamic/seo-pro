@@ -46,7 +46,6 @@ class ExternalLinkRepositoryTest extends TestCase
             'failing_since' => '2026-09-01 12:00:00',
             'references' => [],
             'subjects' => [],
-            'data' => [],
         ]);
 
         $link = $this->repo->find(1);

@@ -41,16 +41,15 @@ class ExternalLinksStore extends BasicStore
         return Facades\ExternalLink::make()
             ->id((new GetSlugFromPath)($path))
             ->site($site)
-            ->url(Arr::pull($data, 'url'))
-            ->status(Arr::pull($data, 'status', ExternalLink::STATUS_PENDING))
-            ->statusCode(Arr::pull($data, 'status_code'))
-            ->error(Arr::pull($data, 'error'))
-            ->failingSince(Arr::pull($data, 'failing_since'))
-            ->checkedAt(Arr::pull($data, 'checked_at'))
-            ->nextCheckAt(Arr::pull($data, 'next_check_at'))
-            ->notifiedAt(Arr::pull($data, 'notified_at'))
-            ->references(Arr::pull($data, 'references', []))
-            ->data($data);
+            ->url(Arr::get($data, 'url'))
+            ->status(Arr::get($data, 'status', ExternalLink::STATUS_PENDING))
+            ->statusCode(Arr::get($data, 'status_code'))
+            ->error(Arr::get($data, 'error'))
+            ->failingSince(Arr::get($data, 'failing_since'))
+            ->checkedAt(Arr::get($data, 'checked_at'))
+            ->nextCheckAt(Arr::get($data, 'next_check_at'))
+            ->notifiedAt(Arr::get($data, 'notified_at'))
+            ->references(Arr::get($data, 'references', []));
     }
 
     protected function extractSiteFromPath(string $path): string

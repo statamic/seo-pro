@@ -25,7 +25,6 @@ class ExternalLinkModel extends Model
             'notified_at' => 'datetime',
             'references' => 'json',
             'subjects' => 'json',
-            'data' => 'json',
         ];
     }
 }

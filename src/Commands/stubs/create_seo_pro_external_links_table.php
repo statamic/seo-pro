@@ -25,7 +25,6 @@ return new class extends Migration
             $table->dateTime('notified_at')->nullable();
             $table->json('references');
             $table->json('subjects');
-            $table->json('data');
             $table->timestamps();
 
             $table->unique(['site', 'url_hash']);
