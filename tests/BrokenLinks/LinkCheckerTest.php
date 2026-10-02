@@ -260,6 +260,8 @@ class LinkCheckerTest extends TestCase
             'https://example.com/broken — 404 Not Found',
             'Found in: Home',
         ], $mail->introLines);
+        $this->assertEquals('View Broken Links', $mail->actionText);
+        $this->assertEquals(cp_route('seo-pro.broken-links.index'), $mail->actionUrl);
     }
 
     #[Test]

@@ -24,8 +24,8 @@ class BrokenLinksDigest extends Notification
         $count = $this->links->count();
 
         $message = (new MailMessage)
-            ->subject(trans_choice('seo-pro::messages.broken_links_digest_subject', $count, ['count' => $count]))
-            ->line(trans_choice('seo-pro::messages.broken_links_digest_intro', $count, ['count' => $count]));
+            ->subject(trans_choice('seo-pro::messages.broken_links_notification_subject', $count, ['count' => $count]))
+            ->line(trans_choice('seo-pro::messages.broken_links_notification_body', $count, ['count' => $count]));
 
         foreach ($this->links as $link) {
             $message->line($link->url().' — '.$link->response());
@@ -40,6 +40,6 @@ class BrokenLinksDigest extends Notification
             }
         }
 
-        return $message;
+        return $message->action(__('seo-pro::messages.view_broken_links'), cp_route('seo-pro.broken-links.index'));
     }
 }
