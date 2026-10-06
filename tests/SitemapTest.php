@@ -219,6 +219,49 @@ class SitemapTest extends TestCase
     }
 
     #[Test]
+    public function it_excludes_entries_with_sitemap_disabled()
+    {
+        $this->setSeoOnEntry(Entry::findByUri('/about')->entry(), [
+            'sitemap' => false,
+        ]);
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->getContent();
+
+        $locs = $this->getPagesFromSitemapXml($content)->pluck('loc');
+
+        $this->assertCount(6, $locs);
+        $this->assertNotContains('http://cool-runnings.com/about', $locs);
+    }
+
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/692
+     */
+    #[Test]
+    public function it_excludes_entries_with_sitemap_disabled_in_section_defaults()
+    {
+        $this
+            ->setSeoOnCollection(Collection::find('pages'), [
+                'sitemap' => false,
+            ])
+            ->setSeoOnEntry(Entry::findByUri('/about')->entry(), [
+                'title' => 'Custom Title',
+            ]);
+
+        $content = $this
+            ->get('/sitemap.xml')
+            ->assertOk()
+            ->getContent();
+
+        $locs = $this->getPagesFromSitemapXml($content)->pluck('loc');
+
+        $this->assertNotContains('http://cool-runnings.com/about', $locs);
+        $this->assertNotContains('http://cool-runnings.com/articles', $locs);
+    }
+
+    #[Test]
     public function it_doesnt_generate_pages_for_content_without_uris()
     {
         $this->files->put(base_path('content/collections/articles.yaml'), 'route: null');
