@@ -132,15 +132,16 @@ class Sitemap
                 }
 
                 $cascade = $content->value('seo');
+                $sectionDefaults = $this->getSectionDefaults($content);
 
-                if ($cascade === false || collect($cascade)->get('sitemap') === false) {
+                if ($cascade === false || collect($sectionDefaults)->merge($cascade)->get('sitemap') === false) {
                     return;
                 }
 
                 $data = (new Cascade)
                     ->forSitemap()
                     ->withSiteDefaults($this->getSiteDefaults($content->locale()))
-                    ->withSectionDefaults($this->getSectionDefaults($content))
+                    ->withSectionDefaults($sectionDefaults)
                     ->with($cascade ?: [])
                     ->withCurrent($content)
                     ->get();
