@@ -10,14 +10,23 @@ use Statamic\Console\Commands\Multisite;
 use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Addon;
 use Statamic\Facades\CP\Nav;
+use Statamic\Facades\Entry;
 use Statamic\Facades\File;
 use Statamic\Facades\Git;
+use Statamic\Facades\GlobalSet;
 use Statamic\Facades\GraphQL;
 use Statamic\Facades\Image;
 use Statamic\Facades\Permission;
 use Statamic\Facades\Site;
+use Statamic\Facades\Term;
 use Statamic\Facades\User;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\SeoPro\BrokenLinks\ContentSubscriber as BrokenLinksContentSubscriber;
+use Statamic\SeoPro\BrokenLinks\ExternalLink;
+use Statamic\SeoPro\BrokenLinks\ExternalLinkRepository;
+use Statamic\SeoPro\BrokenLinks\Reference;
+use Statamic\SeoPro\BrokenLinks\Stache\ExternalLinksStore;
+use Statamic\SeoPro\Commands\CheckBrokenLinksCommand;
 use Statamic\SeoPro\Commands\GenerateReportCommand;
 use Statamic\SeoPro\Commands\PurgeErrorsCommand;
 use Statamic\SeoPro\Events\RedirectSaved;
@@ -53,6 +62,7 @@ class ServiceProvider extends AddonServiceProvider
     protected $policies = [
         Error::class => Policies\ErrorPolicy::class,
         Redirect::class => Policies\RedirectPolicy::class,
+        ExternalLink::class => Policies\ExternalLinkPolicy::class,
     ];
 
     protected $config = false;
@@ -65,6 +75,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->registerSerializableClasses([
             Error::class,
+            ExternalLink::class,
             Page::class,
             Redirect::class,
             Report::class,
@@ -82,6 +93,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootRedirects()
+            ->bootBrokenLinks()
             ->bootRouteBindings()
             ->bootGit()
             ->bootAddonScheduledCommands()
@@ -143,6 +155,7 @@ class ServiceProvider extends AddonServiceProvider
             })->label(__('seo-pro::messages.view_reports'));
             Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
             Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
+            Permission::register('view seo broken links')->label(__('seo-pro::messages.view_broken_links'));
         });
 
         return $this;
@@ -160,6 +173,7 @@ class ServiceProvider extends AddonServiceProvider
                             $nav->item(__('seo-pro::messages.reports'))->route('seo-pro.reports.index')->can('view seo reports'),
                             $nav->item(__('seo-pro::messages.redirects'))->route('seo-pro.redirects.index')->can('view seo redirects'),
                             $nav->item(__('seo-pro::messages.errors'))->route('seo-pro.errors.index')->can('view seo redirects'),
+                            $nav->item(__('seo-pro::messages.broken_links'))->route('seo-pro.broken-links.index')->can('view seo broken links'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
                         ];
@@ -176,6 +190,10 @@ class ServiceProvider extends AddonServiceProvider
 
         if (config('statamic.seo-pro.redirects.automatic_redirects.enabled')) {
             Event::subscribe(Redirects\AutomaticRedirectSubscriber::class);
+        }
+
+        if (config('statamic.seo-pro.broken_links.enabled')) {
+            Event::subscribe(BrokenLinksContentSubscriber::class);
         }
 
         return $this;
@@ -230,6 +248,57 @@ class ServiceProvider extends AddonServiceProvider
         }
 
         NotFoundHttpException::renderUsing(fn ($request) => app(HandleRedirects::class)($request));
+
+        return $this;
+    }
+
+    protected function bootBrokenLinks()
+    {
+        $this->app['stache']->registerStores([
+            (new ExternalLinksStore)->directory(config('statamic.seo-pro.broken_links.directory')),
+        ]);
+
+        $this->app->bind(BrokenLinks\Stache\ExternalLinkQueryBuilder::class, function (): BrokenLinks\Stache\ExternalLinkQueryBuilder {
+            return new BrokenLinks\Stache\ExternalLinkQueryBuilder($this->app->make(Stache::class)->store('seo_pro_external_links'));
+        });
+
+        Statamic::repository(ExternalLinkRepository::class, BrokenLinks\Stache\ExternalLinkRepository::class);
+
+        if (config('statamic.seo-pro.broken_links.driver') === 'database') {
+            $this->app['stache']->exclude('seo_pro_external_links');
+
+            Statamic::repository(ExternalLinkRepository::class, BrokenLinks\Eloquent\ExternalLinkRepository::class);
+        }
+
+        Reference::resolveUsing(
+            type: 'entry',
+            title: fn (Reference $reference): ?string => Entry::find($reference->id)?->value('title'),
+            editUrl: function (Reference $reference): ?string {
+                $entry = Entry::find($reference->id);
+
+                return $entry && User::current()->can('edit', $entry) ? $entry->editUrl() : null;
+            },
+        );
+
+        Reference::resolveUsing(
+            type: 'term',
+            title: fn (Reference $reference): ?string => Term::find($reference->id)?->in($reference->site)?->title(),
+            editUrl: function (Reference $reference): ?string {
+                $term = Term::find($reference->id)?->in($reference->site);
+
+                return $term && User::current()->can('edit', $term) ? $term->editUrl() : null;
+            },
+        );
+
+        Reference::resolveUsing(
+            type: 'global',
+            title: fn (Reference $reference): ?string => GlobalSet::find($reference->id)?->in($reference->site)?->title(),
+            editUrl: function (Reference $reference): ?string {
+                $variables = GlobalSet::find($reference->id)?->in($reference->site);
+
+                return $variables && User::current()->can('edit', $variables) ? $variables->editUrl() : null;
+            },
+        );
 
         return $this;
     }
@@ -292,6 +361,10 @@ class ServiceProvider extends AddonServiceProvider
     {
         if (config('statamic.seo-pro.redirects.errors.enabled')) {
             $this->app->make(Schedule::class)->command(PurgeErrorsCommand::class)->daily();
+        }
+
+        if (config('statamic.seo-pro.broken_links.enabled')) {
+            $this->app->make(Schedule::class)->command(CheckBrokenLinksCommand::class)->everyFifteenMinutes()->withoutOverlapping();
         }
 
         return $this;
@@ -369,6 +442,22 @@ class ServiceProvider extends AddonServiceProvider
                     }
                 );
             }
+
+            if (config('statamic.seo-pro.broken_links.driver') === 'file') {
+                $this->components->task(
+                    description: 'Updating broken links',
+                    task: function (): void {
+                        $base = app(Stache::class)->store('seo_pro_external_links')->directory();
+
+                        File::makeDirectory("{$base}/{$this->siteHandle}");
+
+                        File::getFiles($base)->each(function (string $file) use ($base): void {
+                            $filename = pathinfo($file, PATHINFO_BASENAME);
+                            File::move($file, "{$base}/{$this->siteHandle}/{$filename}");
+                        });
+                    }
+                );
+            }
         });
 
         return $this;
@@ -380,6 +469,7 @@ class ServiceProvider extends AddonServiceProvider
 
         return $user->can('view seo reports')
             || $user->can('view seo redirects')
+            || $user->can('view seo broken links')
             || $user->can('edit seo site defaults')
             || $user->can('edit seo section defaults');
     }
