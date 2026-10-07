@@ -160,4 +160,33 @@ return [
         'meta_description_length_page_passing' => 'Meta description is :length characters.',
     ],
 
+    'widget' => [
+        'date' => 'Report from :date',
+        'time_format' => 'h:mm A',
+        'fresh_today' => 'Generated today at :time.',
+        'fresh_yesterday' => 'Generated yesterday at :time.',
+        'age_days' => '{1}Generated one day ago.|[2,*]Generated :count days ago.',
+        'age_stale' => 'Generated :ago.',
+        'stale_detail' => 'A lot has probably changed since.',
+        'new_report' => 'New Report',
+        'changes' => '{0}Nothing has been edited since.|{1}One entry has been edited since.|[2,*]:count entries have been edited since.',
+        'rules_checked' => '{1}1 rule checked|[0,*]:count rules checked',
+        'rules_passed' => '{1}1 rule passed|[0,*]:count rules passed',
+        'pages' => '{1}1 page|[0,*]:count pages',
+        'site_wide' => 'Site',
+        'all_passed' => 'All rules passed',
+        'hint_aria' => 'About the rules',
+        'hint_body' => 'Failed rules lower the SEO score, warnings do not. They just point out where a closer look pays off.',
+        'score_aria' => 'SEO score :score, view report',
+        'rules' => [
+            'site_name' => 'Site name',
+            'unique_title' => 'Unique title',
+            'title_length' => 'Title length',
+            'unique_description' => 'Unique meta description',
+            'description_length' => 'Meta description length',
+            'no_underscores' => 'URL without underscores',
+            'three_segments' => 'URL with max. 3 segments',
+        ],
+    ],
+
 ];
