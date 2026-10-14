@@ -5,6 +5,7 @@ namespace Statamic\SeoPro;
 use Exception;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Assets\Asset as AssetContract;
+use Statamic\Contracts\Entries\Entry as EntryContract;
 use Statamic\Contracts\Query\Builder;
 use Statamic\Facades\Antlers;
 use Statamic\Facades\Asset;
@@ -486,7 +487,7 @@ class Cascade
 
     private function localizationIn(string $locale)
     {
-        if (! method_exists($this->model, 'descendants')) {
+        if (! $this->model instanceof EntryContract) {
             return $this->model->in($locale);
         }
 
