@@ -34,6 +34,7 @@ class Cascade
     protected $model;
     protected $taxonomy;
     protected $forSitemap = false;
+    protected $localizations;
 
     public function __construct()
     {
@@ -83,6 +84,8 @@ class Cascade
         $this->current = $this->augmentData($data);
 
         $this->model = $data ?? new NullModel;
+
+        $this->localizations = null;
 
         return $this;
     }
@@ -465,7 +468,7 @@ class Cascade
                 && (! $this->taxonomy->collection() || $this->taxonomy->collection()->sites()->contains($locale));
         }
 
-        $localization = $this->model->in($locale);
+        $localization = $this->localizationIn($locale);
 
         return $localization?->status() === 'published' && $localization->url();
     }
@@ -478,7 +481,21 @@ class Cascade
             return URL::tidy($site->absoluteUrl().$prefix.'/'.str_replace('_', '-', $this->taxonomy->handle()));
         }
 
-        return $this->model->in($site->handle())->absoluteUrl();
+        return $this->localizationIn($site->handle())->absoluteUrl();
+    }
+
+    private function localizationIn(string $locale)
+    {
+        if (! method_exists($this->model, 'descendants')) {
+            return $this->model->in($locale);
+        }
+
+        $this->localizations ??= collect([$root = $this->model->root()])
+            ->merge($root->descendants())
+            ->push($this->model)
+            ->keyBy->locale();
+
+        return $this->localizations->get($locale);
     }
 
     protected function currentHreflang($alternateLocales)

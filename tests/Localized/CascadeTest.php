@@ -3,6 +3,8 @@
 namespace Tests\Localized;
 
 use PHPUnit\Framework\Attributes\Test;
+use Statamic\Contracts\Entries\QueryBuilder as EntryQueryBuilder;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
@@ -62,6 +64,29 @@ class CascadeTest extends LocalizedTestCase
             ->get();
 
         $this->assertEmpty($data['alternate_locales']);
+    }
+
+    #[Test]
+    public function it_does_not_query_localizations_for_each_alternate_locale()
+    {
+        $localizationQueries = 0;
+
+        $this->app->resolving(EntryQueryBuilder::class, function () use (&$localizationQueries) {
+            if (in_array('descendants', array_column(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 'function'))) {
+                $localizationQueries++;
+            }
+        });
+
+        Blink::flush();
+
+        $data = (new Cascade)
+            ->withSiteDefaults(SiteDefaults::in('default')->all())
+            ->withCurrent(Entry::find('home'))
+            ->get();
+
+        $this->assertCount(3, $data['alternate_locales']);
+
+        $this->assertLessThanOrEqual(2, $localizationQueries);
     }
 
     #[Test]
