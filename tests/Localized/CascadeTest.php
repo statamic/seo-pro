@@ -2,9 +2,9 @@
 
 namespace Tests\Localized;
 
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
-use Statamic\Contracts\Entries\QueryBuilder as EntryQueryBuilder;
-use Statamic\Facades\Blink;
+use Statamic\Entries\Entry as EntryInstance;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Config;
 use Statamic\Facades\Entry;
@@ -69,24 +69,19 @@ class CascadeTest extends LocalizedTestCase
     #[Test]
     public function it_does_not_query_localizations_for_each_alternate_locale()
     {
-        $localizationQueries = 0;
+        $entry = Mockery::mock(EntryInstance::class, [])->makePartial();
+        $entry->collection('pages')->locale('default')->slug('localized')->saveQuietly();
 
-        $this->app->resolving(EntryQueryBuilder::class, function () use (&$localizationQueries) {
-            if (in_array('descendants', array_column(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 'function'))) {
-                $localizationQueries++;
-            }
-        });
+        collect(['french', 'italian', 'british'])->each(fn ($site) => $entry->makeLocalization($site)->saveQuietly());
 
-        Blink::flush();
+        $entry->shouldReceive('descendants')->once()->passthru();
 
         $data = (new Cascade)
             ->withSiteDefaults(SiteDefaults::in('default')->all())
-            ->withCurrent(Entry::find('home'))
+            ->withCurrent($entry)
             ->get();
 
         $this->assertCount(3, $data['alternate_locales']);
-
-        $this->assertLessThanOrEqual(2, $localizationQueries);
     }
 
     #[Test]
