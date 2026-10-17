@@ -387,6 +387,156 @@ You can add a recent errors widget to your dashboard to see the latest 404s at a
 ],
 ```
 
+## Broken Links
+
+SEO Pro can track external links found in your content and periodically check them for broken links, so you can find and fix them before your visitors do.
+
+To enable broken link tracking, set the `SEO_PRO_TRACK_BROKEN_LINKS` environment variable:
+
+```env
+SEO_PRO_TRACK_BROKEN_LINKS=true
+```
+
+Then, scan your existing content for external links, so SEO Pro can start checking them right away:
+
+```
+php please seo-pro:scan-broken-links
+```
+
+### Managing Broken Links
+
+Head to `Tools > SEO Pro > Broken Links` to see every broken link, along with when it broke and the response it got back (like `404 Not Found` or `Host not found`). Once a broken link is fixed, it'll drop off the listing after its next check.
+
+Links that haven't been checked yet aren't listed, but you'll see a note letting you know how many are still waiting to be checked.
+
+You can recheck one or more links on demand using the row or bulk actions, or recheck everything at once with the "Recheck All" button.
+
+### How Links Are Tracked
+
+Whenever an entry, term, or global set is saved, SEO Pro scans its fields for external URLs and keeps track of where each one was found. If you remove a link from your content, SEO Pro will stop tracking it.
+
+On multi-site installs, links are tracked per site. If the same URL appears in content on two sites, it'll be listed (and checked) once for each.
+
+To re-scan all of your content, run:
+
+```
+php please seo-pro:scan-broken-links
+```
+
+### Checking Links
+
+SEO Pro periodically checks each tracked link with an HTTP request, and marks it as broken if it returns a status outside the 200-399 range (or times out, or can't be reached at all).
+
+You can configure how often links are checked, along with the request timeout and concurrency:
+
+```php
+// config/statamic/seo-pro.php
+
+'broken_links' => [
+    'check' => [
+        'frequency' => 'hourly', // every_15_minutes, every_30_minutes, hourly, every_6_hours, every_12_hours, daily, weekly
+        'timeout' => 10,
+        'batch_size' => 100,
+        'concurrency' => 10,
+    ],
+],
+```
+
+You may exclude specific hosts from being tracked at all. Your own site's domain(s) are already excluded automatically, along with `localhost`, private IP addresses and internal hostnames:
+
+```php
+// config/statamic/seo-pro.php
+
+'broken_links' => [
+    'excluded_hosts' => ['staging.example.com'],
+],
+```
+
+Excluded hosts are applied as content is scanned, so after changing them, run `php please seo-pro:scan-broken-links` to clean up any links that are already being tracked.
+
+Checks run automatically using your server's scheduler (as long as the [scheduler](https://statamic.dev/scheduling) is configured), or you can trigger one manually:
+
+```
+php please seo-pro:check-broken-links
+```
+
+### Notifications
+
+SEO Pro can email you a summary of your broken links. To avoid emailing you about sites that are only down briefly, links are only included once they've been broken for at least a day.
+
+Add the email addresses that should receive it:
+
+```php
+// config/statamic/seo-pro.php
+
+'broken_links' => [
+    'notifications' => [
+        'recipients' => ['you@example.com'],
+    ],
+],
+```
+
+You'll only be emailed about a broken link once. If it recovers and then breaks again, you'll be emailed about it again.
+
+### Storage
+
+By default, tracked links are stored as YAML files in the `storage/statamic/seopro/external-links` directory:
+
+```php
+// config/statamic/seo-pro.php
+
+'broken_links' => [
+    'driver' => 'file',
+    'directory' => storage_path('statamic/seopro/external-links'),
+],
+```
+
+Alternatively, you may store tracked links in the database by changing the driver:
+
+```php
+// config/statamic/seo-pro.php
+
+'broken_links' => [
+    'driver' => 'database',
+],
+```
+
+Then run `php please seo-pro:database-broken-links` to publish the migration and import any existing tracked links.
+
+### Tracking Additional Content
+
+Out of the box, SEO Pro scans entries, terms and global sets. If you have content stored elsewhere, like in your own Eloquent models, you can have it scanned too whenever it's saved, and forgotten when it's deleted:
+
+```php
+use Statamic\SeoPro\BrokenLinks\ContentScanner;
+
+Product::saved(function (Product $product) {
+    ContentScanner::scan(
+        type: 'product',
+        id: $product->id,
+        values: $product->toArray(),
+    );
+});
+
+Product::deleted(function (Product $product) {
+    ContentScanner::forget(type: 'product', id: $product->id);
+});
+```
+
+On multi-site installs, you may also pass the `site` the links belong to. Otherwise, the default site is used.
+
+To show the product in the Broken Links listing and email, you'll also need to tell SEO Pro what it's called and where to link. Return `null` from `editUrl` when the current user isn't authorized to edit it:
+
+```php
+use Statamic\SeoPro\BrokenLinks\Reference;
+
+Reference::resolveUsing(
+    type: 'product',
+    title: fn (Reference $reference) => Product::find($reference->id)?->name,
+    editUrl: fn (Reference $reference) => auth()->user()->can('edit products') ? route('products.edit', $reference->id) : null,
+);
+```
+
 ## Advanced Configuration
 
 ### Publishing Config

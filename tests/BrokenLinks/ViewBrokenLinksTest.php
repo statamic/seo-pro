@@ -1,0 +1,305 @@
+<?php
+
+namespace Tests\BrokenLinks;
+
+use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
+use Statamic\Facades\GlobalSet;
+use Statamic\Facades\Role;
+use Statamic\Facades\Scope;
+use Statamic\Facades\Site;
+use Statamic\Facades\Taxonomy;
+use Statamic\Facades\Term;
+use Statamic\Facades\User;
+use Statamic\SeoPro\BrokenLinks\CheckExternalLinks;
+use Statamic\SeoPro\BrokenLinks\Reference;
+use Statamic\SeoPro\Facades;
+use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
+use Tests\TestCase;
+
+class ViewBrokenLinksTest extends TestCase
+{
+    use PreventsSavingStacheItemsToDisk;
+
+    #[Test]
+    public function can_view_broken_links_index()
+    {
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->get(cp_route('seo-pro.broken-links.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('seo-pro::BrokenLinks/Index'));
+    }
+
+    #[Test]
+    public function cant_view_broken_links_without_permission()
+    {
+        Role::make('test')->addPermission('access cp')->save();
+
+        $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->get(cp_route('seo-pro.broken-links.index'))
+            ->assertRedirect('/cp');
+    }
+
+    #[Test]
+    public function only_broken_links_are_listed()
+    {
+        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->checkedAt(now())->brokenSince(now())->save();
+        Facades\ExternalLink::make()->id('fine')->url('https://example.com/fine')->checkedAt(now())->save();
+        Facades\ExternalLink::make()->id('unchecked')->url('https://example.com/unchecked')->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals(['broken'], collect($response->json('data'))->pluck('id')->all());
+    }
+
+    #[Test]
+    public function the_listing_counts_links_that_have_not_been_checked_yet()
+    {
+        Facades\ExternalLink::make()->id('broken')->url('https://example.com/broken')->checkedAt(now())->brokenSince(now())->save();
+        Facades\ExternalLink::make()->id('one')->url('https://example.com/one')->save();
+        Facades\ExternalLink::make()->id('two')->url('https://example.com/two')->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals(2, $response->json('meta.uncheckedCount'));
+    }
+
+    #[Test]
+    public function only_broken_links_in_authorized_sites_are_listed()
+    {
+        $this->setSites();
+
+        Facades\ExternalLink::make()->id('english')->site('default')->url('https://example.com/english')->brokenSince(now())->save();
+        Facades\ExternalLink::make()->id('french')->site('fr')->url('https://example.com/french')->brokenSince(now())->save();
+
+        Role::make('test')
+            ->addPermission('access cp')
+            ->addPermission('view seo broken links')
+            ->addPermission('access fr site')
+            ->save();
+
+        $response = $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals(['french'], collect($response->json('data'))->pluck('id')->all());
+    }
+
+    #[Test]
+    public function references_include_titles_and_edit_urls()
+    {
+        Collection::make('blog')->save();
+        Taxonomy::make('tags')->save();
+
+        $entry = tap(Entry::make()->collection('blog')->slug('hello-world')->data(['title' => 'Hello World']))->save();
+        $term = tap(Term::make()->taxonomy('tags')->slug('news')->data(['title' => 'News']))->save();
+        $globalSet = tap(GlobalSet::make('footer')->title('Footer'))->save();
+        $globalSet->makeLocalization('default')->save();
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now())->references([
+            new Reference(type: 'entry', id: $entry->id(), site: 'default'),
+            new Reference(type: 'term', id: $term->id(), site: 'default'),
+            new Reference(type: 'global', id: 'footer', site: 'default'),
+        ])->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals([
+            ['title' => 'Hello World', 'edit_url' => $entry->editUrl()],
+            ['title' => 'News', 'edit_url' => $term->inDefaultLocale()->editUrl()],
+            ['title' => 'Footer', 'edit_url' => $globalSet->in('default')->editUrl()],
+        ], $response->json('data.0.references'));
+    }
+
+    #[Test]
+    public function references_are_only_editable_by_users_who_can_edit_them()
+    {
+        Collection::make('blog')->save();
+
+        $entry = tap(Entry::make()->collection('blog')->slug('hello-world'))->save();
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now())->references([
+            new Reference(type: 'entry', id: $entry->id(), site: 'default'),
+        ])->save();
+
+        Role::make('test')
+            ->addPermission('access cp')
+            ->addPermission('view seo broken links')
+            ->addPermission('view blog entries')
+            ->save();
+
+        $response = $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals([], $response->json('data.0.references'));
+    }
+
+    #[Test]
+    public function references_to_custom_content_use_the_registered_resolver()
+    {
+        Reference::resolveUsing(
+            type: 'product',
+            title: fn (Reference $reference) => "Product {$reference->id}",
+            editUrl: fn (Reference $reference) => "/cp/products/{$reference->id}/{$reference->site}",
+        );
+
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now())->references([
+            new Reference(type: 'product', id: '123', site: 'default'),
+        ])->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals([
+            ['title' => 'Product 123', 'edit_url' => '/cp/products/123/default'],
+        ], $response->json('data.0.references'));
+    }
+
+    #[Test]
+    public function broken_links_are_sorted_with_the_longest_broken_first_by_default()
+    {
+        Facades\ExternalLink::make()->id('recent')->url('https://example.com/recent')->brokenSince(now()->subDay())->save();
+        Facades\ExternalLink::make()->id('oldest')->url('https://example.com/oldest')->brokenSince(now()->subWeek())->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals(['oldest', 'recent'], collect($response->json('data'))->pluck('id')->all());
+    }
+
+    #[Test]
+    public function the_listing_describes_the_response_each_link_returned()
+    {
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now())->statusCode(404)->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index'))
+            ->assertOk();
+
+        $this->assertEquals('404 Not Found', $response->json('data.0.response'));
+    }
+
+    #[Test]
+    public function broken_links_can_be_searched_by_url()
+    {
+        Facades\ExternalLink::make()->id('abc')->url('https://example.com/broken')->brokenSince(now())->save();
+        Facades\ExternalLink::make()->id('def')->url('https://example.com/fine')->brokenSince(now())->save();
+
+        $response = $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->getJson(cp_route('seo-pro.broken-links.index', ['search' => 'broken']))
+            ->assertOk();
+
+        $data = $response->json('data');
+
+        $this->assertCount(1, $data);
+        $this->assertEquals('abc', $data[0]['id']);
+    }
+
+    #[Test]
+    public function the_site_filter_is_offered_for_the_broken_links_listing_in_a_multisite()
+    {
+        $this->setSites();
+
+        $filters = Scope::filters('broken-links');
+
+        $this->assertTrue($filters->contains(fn ($filter) => $filter->handle() === 'seo_pro_site'));
+    }
+
+    #[Test]
+    public function a_super_user_can_recheck_all_links()
+    {
+        Queue::fake();
+
+        config()->set('statamic.seo-pro.broken_links.check.batch_size', 2);
+
+        Facades\ExternalLink::make()->id('one')->url('https://example.com/one')->save();
+        Facades\ExternalLink::make()->id('two')->url('https://example.com/two')->save();
+        Facades\ExternalLink::make()->id('three')->url('https://example.com/three')->save();
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.broken-links.recheck-all'))
+            ->assertOk();
+
+        Queue::assertPushed(CheckExternalLinks::class, 2);
+    }
+
+    #[Test]
+    #[DataProvider('recheckMessageProvider')]
+    public function rechecking_all_links_sets_expectations_based_on_the_queue_connection(string $connection, string $message)
+    {
+        config()->set('queue.default', $connection);
+
+        Queue::fake();
+
+        $this
+            ->actingAs(User::make()->makeSuper()->save())
+            ->postJson(cp_route('seo-pro.broken-links.recheck-all'))
+            ->assertOk()
+            ->assertJson(['message' => __($message)]);
+    }
+
+    public static function recheckMessageProvider(): array
+    {
+        return [
+            'sync' => ['sync', 'seo-pro::messages.broken_links_rechecked'],
+            'queued' => ['redis', 'seo-pro::messages.broken_links_queued_for_rechecking'],
+        ];
+    }
+
+    #[Test]
+    public function a_user_who_can_view_broken_links_can_recheck_all_links()
+    {
+        Role::make('test')->addPermission('access cp')->addPermission('view seo broken links')->save();
+
+        $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->postJson(cp_route('seo-pro.broken-links.recheck-all'))
+            ->assertOk();
+    }
+
+    #[Test]
+    public function a_user_who_cannot_view_broken_links_cannot_recheck_all_links()
+    {
+        Role::make('test')->addPermission('access cp')->save();
+
+        $this
+            ->actingAs(User::make()->assignRole('test')->save())
+            ->postJson(cp_route('seo-pro.broken-links.recheck-all'))
+            ->assertForbidden();
+    }
+
+    private function setSites(): void
+    {
+        config()->set('statamic.editions.pro', true);
+        config()->set('statamic.system.multisite', true);
+
+        Site::setSites([
+            'default' => ['url' => 'http://test.com', 'locale' => 'en_US'],
+            'fr' => ['url' => 'http://test.fr', 'locale' => 'fr_FR'],
+        ]);
+    }
+}
