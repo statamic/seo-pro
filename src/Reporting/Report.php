@@ -7,9 +7,9 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Statamic\Facades\Entry;
 use Statamic\Facades\File;
-use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
 use Statamic\Facades\YAML;
 
@@ -112,8 +112,8 @@ class Report implements Arrayable, Jsonable
 
     protected function hasRemainingChunks()
     {
-        return File::exists($this->chunksFolder())
-            && File::getFolders($this->chunksFolder())->isNotEmpty();
+        return File::disk(static::disk())->exists($this->chunksFolder())
+            && File::disk(static::disk())->getFolders($this->chunksFolder())->isNotEmpty();
     }
 
     protected function chunks()
@@ -139,8 +139,8 @@ class Report implements Arrayable, Jsonable
 
     public function finalize()
     {
-        if (File::exists($dir = $this->chunksFolder())) {
-            File::delete($dir);
+        if (File::disk(static::disk())->exists($dir = $this->chunksFolder())) {
+            File::disk(static::disk())->delete($dir);
         }
 
         $this
@@ -284,12 +284,12 @@ class Report implements Arrayable, Jsonable
             return $this;
         }
 
-        $dir = storage_path(sprintf('statamic/seopro/reports/%s/pages', $this->id));
+        $dir = sprintf('statamic/seopro/reports/%s/pages', $this->id);
 
-        $files = Folder::getFilesRecursively($dir);
+        $files = File::disk(static::disk())->getFilesRecursively($dir);
 
         $this->pages = collect($files)
-            ->map(fn ($file) => YAML::parse(File::get($file)))
+            ->map(fn ($file) => YAML::parse(File::disk(static::disk())->get($file)))
             ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']))
             ->sortBy
             ->url()
@@ -326,7 +326,7 @@ class Report implements Arrayable, Jsonable
 
     public static function all()
     {
-        $folders = collect(Folder::getFolders(static::preparePath()));
+        $folders = collect(File::disk(static::disk())->getFolders('statamic/seopro/reports'));
 
         if ($folders->isEmpty()) {
             return $folders;
@@ -369,7 +369,7 @@ class Report implements Arrayable, Jsonable
 
     public function save()
     {
-        File::put($this->path(), YAML::dump($this->raw = [
+        File::disk(static::disk())->put($this->path(), YAML::dump($this->raw = [
             'date' => $this->date ?? now()->timestamp,
             'status' => $this->status(),
             'score' => $this->score(),
@@ -385,34 +385,46 @@ class Report implements Arrayable, Jsonable
 
     public function delete()
     {
-        File::delete($this->parentFolder());
+        File::disk(static::disk())->delete($this->parentFolder());
 
         return $this->clearCaches();
     }
 
+    /**
+     * The disk for File::disk(): the one configured in `reports.disk`, or else the local
+     * storage directory. Reports live under statamic/seopro/reports on it.
+     */
+    public static function disk()
+    {
+        return config('statamic.seo-pro.reports.disk') ?: Storage::build([
+            'driver' => 'local',
+            'root' => storage_path(),
+        ]);
+    }
+
     public function parentFolder()
     {
-        return storage_path('statamic/seopro/reports/'.$this->id);
+        return 'statamic/seopro/reports/'.$this->id;
     }
 
     public function chunksFolder()
     {
-        return storage_path('statamic/seopro/reports/'.$this->id.'/chunks');
+        return 'statamic/seopro/reports/'.$this->id.'/chunks';
     }
 
     public function path()
     {
-        return storage_path('statamic/seopro/reports/'.$this->id.'/report.yaml');
+        return 'statamic/seopro/reports/'.$this->id.'/report.yaml';
     }
 
     public function exists()
     {
-        return File::exists($this->path());
+        return File::disk(static::disk())->exists($this->path());
     }
 
     public function load()
     {
-        $this->raw = YAML::parse(File::get($this->path()));
+        $this->raw = YAML::parse(File::disk(static::disk())->get($this->path()));
 
         $this->date = $this->raw['date'];
         $this->results = $this->raw['results'];
@@ -499,17 +511,6 @@ class Report implements Arrayable, Jsonable
         return $this;
     }
 
-    public static function preparePath($path = null)
-    {
-        $path = collect([storage_path('statamic/seopro/reports'), $path])->filter()->implode('/');
-
-        if (! File::exists($path)) {
-            File::makeDirectory($path, 0755, true);
-        }
-
-        return $path;
-    }
-
     protected function allContent()
     {
         $content = collect()
@@ -562,7 +563,7 @@ class Report implements Arrayable, Jsonable
             return false;
         }
 
-        $reports = collect(app('files')->directories(storage_path('statamic/seopro/reports')));
+        $reports = collect(File::disk(static::disk())->getFolders('statamic/seopro/reports'));
 
         $keepReports = $reports
             ->keyBy(fn ($path) => pathinfo($path)['basename'])
@@ -571,7 +572,7 @@ class Report implements Arrayable, Jsonable
 
         $reports
             ->reject(fn ($path) => $keepReports->contains($path))
-            ->each(fn ($path) => app('files')->deleteDirectory($path));
+            ->each(fn ($path) => File::disk(static::disk())->delete($path));
 
         return true;
     }

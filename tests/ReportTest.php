@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Config;
@@ -66,6 +67,32 @@ EXPECTED;
         $this->assertFileExists($this->reportsPath('1'));
         $this->assertFileExists($this->reportsPath('2'));
         $this->assertFileExists($this->reportsPath('3'));
+    }
+
+    #[Test]
+    public function it_stores_reports_on_the_configured_disk()
+    {
+        config(['statamic.seo-pro.reports.disk' => 'reports']);
+        Storage::fake('reports');
+
+        $this->generateEntries(3);
+
+        Report::create()->save()->generate();
+
+        Storage::disk('reports')->assertExists('statamic/seopro/reports/1/report.yaml');
+        $this->assertCount(3, Storage::disk('reports')->allFiles('statamic/seopro/reports/1/pages'));
+        $this->assertCount(0, Storage::disk('reports')->directories('statamic/seopro/reports/1/chunks'));
+        $this->assertFileDoesNotExist($this->reportsPath());
+
+        $this->assertCount(1, Report::all());
+        $this->assertSame(1, Report::find(1)->id());
+        $this->assertSame(3, Report::find(1)->withPages()->pagesCrawled());
+        $this->assertSame(2, Report::nextId());
+
+        Report::find(1)->delete();
+
+        Storage::disk('reports')->assertMissing('statamic/seopro/reports/1/report.yaml');
+        $this->assertCount(0, Report::all());
     }
 
     #[Test]

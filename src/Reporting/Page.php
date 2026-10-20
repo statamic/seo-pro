@@ -146,7 +146,7 @@ class Page implements Arrayable
             'results' => $this->results,
         ];
 
-        File::put($this->path(), YAML::dump($data));
+        File::disk(Report::disk())->put($this->path(), YAML::dump($data));
     }
 
     protected function path()
@@ -154,9 +154,9 @@ class Page implements Arrayable
         $key = md5($this->id);
         $parts = array_slice(str_split($key, 2), 0, 2);
 
-        return storage_path(vsprintf('statamic/seopro/reports/%s/pages/%s/%s.yaml', [
+        return vsprintf('statamic/seopro/reports/%s/pages/%s/%s.yaml', [
             $this->report->id(), implode('/', $parts), $key,
-        ]));
+        ]);
     }
 
     public function model()

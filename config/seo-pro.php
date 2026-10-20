@@ -50,6 +50,7 @@ return [
     ],
 
     'reports' => [
+        'disk' => null,
         'keep_recent' => 'all',
         'queue_chunk_size' => 1000,
         'title_length' => [

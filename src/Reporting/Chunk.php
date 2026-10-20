@@ -37,7 +37,7 @@ class Chunk
 
     public function save()
     {
-        File::put($this->yamlPath(), YAML::dump([
+        File::disk(Report::disk())->put($this->yamlPath(), YAML::dump([
             'ids' => $this->contentIds,
         ]));
 
@@ -61,7 +61,7 @@ class Chunk
             $this->createPage($content[$id] ?? Data::find($id))?->save();
         }
 
-        File::delete($this->folderPath());
+        File::disk(Report::disk())->delete($this->folderPath());
 
         if ($this->wasLastChunk()) {
             $this->report->finalize();
@@ -70,7 +70,7 @@ class Chunk
 
     protected function wasLastChunk()
     {
-        return File::getFolders($this->report->chunksFolder())->isEmpty();
+        return File::disk(Report::disk())->getFolders($this->report->chunksFolder())->isEmpty();
     }
 
     protected function createPage($content)
