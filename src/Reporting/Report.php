@@ -315,7 +315,7 @@ class Report implements Arrayable, Jsonable
 
     public static function latest()
     {
-        return static::all()->first();
+        return app(ReportRepository::class)->latest();
     }
 
     public static function latestGenerated()

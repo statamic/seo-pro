@@ -28,6 +28,13 @@ class ReportRepository implements RepositoryContract
         return static::fromModel($model);
     }
 
+    public function latest(): ?Report
+    {
+        $model = ReportModel::query()->orderByDesc('id')->first();
+
+        return $model ? static::fromModel($model) : null;
+    }
+
     public function nextId(): int
     {
         return (int) ReportModel::max('id') + 1;

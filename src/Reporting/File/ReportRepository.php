@@ -33,6 +33,11 @@ class ReportRepository implements RepositoryContract
         return Report::create($id)->hydrate(YAML::parse(File::get($path)));
     }
 
+    public function latest(): ?Report
+    {
+        return $this->all()->first();
+    }
+
     public function nextId(): int
     {
         return (int) Folder::getFolders($this->prepareDirectory())

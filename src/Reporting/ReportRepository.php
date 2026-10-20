@@ -10,6 +10,8 @@ interface ReportRepository
 
     public function find($id): ?Report;
 
+    public function latest(): ?Report;
+
     public function nextId(): int;
 
     public function save(Report $report): void;

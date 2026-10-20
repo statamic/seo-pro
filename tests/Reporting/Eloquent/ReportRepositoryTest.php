@@ -94,6 +94,17 @@ class ReportRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_finds_the_latest_report()
+    {
+        $this->assertNull($this->repo->latest());
+
+        $this->createReportModel();
+        $this->createReportModel();
+
+        $this->assertSame(2, $this->repo->latest()->id());
+    }
+
+    #[Test]
     public function it_computes_the_next_id()
     {
         $this->assertSame(1, $this->repo->nextId());
