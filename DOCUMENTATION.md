@@ -155,6 +155,7 @@ By default, reports are stored as YAML files in the `storage/statamic/seopro/rep
 // config/statamic/seo-pro.php
 
 'reports' => [
+    'driver' => 'file',
     'directory' => storage_path('statamic/seopro/reports'),
 ],
 ```

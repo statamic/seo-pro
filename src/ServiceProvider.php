@@ -240,6 +240,10 @@ class ServiceProvider extends AddonServiceProvider
     {
         Statamic::repository(ReportRepository::class, Reporting\File\ReportRepository::class);
 
+        if (config('statamic.seo-pro.reports.driver') === 'database') {
+            Statamic::repository(ReportRepository::class, Reporting\Eloquent\ReportRepository::class);
+        }
+
         return $this;
     }
 
