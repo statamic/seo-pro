@@ -96,7 +96,7 @@ class ReportRepository implements RepositoryContract
 
     private function directory(): string
     {
-        return storage_path('statamic/seopro/reports');
+        return config('statamic.seo-pro.reports.directory', storage_path('statamic/seopro/reports'));
     }
 
     private function prepareDirectory(): string

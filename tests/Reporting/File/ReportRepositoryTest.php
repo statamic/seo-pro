@@ -25,6 +25,15 @@ class ReportRepositoryTest extends TestCase
         $this->repo = $this->app->make(ReportRepository::class);
     }
 
+    protected function tearDown(): void
+    {
+        if ($this->files->exists($path = $this->elsewherePath())) {
+            $this->files->deleteDirectory($path);
+        }
+
+        parent::tearDown();
+    }
+
     #[Test]
     public function it_binds_the_file_repository_by_default()
     {
@@ -89,6 +98,28 @@ class ReportRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_reads_the_directory_from_config()
+    {
+        config(['statamic.seo-pro.reports.directory' => $this->elsewherePath()]);
+
+        $this->repo->save($this->pendingReport());
+
+        $this->assertFileExists($this->elsewherePath('1/report.yaml'));
+    }
+
+    #[Test]
+    public function it_falls_back_to_the_default_directory_when_the_key_is_missing()
+    {
+        // A config published before the directory key existed has a reports section without it.
+        config(['statamic.seo-pro.reports' => ['keep_recent' => 'all', 'queue_chunk_size' => 1000]]);
+
+        $this->repo->save($this->pendingReport());
+
+        $this->assertFileExists($this->reportsPath('1/report.yaml'));
+        $this->assertCount(1, $this->repo->all());
+    }
+
+    #[Test]
     public function can_save_chunk()
     {
         $report = $this->savedReport();
@@ -138,6 +169,11 @@ class ReportRepositoryTest extends TestCase
     private function reportsPath($append = null)
     {
         return collect([storage_path('statamic/seopro/reports'), $append])->filter()->implode('/');
+    }
+
+    private function elsewherePath($append = null)
+    {
+        return collect([storage_path('statamic/seopro/elsewhere'), $append])->filter()->implode('/');
     }
 
     private function pendingReport()

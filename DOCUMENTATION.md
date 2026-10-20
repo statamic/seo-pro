@@ -147,6 +147,18 @@ Reports will stick around until deleted, so you are free to compare reports to s
 
 You may generate a report through the Control Panel, or by running `php please seo-pro:generate-report`.
 
+### Storage
+
+By default, reports are stored as YAML files in the `storage/statamic/seopro/reports` directory. You can change this in the config:
+
+```php
+// config/statamic/seo-pro.php
+
+'reports' => [
+    'directory' => storage_path('statamic/seopro/reports'),
+],
+```
+
 ### Queuing Reports
 
 Depending on the size of your site, generating a report may take a while. To prevent request timeouts, you may enable queues, and the reports will be truly queued in the background.
