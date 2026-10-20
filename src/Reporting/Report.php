@@ -335,6 +335,8 @@ class Report implements Arrayable, Jsonable
 
     public function save()
     {
+        $this->date ??= now()->timestamp;
+
         $this->raw = $this->raw();
 
         $this->repository()->save($this);
