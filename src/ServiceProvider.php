@@ -32,6 +32,7 @@ use Statamic\SeoPro\Redirects\Stache\ErrorsStore;
 use Statamic\SeoPro\Redirects\Stache\RedirectsStore;
 use Statamic\SeoPro\Reporting\Page;
 use Statamic\SeoPro\Reporting\Report;
+use Statamic\SeoPro\Reporting\ReportRepository;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
 use Statamic\Stache\Stache;
 use Statamic\Statamic;
@@ -82,6 +83,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonSubscriber()
             ->bootAddonGlidePresets()
             ->bootRedirects()
+            ->bootReports()
             ->bootRouteBindings()
             ->bootGit()
             ->bootAddonScheduledCommands()
@@ -230,6 +232,13 @@ class ServiceProvider extends AddonServiceProvider
         }
 
         NotFoundHttpException::renderUsing(fn ($request) => app(HandleRedirects::class)($request));
+
+        return $this;
+    }
+
+    protected function bootReports()
+    {
+        Statamic::repository(ReportRepository::class, Reporting\File\ReportRepository::class);
 
         return $this;
     }
