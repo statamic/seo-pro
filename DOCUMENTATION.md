@@ -160,6 +160,18 @@ By default, reports are stored as YAML files in the `storage/statamic/seopro/rep
 ],
 ```
 
+Where the filesystem is not shared between processes or does not survive a deploy (containers, serverless platforms, autoscaled instances), a report written by one process is never seen by the next request. In that case you may store reports in the database by changing the driver:
+
+```php
+// config/statamic/seo-pro.php
+
+'reports' => [
+    'driver' => 'database',
+],
+```
+
+Then run `php please seo-pro:database-reports` to publish the migration and import existing reports.
+
 ### Queuing Reports
 
 Depending on the size of your site, generating a report may take a while. To prevent request timeouts, you may enable queues, and the reports will be truly queued in the background.
