@@ -4,8 +4,6 @@ namespace Statamic\SeoPro\Reporting;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Statamic\Facades\Data;
-use Statamic\Facades\File;
-use Statamic\Facades\YAML;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
@@ -38,6 +36,11 @@ class Page implements Arrayable
     public function results()
     {
         return $this->results;
+    }
+
+    public function data()
+    {
+        return $this->data;
     }
 
     public function validate()
@@ -140,23 +143,12 @@ class Page implements Arrayable
 
     public function save()
     {
-        $data = [
-            'id' => $this->id,
-            'data' => $this->data,
-            'results' => $this->results,
-        ];
-
-        File::put($this->path(), YAML::dump($data));
+        $this->repository()->savePage($this);
     }
 
-    protected function path()
+    protected function repository()
     {
-        $key = md5($this->id);
-        $parts = array_slice(str_split($key, 2), 0, 2);
-
-        return storage_path(vsprintf('statamic/seopro/reports/%s/pages/%s/%s.yaml', [
-            $this->report->id(), implode('/', $parts), $key,
-        ]));
+        return app(ReportRepository::class);
     }
 
     public function model()
