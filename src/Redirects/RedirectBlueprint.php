@@ -3,6 +3,7 @@
 namespace Statamic\SeoPro\Redirects;
 
 use Statamic\Facades\Blueprint as BlueprintFacade;
+use Statamic\Facades\Site;
 use Statamic\Fields\Blueprint as FieldsBlueprint;
 use Statamic\SeoPro\Rules\ValidRedirectUrl;
 
@@ -37,6 +38,7 @@ class RedirectBlueprint
                                         'instructions' => __('seo-pro::messages.redirect_destination'),
                                         'validate' => ['required'],
                                         'listable' => true,
+                                        'select_across_sites' => Site::multiEnabled(),
                                     ],
                                 ],
                                 [
