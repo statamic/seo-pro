@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Site;
 use Statamic\SeoPro\Facades;
 use Statamic\SeoPro\Redirects\RecordError;
 use Statamic\SeoPro\Redirects\RecordRedirectHit;
@@ -530,6 +531,41 @@ class HandleRedirectsTest extends TestCase
         $this
             ->get('/old-post')
             ->assertRedirect($entry->absoluteUrl())
+            ->assertStatus(301);
+    }
+
+    #[Test]
+    public function it_redirects_to_an_entry_on_another_site()
+    {
+        config(['statamic.system.multisite' => true, 'statamic.editions.pro' => true]);
+
+        Site::setSites([
+            'en' => ['name' => 'English', 'url' => 'http://example.com/', 'locale' => 'en_US'],
+            'fr' => ['name' => 'French', 'url' => 'http://example.fr/', 'locale' => 'fr_FR'],
+        ]);
+
+        $collection = tap(Collection::make('posts')->sites(['en', 'fr'])->routes('/posts/{slug}'))->save();
+
+        tap(Entry::make()
+            ->id('post-fr')
+            ->locale('fr')
+            ->collection($collection)
+            ->slug('bonjour')
+            ->data(['title' => 'Bonjour'])
+        )->save();
+
+        Facades\Redirect::make()
+            ->id('abc')
+            ->site('en')
+            ->source('/old-post')
+            ->destination('entry::post-fr')
+            ->responseCode(301)
+            ->enabled(true)
+            ->save();
+
+        $this
+            ->get('http://example.com/old-post')
+            ->assertRedirect('http://example.fr/posts/bonjour')
             ->assertStatus(301);
     }
 }
