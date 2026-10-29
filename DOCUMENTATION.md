@@ -252,6 +252,8 @@ Redirects and errors are scoped to individual sites. Each redirect belongs to a 
 
 When using the Control Panel, redirects and errors are filtered to the currently selected site. The site can be changed using the site filter in the listing.
 
+A redirect's destination may point to another site. The destination field lets you pick an entry from any site, and the redirect will go to that entry's URL. For URL destinations, use the other site's path (`/fr/a-propos`) or its full URL when sites use separate domains.
+
 When you enable multi-site on an existing install via `php please multisite`, SEO Pro will automatically move your existing redirect and error files into subdirectories for the default site.
 
 ### Automatic Redirects
