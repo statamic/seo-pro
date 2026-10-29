@@ -1,5 +1,17 @@
 # Release Notes
 
+## 7.16.0 (2026-10-29)
+
+### What's new
+- Allow redirect destinations to select entries across sites [#701](https://github.com/statamic/seo-pro/issues/701) by @edalzell
+
+### What's fixed
+- Fix entries being included in sitemap when disabled in section defaults [#693](https://github.com/statamic/seo-pro/issues/693) by @duncanmcclean
+- Bump actions/setup-node from 7.0.0 to 7.1.0 in the github-actions group [#695](https://github.com/statamic/seo-pro/issues/695) by @dependabot
+- Bump the github-actions group with 2 updates [#696](https://github.com/statamic/seo-pro/issues/696) by @dependabot
+
+
+
 ## 7.15.1 (2026-10-02)
 
 ### What's fixed
