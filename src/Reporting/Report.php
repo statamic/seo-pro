@@ -8,10 +8,7 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Entry;
-use Statamic\Facades\File;
-use Statamic\Facades\Folder;
 use Statamic\Facades\Term;
-use Statamic\Facades\YAML;
 
 class Report implements Arrayable, Jsonable
 {
@@ -57,11 +54,7 @@ class Report implements Arrayable, Jsonable
 
     public static function nextId()
     {
-        if (! $latest = static::latest()) {
-            return 1;
-        }
-
-        return $latest->id() + 1;
+        return app(ReportRepository::class)->nextId();
     }
 
     public function id()
@@ -112,15 +105,14 @@ class Report implements Arrayable, Jsonable
 
     protected function hasRemainingChunks()
     {
-        return File::exists($this->chunksFolder())
-            && File::getFolders($this->chunksFolder())->isNotEmpty();
+        return $this->repository()->hasChunks($this);
     }
 
     protected function chunks()
     {
         $chunks = $this
             ->allContent()
-            ->chunk(config('statamic.seo-pro.reports.queue_chunk_size'))
+            ->chunk(config('statamic.seo-pro.reports.queue_chunk_size', 1000))
             ->map(function ($chunk, $id) {
                 return app()
                     ->makeWith(Chunk::class, [
@@ -139,9 +131,7 @@ class Report implements Arrayable, Jsonable
 
     public function finalize()
     {
-        if (File::exists($dir = $this->chunksFolder())) {
-            File::delete($dir);
-        }
+        $this->repository()->deleteChunks($this);
 
         $this
             ->withPages()
@@ -284,13 +274,7 @@ class Report implements Arrayable, Jsonable
             return $this;
         }
 
-        $dir = storage_path(sprintf('statamic/seopro/reports/%s/pages', $this->id));
-
-        $files = Folder::getFilesRecursively($dir);
-
-        $this->pages = collect($files)
-            ->map(fn ($file) => YAML::parse(File::get($file)))
-            ->map(fn ($yaml) => (new Page($yaml['id'], $yaml['data'], $this))->setResults($yaml['results']))
+        $this->pages = $this->repository()->pages($this)
             ->sortBy
             ->url()
             ->values();
@@ -326,24 +310,12 @@ class Report implements Arrayable, Jsonable
 
     public static function all()
     {
-        $folders = collect(Folder::getFolders(static::preparePath()));
-
-        if ($folders->isEmpty()) {
-            return $folders;
-        }
-
-        return $folders
-            ->map(fn ($path) => (int) pathinfo($path)['filename'])
-            ->map(fn ($id) => static::find($id))
-            ->filter()
-            ->sortByDesc
-            ->id()
-            ->values();
+        return app(ReportRepository::class)->all();
     }
 
     public static function latest()
     {
-        return static::all()->first();
+        return app(ReportRepository::class)->latest();
     }
 
     public static function latestGenerated()
@@ -353,13 +325,7 @@ class Report implements Arrayable, Jsonable
 
     public static function find($id)
     {
-        $instance = static::create($id);
-
-        if (! $instance->exists()) {
-            return;
-        }
-
-        return $instance->load();
+        return app(ReportRepository::class)->find($id);
     }
 
     public function fresh()
@@ -369,14 +335,11 @@ class Report implements Arrayable, Jsonable
 
     public function save()
     {
-        File::put($this->path(), YAML::dump($this->raw = [
-            'date' => $this->date ?? now()->timestamp,
-            'status' => $this->status(),
-            'score' => $this->score(),
-            'pages_crawled' => $this->pagesCrawled(),
-            'pages_actionable' => $this->pagesActionable(),
-            'results' => $this->results,
-        ]));
+        $this->date ??= now()->timestamp;
+
+        $this->raw = $this->raw();
+
+        $this->repository()->save($this);
 
         static::deleteOldReports();
 
@@ -385,34 +348,26 @@ class Report implements Arrayable, Jsonable
 
     public function delete()
     {
-        File::delete($this->parentFolder());
+        $this->repository()->delete($this);
 
         return $this->clearCaches();
     }
 
-    public function parentFolder()
+    public function raw()
     {
-        return storage_path('statamic/seopro/reports/'.$this->id);
+        return [
+            'date' => $this->date ?? now()->timestamp,
+            'status' => $this->status(),
+            'score' => $this->score(),
+            'pages_crawled' => $this->pagesCrawled(),
+            'pages_actionable' => $this->pagesActionable(),
+            'results' => $this->results,
+        ];
     }
 
-    public function chunksFolder()
+    public function hydrate(array $raw)
     {
-        return storage_path('statamic/seopro/reports/'.$this->id.'/chunks');
-    }
-
-    public function path()
-    {
-        return storage_path('statamic/seopro/reports/'.$this->id.'/report.yaml');
-    }
-
-    public function exists()
-    {
-        return File::exists($this->path());
-    }
-
-    public function load()
-    {
-        $this->raw = YAML::parse(File::get($this->path()));
+        $this->raw = $raw;
 
         $this->date = $this->raw['date'];
         $this->results = $this->raw['results'];
@@ -499,15 +454,9 @@ class Report implements Arrayable, Jsonable
         return $this;
     }
 
-    public static function preparePath($path = null)
+    protected function repository()
     {
-        $path = collect([storage_path('statamic/seopro/reports'), $path])->filter()->implode('/');
-
-        if (! File::exists($path)) {
-            File::makeDirectory($path, 0755, true);
-        }
-
-        return $path;
+        return app(ReportRepository::class);
     }
 
     protected function allContent()
@@ -562,16 +511,7 @@ class Report implements Arrayable, Jsonable
             return false;
         }
 
-        $reports = collect(app('files')->directories(storage_path('statamic/seopro/reports')));
-
-        $keepReports = $reports
-            ->keyBy(fn ($path) => pathinfo($path)['basename'])
-            ->sortKeysDesc()
-            ->take($keep);
-
-        $reports
-            ->reject(fn ($path) => $keepReports->contains($path))
-            ->each(fn ($path) => app('files')->deleteDirectory($path));
+        static::all()->slice($keep)->each->delete();
 
         return true;
     }
