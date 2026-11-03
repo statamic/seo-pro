@@ -84,4 +84,23 @@ return [
         ],
     ],
 
+    'broken_links' => [
+        'enabled' => env('SEO_PRO_TRACK_BROKEN_LINKS', false),
+        'driver' => 'file',
+        'directory' => storage_path('statamic/seopro/external-links'),
+        'excluded_hosts' => [],
+        'check' => [
+            'frequency' => 'hourly',
+            'timeout' => 10,
+            'batch_size' => 100,
+            'concurrency' => 10,
+            'user_agent' => 'Mozilla/5.0 (compatible; SeoProLinkChecker/1.0; +https://statamic.com)',
+        ],
+        'notifications' => [
+            'recipients' => [
+                // 'you@example.com',
+            ],
+        ],
+    ],
+
 ];
