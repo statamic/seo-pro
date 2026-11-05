@@ -164,6 +164,19 @@ class SitemapTest extends TestCase
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?> test', $content);
     }
 
+    /**
+     * @see https://github.com/statamic/seo-pro/issues/704
+     */
+    #[Test]
+    public function it_doesnt_reference_an_xsl_stylesheet()
+    {
+        config()->set('statamic.seo-pro.sitemap.pagination.enabled', true);
+        config()->set('statamic.seo-pro.sitemap.pagination.limit', 5);
+
+        $this->get('/sitemap.xml')->assertOk()->assertDontSee('xml-stylesheet', false);
+        $this->get('/sitemap_1.xml')->assertOk()->assertDontSee('xml-stylesheet', false);
+    }
+
     #[Test]
     public function it_uses_cascade_to_generate_priorities()
     {
