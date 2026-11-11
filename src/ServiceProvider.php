@@ -143,6 +143,7 @@ class ServiceProvider extends AddonServiceProvider
             })->label(__('seo-pro::messages.view_reports'));
             Permission::register('edit seo site defaults')->label(__('seo-pro::messages.edit_site_defaults'));
             Permission::register('edit seo section defaults')->label(__('seo-pro::messages.edit_section_defaults'));
+            Permission::register('edit seo robots')->label(__('seo-pro::messages.edit_robots'));
         });
 
         return $this;
@@ -162,6 +163,7 @@ class ServiceProvider extends AddonServiceProvider
                             $nav->item(__('seo-pro::messages.errors'))->route('seo-pro.errors.index')->can('view seo redirects'),
                             $nav->item(__('seo-pro::messages.site_defaults'))->route('seo-pro.site-defaults.edit')->can('edit seo site defaults'),
                             $nav->item(__('seo-pro::messages.section_defaults'))->route('seo-pro.section-defaults.index')->can('edit seo section defaults'),
+                            $nav->item(__('seo-pro::messages.robots'))->route('seo-pro.robots.edit')->can('edit seo robots'),
                         ];
                     });
             }
@@ -282,6 +284,11 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootGit()
     {
         if (config('statamic.git.enabled')) {
+            config()->set('statamic.git.paths', array_values(array_unique([
+                ...config('statamic.git.paths', []),
+                public_path('robots.txt'),
+            ])));
+
             Git::listen(RedirectSaved::class);
         }
 
@@ -381,6 +388,7 @@ class ServiceProvider extends AddonServiceProvider
         return $user->can('view seo reports')
             || $user->can('view seo redirects')
             || $user->can('edit seo site defaults')
-            || $user->can('edit seo section defaults');
+            || $user->can('edit seo section defaults')
+            || $user->can('edit seo robots');
     }
 }
