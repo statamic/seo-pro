@@ -4,8 +4,6 @@ namespace Statamic\SeoPro\Reporting;
 
 use Illuminate\Support\Facades\Cache;
 use Statamic\Facades\Data;
-use Statamic\Facades\File;
-use Statamic\Facades\YAML;
 use Statamic\SeoPro\Cascade;
 use Statamic\SeoPro\GetsSectionDefaults;
 use Statamic\SeoPro\SiteDefaults\SiteDefaults;
@@ -25,21 +23,24 @@ class Chunk
         $this->report = $report;
     }
 
-    protected function folderPath()
+    public function id()
     {
-        return $this->report->chunksFolder()."/{$this->id}";
+        return $this->id;
     }
 
-    protected function yamlPath()
+    public function contentIds()
     {
-        return $this->folderPath().'/chunk.yaml';
+        return $this->contentIds;
+    }
+
+    public function report()
+    {
+        return $this->report;
     }
 
     public function save()
     {
-        File::put($this->yamlPath(), YAML::dump([
-            'ids' => $this->contentIds,
-        ]));
+        $this->repository()->saveChunk($this);
 
         return $this;
     }
@@ -61,7 +62,7 @@ class Chunk
             $this->createPage($content[$id] ?? Data::find($id))?->save();
         }
 
-        File::delete($this->folderPath());
+        $this->repository()->deleteChunk($this);
 
         if ($this->wasLastChunk()) {
             $this->report->finalize();
@@ -70,7 +71,12 @@ class Chunk
 
     protected function wasLastChunk()
     {
-        return File::getFolders($this->report->chunksFolder())->isEmpty();
+        return ! $this->repository()->hasChunks($this->report);
+    }
+
+    protected function repository()
+    {
+        return app(ReportRepository::class);
     }
 
     protected function createPage($content)

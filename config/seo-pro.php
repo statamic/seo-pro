@@ -50,6 +50,8 @@ return [
     ],
 
     'reports' => [
+        'driver' => 'file',
+        'directory' => storage_path('statamic/seopro/reports'),
         'keep_recent' => 'all',
         'queue_chunk_size' => 1000,
         'title_length' => [
